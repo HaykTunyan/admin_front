@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "start": "craco start",
-    "build": "craco build && yarn build && netlify deploy --prod ",
+    "build": "craco build",
     "test": "craco test",
-    "eject": "craco eject",
+    "eject": "react-scripts eject",
     "format": "npx prettier --write .",
-    "lint": "eslint src --ext .js,.jsx --fix"
   },
   "browserslist": [
     "> 0.5%",
