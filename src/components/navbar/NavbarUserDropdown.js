@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
-import { UserCheck } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import {
   Tooltip,
