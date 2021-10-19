@@ -44,7 +44,6 @@ const Profile = async(() => import("./pages/pages/Profile"));
 const routes = [
   {
     path: "/",
-    exact: true,
     element: <AuthLayout />,
     children: [
       {
