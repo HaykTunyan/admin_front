@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "craco build && yarn build && netlify deploy --prod ",
     "test": "craco test",
     "eject": "craco eject",
     "format": "npx prettier --write .",
