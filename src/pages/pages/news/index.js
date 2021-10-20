@@ -15,6 +15,7 @@ import {
 import { spacing } from "@material-ui/system";
 import NewsImage from "../../../assets/news_one.jpg";
 import AddNewsModal from "../../modal/AddNewsModal";
+import EditNewsModal from "../../modal/EditNewsModal";
 
 const Card = styled(MuiCard)(spacing);
 
@@ -145,9 +146,7 @@ const News = ({ image, title, description, chip }) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" color="primary">
-          Edit
-        </Button>
+        <EditNewsModal />
         <Button size="small" color="primary">
           View More
         </Button>

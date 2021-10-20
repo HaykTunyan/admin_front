@@ -12,8 +12,9 @@ import {
 } from "@material-ui/core";
 import { CloudUpload } from "@material-ui/icons";
 import ImageUploading from "react-images-uploading";
+import NewsImage from "../../assets/news_one.jpg";
 
-const AddNewsModal = () => {
+const EditNewsModal = () => {
   const [open, setOpen] = useState(false);
   const [images, setImages] = useState([]);
   const maxNumber = 69;
@@ -33,11 +34,11 @@ const AddNewsModal = () => {
 
   return (
     <div>
-      <Button variant="contained" onClick={handleClickOpen}>
-        Add News
+      <Button size="small" color="primary" onClick={handleClickOpen}>
+        Edit
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Information for News</DialogTitle>
+        <DialogTitle>Edit Information for News</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -47,6 +48,7 @@ const AddNewsModal = () => {
             type="text"
             fullWidth
             variant="standard"
+            defaultValue="IBM Donates Code Improvements to Open Source Hyperledger"
           />
           <TextField
             autoFocus
@@ -56,6 +58,7 @@ const AddNewsModal = () => {
             type="text"
             fullWidth
             variant="standard"
+            defaultValue="“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM."
           />
           <TextField
             autoFocus
@@ -93,6 +96,9 @@ const AddNewsModal = () => {
                 dragProps,
               }) => (
                 <div className="upload__image-wrapper">
+                  <div className="image-item">
+                    <img src={NewsImage} width="100" />
+                  </div>
                   <Box py={5}>
                     <Button
                       variant="contained"
@@ -110,6 +116,7 @@ const AddNewsModal = () => {
                     </Button>
                   </Box>
                   <Divider my={5} />
+
                   {imageList.map((image, index) => (
                     <div key={index} className="image-item">
                       <img src={image["data_url"]} alt="" width="100" />
@@ -139,11 +146,11 @@ const AddNewsModal = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Create News</Button>
+          <Button onClick={handleClose}>Save News</Button>
         </DialogActions>
       </Dialog>
     </div>
   );
 };
 
-export default AddNewsModal;
+export default EditNewsModal;

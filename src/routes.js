@@ -31,6 +31,7 @@ import Transaction from "./pages/pages/transactions";
 import KYC from "./pages/pages/kyc";
 import DeviceManagement from "./pages/pages/DeviceManagement";
 import Referral from "./pages/pages/referral";
+import Administrators from "./pages/pages/user-managment/Administrators";
 
 // Documentation
 import Redux from "./pages/docs/Redux";
@@ -123,6 +124,10 @@ const routes = [
       {
         path: "notifications",
         element: <Notifications />,
+      },
+      {
+        path: "administrators",
+        element: <Administrators />,
       },
     ],
   },

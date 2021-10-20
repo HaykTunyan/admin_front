@@ -1,7 +1,6 @@
 import React from "react";
 import styled, { withTheme } from "styled-components/macro";
 import Chart from "react-chartjs-2";
-
 import { CardContent, Card as MuiCard, Typography } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import { orange, red } from "@material-ui/core/colors";
@@ -16,7 +15,7 @@ const ChartWrapper = styled.div`
 
 const PieChart = ({ theme, title, description }) => {
   const data = {
-    // labels: ["Social", "Search Engines", "Direct", "Other"],
+    labels: ["Social", "Search Engines", "Direct", "Other"],
     datasets: [
       {
         data: [260, 125, 54, 146],
@@ -35,7 +34,7 @@ const PieChart = ({ theme, title, description }) => {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false,
+        display: true,
       },
     },
   };

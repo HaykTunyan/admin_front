@@ -2,7 +2,6 @@ import React, { Fragment, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
-import { MoreVertical } from "react-feather";
 import {
   Divider as MuiDivider,
   Grid,
@@ -14,16 +13,8 @@ import {
   Typography,
   Select,
   MenuItem,
-  CardHeader,
-  IconButton,
-  Chip as MuiChip,
-  Paper as MuiPaper,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
 } from "@material-ui/core";
+import AddNotificationModal from "../../modal/AddNotificationModal";
 
 // Styele Component.
 const Divider = styled(MuiDivider)(spacing);
@@ -36,95 +27,6 @@ const TextField = styled(MuiTextField)(spacing);
 
 const Button = styled(MuiButton)(spacing);
 
-const Chip = styled(MuiChip)`
-  height: 20px;
-  padding: 4px 0;
-  font-size: 90%;
-  background-color: ${(props) =>
-    props.theme.palette[props.color ? props.color : "primary"].light};
-  color: ${(props) => props.theme.palette.common.white};
-`;
-
-const Paper = styled(MuiPaper)(spacing);
-
-const TableWrapper = styled.div`
-  overflow-y: auto;
-  max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
-`;
-
-const rows = [
-  {
-    id: 0,
-    name: "User Name",
-    title: "This page contains a set of example notifications",
-    type: <Chip label="type" color="success" />,
-    sales: "1205",
-  },
-  {
-    id: 1,
-    name: "User Name",
-    title: "This page contains a set of example notifications",
-    type: <Chip label="type" color="success" />,
-    sales: "1205",
-  },
-  {
-    id: 2,
-    name: "User Name",
-    title: "This page contains a set of example notifications",
-    type: <Chip label="type" color="success" />,
-    sales: "1205",
-  },
-  {
-    id: 3,
-    name: "User Name",
-    title: "This page contains a set of example notifications",
-    type: <Chip label="type" color="success" />,
-    sales: "1205",
-  },
-  {
-    id: 4,
-    name: "User Name",
-    title: "This page contains a set of example notifications",
-    type: <Chip label="type" color="warning" />,
-    sales: "1205",
-  },
-  {
-    id: 5,
-    name: "User Name",
-    title: "This page contains a set of example notifications",
-    type: <Chip label="type" color="success" />,
-    sales: "1205",
-  },
-  {
-    id: 6,
-    name: "User Name",
-    title: "This page contains a set of example notifications",
-    type: <Chip label="type" color="warning" />,
-    sales: "1205",
-  },
-  {
-    id: 7,
-    name: "User Name",
-    title: "This page contains a set of example notifications",
-    type: <Chip label="type" color="success" />,
-    sales: "1205",
-  },
-  {
-    id: 8,
-    name: "User Name",
-    title: "This page contains a set of example notifications",
-    type: <Chip label="type" color="warning" />,
-    sales: "1205",
-  },
-  {
-    id: 9,
-    name: "User Name",
-    title: "This page contains a set of example notifications",
-    type: <Chip label="type" color="success" />,
-    sales: "1205",
-  },
-];
-
 const Notifications = () => {
   const [selectNoficate, setSelectNotificate] = useState("1");
 
@@ -135,56 +37,18 @@ const Notifications = () => {
   return (
     <Fragment>
       <Helmet title="Notification" />
-      <Typography variant="h3" gutterBottom display="inline">
-        Notification
-      </Typography>
-
-      <Divider my={6} />
-
-      <Grid container spacing={6}>
-        <Grid item xs={12}>
-          <Card mb={6}>
-            <CardContent>
-              <Card mb={6}>
-                <CardHeader
-                  action={
-                    <IconButton aria-label="settings" size="large">
-                      <MoreVertical />
-                    </IconButton>
-                  }
-                  title="Notification products list"
-                />
-                <Paper>
-                  <TableWrapper>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>User Name</TableCell>
-                          <TableCell>Notification Title</TableCell>
-                          <TableCell>Notification Type</TableCell>
-                          <TableCell>Sends</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {rows.map((row) => (
-                          <TableRow key={row.id}>
-                            <TableCell component="th" scope="row">
-                              {row.name}
-                            </TableCell>
-                            <TableCell>{row.title}</TableCell>
-                            <TableCell>{row.type}</TableCell>
-                            <TableCell>{row.sales}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableWrapper>
-                </Paper>
-              </Card>
-            </CardContent>
-          </Card>
+      <Grid justifyContent="space-between" container spacing={6}>
+        <Grid item>
+          <Typography variant="h3" gutterBottom display="inline">
+            Notification
+          </Typography>
+        </Grid>
+        <Grid item>
+          <AddNotificationModal />
         </Grid>
       </Grid>
+
+      <Divider my={6} />
 
       <Grid container spasing={6}>
         <Grid item xs={12}>
@@ -198,15 +62,23 @@ const Notifications = () => {
               <Grid container spacing={6}>
                 <Grid item md={6}>
                   <TextField
+                    id="selectIssuer"
+                    label="Seleect Issuer"
+                    defaultValue="Issuer"
+                    variant="outlined"
+                    fullWidth
+                    my={3}
+                  />
+                  <TextField
                     id="titleNotification"
                     label="Title Notification"
                     defaultValue="titleNotification"
                     variant="outlined"
                     fullWidth
-                    my={2}
+                    my={3}
                   />
                   {/*  */}
-                  <FormControl fullWidth my={2} variant="outlined">
+                  <FormControl fullWidth my={3} variant="outlined">
                     <Select
                       value={selectNoficate}
                       onChange={handleChange}
@@ -222,7 +94,7 @@ const Notifications = () => {
                   </FormControl>
                   {/*  */}
 
-                  <FormControl fullWidth my={2} variant="outlined">
+                  <FormControl fullWidth my={3} variant="outlined">
                     <TextField
                       label="Notification Info"
                       id="info"

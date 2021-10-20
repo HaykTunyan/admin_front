@@ -7,6 +7,10 @@ import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 const DateRange = () => {
   const [value, setValue] = useState([null, null]);
 
+  const onChangeTime = (newValue) => {
+    setValue(newValue);
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DateRangePicker

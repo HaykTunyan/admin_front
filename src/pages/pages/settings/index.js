@@ -21,7 +21,7 @@ import SwapSettings from "./SwapSettings";
 const Divider = styled(MuiDivider)(spacing);
 
 const Settings = () => {
-  const [value, setValue] = useState("1");
+  const [value, setValue] = useState("2");
 
   const handleChange = (e, newValue) => {
     setValue(newValue);
@@ -42,16 +42,16 @@ const Settings = () => {
                   onChange={handleChange}
                   aria-label="lab API tabs example"
                 >
-                  <Tab label="Admin Managment" value="1" />
+                  {/* <Tab label="Admin Managment" value="1" /> */}
                   <Tab label="KYC Settings" value="2" />
                   <Tab label="Transactions Settings" value="3" />
                   <Tab label="Savings Setting" value="4" />
                   <Tab label="Swap Settings" value="5" />
                 </TabList>
               </Box>
-              <TabPanel value="1" mb={5}>
+              {/* <TabPanel value="1" mb={5}>
                 <AdminManager />
-              </TabPanel>
+              </TabPanel> */}
               <TabPanel value="2" mb={5}>
                 <KYCSettings />
               </TabPanel>

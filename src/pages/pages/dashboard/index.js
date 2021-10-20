@@ -11,10 +11,16 @@ import {
   Card as MuiCard,
   Box,
   Tab,
+  Paper,
+  TableRow,
+  TableHead,
+  TableContainer,
+  TableCell,
+  TableBody,
+  Table,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import DateRange from "../../components/DateRange";
-import DoughnutChart from "../../dashboards/Analytics/DoughnutChart";
 import Stats from "../../components/Stats";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
@@ -69,29 +75,20 @@ const DashboardPage = () => {
   const theme = useTheme();
   const [panel, setPanel] = useState("1");
 
+  function createData(name, coin, percent) {
+    return { name, coin, percent };
+  }
+
+  const rows = [
+    createData("User One", 130, 30),
+    createData("User Two", 430, 15),
+    createData("User Three", 180, 75),
+    createData("User Four", 240, 60),
+    createData("User Five", 300, 50),
+  ];
+
   const handleChange = (event, newPanel) => {
     setPanel(newPanel);
-  };
-  const data = {
-    labels: ["Social", "Search Engines", "Direct", "Other"],
-    datasets: [
-      {
-        data: [260, 125, 164],
-        backgroundColor: [theme.palette.secondary.main, red[500], orange[500]],
-        borderWidth: 5,
-        borderColor: theme.palette.background.paper,
-      },
-    ],
-  };
-
-  const options = {
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
-    cutout: "80%",
   };
 
   return (
@@ -135,7 +132,7 @@ const DashboardPage = () => {
                           component="div"
                           sx={{ fontWeight: "bold" }}
                         >
-                          300 000
+                          300 000 $
                         </Typography>
                       </Box>
                     }
@@ -250,105 +247,288 @@ const DashboardPage = () => {
               <TabPanel value="1">
                 <Grid container spacing={6}>
                   <Grid item xs={12}>
-                    <Stats
-                      title="Total number of users"
-                      amount="300000"
-                      chip="Today Info"
-                      percentagetext="+16%"
-                      percentagecolor={green[500]}
-                    />
+                    <TableContainer component={Paper}>
+                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Total Users</TableCell>
+                            <TableCell align="center">Coin</TableCell>
+                            <TableCell align="right">Percent</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {rows.map((row) => (
+                            <TableRow
+                              key={row.name}
+                              sx={{
+                                "&:last-child td, &:last-child th": {
+                                  border: 0,
+                                },
+                              }}
+                            >
+                              <TableCell component="th" scope="row">
+                                {row.name}
+                              </TableCell>
+                              <TableCell align="center">
+                                {row.coin} <span>$</span>{" "}
+                              </TableCell>
+                              <TableCell align="right">
+                                {row.percent} <span>%</span>{" "}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
                   </Grid>
                 </Grid>
               </TabPanel>
               {/* Panel Two */}
               <TabPanel value="2">
                 <Grid item xs={12}>
-                  <Stats
+                  <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Total Users</TableCell>
+                          <TableCell align="center">Coin</TableCell>
+                          <TableCell align="right">Percent</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <TableRow
+                            key={row.name}
+                            sx={{
+                              "&:last-child td, &:last-child th": {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.coin} <span>$</span>{" "}
+                            </TableCell>
+                            <TableCell align="right">
+                              {row.percent} <span>%</span>{" "}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  {/* <Stats
                     title="The total balance of all users is in $ and you can open it to see how much in each coin."
                     amount="11 360 000 $"
                     chip="Today Info"
                     percentagetext="-5%"
                     percentagecolor={red[500]}
-                  />
+                  /> */}
                 </Grid>
               </TabPanel>
               {/* Panel Three */}
               <TabPanel value="3">
                 <Grid item xs={12}>
-                  <Stats
+                  <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Total Users</TableCell>
+                          <TableCell align="center">Coin</TableCell>
+                          <TableCell align="right">Percent</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <TableRow
+                            key={row.name}
+                            sx={{
+                              "&:last-child td, &:last-child th": {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.coin} <span>$</span>{" "}
+                            </TableCell>
+                            <TableCell align="right">
+                              {row.percent} <span>%</span>{" "}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                  {/* <Stats
                     title="The current balance of all users by default wallets is in $ and you can open it to see how much in each coin."
                     amount="9 960 000 $"
                     chip="Today Info"
                     percentagetext="-4%"
                     percentagecolor={red[500]}
-                  />
+                  /> */}
                 </Grid>
               </TabPanel>
               {/* Panel Four */}
               <TabPanel value="4">
                 <Grid item xs={12}>
-                  <Stats
-                    title="The total amount of Receive is in $ and you can open it to see how much in each coin."
-                    amount="11 000 000 $"
-                    chip="Today Info"
-                    percentagetext="+4%"
-                    percentagecolor={green[500]}
-                  />
+                  <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Total Users</TableCell>
+                          <TableCell align="center">Coin</TableCell>
+                          <TableCell align="right">Percent</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <TableRow
+                            key={row.name}
+                            sx={{
+                              "&:last-child td, &:last-child th": {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.coin} <span>$</span>{" "}
+                            </TableCell>
+                            <TableCell align="right">
+                              {row.percent} <span>%</span>{" "}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </Grid>
               </TabPanel>
               {/* Panel Five */}
               <TabPanel value="5">
                 <Grid item xs={12}>
-                  <Stats
-                    title="The total amount of Send in $ and you can open it to see how much in each coin."
-                    amount="11 200 000 $"
-                    chip="Today Info"
-                    percentagetext="-14%"
-                    percentagecolor={red[500]}
-                  />
+                  <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Total Users</TableCell>
+                          <TableCell align="center">Coin</TableCell>
+                          <TableCell align="right">Percent</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <TableRow
+                            key={row.name}
+                            sx={{
+                              "&:last-child td, &:last-child th": {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.coin} <span>$</span>{" "}
+                            </TableCell>
+                            <TableCell align="right">
+                              {row.percent} <span>%</span>{" "}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </Grid>
               </TabPanel>
               {/* Panel Six */}
               <TabPanel value="6">
                 <Grid item xs={12}>
-                  <Stats
-                    title="The total amount of the exchange is $ and you can open it to see what was changed for and in what volume."
-                    amount="1 700 000 $"
-                    chip="Today Info"
-                    percentagetext="-2%"
-                    percentagecolor={red[500]}
-                  />
+                  <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Total Users</TableCell>
+                          <TableCell align="center">Coin</TableCell>
+                          <TableCell align="right">Percent</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <TableRow
+                            key={row.name}
+                            sx={{
+                              "&:last-child td, &:last-child th": {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.coin} <span>$</span>{" "}
+                            </TableCell>
+                            <TableCell align="right">
+                              {row.percent} <span>%</span>{" "}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </Grid>
               </TabPanel>
+
               {/* Panel Seven */}
               <TabPanel value="7">
                 <Grid item xs={12}>
-                  <Stats
-                    title="Total amount now in Savings in $
-                    separately: in Locked / in Flex
-                    and you can expand to see how many where in coins"
-                    amount="4 200 000 $"
-                    chip="Today Info"
-                    percentagetext="+22%"
-                    percentagecolor={green[500]}
-                  />
+                  <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Total Users</TableCell>
+                          <TableCell align="center">Coin</TableCell>
+                          <TableCell align="right">Percent</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <TableRow
+                            key={row.name}
+                            sx={{
+                              "&:last-child td, &:last-child th": {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.coin} <span>$</span>{" "}
+                            </TableCell>
+                            <TableCell align="right">
+                              {row.percent} <span>%</span>{" "}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </Grid>
               </TabPanel>
             </TabContext>
           </Box>
         </Grid>
-      </Grid>
-
-      <Grid container spacing={6}>
-        {item.map((item) => (
-          <Grid item xs={12} md={6} key={item.key}>
-            <DoughnutChart
-              title={item.title}
-              percent={item.percent}
-              version={item.version}
-            />
-          </Grid>
-        ))}
       </Grid>
     </Fragment>
   );
