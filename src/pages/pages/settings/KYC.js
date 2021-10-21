@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import {
   Button as MuiButton,
@@ -21,7 +21,7 @@ const Button = styled(MuiButton)(spacing);
 const TextField = styled(MuiTextField)(spacing);
 
 const KYCSettings = () => {
-  const [age, setAge] = React.useState("");
+  const [age, setAge] = useState("");
 
   const handleChange = (event) => {
     setAge(event.target.value);

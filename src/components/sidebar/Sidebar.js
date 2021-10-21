@@ -38,7 +38,7 @@ const Sidebar = ({ items, ...rest }) => {
   return (
     <Drawer variant="permanent" {...rest}>
       <Brand component={NavLink} to="/">
-        Dashboard
+        Beincoin
       </Brand>
       <SidebarNav items={items} />
     </Drawer>

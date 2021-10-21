@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
 import {
+  Box,
   Paper as MuiPaper,
   Table,
   TableBody,
@@ -11,6 +12,7 @@ import {
   TableHead,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
+import CSVButton from "../../components/CSVButton";
 
 const Paper = styled(MuiPaper)(spacing);
 
@@ -129,13 +131,13 @@ const SendTable = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Date Opetation</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Sum</TableCell>
-                <TableCell>Coin</TableCell>
-                <TableCell>TX ID</TableCell>
-                <TableCell>Operation Type</TableCell>
-                <TableCell>Type</TableCell>
+                <TableCell align="center">Email</TableCell>
+                <TableCell align="center">Phone</TableCell>
+                <TableCell align="center">Sum</TableCell>
+                <TableCell align="center">Coin</TableCell>
+                <TableCell align="center">TX ID</TableCell>
+                <TableCell align="center">Operation Type</TableCell>
+                <TableCell align="center">Type</TableCell>
                 <TableCell>Transaction Status</TableCell>
               </TableRow>
             </TableHead>
@@ -162,6 +164,9 @@ const SendTable = () => {
           </Table>
         </TableContainer>
       </Paper>
+      <Box mt={8} flex justifyContent="flex-end">
+        <CSVButton data={rows} />
+      </Box>
     </Fragment>
   );
 };

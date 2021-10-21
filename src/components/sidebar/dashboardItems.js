@@ -18,7 +18,7 @@ import {
 const pagesSection = [
   // Dashboard.
   {
-    href: "/dashboard-list",
+    href: "/dashboard",
     icon: Sliders,
     title: "Dashboard",
   },
@@ -48,11 +48,11 @@ const pagesSection = [
         icon: Archive,
         title: "Administrators",
       },
-      {
-        href: "/kyc",
-        icon: Key,
-        title: "KYC",
-      },
+      // {
+      //   href: "/kyc",
+      //   icon: Key,
+      //   title: "KYC",
+      // },
     ],
   },
   // Transactions.

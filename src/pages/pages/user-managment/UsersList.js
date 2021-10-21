@@ -22,6 +22,7 @@ import {
   Typography,
   Divider,
   InputBase,
+  InputLabel,
   TableSortLabel,
 } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
@@ -189,19 +190,33 @@ const UsersList = () => {
           >
             <FormControl
               sx={{
-                minWidth: 120,
+                minWidth: 218,
               }}
               pb={4}
             >
+              <InputLabel id="select-kyc">KYC Type</InputLabel>
               <Select
+                labelId="select-kyc"
+                id="select-kyc"
                 value={age}
                 onChange={handleChange}
                 displayEmpty
+                label="KYC Type"
                 inputProps={{ "aria-label": "Without label" }}
                 pb={6}
               >
                 <MenuItem value="Verified">Verified</MenuItem>
-                <MenuItem value="Unverify">Unverify</MenuItem>
+                <MenuItem value="Unverified">Unverified</MenuItem>
+                <MenuItem value="Awaiting Documents">
+                  Awaiting Documents
+                </MenuItem>
+                <MenuItem value="Documents Under Review">
+                  Documents Under Review
+                </MenuItem>
+                <MenuItem value="Confirmed">Confirmed</MenuItem>
+                <MenuItem value="Sent a Second Request">
+                  Sent a Second Request
+                </MenuItem>
               </Select>
             </FormControl>
           </Box>

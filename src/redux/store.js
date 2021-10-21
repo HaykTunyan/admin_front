@@ -7,8 +7,6 @@ import { transactionSlice } from "./slices/transactionSlice";
 import { notificationSlice } from "./slices/notificationSlice";
 import authReducer from "./slices/auth";
 
-// import { referral } from "./slices/referral";
-
 export const store = configureStore({
   reducer: {
     auth: authReducer,

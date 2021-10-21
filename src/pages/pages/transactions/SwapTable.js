@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
 import {
+  Box,
   Paper as MuiPaper,
   Table,
   TableBody,
@@ -11,6 +12,7 @@ import {
   TableHead,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
+import CSVButton from "../../components/CSVButton";
 
 const Paper = styled(MuiPaper)(spacing);
 
@@ -105,11 +107,11 @@ const SwapTable = () => {
             <TableHead>
               <TableRow>
                 <TableCell>Date Opetation</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Coin / Coin</TableCell>
-                <TableCell>TX ID</TableCell>
-                <TableCell>Status Operation</TableCell>
+                <TableCell align="center">Email</TableCell>
+                <TableCell align="center">Phone</TableCell>
+                <TableCell align="center">Coin / Coin</TableCell>
+                <TableCell align="center">TX ID</TableCell>
+                <TableCell align="center">Status Operation</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -132,6 +134,9 @@ const SwapTable = () => {
           </Table>
         </TableContainer>
       </Paper>
+      <Box mt={8} flex justifyContent="flex-end">
+        <CSVButton data={rows} />
+      </Box>
     </Fragment>
   );
 };

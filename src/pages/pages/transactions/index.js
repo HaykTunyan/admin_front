@@ -104,14 +104,15 @@ const Transaction = () => {
                 <TabList
                   onChange={handleChange}
                   aria-label="lab API tabs example"
+                  sx={{ width: "100%" }}
                 >
                   <Tab
                     label="Send/Receive"
                     value="1"
-                    style={{ width: "33.33%" }}
+                    sx={{ width: "33.33%" }}
                   />
-                  <Tab label="Swap" value="2" style={{ width: "33.33%" }} />
-                  <Tab label="Savings" value="3" style={{ width: "33.33%" }} />
+                  <Tab label="Swap" value="2" sx={{ width: "33.33%" }} />
+                  <Tab label="Savings" value="3" sx={{ width: "33.33%" }} />
                 </TabList>
               </Box>
               <TabPanel value="1">
