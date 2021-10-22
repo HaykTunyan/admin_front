@@ -11,6 +11,7 @@ import {
   InputLabel,
   MenuItem,
   FormControl,
+  Typography,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
@@ -32,7 +33,12 @@ const KYCSettings = () => {
       <Card mb={6}>
         <CardContent>
           <Grid container spacing={6}>
-            <Grid item md={8}>
+            <Typography variant="body1" p={6}>
+              Scenarios in which the user is sent to KYC
+            </Typography>
+            {/* Not this time */}
+
+            {/* <Grid item md={8}>
               <TextField
                 id="username"
                 label="Enter userName"
@@ -61,12 +67,12 @@ const KYCSettings = () => {
                   </Select>
                 </FormControl>
               </Box>
-            </Grid>
+            </Grid> */}
           </Grid>
 
-          <Button variant="contained" color="primary">
+          {/* <Button variant="contained" color="primary">
             Save changes
-          </Button>
+          </Button> */}
         </CardContent>
       </Card>
     </Fragment>

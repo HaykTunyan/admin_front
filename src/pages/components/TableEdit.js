@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { makeStyles } from "@mui/styles";
 import {
   Table,
@@ -141,56 +141,58 @@ const EditTable = ({ them, rowsData, rowCell }) => {
   };
 
   return (
-    <Paper className={classes.root}>
-      <Table className={classes.table} aria-label="caption table">
-        <TableHead>
-          <TableRow>
-            <TableCell align="left">Dessert (100g serving)</TableCell>
-            <TableCell align="left">Calories</TableCell>
-            <TableCell align="left">Fat&nbsp;(g)</TableCell>
-            <TableCell align="left">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="left">Protein&nbsp;(g)</TableCell>
-            <TableCell align="left" />
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <CustomTableCell {...{ row, name: "name", onChange }} />
-              <CustomTableCell {...{ row, name: "calories", onChange }} />
-              <CustomTableCell {...{ row, name: "fat", onChange }} />
-              <CustomTableCell {...{ row, name: "carbs", onChange }} />
-              <CustomTableCell {...{ row, name: "protein", onChange }} />
-              <TableCell className={classes.selectTableCell}>
-                {row.isEditMode ? (
-                  <>
+    <Fragment>
+      <Paper className={classes.root}>
+        <Table className={classes.table} aria-label="caption table">
+          <TableHead>
+            <TableRow>
+              <TableCell align="left">Dessert (100g serving)</TableCell>
+              <TableCell align="left">Calories</TableCell>
+              <TableCell align="left">Fat&nbsp;(g)</TableCell>
+              <TableCell align="left">Carbs&nbsp;(g)</TableCell>
+              <TableCell align="left">Protein&nbsp;(g)</TableCell>
+              <TableCell align="left" />
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow key={row.id}>
+                <CustomTableCell {...{ row, name: "name", onChange }} />
+                <CustomTableCell {...{ row, name: "calories", onChange }} />
+                <CustomTableCell {...{ row, name: "fat", onChange }} />
+                <CustomTableCell {...{ row, name: "carbs", onChange }} />
+                <CustomTableCell {...{ row, name: "protein", onChange }} />
+                <TableCell className={classes.selectTableCell}>
+                  {row.isEditMode ? (
+                    <>
+                      <IconButton
+                        aria-label="done"
+                        onClick={() => onToggleEditMode(row.id)}
+                      >
+                        <DoneIcon />
+                      </IconButton>
+                      <IconButton
+                        aria-label="revert"
+                        onClick={() => onRevert(row.id)}
+                      >
+                        <RevertIcon />
+                      </IconButton>
+                    </>
+                  ) : (
                     <IconButton
-                      aria-label="done"
+                      aria-label="delete"
                       onClick={() => onToggleEditMode(row.id)}
                     >
-                      <DoneIcon />
+                      <EditIcon />
                     </IconButton>
-                    <IconButton
-                      aria-label="revert"
-                      onClick={() => onRevert(row.id)}
-                    >
-                      <RevertIcon />
-                    </IconButton>
-                  </>
-                ) : (
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => onToggleEditMode(row.id)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Paper>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Paper>
+    </Fragment>
   );
 };
 

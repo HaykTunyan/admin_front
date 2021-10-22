@@ -15,7 +15,7 @@ import TabPanel from "@material-ui/lab/TabPanel";
 import AdminManager from "./AdminManager";
 import KYCSettings from "./KYC";
 import TransactionsSettings from "./TransactionsSettings";
-import SavingsSetting from "./SavingsSetting";
+import SavingsSetting from "./SavingsSettings/SavingsSetting";
 import SwapSettings from "./SwapSettings";
 
 const Divider = styled(MuiDivider)(spacing);
