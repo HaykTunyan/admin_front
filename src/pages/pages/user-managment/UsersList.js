@@ -176,7 +176,7 @@ const UsersList = () => {
       <Grid flex justifyContent="space-between" container spacing={6}>
         <Grid item alignItems="center">
           <Typography variant="h3" gutterBottom mb={0}>
-            User List
+            Users
           </Typography>
         </Grid>
         <Grid display="flex" pb={5} alignItems="center">

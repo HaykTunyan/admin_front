@@ -2,10 +2,8 @@ import React from "react";
 import {
   Box,
   CardContent,
-  Checkbox,
   Divider as MuiDivider,
   Grid,
-  IconButton,
   Paper as MuiPaper,
   Table,
   TableBody,
@@ -17,36 +15,20 @@ import {
   FormControl as MuiFormControl,
   TextField as MuiTextField,
   Typography,
-  Select,
-  MenuItem,
   CardHeader,
   Chip as MuiChip,
 } from "@material-ui/core";
 import { Helmet } from "react-helmet-async";
 import { spacing } from "@material-ui/system";
 import styled from "styled-components/macro";
-import Editors from "../../forms/Editors";
-import TextFields from "../../forms/TextFields";
-import AddNewsModal from "../../modal/AddNewsModal";
-import { Edit2 } from "react-feather";
-import {
-  Archive as ArchiveIcon,
-  FilterList as FilterListIcon,
-  RemoveRedEye as RemoveRedEyeIcon,
-} from "@material-ui/icons";
 import AddAdminModal from "../../modal/AddAdminModal";
+import EditAdminModal from "../../modal/EditAdminModal";
 
 const Divider = styled(MuiDivider)(spacing);
 
 const Paper = styled(MuiPaper)(spacing);
 
 const Card = styled(MuiCard)(spacing);
-
-const FormControl = styled(MuiFormControl)(spacing);
-
-const TextField = styled(MuiTextField)(spacing);
-
-const Button = styled(MuiButton)(spacing);
 
 const Chip = styled(MuiChip)`
   height: 20px;
@@ -146,9 +128,7 @@ const Administrators = () => {
                             <TableCell align="center">{row.type}</TableCell>
                             <TableCell align="center">
                               <Box mr={2}>
-                                <IconButton aria-label="details" size="large">
-                                  <Edit2 />
-                                </IconButton>
+                                <EditAdminModal />
                               </Box>
                             </TableCell>
                           </TableRow>
