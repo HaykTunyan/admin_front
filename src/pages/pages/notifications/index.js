@@ -16,15 +16,11 @@ import {
 } from "@material-ui/core";
 import AddNotificationModal from "../../modal/AddNotificationModal";
 
-// Styele Component.
+// Spacing.
 const Divider = styled(MuiDivider)(spacing);
-
 const Card = styled(MuiCard)(spacing);
-
 const FormControl = styled(MuiFormControl)(spacing);
-
 const TextField = styled(MuiTextField)(spacing);
-
 const Button = styled(MuiButton)(spacing);
 
 const Notifications = () => {
@@ -37,14 +33,12 @@ const Notifications = () => {
   return (
     <Fragment>
       <Helmet title="Notification" />
+
       <Grid justifyContent="space-between" container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
             Notification
           </Typography>
-        </Grid>
-        <Grid item>
-          <AddNotificationModal />
         </Grid>
       </Grid>
 
@@ -52,14 +46,21 @@ const Notifications = () => {
 
       <Grid container spasing={6}>
         <Grid item xs={12}>
-          <Card md={6}>
+          <Card xs={12}>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Create New Notification
-              </Typography>
+              <Grid display="flex" justifyContent="space-between" spacing={6}>
+                <Grid item alignItems="center">
+                  <Typography variant="h6" gutterBottom>
+                    Create New Notification
+                  </Typography>
+                </Grid>
+                <Grid display="flex" alignItems="center">
+                  <AddNotificationModal />
+                </Grid>
+              </Grid>
               <Divider my={5} />
 
-              <Grid container spacing={6}>
+              <Grid spacing={6}>
                 <Grid item md={6}>
                   <TextField
                     id="selectIssuer"
@@ -109,7 +110,7 @@ const Notifications = () => {
               </Grid>
 
               <Button variant="contained" color="primary">
-                New Notification
+                Save Notification
               </Button>
             </CardContent>
           </Card>

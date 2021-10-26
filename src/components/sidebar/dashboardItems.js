@@ -34,7 +34,7 @@ const pagesSection = [
     title: "Users Management",
     children: [
       {
-        href: "/user-list",
+        href: "/users",
         icon: List,
         title: "Users",
       },

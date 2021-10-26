@@ -12,10 +12,9 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const Button = styled(MuiButton)(spacing);
-
 const TextField = styled(MuiTextField)(spacing);
 
 const AdminManager = () => {

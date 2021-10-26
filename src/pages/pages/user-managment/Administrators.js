@@ -23,6 +23,7 @@ import { spacing } from "@material-ui/system";
 import styled from "styled-components/macro";
 import AddAdminModal from "../../modal/AddAdminModal";
 import EditAdminModal from "../../modal/EditAdminModal";
+import CSVButton from "../../components/CSVButton";
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -140,6 +141,17 @@ const Administrators = () => {
               </Card>
             </CardContent>
           </Card>
+          <Box
+            mt={8}
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" color="inherit" component="div">
+              Export Data
+            </Typography>
+            <CSVButton data={rows} />
+          </Box>
         </Grid>
       </Grid>
     </>

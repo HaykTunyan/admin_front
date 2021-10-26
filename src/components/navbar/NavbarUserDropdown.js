@@ -30,7 +30,7 @@ const NavbarUserDropdown = () => {
   };
 
   const closeMenu = () => {
-    navigate("/profile");
+    // navigate("/profile");
     setAnchorMenu(null);
   };
 
@@ -62,9 +62,10 @@ const NavbarUserDropdown = () => {
         open={Boolean(anchorMenu)}
         onClose={closeMenu}
       >
-        <MenuItem onClick={closeMenu}>Profile</MenuItem>
-        <MenuItem onClick={openSettings}>Dashboard</MenuItem>
-        <MenuItem>Inbos</MenuItem>
+        <MenuItem onClick={closeMenu} disabled="true">
+          Profile
+        </MenuItem>
+        <MenuItem onClick={openSettings}>Settings</MenuItem>
         <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
       </Menu>
     </Fragment>

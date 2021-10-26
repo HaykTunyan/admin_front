@@ -10,14 +10,18 @@ import {
   Typography as MuiTypography,
   Divider as MuiDivider,
   InputBase,
+  Card as MuiCard,
+  CardContent,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import ReferralTable from "./referralTable";
 
+// Spacing.
+const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
-
 const Typography = styled(MuiTypography)(spacing);
 
+// Custom Style.
 const Search = styled.div`
   border-radius: 2px;
   background-color: ${(props) => props.theme.header.background};
@@ -75,28 +79,34 @@ const Referral = () => {
             Referral
           </Typography>
         </Grid>
-        <Grid display="flex" pb={5} alignItems="center">
-          <Box
-            component="div"
-            sx={{
-              display: "inline",
-              p: 1,
-              m: 1,
-              bgcolor: "background.paper",
-            }}
-          >
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("searchList")} />
-            </Search>
-          </Box>
-        </Grid>
       </Grid>
 
       <Divider my={6} />
-      <ReferralTable />
+
+      <Grid item xs={12}>
+        <Card xs={12}>
+          <CardContent>
+            <Grid
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              spacing={6}
+            >
+              <Grid item alignItems="center">
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <Input placeholder={t("Search")} />
+                </Search>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </Grid>
+      <Grid item xs={12}>
+        <ReferralTable />
+      </Grid>
     </>
   );
 };

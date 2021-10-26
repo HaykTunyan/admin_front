@@ -29,11 +29,14 @@ const Settings = () => {
   return (
     <Fragment>
       <Helmet title="Settings" />
+
       <Typography variant="h3" gutterBottom display="inline">
         Settings
       </Typography>
+
       <Divider my={6} />
-      <Grid container spacing={6}>
+
+      <Grid container spacing={6} mt={6}>
         <Grid item xs={12}>
           <Box sx={{ width: "100%", typography: "body1" }}>
             <TabContext value={value}>

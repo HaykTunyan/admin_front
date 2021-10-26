@@ -5,6 +5,11 @@ import { makeStyles } from "@mui/styles";
 import { Search as SearchIcon } from "react-feather";
 import { darken } from "polished";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
+import { useDispatch } from "react-redux";
+import { getUserList_req } from "../../../redux/actions/users";
+import { spacing } from "@material-ui/system";
 import {
   Box,
   Table,
@@ -19,16 +24,17 @@ import {
   MenuItem,
   IconButton,
   Grid,
-  Typography,
-  Divider,
+  Divider as MuiDivider,
+  Typography as MuiTypography,
   InputBase,
   InputLabel,
-  TableSortLabel,
+  Card as MuiCard,
 } from "@material-ui/core";
-import { useNavigate } from "react-router-dom";
-import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
-import { useDispatch } from "react-redux";
-import { getUserList_req } from "../../../redux/actions/users";
+import CSVButton from "../../components/CSVButton";
+
+const Divider = styled(MuiDivider)(spacing);
+const Typography = styled(MuiTypography)(spacing);
+const Card = styled(MuiCard)(spacing);
 
 const useStyles = makeStyles({
   rootTable: {
@@ -41,7 +47,7 @@ const rows = [
     key: 1,
     number: "001",
     email: "email@email.com",
-    phone: "01111000",
+    phone: "011113494830",
     balance: " 100 ",
     flexible_saving: " 100 ",
     locked_saving: " 100 ",
@@ -54,7 +60,7 @@ const rows = [
     key: 2,
     number: "002",
     email: "email@email.com",
-    phone: "01111000",
+    phone: "89439394",
     balance: " 100 ",
     flexible_saving: " 100 ",
     locked_saving: " 100 ",
@@ -67,7 +73,7 @@ const rows = [
     key: 3,
     number: "003",
     email: "email@email.com",
-    phone: "01111000",
+    phone: "89348938",
     balance: " 100 ",
     flexible_saving: " 100 ",
     locked_saving: " 100 ",
@@ -80,7 +86,7 @@ const rows = [
     key: 4,
     number: "004",
     email: "email@email.com",
-    phone: "01111000",
+    phone: "987934334",
     balance: " 100 ",
     flexible_saving: " 100 ",
     locked_saving: " 100 ",
@@ -93,7 +99,7 @@ const rows = [
     key: 5,
     number: "005",
     email: "email@email.com",
-    phone: "01111000",
+    phone: "879350935",
     balance: " 100 ",
     flexible_saving: " 100 ",
     locked_saving: " 100 ",
@@ -154,10 +160,23 @@ const UsersList = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [age, setAge] = useState("Verify");
+  const [age, setAge] = useState("");
+
+  const [sortModel, setSortModel] = useState([
+    {
+      field: "commodity",
+      sort: "asc",
+    },
+  ]);
+
+  const [position, setPosition] = useState("");
 
   const handleChange = (event) => {
     setAge(event.target.value);
+  };
+
+  const handleChangePosition = (event) => {
+    setPosition(event.target.value);
   };
 
   const ViewUser = () => {
@@ -170,94 +189,111 @@ const UsersList = () => {
 
   return (
     <Fragment>
-      <Helmet title="User List" />
+      <Helmet title="Users" />
 
-      {/*  */}
-      <Grid flex justifyContent="space-between" container spacing={6}>
-        <Grid item alignItems="center">
-          <Typography variant="h3" gutterBottom mb={0}>
+      <Grid justifyContent="space-between" container spacing={6}>
+        <Grid item>
+          <Typography variant="h3" gutterBottom>
             Users
           </Typography>
-        </Grid>
-        <Grid display="flex" pb={5} alignItems="center">
-          <Box
-            component="div"
-            sx={{
-              display: "inline",
-              p: 1,
-              m: 1,
-            }}
-          >
-            <FormControl
-              sx={{
-                minWidth: 218,
-              }}
-              pb={4}
-            >
-              <InputLabel id="select-kyc">KYC Type</InputLabel>
-              <Select
-                labelId="select-kyc"
-                id="select-kyc"
-                value={age}
-                onChange={handleChange}
-                displayEmpty
-                label="KYC Type"
-                inputProps={{ "aria-label": "Without label" }}
-                pb={6}
-              >
-                <MenuItem value="Verified">Verified</MenuItem>
-                <MenuItem value="Unverified">Unverified</MenuItem>
-                <MenuItem value="Awaiting Documents">
-                  Awaiting Documents
-                </MenuItem>
-                <MenuItem value="Documents Under Review">
-                  Documents Under Review
-                </MenuItem>
-                <MenuItem value="Confirmed">Confirmed</MenuItem>
-                <MenuItem value="Sent a Second Request">
-                  Sent a Second Request
-                </MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Box
-            component="div"
-            sx={{
-              display: "inline",
-              p: 1,
-              m: 1,
-              bgcolor: "background.paper",
-            }}
-          >
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("searchList")} />
-            </Search>
-          </Box>
         </Grid>
       </Grid>
 
       <Divider my={6} />
+
+      <Grid container alignItems="center">
+        <Grid item xs={3}>
+          <FormControl
+            sx={{
+              minWidth: 218,
+            }}
+            pb={4}
+          >
+            <InputLabel id="select-position">Geo Position</InputLabel>
+            <Select
+              labelId="select-position"
+              id="select-position"
+              value={position}
+              onChange={handleChangePosition}
+              displayEmpty
+              label="Geo Position"
+              inputProps={{ "aria-label": "Without label" }}
+              pb={6}
+            >
+              <MenuItem value="Russian">Russian</MenuItem>
+              <MenuItem value="England">England</MenuItem>
+              <MenuItem value="Germany">Germany</MenuItem>
+              <MenuItem value="France">France</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item xs={3}>
+          <FormControl
+            sx={{
+              minWidth: 218,
+            }}
+            pb={4}
+          >
+            <InputLabel id="select-kyc">KYC Type</InputLabel>
+            <Select
+              labelId="select-kyc"
+              id="select-kyc"
+              value={age}
+              onChange={handleChange}
+              displayEmpty
+              label="KYC Type"
+              inputProps={{ "aria-label": "Without label" }}
+              pb={6}
+            >
+              <MenuItem value="Verified">Verified</MenuItem>
+              <MenuItem value="Unverified">Unverified</MenuItem>
+              <MenuItem value="Awaiting Documents">Awaiting Documents</MenuItem>
+              <MenuItem value="Documents Under Review">
+                Documents Under Review
+              </MenuItem>
+              <MenuItem value="Confirmed">Confirmed</MenuItem>
+              <MenuItem value="Sent a Second Request">
+                Sent a Second Request
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item xs={3}>
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <Input placeholder={t("searchList")} />
+          </Search>
+        </Grid>
+      </Grid>
+
+      <Divider my={6} />
+
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Paper>
             <TableContainer component={Paper} className={classes.rootTable}>
-              <Table aria-label="simple table">
+              <Table
+                aria-label="simple table"
+                sortModel={sortModel}
+                onSortModelChange={(model) => setSortModel(model)}
+              >
                 <TableHead>
                   <TableRow>
                     <TableCell>Account Number</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Phone</TableCell>
-                    <TableCell>Balance</TableCell>
-                    <TableCell>Flexible Saving</TableCell>
-                    <TableCell>Locked Saving</TableCell>
-                    <TableCell>Total Profile</TableCell>
-                    <TableCell>Status KYC</TableCell>
-                    <TableCell>Date Register</TableCell>
-                    <TableCell>Geo Position</TableCell>
-                    <TableCell>View Position</TableCell>
+                    <TableCell align="center">Email</TableCell>
+                    <TableCell align="center">Phone</TableCell>
+                    <TableCell align="center">Balance</TableCell>
+                    <TableCell align="center">Flexible Saving</TableCell>
+                    <TableCell align="center">Locked Saving</TableCell>
+                    <TableCell align="center">Total Profile</TableCell>
+                    <TableCell align="center">Status KYC</TableCell>
+                    <TableCell align="center">Date Register</TableCell>
+                    <TableCell align="center">Geo Position</TableCell>
+                    <TableCell align="center">View Position</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -269,16 +305,18 @@ const UsersList = () => {
                       <TableCell component="th" scope="row">
                         {row.number}
                       </TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>{row.phone}</TableCell>
-                      <TableCell>{row.balance}</TableCell>
-                      <TableCell>{row.flexible_saving}</TableCell>
-                      <TableCell>{row.locked_saving}</TableCell>
-                      <TableCell>{row.total_profile}</TableCell>
-                      <TableCell>{row.status_kyc}</TableCell>
-                      <TableCell>{row.date_register}</TableCell>
-                      <TableCell>{row.geo_positon}</TableCell>
-                      <TableCell padding="none" align="right">
+                      <TableCell align="center">{row.email}</TableCell>
+                      <TableCell align="center">{row.phone}</TableCell>
+                      <TableCell align="center">{row.balance}</TableCell>
+                      <TableCell align="center">
+                        {row.flexible_saving}
+                      </TableCell>
+                      <TableCell v>{row.locked_saving}</TableCell>
+                      <TableCell align="center">{row.total_profile}</TableCell>
+                      <TableCell align="center">{row.status_kyc}</TableCell>
+                      <TableCell align="center">{row.date_register}</TableCell>
+                      <TableCell align="center">{row.geo_positon}</TableCell>
+                      <TableCell padding="none" align="center">
                         <Box mr={2}>
                           <IconButton
                             aria-label="details"
@@ -295,6 +333,17 @@ const UsersList = () => {
               </Table>
             </TableContainer>
           </Paper>
+          <Box
+            mt={8}
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" color="inherit" component="div">
+              Export Data
+            </Typography>
+            <CSVButton data={rows} />
+          </Box>
         </Grid>
       </Grid>
     </Fragment>

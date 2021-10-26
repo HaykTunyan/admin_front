@@ -82,7 +82,7 @@ const routes = [
         element: <DeviceManagement />,
       },
       {
-        path: "user-list",
+        path: "users",
         element: <UsersList />,
       },
       {

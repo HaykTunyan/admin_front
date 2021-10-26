@@ -9,6 +9,7 @@ import {
   TableCell,
   TableContainer,
   TableRow,
+  Typography,
   TableHead,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
@@ -122,7 +123,7 @@ const SavingsTable = () => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="center">Date Opetation</TableCell>
+                <TableCell>Date Opetation</TableCell>
                 <TableCell align="center">Email</TableCell>
                 <TableCell align="center">Phone</TableCell>
                 <TableCell align="center">Sum</TableCell>
@@ -154,7 +155,10 @@ const SavingsTable = () => {
           </Table>
         </TableContainer>
       </Paper>
-      <Box mt={8} flex justifyContent="flex-end">
+      <Box mt={8} display="flex" justifyContent="flex-end" alignItems="center">
+        <Typography variant="subtitle1" color="inherit" component="div">
+          Export Data
+        </Typography>
         <CSVButton data={rows} />
       </Box>
     </Fragment>

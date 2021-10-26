@@ -1,15 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import styled, { withTheme } from "styled-components/macro";
-import {
-  green,
-  red,
-  orange,
-  grey,
-  blue,
-  lightBlue,
-  purple,
-} from "@material-ui/core/colors";
+import styled from "styled-components/macro";
+import { green, orange, grey, blue, purple } from "@material-ui/core/colors";
 import {
   Grid,
   Divider as MuiDivider,
@@ -18,7 +10,6 @@ import {
   Card as MuiCard,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-import PieChart from "../../components/charts/PieChart";
 import Chart from "react-chartjs-2";
 import Stats from "../components/Stats";
 
@@ -88,7 +79,7 @@ const DeviceManagement = ({ theme }) => {
       <Grid container spacing={6}>
         <Grid item xs={12} md={3}>
           <Stats
-            title="Mobile Phone Users of this time"
+            title="Mobile Phone Users"
             amount="45%"
             chip="45%"
             percentagetext="+45%"
@@ -97,7 +88,7 @@ const DeviceManagement = ({ theme }) => {
         </Grid>
         <Grid item xs={12} md={3}>
           <Stats
-            title="Desktop User of this time"
+            title="Desktop User"
             amount="25 %"
             chip="25%"
             percentagetext="+25%"
@@ -106,7 +97,7 @@ const DeviceManagement = ({ theme }) => {
         </Grid>
         <Grid item xs={12} md={3}>
           <Stats
-            title="Mac Users of this time"
+            title="Mac Users"
             amount="25 %"
             chip="25%"
             percentagetext="+25%"
@@ -115,7 +106,7 @@ const DeviceManagement = ({ theme }) => {
         </Grid>
         <Grid item xs={12} md={3}>
           <Stats
-            title="Other Users of this time "
+            title="Other Users"
             amount="5 %"
             chip="5%"
             percentagetext="+5%"
@@ -142,13 +133,6 @@ const DeviceManagement = ({ theme }) => {
           </Card>
         </Grid>
       </Grid>
-      {/* <Grid container spacing={6}>
-        {Divaces.map((item) => (
-          <Grid item xs={12} md={6} key={item.key}>
-            <PieChart title={item.title} description={item.description} />
-          </Grid>
-        ))}
-      </Grid> */}
     </>
   );
 };

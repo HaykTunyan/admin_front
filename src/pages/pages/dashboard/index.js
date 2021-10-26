@@ -1,8 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
-import { useTheme } from "@material-ui/core/styles";
-import { green, red, orange } from "@material-ui/core/colors";
 import {
   Grid,
   Divider as MuiDivider,
@@ -21,15 +19,13 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import DateRange from "../../components/DateRange";
-import Stats from "../../components/Stats";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
+import CSVButton from "../../components/CSVButton";
 
 const Divider = styled(MuiDivider)(spacing);
-
 const Typography = styled(MuiTypography)(spacing);
-
 const Card = styled(MuiCard)(spacing);
 
 export const item = [
@@ -72,7 +68,6 @@ export const item = [
 ];
 
 const DashboardPage = () => {
-  const theme = useTheme();
   const [panel, setPanel] = useState("1");
 
   function createData(name, coin, percent) {
@@ -239,7 +234,7 @@ const DashboardPage = () => {
                       </Box>
                     }
                     value="7"
-                    style={{ width: "10.428%" }}
+                    style={{ width: "14.28%" }}
                   />
                 </TabList>
               </Box>
@@ -280,6 +275,21 @@ const DashboardPage = () => {
                         </TableBody>
                       </Table>
                     </TableContainer>
+                    <Box
+                      mt={8}
+                      display="flex"
+                      justifyContent="flex-end"
+                      alignItems="center"
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        color="inherit"
+                        component="div"
+                      >
+                        Export Data
+                      </Typography>
+                      <CSVButton data={rows} />
+                    </Box>
                   </Grid>
                 </Grid>
               </TabPanel>
@@ -319,6 +329,21 @@ const DashboardPage = () => {
                       </TableBody>
                     </Table>
                   </TableContainer>
+                  <Box
+                    mt={8}
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      color="inherit"
+                      component="div"
+                    >
+                      Export Data
+                    </Typography>
+                    <CSVButton data={rows} />
+                  </Box>
                   {/* <Stats
                     title="The total balance of all users is in $ and you can open it to see how much in each coin."
                     amount="11 360 000 $"
@@ -364,6 +389,21 @@ const DashboardPage = () => {
                       </TableBody>
                     </Table>
                   </TableContainer>
+                  <Box
+                    mt={8}
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      color="inherit"
+                      component="div"
+                    >
+                      Export Data
+                    </Typography>
+                    <CSVButton data={rows} />
+                  </Box>
                   {/* <Stats
                     title="The current balance of all users by default wallets is in $ and you can open it to see how much in each coin."
                     amount="9 960 000 $"
@@ -409,6 +449,21 @@ const DashboardPage = () => {
                       </TableBody>
                     </Table>
                   </TableContainer>
+                  <Box
+                    mt={8}
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      color="inherit"
+                      component="div"
+                    >
+                      Export Data
+                    </Typography>
+                    <CSVButton data={rows} />
+                  </Box>
                 </Grid>
               </TabPanel>
               {/* Panel Five */}
@@ -447,6 +502,21 @@ const DashboardPage = () => {
                       </TableBody>
                     </Table>
                   </TableContainer>
+                  <Box
+                    mt={8}
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      color="inherit"
+                      component="div"
+                    >
+                      Export Data
+                    </Typography>
+                    <CSVButton data={rows} />
+                  </Box>
                 </Grid>
               </TabPanel>
               {/* Panel Six */}
@@ -485,6 +555,21 @@ const DashboardPage = () => {
                       </TableBody>
                     </Table>
                   </TableContainer>
+                  <Box
+                    mt={8}
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      color="inherit"
+                      component="div"
+                    >
+                      Export Data
+                    </Typography>
+                    <CSVButton data={rows} />
+                  </Box>
                 </Grid>
               </TabPanel>
 
@@ -524,6 +609,21 @@ const DashboardPage = () => {
                       </TableBody>
                     </Table>
                   </TableContainer>
+                  <Box
+                    mt={8}
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                  >
+                    <Typography
+                      variant="subtitle1"
+                      color="inherit"
+                      component="div"
+                    >
+                      Export Data
+                    </Typography>
+                    <CSVButton data={rows} />
+                  </Box>
                 </Grid>
               </TabPanel>
             </TabContext>

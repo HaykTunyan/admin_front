@@ -23,6 +23,7 @@ import {
 import EditIcon from "@material-ui/icons/EditOutlined";
 import DoneIcon from "@material-ui/icons/DoneAllTwoTone";
 import RevertIcon from "@material-ui/icons/NotInterestedOutlined";
+import CSVButton from "../../components/CSVButton";
 
 const Card = styled(MuiCard)(spacing);
 
@@ -242,6 +243,12 @@ const TransactionsSettings = () => {
           </Paper>
         </CardContent>
       </Card>
+      <Box mt={8} display="flex" justifyContent="flex-end" alignItems="center">
+        <Typography variant="subtitle1" color="inherit" component="div">
+          Export Data
+        </Typography>
+        <CSVButton data={rows} />
+      </Box>
     </Fragment>
   );
 };

@@ -27,7 +27,7 @@ const UserView = () => {
           </Typography>
         </Grid>
         <Grid item>
-          <IconButton aria-label="left" onClick={() => navigate("/user-list")}>
+          <IconButton aria-label="left" onClick={() => navigate("/users")}>
             <ArrowLeft />
           </IconButton>
         </Grid>

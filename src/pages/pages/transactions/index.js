@@ -7,6 +7,7 @@ import {
   Box,
   Tab,
   InputBase,
+  Card as MuiCard,
 } from "@material-ui/core";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
@@ -18,6 +19,9 @@ import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/macro";
 import { darken } from "polished";
+import { spacing } from "@material-ui/system";
+
+const Card = styled(MuiCard)(spacing);
 
 const Search = styled.div`
   border-radius: 2px;
@@ -76,25 +80,17 @@ const Transaction = () => {
     <Fragment>
       <Helmet title="Transaction" />
 
-      <Grid justifyContent="space-between" container spacing={6}>
+      <Grid flex justifyContent="space-between" container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom>
             Transaction
           </Typography>
         </Grid>
-        <Grid item>
-          <Box component="div">
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("searchList")} />
-            </Search>
-          </Box>
-        </Grid>
       </Grid>
+
       <Divider my={6} />
-      <Grid container justifyContent="flex-start" spacing={5} mt={2}>
+
+      <Grid container spacing={6} mt={6}>
         <Grid item sx={{ width: "100%" }}>
           <Box sx={{ width: "100%", typography: "body1" }}>
             <TabContext value={value} sx={{ width: "100%" }}>
@@ -116,12 +112,48 @@ const Transaction = () => {
                 </TabList>
               </Box>
               <TabPanel value="1">
+                <Card p={4}>
+                  <Grid item xs={3}>
+                    <Box component="div">
+                      <Search>
+                        <SearchIconWrapper>
+                          <SearchIcon />
+                        </SearchIconWrapper>
+                        <Input placeholder={t("searchList")} />
+                      </Search>
+                    </Box>
+                  </Grid>
+                </Card>
                 <SendTable />
               </TabPanel>
               <TabPanel value="2">
+                <Card p={4}>
+                  <Grid item xs={3}>
+                    <Box component="div">
+                      <Search>
+                        <SearchIconWrapper>
+                          <SearchIcon />
+                        </SearchIconWrapper>
+                        <Input placeholder={t("searchList")} />
+                      </Search>
+                    </Box>
+                  </Grid>
+                </Card>
                 <SwapTable />
               </TabPanel>
               <TabPanel value="3">
+                <Card p={4}>
+                  <Grid item xs={3}>
+                    <Box component="div">
+                      <Search>
+                        <SearchIconWrapper>
+                          <SearchIcon />
+                        </SearchIconWrapper>
+                        <Input placeholder={t("searchList")} />
+                      </Search>
+                    </Box>
+                  </Grid>
+                </Card>
                 <SavingsTable />
               </TabPanel>
             </TabContext>

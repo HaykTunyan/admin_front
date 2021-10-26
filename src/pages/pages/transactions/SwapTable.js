@@ -10,6 +10,7 @@ import {
   TableContainer,
   TableRow,
   TableHead,
+  Typography,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
@@ -134,7 +135,10 @@ const SwapTable = () => {
           </Table>
         </TableContainer>
       </Paper>
-      <Box mt={8} flex justifyContent="flex-end">
+      <Box mt={8} display="flex" justifyContent="flex-end" alignItems="center">
+        <Typography variant="subtitle1" color="inherit" component="div">
+          Export Data
+        </Typography>
         <CSVButton data={rows} />
       </Box>
     </Fragment>

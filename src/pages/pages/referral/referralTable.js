@@ -9,8 +9,11 @@ import {
   TableHead,
   Paper,
   Grid,
+  Typography,
+  Box,
 } from "@material-ui/core";
 import ReferralUserModal from "../../modal/ReferralUserModal";
+import CSVButton from "../../components/CSVButton";
 
 const rows = [
   {
@@ -113,6 +116,17 @@ const ReferralTable = () => {
               </Table>
             </TableContainer>
           </Paper>
+          <Box
+            mt={8}
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" color="inherit" component="div">
+              Export Data
+            </Typography>
+            <CSVButton data={rows} />
+          </Box>
         </Grid>
       </Grid>
     </>

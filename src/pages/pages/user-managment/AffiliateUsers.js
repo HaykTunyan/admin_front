@@ -26,6 +26,7 @@ import {
   RemoveRedEye as RemoveRedEyeIcon,
 } from "@material-ui/icons";
 import { spacing } from "@material-ui/system";
+import CSVButton from "../../components/CSVButton";
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -408,6 +409,12 @@ function EnhancedTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      <Box mt={8} display="flex" justifyContent="flex-end" alignItems="center">
+        <Typography variant="subtitle1" color="inherit" component="div">
+          Export Data
+        </Typography>
+        <CSVButton data={rows} />
+      </Box>
     </div>
   );
 }
