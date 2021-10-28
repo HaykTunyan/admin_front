@@ -16,6 +16,7 @@ import {
   InputBase,
   IconButton as MuiIconButton,
 } from "@material-ui/core";
+import DeleteModal from "../modal/DeleteModal";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -81,6 +82,9 @@ const TableWrapper = styled.div`
 
 const FlexibleTable = ({ title, rowList, rowBody }) => {
   const { t } = useTranslation();
+  const dialog = "Flexible Item";
+  const description = "Delete Item in this list";
+
   return (
     <Fragment>
       <Card mb={6}>
@@ -113,9 +117,7 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
                     <TableCell>{item.min_amount}</TableCell>
                     <TableCell>{item.status}</TableCell>
                     <TableCell>
-                      <IconButton aria-label="settings" size="large">
-                        <Trash />
-                      </IconButton>
+                      <DeleteModal dialog={dialog} description={description} />
                     </TableCell>
                   </TableRow>
                 ))}

@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { darken } from "polished";
-import { Search as SearchIcon, Trash } from "react-feather";
+import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import {
   Card as MuiCard,
@@ -16,6 +16,7 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
+import DeleteModal from "../modal/DeleteModal";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -81,6 +82,9 @@ const TableWrapper = styled.div`
 
 const DashboardTable = ({ title, rowList, rowBody }) => {
   const { t } = useTranslation();
+
+  const dialog = "Locked Item";
+  const description = "Delete Item in this list";
   return (
     <Fragment>
       <Card mb={6}>
@@ -115,9 +119,7 @@ const DashboardTable = ({ title, rowList, rowBody }) => {
                     <TableCell>{item.status}</TableCell>
                     <TableCell>{item.bonus}</TableCell>
                     <TableCell>
-                      <IconButton aria-label="settings" size="large">
-                        <Trash />
-                      </IconButton>
+                      <DeleteModal dialog={dialog} description={description} />
                     </TableCell>
                   </TableRow>
                 ))}

@@ -23,6 +23,8 @@ import EditIcon from "@material-ui/icons/EditOutlined";
 import RevertIcon from "@material-ui/icons/NotInterestedOutlined";
 import AddSwapModal from "../../modal/AddSwapModal";
 import CSVButton from "../../components/CSVButton";
+import EditSwapModal from "../../modal/EditSwapModal";
+import DeleteModal from "../../modal/DeleteModal";
 
 const Paper = styled(MuiPaper)(spacing);
 const Toolbar = styled(MuiToolbar)(spacing);
@@ -115,6 +117,8 @@ const rows = [
 
 const SwapSettings = () => {
   const { t } = useTranslation();
+  const dialog = "Swap Item";
+  const description = "Delete Item in this list";
 
   return (
     <Fragment>
@@ -151,12 +155,8 @@ const SwapSettings = () => {
                   </TableCell>
                   <TableCell align="right">
                     <Box flex justifyContent="space-between">
-                      <IconButton aria-label="done">
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton aria-label="done">
-                        <RevertIcon />
-                      </IconButton>
+                      <EditSwapModal />
+                      <DeleteModal dialog={dialog} description={description} />
                     </Box>
                   </TableCell>
                 </TableRow>
