@@ -377,37 +377,37 @@ export const rowFlexible = [
   {
     id: 1,
     coin_name: "BIT",
-    min_amount: "4 mounth",
+    min_amount: "4 month",
     status: "active",
   },
   {
     id: 2,
     coin_name: "BIT",
-    min_amount: "4 mounth",
+    min_amount: "4 month",
     status: "active",
   },
   {
     id: 3,
     coin_name: "BIT",
-    min_amount: "4 mounth",
+    min_amount: "4 month",
     status: "active",
   },
   {
     id: 4,
     coin_name: "BIT",
-    min_amount: "4 mounth",
+    min_amount: "4 month",
     status: "active",
   },
   {
     id: 5,
     coin_name: "BIT",
-    min_amount: "4 mounth",
+    min_amount: "4 month",
     status: "active",
   },
   {
     id: 6,
     coin_name: "BIT",
-    min_amount: "4 mounth",
+    min_amount: "4 month",
     status: "active",
   },
 ];
