@@ -3,7 +3,6 @@ import styled from "styled-components/macro";
 import { Helmet } from "react-helmet-async";
 import {
   Box,
-  Checkbox,
   Divider as MuiDivider,
   Grid,
   IconButton,
@@ -27,9 +26,10 @@ import {
 } from "@material-ui/icons";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
+import { useSelector } from "react-redux";
 
+// Spacing.
 const Divider = styled(MuiDivider)(spacing);
-
 const Paper = styled(MuiPaper)(spacing);
 
 const Spacer = styled.div`
@@ -40,118 +40,7 @@ const ToolbarTitle = styled.div`
   min-width: 150px;
 `;
 
-const rows = [
-  {
-    key: 1,
-    id: "001",
-    email: "admin@elsteam.com",
-    phone: "011000000",
-    balance: "100",
-    flexible_saving: "100",
-    locked_saving: "100",
-    total_profit: "500",
-    status_kyc: "status",
-    date_register: "01/10/2021",
-  },
-  {
-    key: 2,
-    id: "002",
-    email: "admin@elsteam.com",
-    phone: "011000000",
-    balance: "100",
-    flexible_saving: "100",
-    locked_saving: "100",
-    total_profit: "500",
-    status_kyc: "status",
-    date_register: "01/10/2021",
-  },
-  {
-    key: 3,
-    id: "003",
-    email: "admin@elsteam.com",
-    phone: "011000000",
-    balance: "100",
-    flexible_saving: "100",
-    locked_saving: "100",
-    total_profit: "500",
-    status_kyc: "status",
-    date_register: "01/10/2021",
-  },
-  {
-    key: 4,
-    id: "004",
-    email: "admin@elsteam.com",
-    phone: "011000000",
-    balance: "100",
-    flexible_saving: "100",
-    locked_saving: "100",
-    total_profit: "500",
-    status_kyc: "status",
-    date_register: "01/10/2021",
-  },
-  {
-    key: 5,
-    id: "005",
-    email: "admin@elsteam.com",
-    phone: "011000000",
-    balance: "100",
-    flexible_saving: "100",
-    locked_saving: "100",
-    total_profit: "500",
-    status_kyc: "status",
-    date_register: "01/10/2021",
-  },
-  {
-    key: 6,
-    id: "006",
-    email: "admin@elsteam.com",
-    phone: "011000000",
-    balance: "100",
-    flexible_saving: "100",
-    locked_saving: "100",
-    total_profit: "500",
-    status_kyc: "status",
-    date_register: "01/10/2021",
-  },
-  {
-    key: 7,
-    id: "007",
-    email: "admin@elsteam.com",
-    phone: "011000000",
-    balance: "100",
-    flexible_saving: "100",
-    locked_saving: "100",
-    total_profit: "500",
-    status_kyc: "status",
-    date_register: "01/10/2021",
-  },
-  {
-    key: 8,
-    id: "008",
-    email: "admin@elsteam.com",
-    phone: "011000000",
-    balance: "100",
-    flexible_saving: "100",
-    locked_saving: "100",
-    total_profit: "500",
-    status_kyc: "status",
-    date_register: "01/10/2021",
-  },
-  {
-    key: 9,
-    id: "009",
-    email: "admin@elsteam.com",
-    phone: "011000000",
-    balance: "100",
-    flexible_saving: "100",
-    locked_saving: "100",
-    total_profit: "500",
-    status_kyc: "status",
-    date_register: "01/10/2021",
-  },
-];
-
-function descendingComparator(a, b, orderBy) {
+const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -159,15 +48,15 @@ function descendingComparator(a, b, orderBy) {
     return 1;
   }
   return 0;
-}
+};
 
-function getComparator(order, orderBy) {
+const getComparator = (order, orderBy) => {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
-}
+};
 
-function stableSort(array, comparator) {
+const stableSort = (array, comparator) => {
   const stabilizedThis = array.map((el, index) => ({
     el,
     index,
@@ -178,7 +67,7 @@ function stableSort(array, comparator) {
     return a.index - b.index;
   });
   return stabilizedThis.map((element) => element.el);
-}
+};
 
 const headCells = [
   { id: "id", alignment: "left", label: "Order ID" },
@@ -209,14 +98,6 @@ const EnhancedTableHead = (props) => {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ "aria-label": "select all" }}
-          />
-        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -251,7 +132,7 @@ const EnhancedTableToolbar = (props) => {
           </Typography>
         ) : (
           <Typography variant="h6" id="tableTitle">
-            Orders
+            All Affilate Users
           </Typography>
         )}
       </ToolbarTitle>
@@ -275,12 +156,18 @@ const EnhancedTableToolbar = (props) => {
   );
 };
 
-function EnhancedTable() {
+const EnhancedTable = () => {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("customer");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // affiliateList
+
+  const affilate = useSelector((state) => state.allUser);
+
+  const rows = affilate.affiliateList;
 
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -332,7 +219,7 @@ function EnhancedTable() {
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
-    <div>
+    <Fragment>
       <Paper>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
@@ -364,14 +251,6 @@ function EnhancedTable() {
                       key={`${row.id}-${index}`}
                       selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ "aria-labelledby": labelId }}
-                          onClick={(event) => handleClick(event, row.key)}
-                        />
-                      </TableCell>
-
                       <TableCell align="left">#{row.id}</TableCell>
                       <TableCell align="left">{row.email}</TableCell>
                       <TableCell align="left">{row.phone}</TableCell>
@@ -415,9 +294,9 @@ function EnhancedTable() {
         </Typography>
         <CSVButton data={rows} />
       </Box>
-    </div>
+    </Fragment>
   );
-}
+};
 
 const AffiliateUsers = () => {
   return (

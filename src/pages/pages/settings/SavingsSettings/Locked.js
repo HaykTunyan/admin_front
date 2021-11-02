@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import DashboardTable from "../../../components/LocedTable";
 import CSVButton from "../../../components/CSVButton";
+import { useSelector } from "react-redux";
 
 // Moke Data
 export const rowList = [
@@ -42,75 +43,12 @@ export const rowList = [
   },
 ];
 
-// Moke Data
-export const rowBody = [
-  {
-    id: 0,
-    coin_name: "BIT",
-    period: "1.3 - 1.12",
-    air: "35",
-    min_amount: "4 mounth",
-    status: "active",
-    bonus: "120 $",
-  },
-  {
-    id: 1,
-    coin_name: "BIT",
-    period: "1.3 - 1.12",
-    air: "35",
-    min_amount: "4 mounth",
-    status: "active",
-    bonus: "120 $",
-  },
-  {
-    id: 2,
-    coin_name: "BIT",
-    period: "1.3 - 1.12",
-    air: "35",
-    min_amount: "4 mounth",
-    status: "active",
-    bonus: "120 $",
-  },
-  {
-    id: 3,
-    coin_name: "BIT",
-    period: "1.3 - 1.12",
-    air: "35",
-    min_amount: "4 mounth",
-    status: "active",
-    bonus: "120 $",
-  },
-  {
-    id: 4,
-    coin_name: "BIT",
-    period: "1.3 - 1.12",
-    air: "35",
-    min_amount: "4 mounth",
-    status: "active",
-    bonus: "120 $",
-  },
-  {
-    id: 5,
-    coin_name: "BIT",
-    period: "1.3 - 1.12",
-    air: "35",
-    min_amount: "4 mounth",
-    status: "active",
-    bonus: "120 $",
-  },
-  {
-    id: 6,
-    coin_name: "BIT",
-    period: "1.3 - 1.12",
-    air: "35",
-    min_amount: "4 mounth",
-    status: "active",
-    bonus: "120 $",
-  },
-];
-
 const Locked = () => {
   const title = "Locked Info";
+
+  const callRow = useSelector((state) => state.settings);
+
+  const rowBody = callRow.lockedSettingsRow;
 
   return (
     <>

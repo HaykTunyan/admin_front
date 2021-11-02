@@ -14,54 +14,7 @@ import {
 } from "@material-ui/core";
 import ReferralUserModal from "../../modal/ReferralUserModal";
 import CSVButton from "../../components/CSVButton";
-
-const rows = [
-  {
-    key: 0,
-    name: "User One",
-    link: "https://coin.com",
-    reg_user: " 100",
-    imp_user: " 50 ",
-    big_price: " 10 000 ",
-    all_coin: " 100 000 ",
-  },
-  {
-    key: 1,
-    name: "User Two",
-    link: "https://coin.com",
-    reg_user: " 100",
-    imp_user: " 50 ",
-    big_price: " 10 000 ",
-    all_coin: " 100 000 ",
-  },
-  {
-    key: 2,
-    name: "User Three",
-    link: "https://coin.com",
-    reg_user: " 100",
-    imp_user: " 50 ",
-    big_price: " 10 000 ",
-    all_coin: " 100 000 ",
-  },
-  {
-    key: 3,
-    name: "User Four",
-    link: "https://coin.com",
-    reg_user: " 100",
-    imp_user: " 50 ",
-    big_price: " 10 000 ",
-    all_coin: " 100 000 ",
-  },
-  {
-    key: 4,
-    name: "User Five",
-    link: "https://coin.com",
-    reg_user: " 100",
-    imp_user: " 50 ",
-    big_price: " 10 000 ",
-    all_coin: " 100 000 ",
-  },
-];
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles({
   rootTable: {
@@ -72,6 +25,9 @@ const useStyles = makeStyles({
 const ReferralTable = () => {
   const classes = useStyles();
 
+  const callRow = useSelector((state) => state.referral);
+
+  const rows = callRow.referralRow;
   return (
     <>
       <Grid container spacing={6}>

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { darken } from "polished";
@@ -15,6 +15,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@material-ui/core";
 import DeleteModal from "../modal/DeleteModal";
 
@@ -23,13 +25,6 @@ const Card = styled(MuiCard)(spacing);
 const Paper = styled(MuiPaper)(spacing);
 
 // Custom Style.
-const IconButton = styled(MuiIconButton)`
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
-
 const Input = styled(InputBase)`
   color: inherit;
   width: 100%;
@@ -85,6 +80,13 @@ const DashboardTable = ({ title, rowList, rowBody }) => {
 
   const dialog = "Locked Item";
   const description = "Delete Item in this list";
+
+  const [alignment, setAlignment] = useState("");
+
+  const handleAlignment = (event, newAlignment) => {
+    setAlignment(newAlignment);
+  };
+
   return (
     <Fragment>
       <Card mb={6}>
@@ -113,7 +115,21 @@ const DashboardTable = ({ title, rowList, rowBody }) => {
                 {rowBody?.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>{item.coin_name}</TableCell>
-                    <TableCell>{item.period}</TableCell>
+                    <TableCell>
+                      <ToggleButtonGroup
+                        value={alignment}
+                        exclusive
+                        onChange={handleAlignment}
+                        aria-label="text alignment"
+                      >
+                        <ToggleButton value="1" aria-label="left aligned">
+                          {item.period_one}
+                        </ToggleButton>
+                        <ToggleButton value="2" aria-label="right aligned">
+                          {item.period_two}
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                    </TableCell>
                     <TableCell>{item.air}</TableCell>
                     <TableCell>{item.min_amount}</TableCell>
                     <TableCell>{item.status}</TableCell>

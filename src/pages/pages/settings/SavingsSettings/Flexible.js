@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import FlexibleTable from "../../../components/FlexibleTable";
 import CSVButton from "../../../components/CSVButton";
-import { Typography, Box } from "@material-ui/core";
+import { Typography, Box, Radio } from "@material-ui/core";
+import { useSelector } from "react-redux";
 
 // Moke Data.
 export const rowList = [
@@ -27,61 +28,12 @@ export const rowList = [
   },
 ];
 
-// Moke Data.
-export const rowBody = [
-  {
-    id: 0,
-    coin_name: "BIT",
-    week_price: "1.3 - 1.12",
-    min_amount: "4 mounth",
-    status: "active",
-  },
-  {
-    id: 1,
-    coin_name: "BIT",
-    week_price: "1.3 - 1.12",
-    min_amount: "4 mounth",
-    status: "active",
-  },
-  {
-    id: 2,
-    coin_name: "BIT",
-    week_price: "1.3 - 1.12",
-    min_amount: "4 mounth",
-    status: "active",
-  },
-  {
-    id: 3,
-    coin_name: "BIT",
-    week_price: "1.3 - 1.12",
-    min_amount: "4 mounth",
-    status: "active",
-  },
-  {
-    id: 4,
-    coin_name: "BIT",
-    week_price: "1.3 - 1.12",
-    min_amount: "4 mounth",
-    status: "active",
-  },
-  {
-    id: 5,
-    coin_name: "BIT",
-    week_price: "1.3 - 1.12",
-    min_amount: "4 mounth",
-    status: "active",
-  },
-  {
-    id: 6,
-    coin_name: "BIT",
-    week_price: "1.3 - 1.12",
-    min_amount: "4 mounth",
-    status: "active",
-  },
-];
-
 const Flexible = () => {
   const title = "Flexible Info";
+
+  const callRow = useSelector((state) => state.settings);
+
+  const rowBody = callRow.flexibleSettingsRow;
 
   return (
     <>

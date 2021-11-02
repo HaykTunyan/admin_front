@@ -24,11 +24,12 @@ import EditIcon from "@material-ui/icons/EditOutlined";
 import DoneIcon from "@material-ui/icons/DoneAllTwoTone";
 import RevertIcon from "@material-ui/icons/NotInterestedOutlined";
 import CSVButton from "../../components/CSVButton";
+import { XCircle } from "react-feather";
+import { useSelector } from "react-redux";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const Toolbar = styled(MuiToolbar)(spacing);
-
 const Button = styled(MuiButton)(spacing);
 
 const useStyles = makeStyles({
@@ -63,6 +64,7 @@ const useStyles = makeStyles({
 const CustomTableCell = ({ row, name, onChange }) => {
   const classes = useStyles();
   const { isEditMode } = row;
+
   return (
     <TableCell align="left" className={classes.tableCell}>
       {isEditMode ? (
@@ -80,6 +82,8 @@ const CustomTableCell = ({ row, name, onChange }) => {
 };
 
 const TransactionsSettings = () => {
+  const transactionList = useSelector((state) => state.settings);
+
   const [rows, setRows] = useState([
     {
       id: "0",
@@ -224,7 +228,7 @@ const TransactionsSettings = () => {
                             aria-label="revert"
                             onClick={() => onRevert(row.id)}
                           >
-                            <RevertIcon />
+                            <XCircle />
                           </IconButton>
                         </>
                       ) : (

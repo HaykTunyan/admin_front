@@ -7,7 +7,7 @@ import { darken } from "polished";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserList_req } from "../../../redux/actions/users";
 import { spacing } from "@material-ui/system";
 import {
@@ -29,6 +29,7 @@ import {
   InputBase,
   InputLabel,
   Card as MuiCard,
+  TablePagination,
 } from "@material-ui/core";
 import CSVButton from "../../components/CSVButton";
 
@@ -41,74 +42,6 @@ const useStyles = makeStyles({
     margin: "10px",
   },
 });
-
-const rows = [
-  {
-    key: 1,
-    number: "001",
-    email: "email@email.com",
-    phone: "011113494830",
-    balance: " 100 ",
-    flexible_saving: " 100 ",
-    locked_saving: " 100 ",
-    total_profile: " 100 ",
-    status_kyc: " 100 ",
-    date_register: "01.10.2021",
-    geo_positon: " Yerevan ",
-  },
-  {
-    key: 2,
-    number: "002",
-    email: "email@email.com",
-    phone: "89439394",
-    balance: " 100 ",
-    flexible_saving: " 100 ",
-    locked_saving: " 100 ",
-    total_profile: " 100 ",
-    status_kyc: " 100 ",
-    date_register: "01.10.2021",
-    geo_positon: " Yerevan ",
-  },
-  {
-    key: 3,
-    number: "003",
-    email: "email@email.com",
-    phone: "89348938",
-    balance: " 100 ",
-    flexible_saving: " 100 ",
-    locked_saving: " 100 ",
-    total_profile: " 100 ",
-    status_kyc: " 100 ",
-    date_register: "01.10.2021",
-    geo_positon: " Yerevan ",
-  },
-  {
-    key: 4,
-    number: "004",
-    email: "email@email.com",
-    phone: "987934334",
-    balance: " 100 ",
-    flexible_saving: " 100 ",
-    locked_saving: " 100 ",
-    total_profile: " 100 ",
-    status_kyc: " 100 ",
-    date_register: "01.10.2021",
-    geo_positon: " Yerevan ",
-  },
-  {
-    key: 5,
-    number: "005",
-    email: "email@email.com",
-    phone: "879350935",
-    balance: " 100 ",
-    flexible_saving: " 100 ",
-    locked_saving: " 100 ",
-    total_profile: " 100 ",
-    status_kyc: " 100 ",
-    date_register: "01.10.2021",
-    geo_positon: " Yerevan ",
-  },
-];
 
 const Search = styled.div`
   border-radius: 2px;
@@ -156,11 +89,16 @@ const Input = styled(InputBase)`
 `;
 
 const UsersList = () => {
+  // hooks
   const dispatch = useDispatch();
   const classes = useStyles();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [age, setAge] = useState("");
+
+  const rowUsers = useSelector((state) => state.allUser);
+
+  const rowUserList = rowUsers.listData;
 
   const [sortModel, setSortModel] = useState([
     {
@@ -171,6 +109,20 @@ const UsersList = () => {
 
   const [position, setPosition] = useState("");
 
+  const accessToken = window.localStorage.getItem("accessToken");
+
+  const [page, setPage] = useState("2");
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const handleChange = (event) => {
     setAge(event.target.value);
   };
@@ -179,13 +131,13 @@ const UsersList = () => {
     setPosition(event.target.value);
   };
 
-  const ViewUser = () => {
-    navigate("/view-user");
-  };
-
   useEffect(() => {
-    dispatch(getUserList_req());
+    dispatch(getUserList_req(accessToken));
   }, []);
+
+  const emptyRows =
+    rowsPerPage -
+    Math.min(rowsPerPage, rowUserList.length - page * rowsPerPage);
 
   return (
     <Fragment>
@@ -297,7 +249,7 @@ const UsersList = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
+                  {rowUserList.map((row) => (
                     <TableRow
                       key={row.key}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -321,7 +273,7 @@ const UsersList = () => {
                           <IconButton
                             aria-label="details"
                             size="large"
-                            onClick={ViewUser}
+                            onClick={() => navigate("/view-user")}
                           >
                             <RemoveRedEyeIcon />
                           </IconButton>
@@ -331,6 +283,16 @@ const UsersList = () => {
                   ))}
                 </TableBody>
               </Table>
+              {/* Pagination */}
+              <TablePagination
+                component="div"
+                rowsPerPageOptions={[5, 10, 25]}
+                count={100}
+                page={rowUserList.length}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </TableContainer>
           </Paper>
           <Box
@@ -342,7 +304,7 @@ const UsersList = () => {
             <Typography variant="subtitle1" color="inherit" component="div">
               Export Data
             </Typography>
-            <CSVButton data={rows} />
+            <CSVButton data={rowUserList} />
           </Box>
         </Grid>
       </Grid>

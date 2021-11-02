@@ -14,92 +14,23 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
+import { useSelector } from "react-redux";
 
+// Spacing.
 const Paper = styled(MuiPaper)(spacing);
 
+// Custom Style.
 const useStyles = makeStyles({
   rootTable: {
     margin: "10px",
   },
 });
 
-const rows = [
-  {
-    key: 0,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "s",
-    coin_to_coin: " 20 / 30",
-    tx_id: " 100 ",
-    status_operation: "active",
-  },
-  {
-    key: 1,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "s",
-    coin_to_coin: " 20 / 30",
-    tx_id: " 100 ",
-    status_operation: "active",
-  },
-  {
-    key: 2,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "s",
-    coin_to_coin: " 20 / 30",
-    tx_id: " 100 ",
-    status_operation: "active",
-  },
-  {
-    key: 3,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "s",
-    coin_to_coin: " 20 / 30",
-    tx_id: " 100 ",
-    status_operation: "active",
-  },
-  {
-    key: 4,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "s",
-    coin_to_coin: " 20 / 30",
-    tx_id: " 100 ",
-    status_operation: "active",
-  },
-  {
-    key: 5,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "s",
-    coin_to_coin: " 20 / 30",
-    tx_id: " 100 ",
-    status_operation: "active",
-  },
-  {
-    key: 6,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "s",
-    coin_to_coin: " 20 / 30",
-    tx_id: " 100 ",
-    status_operation: "active",
-  },
-  {
-    key: 7,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "s",
-    coin_to_coin: " 20 / 30",
-    tx_id: " 100 ",
-    status_operation: "active",
-  },
-];
-
 const SwapTable = () => {
   const classes = useStyles();
+  const callList = useSelector((state) => state.transaction);
+
+  const rows = callList.swapList;
   return (
     <Fragment>
       <Paper>

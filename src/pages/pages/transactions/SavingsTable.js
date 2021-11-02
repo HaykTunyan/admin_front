@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
+import { useSelector } from "react-redux";
 
 const Paper = styled(MuiPaper)(spacing);
 
@@ -23,99 +24,12 @@ const useStyles = makeStyles({
   },
 });
 
-const rows = [
-  {
-    key: 0,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "00000000",
-    sum: " 30 ",
-    coin: " 20 ",
-    tx_id: " 100 ",
-    type: "Flexible",
-    operation_type: "active",
-  },
-  {
-    key: 1,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "00000000",
-    sum: " 30 ",
-    coin: " 20 ",
-    tx_id: " 100 ",
-    type: "Flexible",
-    operation_type: "active",
-  },
-  {
-    key: 2,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "00000000",
-    sum: " 30 ",
-    coin: " 20 ",
-    tx_id: " 100 ",
-    type: "Flexible",
-    operation_type: "active",
-  },
-  {
-    key: 3,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "00000000",
-    sum: " 30 ",
-    coin: " 20 ",
-    tx_id: " 100 ",
-    type: "Flexible",
-    operation_type: "active",
-  },
-  {
-    key: 4,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "00000000",
-    sum: " 30 ",
-    coin: " 20 ",
-    tx_id: " 100 ",
-    type: "Flexible",
-    operation_type: "active",
-  },
-  {
-    key: 5,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "00000000",
-    sum: " 30 ",
-    coin: " 20 ",
-    tx_id: " 100 ",
-    type: "Flexible",
-    operation_type: "active",
-  },
-  {
-    key: 6,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "00000000",
-    sum: " 30 ",
-    coin: " 20 ",
-    tx_id: " 100 ",
-    type: "Flexible",
-    operation_type: "active",
-  },
-  {
-    key: 7,
-    date_operation: "01.10.2021",
-    email: "email@email.com",
-    phone: "00000000",
-    sum: " 30 ",
-    coin: " 20 ",
-    tx_id: " 100 ",
-    type: "Flexible",
-    operation_type: "active",
-  },
-];
-
 const SavingsTable = () => {
   const classes = useStyles();
+  const callList = useSelector((state) => state.transaction);
+
+  const rows = callList.savingList;
+
   return (
     <Fragment>
       <Paper>

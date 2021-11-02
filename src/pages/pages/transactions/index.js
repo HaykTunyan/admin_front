@@ -21,6 +21,7 @@ import styled from "styled-components/macro";
 import { darken } from "polished";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
 
 const Search = styled.div`

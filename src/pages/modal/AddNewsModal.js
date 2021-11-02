@@ -9,9 +9,11 @@ import {
   DialogTitle,
   Box,
   Divider,
+  Typography,
 } from "@material-ui/core";
 import { CloudUpload } from "@material-ui/icons";
 import ImageUploading from "react-images-uploading";
+import TinymceNew from "../components/TinymceNew";
 
 const AddNewsModal = () => {
   const [open, setOpen] = useState(false);
@@ -40,7 +42,6 @@ const AddNewsModal = () => {
         <DialogTitle>Information for News</DialogTitle>
         <DialogContent>
           <TextField
-            autoFocus
             margin="dense"
             id="title-one"
             label="Title H1"
@@ -49,32 +50,21 @@ const AddNewsModal = () => {
             variant="standard"
           />
           <TextField
-            autoFocus
             margin="dense"
             id="description"
-            label="Description One"
+            label="Description"
             type="text"
             fullWidth
             variant="standard"
           />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Title 2"
-            type="text"
-            fullWidth
-            variant="standard"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Description Two"
-            type="text"
-            fullWidth
-            variant="standard"
-          />
+          <Box my={5}>
+            <Typography
+              variant="subtitle1"
+              children="Editor Text for Description"
+            />
+            <TinymceNew />
+          </Box>
+          <Divider my={5} />
           <div>
             <ImageUploading
               multiple

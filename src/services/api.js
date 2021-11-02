@@ -8,7 +8,7 @@ import { store } from "../redux/store";
 // });
 
 const instance = axios.create({
-  baseURL: "http://nodejs.beincrypto.org:3000/api",
+  baseURL: "http://api.beincrypto.org/api",
 });
 
 export const setInstance = (access_token) => {

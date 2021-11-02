@@ -19,12 +19,11 @@ import {
   IconButton as MuiIconButton,
 } from "@material-ui/core";
 import { Search as SearchIcon } from "react-feather";
-import EditIcon from "@material-ui/icons/EditOutlined";
-import RevertIcon from "@material-ui/icons/NotInterestedOutlined";
 import AddSwapModal from "../../modal/AddSwapModal";
 import CSVButton from "../../components/CSVButton";
 import EditSwapModal from "../../modal/EditSwapModal";
 import DeleteModal from "../../modal/DeleteModal";
+import { useSelector } from "react-redux";
 
 const Paper = styled(MuiPaper)(spacing);
 const Toolbar = styled(MuiToolbar)(spacing);
@@ -33,13 +32,6 @@ const Table = styled(MuiTable)(spacing);
 const TableWrapper = styled.div`
   overflow-y: auto;
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
-`;
-
-const IconButton = styled(MuiIconButton)`
-  svg {
-    width: 22px;
-    height: 22px;
-  }
 `;
 
 const Search = styled.div`
@@ -87,39 +79,14 @@ const Input = styled(InputBase)`
   }
 `;
 
-// Moke Data
-const rows = [
-  {
-    id: 0,
-    pair: "BTCNGN",
-  },
-  {
-    id: 1,
-    pair: "BTCNGN",
-  },
-  {
-    id: 2,
-    pair: "BTCNGN",
-  },
-  {
-    id: 3,
-    pair: "BTCNGN",
-  },
-  {
-    id: 4,
-    pair: "BTCNGN",
-  },
-  {
-    id: 5,
-    pair: "BTCNGN",
-  },
-];
-
 const SwapSettings = () => {
   const { t } = useTranslation();
   const dialog = "Swap Item";
   const description = "Delete Item in this list";
 
+  const swapList = useSelector((state) => state.settings);
+
+  const rows = swapList.swapSettingsRow;
   return (
     <Fragment>
       <Paper>

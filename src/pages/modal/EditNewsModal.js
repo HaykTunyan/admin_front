@@ -9,15 +9,23 @@ import {
   DialogTitle,
   Box,
   Divider,
+  Typography,
 } from "@material-ui/core";
 import { CloudUpload } from "@material-ui/icons";
 import ImageUploading from "react-images-uploading";
 import NewsImage from "../../assets/news_one.jpg";
+import TinymceNew from "../components/TinymceNew";
 
 const EditNewsModal = () => {
   const [open, setOpen] = useState(false);
   const [images, setImages] = useState([]);
+
   const maxNumber = 69;
+
+  const [textBody, setTextBody] = useState(
+    "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM."
+  );
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -58,26 +66,16 @@ const EditNewsModal = () => {
             type="text"
             fullWidth
             variant="standard"
-            defaultValue="“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM."
+            defaultValue={textBody}
           />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Title 2"
-            type="text"
-            fullWidth
-            variant="standard"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Description Two"
-            type="text"
-            fullWidth
-            variant="standard"
-          />
+          <Box my={5}>
+            <Typography
+              variant="subtitle1"
+              children="Editor Text for Description"
+            />
+            <TinymceNew textBody={textBody} />
+          </Box>
+          <Divider my={5} />
           <div>
             <ImageUploading
               multiple

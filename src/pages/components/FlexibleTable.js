@@ -1,8 +1,8 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { darken } from "polished";
-import { Search as SearchIcon, Trash } from "react-feather";
+import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import {
   Card as MuiCard,
@@ -15,6 +15,8 @@ import {
   TableRow,
   InputBase,
   IconButton as MuiIconButton,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@material-ui/core";
 import DeleteModal from "../modal/DeleteModal";
 
@@ -23,13 +25,6 @@ const Card = styled(MuiCard)(spacing);
 const Paper = styled(MuiPaper)(spacing);
 
 // Custom Style.
-const IconButton = styled(MuiIconButton)`
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
-
 const Input = styled(InputBase)`
   color: inherit;
   width: 100%;
@@ -85,6 +80,12 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
   const dialog = "Flexible Item";
   const description = "Delete Item in this list";
 
+  const [alignment, setAlignment] = useState("");
+
+  const handleAlignment = (event, newAlignment) => {
+    setAlignment(newAlignment);
+  };
+
   return (
     <Fragment>
       <Card mb={6}>
@@ -113,7 +114,24 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
                 {rowBody?.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>{item.coin_name}</TableCell>
-                    <TableCell>{item.week_price}</TableCell>
+                    <TableCell>
+                      <ToggleButtonGroup
+                        value={alignment}
+                        exclusive
+                        onChange={handleAlignment}
+                        aria-label="text alignment"
+                      >
+                        <ToggleButton value="30" aria-label="left aligned">
+                          {item.week_price_one}
+                        </ToggleButton>
+                        <ToggleButton value="60" aria-label="centered">
+                          {item.week_price_two}
+                        </ToggleButton>
+                        <ToggleButton value="90" aria-label="right aligned">
+                          {item.week_price_three}
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                    </TableCell>
                     <TableCell>{item.min_amount}</TableCell>
                     <TableCell>{item.status}</TableCell>
                     <TableCell>

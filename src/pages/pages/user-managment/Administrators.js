@@ -24,6 +24,7 @@ import styled from "styled-components/macro";
 import AddAdminModal from "../../modal/AddAdminModal";
 import EditAdminModal from "../../modal/EditAdminModal";
 import CSVButton from "../../components/CSVButton";
+import { useSelector } from "react-redux";
 
 const Divider = styled(MuiDivider)(spacing);
 
@@ -45,46 +46,10 @@ const TableWrapper = styled.div`
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
 
-const rows = [
-  {
-    id: 0,
-    name: "Admin Name",
-    email: "admin@email.com",
-    type: <Chip label="active" color="success" />,
-  },
-  {
-    id: 1,
-    name: "Admin Name",
-    email: "admin@email.com",
-    type: <Chip label="disable" color="error" />,
-  },
-  {
-    id: 2,
-    name: "Admin Name",
-    email: "admin@email.com",
-    type: <Chip label="active" color="success" />,
-  },
-  {
-    id: 3,
-    name: "Admin Name",
-    email: "admin@email.com",
-    type: <Chip label="active" color="success" />,
-  },
-  {
-    id: 4,
-    name: "Admin Name",
-    email: "admin@email.com",
-    type: <Chip label="active" color="success" />,
-  },
-  {
-    id: 5,
-    name: "Admin Name",
-    email: "admin@email.com",
-    type: <Chip label="active" color="success" />,
-  },
-];
-
 const Administrators = () => {
+  const adminUser = useSelector((state) => state.user);
+
+  const rows = adminUser.adminList;
   return (
     <>
       <Helmet title="Administrators" />
@@ -126,7 +91,9 @@ const Administrators = () => {
                               {row.name}
                             </TableCell>
                             <TableCell align="center">{row.email}</TableCell>
-                            <TableCell align="center">{row.type}</TableCell>
+                            <TableCell align="center">
+                              <Chip label={row.type} color="success" />
+                            </TableCell>
                             <TableCell align="center">
                               <Box mr={2}>
                                 <EditAdminModal />
