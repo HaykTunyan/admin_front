@@ -17,6 +17,7 @@ import {
   TableRow,
   ToggleButton,
   ToggleButtonGroup,
+  TablePagination,
 } from "@material-ui/core";
 import DeleteModal from "../modal/DeleteModal";
 
@@ -87,6 +88,18 @@ const DashboardTable = ({ title, rowList, rowBody }) => {
     setAlignment(newAlignment);
   };
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <Fragment>
       <Card mb={6}>
@@ -112,35 +125,50 @@ const DashboardTable = ({ title, rowList, rowBody }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rowBody?.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.coin_name}</TableCell>
-                    <TableCell>
-                      <ToggleButtonGroup
-                        value={alignment}
-                        exclusive
-                        onChange={handleAlignment}
-                        aria-label="text alignment"
-                      >
-                        <ToggleButton value="1" aria-label="left aligned">
-                          {item.period_one}
-                        </ToggleButton>
-                        <ToggleButton value="2" aria-label="right aligned">
-                          {item.period_two}
-                        </ToggleButton>
-                      </ToggleButtonGroup>
-                    </TableCell>
-                    <TableCell>{item.air}</TableCell>
-                    <TableCell>{item.min_amount}</TableCell>
-                    <TableCell>{item.status}</TableCell>
-                    <TableCell>{item.bonus}</TableCell>
-                    <TableCell>
-                      <DeleteModal dialog={dialog} description={description} />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {rowBody
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>{item.coin_name}</TableCell>
+                      <TableCell>
+                        <ToggleButtonGroup
+                          value={alignment}
+                          exclusive
+                          onChange={handleAlignment}
+                          aria-label="text alignment"
+                        >
+                          <ToggleButton value="1" aria-label="left aligned">
+                            {item.period_one}
+                          </ToggleButton>
+                          <ToggleButton value="2" aria-label="right aligned">
+                            {item.period_two}
+                          </ToggleButton>
+                        </ToggleButtonGroup>
+                      </TableCell>
+                      <TableCell>{item.air}</TableCell>
+                      <TableCell>{item.min_amount}</TableCell>
+                      <TableCell>{item.status}</TableCell>
+                      <TableCell>{item.bonus}</TableCell>
+                      <TableCell>
+                        <DeleteModal
+                          dialog={dialog}
+                          description={description}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
+            {/* Pagination */}
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 20]}
+              component="div"
+              count={rowBody.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </TableWrapper>
         </Paper>
       </Card>

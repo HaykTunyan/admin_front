@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { darken } from "polished";
@@ -17,6 +17,7 @@ import {
   Grid,
   InputBase,
   IconButton as MuiIconButton,
+  TablePagination,
 } from "@material-ui/core";
 import { Search as SearchIcon } from "react-feather";
 import AddSwapModal from "../../modal/AddSwapModal";
@@ -87,6 +88,19 @@ const SwapSettings = () => {
   const swapList = useSelector((state) => state.settings);
 
   const rows = swapList.swapSettingsRow;
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <Fragment>
       <Paper>
@@ -115,21 +129,36 @@ const SwapSettings = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell component="th" scope="row">
-                    {row.pair}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Box flex justifyContent="space-between">
-                      <EditSwapModal />
-                      <DeleteModal dialog={dialog} description={description} />
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {rows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell component="th" scope="row">
+                      {row.pair}
+                    </TableCell>
+                    <TableCell align="right">
+                      <Box flex justifyContent="space-between">
+                        <EditSwapModal />
+                        <DeleteModal
+                          dialog={dialog}
+                          description={description}
+                        />
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
+          {/* Pagination */}
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 20]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </TableWrapper>
       </Paper>
 

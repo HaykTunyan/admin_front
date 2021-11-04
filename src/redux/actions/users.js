@@ -3,7 +3,7 @@
 import { USER_LOADING, USER_LOADED, USER_LOGOUT, USER_LIST } from "./type";
 import instance, { setInstance, removeInstance } from "../../services/api";
 
-export const accessToken = localStorage.getItem("accessToken");
+const accessToken = localStorage.getItem("accessToken");
 
 export const signIn_req = (values) => (dispatch) => {
   dispatch({
@@ -39,20 +39,18 @@ export const logout_req = () => (dispatch) => {
   removeInstance();
 };
 
-export const getUserList_req =
-  ({ accessToken }) =>
-  (dispatch) => {
-    return instance
-      .get("/admin/user/all")
-      .then(({ data: { data } }) => {
-        dispatch({ type: USER_LIST, payload: { data } });
-        console.log("data users list", data);
-        return data;
-      })
-      .catch((err) => {
-        return Promise.reject(err);
-      })
-      .finally(() => {
-        dispatch({ type: USER_LIST, payload: false });
-      });
-  };
+export const getUserList_req = () => (dispatch) => {
+  return instance
+    .get("/admin/user/all")
+    .then(({ data: { data } }) => {
+      dispatch({ type: USER_LIST, payload: { data } });
+      console.log("data users list", data);
+      return data;
+    })
+    .catch((err) => {
+      return Promise.reject(err);
+    })
+    .finally(() => {
+      dispatch({ type: USER_LIST, payload: false });
+    });
+};

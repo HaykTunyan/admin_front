@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import {
   Typography as MuiTypography,
@@ -10,6 +10,7 @@ import {
   TableCell,
   TableBody,
   Table,
+  TablePagination,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
@@ -18,6 +19,18 @@ import CSVButton from "../../components/CSVButton";
 const Typography = styled(MuiTypography)(spacing);
 
 const UsersTab = ({ rowUserList }) => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <Fragment>
       <TableContainer component={Paper}>
@@ -31,25 +44,37 @@ const UsersTab = ({ rowUserList }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rowUserList.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{
-                  "&:last-child td, &:last-child th": {
-                    border: 0,
-                  },
-                }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.id}
-                </TableCell>
-                <TableCell align="center">{row.name}</TableCell>
-                <TableCell align="center">{row.sure_name}</TableCell>
-                <TableCell align="right">{row.email}</TableCell>
-              </TableRow>
-            ))}
+            {rowUserList
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <TableRow
+                  key={row.id}
+                  sx={{
+                    "&:last-child td, &:last-child th": {
+                      border: 0,
+                    },
+                  }}
+                >
+                  <TableCell component="th" scope="row">
+                    {row.id}
+                  </TableCell>
+                  <TableCell align="center">{row.name}</TableCell>
+                  <TableCell align="center">{row.sure_name}</TableCell>
+                  <TableCell align="right">{row.email}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
+        {/* Pagination */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 20]}
+          component="div"
+          count={rowUserList.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </TableContainer>
       <Box mt={8} display="flex" justifyContent="flex-end" alignItems="center">
         <Typography variant="subtitle1" color="inherit" component="div">

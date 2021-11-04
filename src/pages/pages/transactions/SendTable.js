@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
 import {
@@ -11,6 +11,7 @@ import {
   TableRow,
   TableHead,
   Typography,
+  TablePagination,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
@@ -32,6 +33,18 @@ const SendTable = () => {
 
   const rows = callList.sendList;
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <Fragment>
       <Paper>
@@ -51,26 +64,40 @@ const SendTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.key}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.date_operation}
-                  </TableCell>
-                  <TableCell align="center">{row.email}</TableCell>
-                  <TableCell align="center">{row.phone}</TableCell>
-                  <TableCell align="center">{row.sum}</TableCell>
-                  <TableCell align="center">{row.coin}</TableCell>
-                  <TableCell align="center">{row.tx_id}</TableCell>
-                  <TableCell align="center">{row.operation_type}</TableCell>
-                  <TableCell align="center">{row.type}</TableCell>
-                  <TableCell align="center">{row.transaction_status}</TableCell>
-                </TableRow>
-              ))}
+              {rows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => (
+                  <TableRow
+                    key={row.key}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {row.date_operation}
+                    </TableCell>
+                    <TableCell align="center">{row.email}</TableCell>
+                    <TableCell align="center">{row.phone}</TableCell>
+                    <TableCell align="center">{row.sum}</TableCell>
+                    <TableCell align="center">{row.coin}</TableCell>
+                    <TableCell align="center">{row.tx_id}</TableCell>
+                    <TableCell align="center">{row.operation_type}</TableCell>
+                    <TableCell align="center">{row.type}</TableCell>
+                    <TableCell align="center">
+                      {row.transaction_status}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
+          {/* Pagination */}
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 20]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </TableContainer>
       </Paper>
       <Box mt={8} display="flex" justifyContent="flex-end" alignItems="center">

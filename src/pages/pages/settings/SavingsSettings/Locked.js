@@ -1,11 +1,9 @@
 import React from "react";
-import styled from "styled-components/macro";
-import { darken } from "polished";
 import {
   Typography,
   Box,
-  InputBase,
   IconButton as MuiIconButton,
+  TablePagination,
 } from "@material-ui/core";
 import DashboardTable from "../../../components/LocedTable";
 import CSVButton from "../../../components/CSVButton";
@@ -45,9 +43,7 @@ export const rowList = [
 
 const Locked = () => {
   const title = "Locked Info";
-
   const callRow = useSelector((state) => state.settings);
-
   const rowBody = callRow.lockedSettingsRow;
 
   return (

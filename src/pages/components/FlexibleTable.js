@@ -17,6 +17,7 @@ import {
   IconButton as MuiIconButton,
   ToggleButton,
   ToggleButtonGroup,
+  TablePagination,
 } from "@material-ui/core";
 import DeleteModal from "../modal/DeleteModal";
 
@@ -86,6 +87,18 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
     setAlignment(newAlignment);
   };
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <Fragment>
       <Card mb={6}>
@@ -111,36 +124,51 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rowBody?.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.coin_name}</TableCell>
-                    <TableCell>
-                      <ToggleButtonGroup
-                        value={alignment}
-                        exclusive
-                        onChange={handleAlignment}
-                        aria-label="text alignment"
-                      >
-                        <ToggleButton value="30" aria-label="left aligned">
-                          {item.week_price_one}
-                        </ToggleButton>
-                        <ToggleButton value="60" aria-label="centered">
-                          {item.week_price_two}
-                        </ToggleButton>
-                        <ToggleButton value="90" aria-label="right aligned">
-                          {item.week_price_three}
-                        </ToggleButton>
-                      </ToggleButtonGroup>
-                    </TableCell>
-                    <TableCell>{item.min_amount}</TableCell>
-                    <TableCell>{item.status}</TableCell>
-                    <TableCell>
-                      <DeleteModal dialog={dialog} description={description} />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {rowBody
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell>{item.coin_name}</TableCell>
+                      <TableCell>
+                        <ToggleButtonGroup
+                          value={alignment}
+                          exclusive
+                          onChange={handleAlignment}
+                          aria-label="text alignment"
+                        >
+                          <ToggleButton value="30" aria-label="left aligned">
+                            {item.week_price_one}
+                          </ToggleButton>
+                          <ToggleButton value="60" aria-label="centered">
+                            {item.week_price_two}
+                          </ToggleButton>
+                          <ToggleButton value="90" aria-label="right aligned">
+                            {item.week_price_three}
+                          </ToggleButton>
+                        </ToggleButtonGroup>
+                      </TableCell>
+                      <TableCell>{item.min_amount}</TableCell>
+                      <TableCell>{item.status}</TableCell>
+                      <TableCell>
+                        <DeleteModal
+                          dialog={dialog}
+                          description={description}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
+            {/* Pagination */}
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 20]}
+              component="div"
+              count={rowBody.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </TableWrapper>
         </Paper>
       </Card>

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { spacing } from "@material-ui/system";
 import styled from "styled-components/macro";
 import {
@@ -11,6 +11,7 @@ import {
   Paper,
   Toolbar as MuiToolbar,
   Typography,
+  TablePagination,
 } from "@material-ui/core";
 
 const Toolbar = styled(MuiToolbar)(spacing);
@@ -49,6 +50,18 @@ export const rows = [
 ];
 
 const DesktopCall = () => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <Fragment>
       <TableContainer component={Paper}>
@@ -66,23 +79,35 @@ const DesktopCall = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row" width="30%">
-                  {row.brand_name}
-                </TableCell>
-                <TableCell>
-                  {row.percent}
-                  <span> &#8453;</span>
-                </TableCell>
-                <TableCell align="right">{row.quantity}</TableCell>
-              </TableRow>
-            ))}
+            {rows
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((row) => (
+                <TableRow
+                  key={row.id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row" width="30%">
+                    {row.brand_name}
+                  </TableCell>
+                  <TableCell>
+                    {row.percent}
+                    <span> &#8453;</span>
+                  </TableCell>
+                  <TableCell align="right">{row.quantity}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
+        {/* Pagination */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 20]}
+          component="div"
+          count={rows.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </TableContainer>
     </Fragment>
   );

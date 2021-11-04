@@ -32,6 +32,7 @@ import {
   TablePagination,
 } from "@material-ui/core";
 import CSVButton from "../../components/CSVButton";
+import UsersListTable from "./UserListTable";
 
 const Divider = styled(MuiDivider)(spacing);
 const Typography = styled(MuiTypography)(spacing);
@@ -109,19 +110,10 @@ const UsersList = () => {
 
   const [position, setPosition] = useState("");
 
-  const accessToken = window.localStorage.getItem("accessToken");
+  // const accessToken = window.localStorage.getItem("accessToken");
 
   const [page, setPage] = useState("2");
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -132,12 +124,8 @@ const UsersList = () => {
   };
 
   useEffect(() => {
-    dispatch(getUserList_req(accessToken));
+    dispatch(getUserList_req());
   }, []);
-
-  const emptyRows =
-    rowsPerPage -
-    Math.min(rowsPerPage, rowUserList.length - page * rowsPerPage);
 
   return (
     <Fragment>
@@ -226,86 +214,7 @@ const UsersList = () => {
 
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <Paper>
-            <TableContainer component={Paper} className={classes.rootTable}>
-              <Table
-                aria-label="simple table"
-                sortModel={sortModel}
-                onSortModelChange={(model) => setSortModel(model)}
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Account Number</TableCell>
-                    <TableCell align="center">Email</TableCell>
-                    <TableCell align="center">Phone</TableCell>
-                    <TableCell align="center">Balance</TableCell>
-                    <TableCell align="center">Flexible Saving</TableCell>
-                    <TableCell align="center">Locked Saving</TableCell>
-                    <TableCell align="center">Total Profile</TableCell>
-                    <TableCell align="center">Status KYC</TableCell>
-                    <TableCell align="center">Date Register</TableCell>
-                    <TableCell align="center">Geo Position</TableCell>
-                    <TableCell align="center">View Position</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rowUserList.map((row) => (
-                    <TableRow
-                      key={row.key}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {row.number}
-                      </TableCell>
-                      <TableCell align="center">{row.email}</TableCell>
-                      <TableCell align="center">{row.phone}</TableCell>
-                      <TableCell align="center">{row.balance}</TableCell>
-                      <TableCell align="center">
-                        {row.flexible_saving}
-                      </TableCell>
-                      <TableCell v>{row.locked_saving}</TableCell>
-                      <TableCell align="center">{row.total_profile}</TableCell>
-                      <TableCell align="center">{row.status_kyc}</TableCell>
-                      <TableCell align="center">{row.date_register}</TableCell>
-                      <TableCell align="center">{row.geo_positon}</TableCell>
-                      <TableCell padding="none" align="center">
-                        <Box mr={2}>
-                          <IconButton
-                            aria-label="details"
-                            size="large"
-                            onClick={() => navigate("/view-user")}
-                          >
-                            <RemoveRedEyeIcon />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              {/* Pagination */}
-              <TablePagination
-                component="div"
-                rowsPerPageOptions={[5, 10, 25]}
-                count={100}
-                page={rowUserList.length}
-                onPageChange={handleChangePage}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableContainer>
-          </Paper>
-          <Box
-            mt={8}
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="center"
-          >
-            <Typography variant="subtitle1" color="inherit" component="div">
-              Export Data
-            </Typography>
-            <CSVButton data={rowUserList} />
-          </Box>
+          <UsersListTable rowUserList={rowUserList} />
         </Grid>
       </Grid>
     </Fragment>

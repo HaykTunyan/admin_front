@@ -19,6 +19,7 @@ import {
   Toolbar as MuiToolbar,
   Typography,
   Box,
+  TablePagination,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import DoneIcon from "@material-ui/icons/DoneAllTwoTone";
@@ -146,6 +147,18 @@ const TransactionsSettings = () => {
   const [previous, setPrevious] = useState({});
   const classes = useStyles();
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   const onToggleEditMode = (id) => {
     setRows((state) => {
       return rows.map((row) => {
@@ -209,41 +222,60 @@ const TransactionsSettings = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.id}>
-                    <CustomTableCell {...{ row, name: "min_send", onChange }} />
-                    <CustomTableCell {...{ row, name: "fee", onChange }} />
-                    <CustomTableCell {...{ row, name: "decimals", onChange }} />
-                    <CustomTableCell {...{ row, name: "suspend", onChange }} />
-                    <TableCell className={classes.selectTableCell}>
-                      {row.isEditMode ? (
-                        <>
+                {rows
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
+                    <TableRow key={row.id}>
+                      <CustomTableCell
+                        {...{ row, name: "min_send", onChange }}
+                      />
+                      <CustomTableCell {...{ row, name: "fee", onChange }} />
+                      <CustomTableCell
+                        {...{ row, name: "decimals", onChange }}
+                      />
+                      <CustomTableCell
+                        {...{ row, name: "suspend", onChange }}
+                      />
+                      <TableCell className={classes.selectTableCell}>
+                        {row.isEditMode ? (
+                          <>
+                            <IconButton
+                              aria-label="done"
+                              onClick={() => onToggleEditMode(row.id)}
+                            >
+                              <DoneIcon />
+                            </IconButton>
+                            <IconButton
+                              aria-label="revert"
+                              onClick={() => onRevert(row.id)}
+                            >
+                              <XCircle />
+                            </IconButton>
+                          </>
+                        ) : (
                           <IconButton
-                            aria-label="done"
+                            aria-label="delete"
                             onClick={() => onToggleEditMode(row.id)}
                           >
-                            <DoneIcon />
+                            <EditIcon />
                           </IconButton>
-                          <IconButton
-                            aria-label="revert"
-                            onClick={() => onRevert(row.id)}
-                          >
-                            <XCircle />
-                          </IconButton>
-                        </>
-                      ) : (
-                        <IconButton
-                          aria-label="delete"
-                          onClick={() => onToggleEditMode(row.id)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
+
+            {/* Pagination */}
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 20]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </Paper>
         </CardContent>
       </Card>
