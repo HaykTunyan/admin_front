@@ -29,13 +29,14 @@ import AffiliateUsers from "./pages/pages/user-managment/AffiliateUsers";
 import Calendar from "./pages/pages/Calendar";
 import Transaction from "./pages/pages/transactions";
 import KYC from "./pages/pages/kyc";
-import DeviceManagement from "./pages/pages/DeviceManagement";
+
 import Referral from "./pages/pages/referral";
 import Administrators from "./pages/pages/user-managment/Administrators";
 
 // Documentation
 import Redux from "./pages/docs/Redux";
 import DashboardPage from "./pages/pages/dashboard";
+import DeviceManagement from "./pages/pages/device-managment";
 
 // Dashboard components
 const Default = async(() => import("./pages/dashboards/Default"));

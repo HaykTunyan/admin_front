@@ -5,7 +5,6 @@ import {
   Info,
   Bell,
   Settings,
-  Key,
   UserPlus,
   GitCommit,
   List,

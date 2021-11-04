@@ -21,14 +21,11 @@ import {
 import { tableCellClasses } from "@material-ui/core/TableCell";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const CardContent = styled(MuiCardContent)(spacing);
-
 const Divider = styled(MuiDivider)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
 const Paper = styled(MuiPaper)(spacing);
 
 const CustomTableCell = styled(TableCell)`

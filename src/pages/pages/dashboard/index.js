@@ -455,18 +455,6 @@ const DashboardPage = () => {
     setPanel(newPanel);
   };
 
-  function createData(name, coin, percent) {
-    return { name, coin, percent };
-  }
-
-  const rows = [
-    createData("User One", 130, 30),
-    createData("User Two", 430, 15),
-    createData("User Three", 180, 75),
-    createData("User Four", 240, 60),
-    createData("User Five", 300, 50),
-  ];
-
   return (
     <Fragment>
       <Helmet title="Dashboard" />

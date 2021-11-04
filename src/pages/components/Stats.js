@@ -3,6 +3,7 @@ import styled, { css } from "styled-components/macro";
 import { rgba } from "polished";
 import {
   Box,
+  Button,
   Card as MuiCard,
   CardContent as MuiCardContent,
   Chip as MuiChip,
@@ -10,6 +11,10 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
+const Typography = styled(MuiTypography)(spacing);
+
+// Custom Style.
 const Card = styled(MuiCard)`
   position: relative;
   margin-bottom: ${(props) => props.theme.spacing(6)};
@@ -22,8 +27,6 @@ const Card = styled(MuiCard)`
       color: ${(props) => props.theme.palette.primary.main};
     `}
 `;
-
-const Typography = styled(MuiTypography)(spacing);
 
 const CardContent = styled(MuiCardContent)`
   position: relative;
@@ -91,6 +94,8 @@ const Stats = ({
   percentagetext,
   percentagecolor,
   illustration,
+  view,
+  ViewMore,
 }) => {
   return (
     <Card illustration={illustration}>
@@ -101,14 +106,26 @@ const Stats = ({
         <Typography variant="h3" mb={3}>
           <Box fontWeight="fontWeightRegular">{amount}</Box>
         </Typography>
-        <Percentage
-          variant="subtitle2"
-          color="textSecondary"
-          percentagecolor={percentagecolor}
-          illustration={illustration}
-        >
-          <span>{percentagetext}</span> Since last month
-        </Percentage>
+
+        <Box display="flex" justifyContent="space-between">
+          <Percentage
+            variant="subtitle2"
+            color="textSecondary"
+            percentagecolor={percentagecolor}
+            illustration={illustration}
+          >
+            <span>{percentagetext}</span> Since last month
+          </Percentage>
+          {!view && (
+            <Button
+              size="small"
+              type="button"
+              children="View"
+              onClick={ViewMore}
+            />
+          )}
+        </Box>
+
         {!illustration && <Chip label={chip} />}
       </CardContent>
 
