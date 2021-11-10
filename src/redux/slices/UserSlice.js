@@ -1,48 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const userSlice = createSlice({
   name: "user",
   initialState: {
-    data: [],
-    adminList: [
-      {
-        id: 0,
-        name: "Admin Name",
-        email: "admin@email.com",
-        type: "active",
-      },
-      {
-        id: 1,
-        name: "Admin Name",
-        email: "admin@email.com",
-        type: "active",
-      },
-      {
-        id: 2,
-        name: "Admin Name",
-        email: "admin@email.com",
-        type: "active",
-      },
-      {
-        id: 3,
-        name: "Admin Name",
-        email: "admin@email.com",
-        type: "active",
-      },
-      {
-        id: 4,
-        name: "Admin Name",
-        email: "admin@email.com",
-        type: "active",
-      },
-      {
-        id: 5,
-        name: "Admin Name",
-        email: "admin@email.com",
-        type: "active",
-      },
-    ],
-    submit: false,
+    username: "",
+    email: "",
+    isFetching: false,
+    isSuccess: false,
+    isError: false,
+    errorMessage: "",
   },
   reducers: {
     // Reducer comes here
@@ -50,5 +16,5 @@ export const userSlice = createSlice({
   extraReducers: {
     // Extra reducer comes here
   },
-});
-export const userSelector = (state) => state.user;
+})
+export const userSelector = state => state.user

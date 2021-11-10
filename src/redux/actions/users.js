@@ -14,6 +14,7 @@ export const signIn_req = (values) => (dispatch) => {
     .post("/admin/login", values)
     .then(({ data }) => {
       console.log("Data", data);
+
       setInstance(data.access_token);
       dispatch({
         type: USER_LOADED,
@@ -28,20 +29,24 @@ export const signIn_req = (values) => (dispatch) => {
       return data;
     })
     .catch((err) => {
-      dispatch({ type: USER_LOADING, payload: false });
+      dispatch({
+        type: USER_LOADING,
+        payload: false,
+      });
       return Promise.reject(err);
     });
 };
 
 export const logout_req = () => (dispatch) => {
-  instance.get("/admin/logout");
-  dispatch({ type: USER_LOGOUT });
+  dispatch({
+    type: USER_LOGOUT,
+  });
   removeInstance();
 };
 
 export const getUserList_req = () => (dispatch) => {
   return instance
-    .get("/admin/user/all")
+    .get("/admin/user/all", { mode: "no-cors" })
     .then(({ data: { data } }) => {
       dispatch({ type: USER_LIST, payload: { data } });
       console.log("data users list", data);

@@ -4,7 +4,7 @@ import styled from "styled-components/macro";
 
 import { CssBaseline } from "@material-ui/core";
 
-import Settings from "../components/Settings";
+import SettingsCom from "../components/SettingsCom";
 import GlobalStyle from "../components/GlobalStyle";
 
 const Root = styled.div`
@@ -24,7 +24,7 @@ const Auth = ({ children }) => {
       <GlobalStyle />
       {children}
       <Outlet />
-      <Settings />
+      <SettingsCom />
     </Root>
   );
 };

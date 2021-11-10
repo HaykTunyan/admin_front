@@ -10,9 +10,24 @@ import {
   Grid,
   Typography,
 } from "@material-ui/core";
-
 import { THEMES } from "../constants";
 import useTheme from "../hooks/useTheme";
+
+const DemoTitle = styled(Typography)`
+  text-align: center;
+`;
+
+const Fab = styled(MuiFab)`
+  position: fixed;
+  right: ${(props) => props.theme.spacing(8)};
+  bottom: ${(props) => props.theme.spacing(8)};
+  z-index: 1;
+`;
+
+const Wrapper = styled.div`
+  width: 258px;
+  overflow-x: hidden;
+`;
 
 const DemoButton = styled.div`
   cursor: pointer;
@@ -69,22 +84,6 @@ const DemoButtonInner = styled.div`
     css`
       background: linear-gradient(-45deg, ${indigo[500]} 50%, ${grey[100]} 0);
     `}
-`;
-
-const DemoTitle = styled(Typography)`
-  text-align: center;
-`;
-
-const Fab = styled(MuiFab)`
-  position: fixed;
-  right: ${(props) => props.theme.spacing(8)};
-  bottom: ${(props) => props.theme.spacing(8)};
-  z-index: 1;
-`;
-
-const Wrapper = styled.div`
-  width: 258px;
-  overflow-x: hidden;
 `;
 
 function Demo({ title, themeVariant }) {

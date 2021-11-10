@@ -11,7 +11,7 @@ import GlobalStyle from "../components/GlobalStyle";
 import NavbarSimple from "../components/navbar/NavbarSimple";
 import docItems from "../components/sidebar/docItems";
 import Sidebar from "../components/sidebar/Sidebar";
-import Settings from "../components/Settings";
+import SettingsCom from "../components/SettingsCom";
 
 const drawerWidth = 258;
 
@@ -89,7 +89,7 @@ const Doc = ({ children }) => {
           <Outlet />
         </MainContent>
       </AppContent>
-      <Settings />
+      <SettingsCom />
     </Root>
   );
 };

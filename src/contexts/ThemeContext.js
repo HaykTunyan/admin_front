@@ -1,6 +1,6 @@
 import React from "react";
 
-import { THEMES } from "../constants";
+import { THEMES } from "../config/constants";
 
 const initialState = {
   theme: THEMES.DEFAULT,

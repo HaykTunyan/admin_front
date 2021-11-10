@@ -10,12 +10,12 @@ import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 import StylesProvider from "@material-ui/styles/StylesProvider";
 import jssPreset from "@material-ui/styles/jssPreset";
-import "./i18n";
-import createTheme from "./theme";
-import routes from "./routes";
-import useTheme from "./hooks/useTheme";
-import { store } from "./redux/store";
-import { AuthProvider } from "./contexts/JWTContext";
+import "../translations/i18n";
+import createTheme from "../theme";
+import routes from "../routers/routes";
+import useTheme from "../hooks/useTheme";
+import { store } from "../redux/store";
+import { AuthProvider } from "../contexts/JWTContext";
 
 const jss = create({
   ...jssPreset(),
