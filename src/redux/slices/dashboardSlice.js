@@ -9,6 +9,315 @@ const initialState = {
       change: false,
     },
   ],
+  totalUsers: [
+    {
+      id: 1,
+      name: "All Users",
+      value: "32 000 000",
+    },
+    {
+      id: 2,
+      name: "Verifed Users",
+      value: "26 000 000",
+    },
+    {
+      id: 3,
+      name: "Unverifed Users",
+      value: "6 000 000",
+    },
+  ],
+  rowUserList: [
+    {
+      id: 1,
+      name: "User Name",
+      sure_name: "User Sure Name",
+      email: "emailuser@gmail.com",
+    },
+    {
+      id: 2,
+      name: "User Name",
+      sure_name: "User Sure Name",
+      email: "emailuser@gmail.com",
+    },
+    {
+      id: 3,
+      name: "User Name",
+      sure_name: "User Sure Name",
+      email: "emailuser@gmail.com",
+    },
+    {
+      id: 4,
+      name: "User Name",
+      sure_name: "User Sure Name",
+      email: "emailuser@gmail.com",
+    },
+    {
+      id: 5,
+      name: "User Name",
+      sure_name: "User Sure Name",
+      email: "emailuser@gmail.com",
+    },
+    {
+      id: 6,
+      name: "User Name",
+      sure_name: "User Sure Name",
+      email: "emailuser@gmail.com",
+    },
+    {
+      id: 7,
+      name: "User Name",
+      sure_name: "User Sure Name",
+      email: "emailuser@gmail.com",
+    },
+  ],
+  rowBalance: [
+    {
+      id: 1,
+      name: "Coin",
+      balance_bit: "1 000",
+      balance_coin: "12 000",
+    },
+    {
+      id: 2,
+      name: "BTC",
+      balance_bit: "3 300",
+      balance_coin: "45 000",
+    },
+  ],
+  rowReceive: [
+    {
+      id: 1,
+      name: "User Number One",
+      receive_bit: "100",
+      receive_coin: "13000",
+      receive_send: "200",
+    },
+    {
+      id: 2,
+      name: "User Number Two",
+      receive_bit: "100",
+      receive_coin: "13000",
+      receive_send: "200",
+    },
+    {
+      id: 3,
+      name: "User Number Three",
+      receive_bit: "100",
+      receive_coin: "13000",
+      receive_send: "200",
+    },
+    {
+      id: 4,
+      name: "User Number Four",
+      receive_bit: "100",
+      receive_coin: "13000",
+      receive_send: "200",
+    },
+    {
+      id: 5,
+      name: "User Number Five",
+      receive_bit: "100",
+      receive_coin: "13000",
+      receive_send: "200",
+    },
+    {
+      id: 6,
+      name: "User Number Six",
+      receive_bit: "100",
+      receive_coin: "13000",
+      receive_send: "200",
+    },
+    {
+      id: 7,
+      name: "User Number Seven",
+      receive_bit: "100",
+      receive_coin: "13000",
+      receive_send: "200",
+    },
+  ],
+  rowSend: [
+    {
+      id: 1,
+      name: "User Number One",
+      balance_coin: "13000",
+    },
+    {
+      id: 2,
+      name: "User Number Two",
+      balance_coin: "12000",
+    },
+    {
+      id: 3,
+      name: "User Number Three",
+      balance_coin: "14000",
+    },
+    {
+      id: 4,
+      name: "User Number Four",
+      balance_coin: "15000",
+    },
+    {
+      id: 5,
+      name: "User Number Five",
+      balance_coin: "16000",
+    },
+    {
+      id: 6,
+      name: "User Number Six",
+      balance_coin: "16000",
+    },
+    {
+      id: 7,
+      name: "User Number Seven",
+      balance_coin: "16000",
+    },
+  ],
+  rowExchange: [
+    {
+      id: 1,
+      name: "User Number One",
+      receive_bit: "12",
+      receive_coin: "12000",
+    },
+    {
+      id: 2,
+      name: "User Number Two",
+      receive_bit: "140",
+      receive_coin: "14000",
+    },
+    {
+      id: 3,
+      name: "User Number Three",
+      receive_bit: "150",
+      receive_coin: "15000",
+    },
+    {
+      id: 4,
+      name: "User Number Four",
+      receive_bit: "160",
+      receive_coin: "16000",
+    },
+    {
+      id: 5,
+      name: "User Number Five",
+      receive_bit: "170",
+      receive_coin: "17000",
+    },
+    {
+      id: 6,
+      name: "User Number Six",
+      receive_bit: "130",
+      receive_coin: "13000",
+    },
+    {
+      id: 7,
+      name: "User Number Seven",
+      receive_bit: "120",
+      receive_coin: "12000",
+    },
+  ],
+  rowLocked: [
+    {
+      id: 0,
+      coin_name: "BIT",
+      coin: "20",
+      bonus: "220 ",
+      status: "completed",
+      amount_day: "11/11/2021",
+    },
+    {
+      id: 1,
+      coin_name: "BIT",
+      coin: "10",
+      bonus: "120",
+      status: "completed",
+      amount_day: "11/11/2021",
+    },
+    {
+      id: 2,
+      coin_name: "BIT",
+      coin: "30",
+      bonus: "320",
+      status: "active",
+      amount_day: "11/11/2021",
+    },
+    {
+      id: 3,
+      coin_name: "BIT",
+      coin: "30",
+      bonus: "320",
+      status: "active",
+      amount_day: "11/11/2021",
+    },
+    {
+      id: 4,
+      coin_name: "BIT",
+      coin: "20",
+      bonus: "220",
+      status: "completed",
+      amount_day: "11/11/2021",
+    },
+    {
+      id: 5,
+      coin_name: "BIT",
+      coin: "40",
+      bonus: "420",
+      status: "completed",
+      amount_day: "11/11/2021",
+    },
+    {
+      id: 6,
+      coin_name: "BIT",
+      coin: "50",
+      bonus: "520",
+      status: "active",
+      amount_day: "11/11/2021",
+    },
+  ],
+  rowFlexible: [
+    {
+      id: 1,
+      coin_name: "BIT",
+      min_amount: "1 month",
+      coin: "10",
+      status: "active",
+    },
+    {
+      id: 2,
+      coin_name: "BIT",
+      min_amount: "5 month",
+      coin: "50",
+      status: "completed",
+    },
+    {
+      id: 3,
+      coin_name: "BIT",
+      min_amount: "2 month",
+      coin: "20",
+      status: "active",
+    },
+    {
+      id: 4,
+      coin_name: "BIT",
+      min_amount: "1 month",
+      coin: "10",
+      status: "completed",
+    },
+    {
+      id: 5,
+      coin_name: "BIT",
+      min_amount: "2 month",
+      coin: "20",
+      status: "active",
+    },
+    {
+      id: 6,
+      coin_name: "BIT",
+      min_amount: "4 month",
+      coin: "40",
+      status: "completed",
+    },
+  ],
 };
 
 export const dashboardSlice = createSlice({
@@ -245,6 +554,71 @@ export const dashboardSlice = createSlice({
         walletAddresses: [],
       },
     ],
+    rowReceive: [
+      {
+        id: 1,
+        name: "User Number One",
+        receive_bit: "100",
+        receive_coin: "13000",
+        balance_send: "200",
+      },
+      {
+        id: 2,
+        name: "User Number Two",
+        receive_bit: "100",
+        receive_coin: "13000",
+        balance_send: "200",
+      },
+      {
+        id: 3,
+        name: "User Number Three",
+        receive_bit: "100",
+        receive_coin: "13000",
+        balance_send: "200",
+      },
+      {
+        id: 4,
+        name: "User Number Four",
+        receive_bit: "100",
+        receive_coin: "13000",
+        balance_send: "200",
+      },
+      {
+        id: 5,
+        name: "User Number Five",
+        receive_bit: "100",
+        receive_coin: "13000",
+        balance_send: "200",
+      },
+      {
+        id: 6,
+        name: "User Number Six",
+        receive_bit: "100",
+        receive_coin: "13000",
+        balance_send: "200",
+      },
+      {
+        id: 7,
+        name: "User Number Seven",
+        receive_bit: "100",
+        receive_coin: "13000",
+        balance_send: "200",
+      },
+    ],
+    rowBalance: [
+      {
+        id: 1,
+        name: "Coin",
+        balance_bit: "1 000",
+        balance_coin: "12 000",
+      },
+      {
+        id: 2,
+        name: "BTC",
+        balance_bit: "3 300",
+        balance_coin: "45 000",
+      },
+    ],
   },
 });
 
@@ -252,4 +626,4 @@ export const { reducers } = dashboardSlice;
 
 export default dashboardSlice;
 
-// it is true version for redux.
+// That is right version for redux toolkit.

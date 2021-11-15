@@ -13,13 +13,12 @@ import {
   Tab,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-import DateRange from "../components/DateRange";
+import DateRange from "../components/date-picker/DateRange";
 import DoughnutChart from "../components/charts/DoughnutChart";
 import Stats from "../components/Stats";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
-import { useTranslation } from "react-i18next";
 
 const Divider = styled(MuiDivider)(spacing);
 const Typography = styled(MuiTypography)(spacing);

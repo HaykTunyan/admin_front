@@ -1,49 +1,32 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
-  Paper,
   TextField,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   FormControl,
   DialogTitle,
   InputLabel,
   MenuItem,
   Box,
-  Divider,
-  IconButton,
-  FormControlLabel,
   Select,
-  Checkbox,
 } from "@material-ui/core";
-import { CloudUpload } from "@material-ui/icons";
-import ImageUploading from "react-images-uploading";
-import { UserPlus, Edit2 } from "react-feather";
 
 const AddNotificationModal = () => {
   const [open, setOpen] = useState(false);
-  const [images, setImages] = useState([]);
   const [send, setSend] = useState("");
 
   const handleChange = (event) => {
     setSend(event.target.value);
   };
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  const maxNumber = 69;
+
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const onChange = (imageList, addUpdateIndex) => {
-    // data for submit
-    console.log(imageList, addUpdateIndex);
-    setImages(imageList);
   };
 
   return (
@@ -95,8 +78,12 @@ const AddNotificationModal = () => {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Create Notification</Button>
+          <Button onClick={handleClose} sx={{ width: "120px" }}>
+            Cancel
+          </Button>
+          <Button onClick={handleClose} sx={{ width: "120px" }}>
+            Create Notification
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

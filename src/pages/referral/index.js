@@ -5,7 +5,6 @@ import { Search as SearchIcon } from "react-feather";
 import { darken } from "polished";
 import { useTranslation } from "react-i18next";
 import {
-  Box,
   Grid,
   Typography as MuiTypography,
   Divider as MuiDivider,

@@ -1,13 +1,11 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   TextField,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
-  Box,
   Divider,
   Typography,
   FormControl,
@@ -19,11 +17,7 @@ import {
 
 const AddSwapModal = () => {
   const [open, setOpen] = useState(false);
-  const [images, setImages] = useState([]);
-  const maxNumber = 69;
-
   const [curency, setCurency] = useState("");
-
   const [curencySecound, setCurencySecound] = useState("");
 
   const handleSecoundCurency = (event) => {
@@ -40,12 +34,6 @@ const AddSwapModal = () => {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const onChange = (imageList, addUpdateIndex) => {
-    // data for submit
-    console.log(imageList, addUpdateIndex);
-    setImages(imageList);
   };
 
   return (
@@ -176,10 +164,18 @@ const AddSwapModal = () => {
         </DialogContent>
         <Divider my={2} />
         <DialogActions>
-          <Button variant="outlined" onClick={handleClose}>
+          <Button
+            variant="outlined"
+            onClick={handleClose}
+            sx={{ width: "120px" }}
+          >
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleClose}>
+          <Button
+            variant="contained"
+            onClick={handleClose}
+            sx={{ width: "120px" }}
+          >
             Create Swap
           </Button>
         </DialogActions>

@@ -77,7 +77,7 @@ const UserView = () => {
 
   return (
     <Fragment>
-      <Helmet title="Formik" />
+      <Helmet title="User Info" />
       <Grid flex justifyContent="space-between" container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">

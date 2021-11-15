@@ -51,4 +51,5 @@ export const userSlice = createSlice({
     // Extra reducer comes here
   },
 });
+
 export const userSelector = (state) => state.userData;

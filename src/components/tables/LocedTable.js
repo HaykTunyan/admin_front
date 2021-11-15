@@ -8,7 +8,6 @@ import {
   Card as MuiCard,
   CardHeader,
   InputBase,
-  IconButton as MuiIconButton,
   Paper as MuiPaper,
   Table,
   TableBody,

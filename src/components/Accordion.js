@@ -1,14 +1,11 @@
 import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
-import { NavLink } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import {
   CardContent,
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Grid,
-  Link,
   Breadcrumbs as MuiBreadcrumbs,
   Card as MuiCard,
   Divider as MuiDivider,
@@ -32,7 +29,6 @@ const Accordions = () => {
   return (
     <Fragment>
       <Divider my={6} />
-
       <Grid container spacing={6}>
         <Grid item xs={12} md={6}>
           <Card mb={6}>

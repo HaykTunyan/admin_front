@@ -21,7 +21,6 @@ import {
 } from "@material-ui/core";
 import {
   Archive as ArchiveIcon,
-  FilterList as FilterListIcon,
   RemoveRedEye as RemoveRedEyeIcon,
 } from "@material-ui/icons";
 import { spacing } from "@material-ui/system";

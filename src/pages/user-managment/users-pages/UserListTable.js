@@ -3,7 +3,7 @@ import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getUserList_req } from "../../../redux/actions/users";
 import { spacing } from "@material-ui/system";
 import {
@@ -18,11 +18,14 @@ import {
   IconButton,
   Typography as MuiTypography,
   TablePagination,
+  Breadcrumbs,
 } from "@material-ui/core";
 import CSVButton from "../../../components/CSVButton";
 
+// Spacing.
 const Typography = styled(MuiTypography)(spacing);
 
+// Custom Style.
 const useStyles = makeStyles({
   rootTable: {
     margin: "10px",
@@ -57,6 +60,16 @@ const UsersListTable = ({ rowUserList }) => {
     dispatch(getUserList_req());
   }, []);
 
+  // useEffect(() => {
+  //   // POST request using axios inside useEffect React hook
+  //   const article = { title: "React Hooks POST Request Example" };
+  //   axios
+  //     .post("https://reqres.in/api/articles", article)
+  //     .then((response) => setArticleId(response.data.id));
+
+  //   // empty dependency array means this effect will only run once (like componentDidMount in classes)
+  // }, []);
+
   return (
     <Fragment>
       <Paper>
@@ -68,17 +81,41 @@ const UsersListTable = ({ rowUserList }) => {
           >
             <TableHead>
               <TableRow>
-                <TableCell>Account Number</TableCell>
+                <TableCell>Number</TableCell>
                 <TableCell align="center">Email</TableCell>
                 <TableCell align="center">Phone</TableCell>
                 <TableCell align="center">Balance</TableCell>
-                <TableCell align="center">Flexible Saving</TableCell>
-                <TableCell align="center">Locked Saving</TableCell>
-                <TableCell align="center">Total Profile</TableCell>
+                <TableCell align="center">
+                  Flexible
+                  <Breadcrumbs
+                    aria-label="breadcrumb"
+                    display="flex"
+                    justifyContent="space-around"
+                    align="center"
+                  >
+                    <Typography color="text.primary">active</Typography>
+                    <Typography color="text.primary">finish</Typography>
+                  </Breadcrumbs>
+                </TableCell>
+                <TableCell align="center">
+                  Locked
+                  <Breadcrumbs
+                    aria-label="breadcrumb"
+                    display="flex"
+                    justifyContent="space-around"
+                    align="center"
+                  >
+                    <Typography color="text.primary">active</Typography>
+                    <Typography color="text.primary">finish</Typography>
+                  </Breadcrumbs>
+                </TableCell>
+                <TableCell align="center">Receive</TableCell>
                 <TableCell align="center">Status KYC</TableCell>
                 <TableCell align="center">Date Register</TableCell>
                 <TableCell align="center">Geo Position</TableCell>
-                <TableCell align="center">View Position</TableCell>
+                <TableCell align="center">Send</TableCell>
+                <TableCell align="center">Referal</TableCell>
+                <TableCell align="right">View</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -95,13 +132,45 @@ const UsersListTable = ({ rowUserList }) => {
                     <TableCell align="center">{row.email}</TableCell>
                     <TableCell align="center">{row.phone}</TableCell>
                     <TableCell align="center">{row.balance}</TableCell>
-                    <TableCell align="center">{row.flexible_saving}</TableCell>
-                    <TableCell align="center">{row.locked_saving}</TableCell>
-                    <TableCell align="center">{row.total_profile}</TableCell>
+                    <TableCell align="center">
+                      <Breadcrumbs
+                        aria-label="breadcrumb"
+                        display="flex"
+                        justifyContent="space-around"
+                        align="center"
+                      >
+                        <Typography color="text.primary">
+                          {row.active_flexible}
+                        </Typography>
+                        <Typography color="text.primary">
+                          {row.completed_flexible}
+                        </Typography>
+                      </Breadcrumbs>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Breadcrumbs
+                        aria-label="breadcrumb"
+                        display="flex"
+                        justifyContent="space-around"
+                        align="center"
+                      >
+                        <Typography color="text.primary">
+                          {row.active_saving}
+                        </Typography>
+                        <Typography color="text.primary">
+                          {row.completed_saving}
+                        </Typography>
+                      </Breadcrumbs>
+                    </TableCell>
+                    <TableCell align="center">{row.receive}</TableCell>
                     <TableCell align="center">{row.status_kyc}</TableCell>
                     <TableCell align="center">{row.date_register}</TableCell>
                     <TableCell align="center">{row.geo_positon}</TableCell>
-                    <TableCell padding="none" align="center">
+                    <TableCell align="center">
+                      {row.send} <span>&#36;</span>{" "}
+                    </TableCell>
+                    <TableCell align="center">{row.referal}</TableCell>
+                    <TableCell padding="none" align="right">
                       <Box mr={2}>
                         <IconButton
                           aria-label="details"

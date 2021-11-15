@@ -2,7 +2,6 @@ import React from "react";
 import styled, { withTheme } from "styled-components/macro";
 import { MoreVertical } from "react-feather";
 import { VectorMap } from "react-jvectormap";
-
 import {
   Card as MuiCard,
   CardContent as MuiCardContent,
@@ -10,14 +9,15 @@ import {
   IconButton,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-
 import "../vendor/jvectormap.css";
 
+// Spacing.
+const Card = styled(MuiCard)(spacing);
+
+// Custome Style.
 const MapContainer = styled.div`
   height: 344px;
 `;
-
-const Card = styled(MuiCard)(spacing);
 
 const CardContent = styled(MuiCardContent)`
   &:last-child {
@@ -26,7 +26,7 @@ const CardContent = styled(MuiCardContent)`
   }
 `;
 
-function WorldMap(props) {
+const WorldMap = (props) => {
   const options = {
     map: "world_mill",
     regionStyle: {
@@ -115,6 +115,6 @@ function WorldMap(props) {
       </CardContent>
     </Card>
   );
-}
+};
 
 export default withTheme(WorldMap);

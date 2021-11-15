@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Typography,
-  Box,
-  IconButton as MuiIconButton,
-  TablePagination,
-} from "@material-ui/core";
+import { Typography, Box } from "@material-ui/core";
 import DashboardTable from "../../../components/tables/LocedTable";
 import CSVButton from "../../../components/CSVButton";
 import { useSelector } from "react-redux";

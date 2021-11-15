@@ -14,42 +14,10 @@ import {
   TablePagination,
 } from "@material-ui/core";
 
+// Spacing.
 const Toolbar = styled(MuiToolbar)(spacing);
 
-export const rows = [
-  {
-    id: "01",
-    brand_name: "Dell XPS Desktop 8940",
-    percent: "40",
-    quantity: "4000",
-  },
-  {
-    id: "02",
-    brand_name: "Alienware Aurora R11",
-    percent: "5",
-    quantity: "500",
-  },
-  {
-    id: "03",
-    brand_name: "Apple iMac",
-    percent: "15",
-    quantity: "1500",
-  },
-  {
-    id: "04",
-    brand_name: "Apple Mac Mini M1",
-    percent: "10",
-    quantity: "1000",
-  },
-  {
-    id: "05",
-    brand_name: "Acer Aspire TC",
-    percent: "30",
-    quantity: "3000",
-  },
-];
-
-const DesktopCall = () => {
+const DesktopCall = ({ desktopData }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -79,7 +47,7 @@ const DesktopCall = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {desktopData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow
@@ -102,7 +70,7 @@ const DesktopCall = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 20]}
           component="div"
-          count={rows.length}
+          count={desktopData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

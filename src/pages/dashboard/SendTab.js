@@ -59,13 +59,13 @@ const SendTab = ({ rowSend }) => {
                   </TableCell>
                   <TableCell align="center">{row.name}</TableCell>
                   <TableCell align="right">
-                    {row.balance_coin} <span>&#36;</span>{" "}
+                    {row.balance_coin}
+                    <span> &#36;</span>
                   </TableCell>
                 </TableRow>
               ))}
           </TableBody>
         </Table>
-        {/* Pagination */}
         <TablePagination
           rowsPerPageOptions={[5, 10, 20]}
           component="div"

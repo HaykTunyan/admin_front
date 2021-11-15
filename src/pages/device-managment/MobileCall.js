@@ -14,6 +14,7 @@ import {
   TablePagination,
 } from "@material-ui/core";
 
+// Spacing.
 const Toolbar = styled(MuiToolbar)(spacing);
 
 export const rows = [
@@ -49,7 +50,7 @@ export const rows = [
   },
 ];
 
-const MobileCall = () => {
+const MobileCall = ({ mobileDate }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -79,7 +80,7 @@ const MobileCall = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {mobileDate
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow
@@ -102,7 +103,7 @@ const MobileCall = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 20]}
           component="div"
-          count={rows.length}
+          count={mobileDate.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

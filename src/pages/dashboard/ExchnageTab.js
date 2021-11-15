@@ -70,7 +70,6 @@ const ExchnageTab = ({ rowExchange }) => {
               ))}
           </TableBody>
         </Table>
-        {/* Pagination */}
         <TablePagination
           rowsPerPageOptions={[5, 10, 20]}
           component="div"

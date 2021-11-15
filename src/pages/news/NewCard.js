@@ -9,8 +9,6 @@ import {
   CardMedia as MuiCardMedia,
   Typography as MuiTypography,
 } from "@material-ui/core";
-import { Search as SearchIcon, Trash } from "react-feather";
-
 import EditNewsModal from "../../modal/EditNewsModal";
 
 // Spacing.

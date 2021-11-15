@@ -11,6 +11,7 @@ import {
 } from "@material-ui/core";
 import useAuth from "../../hooks/useAuth";
 
+// Custom Style.
 const IconButton = styled(MuiIconButton)`
   svg {
     width: 22px;

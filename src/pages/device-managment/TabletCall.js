@@ -49,7 +49,7 @@ export const rows = [
   },
 ];
 
-const TabletCell = () => {
+const TabletCell = ({ tabletData }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -79,7 +79,7 @@ const TabletCell = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {tabletData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow
@@ -102,7 +102,7 @@ const TabletCell = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 20]}
           component="div"
-          count={rows.length}
+          count={tabletData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

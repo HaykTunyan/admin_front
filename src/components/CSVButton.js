@@ -1,9 +1,10 @@
 import React from "react";
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 import { Download } from "react-feather";
 import { IconButton as MuiIconButton } from "@material-ui/core";
-import styled, { withTheme } from "styled-components/macro";
+import styled from "styled-components/macro";
 
+// Custom Style.
 const IconButton = styled(MuiIconButton)`
   svg {
     width: 22px;

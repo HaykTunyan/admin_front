@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import {
   Button,
-  TextField,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Box,
   Divider,
   List,
   ListItem,
@@ -69,7 +67,9 @@ const ReferralUserModal = () => {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
+          <Button onClick={handleClose} sx={{ width: "120px" }}>
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
     </>

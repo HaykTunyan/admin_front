@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import FlexibleTable from "../../../components/tables/FlexibleTable";
 import CSVButton from "../../../components/CSVButton";
-import { Typography, Box, Radio } from "@material-ui/core";
+import { Typography, Box } from "@material-ui/core";
 import { useSelector } from "react-redux";
 
 // Moke Data.

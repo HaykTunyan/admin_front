@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Paper,
@@ -6,21 +6,17 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   FormControl,
   DialogTitle,
   InputLabel,
   MenuItem,
   Box,
-  Divider,
   IconButton,
   FormControlLabel,
   Select,
   Checkbox,
 } from "@material-ui/core";
-import { CloudUpload } from "@material-ui/icons";
-import ImageUploading from "react-images-uploading";
-import { UserPlus, Edit2 } from "react-feather";
+import { UserPlus } from "react-feather";
 
 const AddUserModal = () => {
   const [open, setOpen] = useState(false);
@@ -31,19 +27,12 @@ const AddUserModal = () => {
     setVerify(event.target.value);
   };
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  const maxNumber = 69;
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const onChange = (imageList, addUpdateIndex) => {
-    // data for submit
-    console.log(imageList, addUpdateIndex);
-    setImages(imageList);
   };
 
   return (
@@ -130,8 +119,12 @@ const AddUserModal = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Create User</Button>
+          <Button onClick={handleClose} sx={{ width: "120px" }}>
+            Cancel
+          </Button>
+          <Button onClick={handleClose} sx={{ width: "120px" }}>
+            Create User
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

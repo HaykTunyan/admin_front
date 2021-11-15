@@ -20,26 +20,18 @@ import { Edit2 } from "react-feather";
 
 const EditAdminModal = () => {
   const [open, setOpen] = useState(false);
-  const [images, setImages] = useState([]);
   const [verify, setVerify] = useState("");
 
   const handleChange = (event) => {
     setVerify(event.target.value);
   };
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  const maxNumber = 69;
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const onChange = (imageList, addUpdateIndex) => {
-    // data for submit
-    console.log(imageList, addUpdateIndex);
-    setImages(imageList);
   };
 
   return (
@@ -119,8 +111,12 @@ const EditAdminModal = () => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Save Admin</Button>
+          <Button onClick={handleClose} sx={{ width: "120px" }}>
+            Cancel
+          </Button>
+          <Button onClick={handleClose} sx={{ width: "120px" }}>
+            Save Admin
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

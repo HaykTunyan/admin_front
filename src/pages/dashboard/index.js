@@ -15,413 +15,44 @@ import {
   Select,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-import DateRange from "../../components/DateRange";
+import { useSelector } from "react-redux";
+import DateRange from "../../components/date-picker/DateRange";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
 import UsersTab from "./UsersTab";
-import CurrentTab from "./CurrentTab";
-import UserBalanceTab from "./UserBalanceTab";
+import CurrentTab from "./BalanceTab";
+import TotalUsers from "./TotalUsers";
 import ReceiveTab from "./ReceiveTab";
 import SendTab from "./SendTab";
 import ExchnageTab from "./ExchnageTab";
 import SavingTab from "./SavingTab";
+import { DollarSign, User } from "react-feather";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
 const Typography = styled(MuiTypography)(spacing);
 const Card = styled(MuiCard)(spacing);
 
-// Moke Data.
-export const item = [
-  {
-    key: 0,
-    title: "Actual",
-    percent: "100/30 ",
-    version: " new version ",
-  },
-  {
-    key: 1,
-    title: "Reacive",
-    percent: "100/10 ",
-    version: " new version ",
-  },
-  {
-    key: 2,
-    title: "Reacive",
-    percent: "100/40 ",
-    version: " new version ",
-  },
-  {
-    key: 3,
-    title: "Flex",
-    percent: "100/20 ",
-    version: " new version ",
-  },
-  {
-    key: 4,
-    title: "Savings",
-    percent: "100/10 ",
-    version: " new version ",
-  },
-  {
-    key: 5,
-    title: "Locked ",
-    percent: "100/50 ",
-    version: " first version ",
-  },
-];
-
-export const rowUsers = [
-  {
-    id: 1,
-    name: "User Number One",
-    balance_coin: "13000",
-  },
-  {
-    id: 2,
-    name: "User Number Two",
-    balance_coin: "12000",
-  },
-  {
-    id: 3,
-    name: "User Number Three",
-    balance_coin: "14000",
-  },
-  {
-    id: 4,
-    name: "User Number Four",
-    balance_coin: "15000",
-  },
-  {
-    id: 5,
-    name: "User Number Five",
-    balance_coin: "16000",
-  },
-  {
-    id: 6,
-    name: "User Number Six",
-    balance_coin: "16000",
-  },
-  {
-    id: 7,
-    name: "User Number Seven",
-    balance_coin: "16000",
-  },
-];
-
-export const rowCurrent = [
-  {
-    id: 1,
-    name: "User Number One",
-    balance_bit: "100",
-    balance_coin: "13000",
-  },
-  {
-    id: 2,
-    name: "User Number Two",
-    balance_bit: "330",
-    balance_coin: "12000",
-  },
-  {
-    id: 3,
-    name: "User Number Three",
-    balance_bit: "400",
-    balance_coin: "14000",
-  },
-  {
-    id: 4,
-    name: "User Number Four",
-    balance_bit: "200",
-    balance_coin: "15000",
-  },
-  {
-    id: 5,
-    name: "User Number Five",
-    balance_bit: "150",
-    balance_coin: "16000",
-  },
-  {
-    id: 6,
-    name: "User Number Six",
-    balance_bit: "530",
-    balance_coin: "16000",
-  },
-  {
-    id: 7,
-    name: "User Number Seven",
-    balance_bit: "320",
-    balance_coin: "16000",
-  },
-];
-
-export const rowReceive = [
-  {
-    id: 1,
-    name: "User Number One",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 2,
-    name: "User Number Two",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 3,
-    name: "User Number Three",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 4,
-    name: "User Number Four",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 5,
-    name: "User Number Five",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 6,
-    name: "User Number Six",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 7,
-    name: "User Number Seven",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-];
-
-export const rowSend = [
-  {
-    id: 1,
-    name: "User Number One",
-    balance_coin: "13000",
-  },
-  {
-    id: 2,
-    name: "User Number Two",
-    balance_coin: "12000",
-  },
-  {
-    id: 3,
-    name: "User Number Three",
-    balance_coin: "14000",
-  },
-  {
-    id: 4,
-    name: "User Number Four",
-    balance_coin: "15000",
-  },
-  {
-    id: 5,
-    name: "User Number Five",
-    balance_coin: "16000",
-  },
-  {
-    id: 6,
-    name: "User Number Six",
-    balance_coin: "16000",
-  },
-  {
-    id: 7,
-    name: "User Number Seven",
-    balance_coin: "16000",
-  },
-];
-
-export const rowUserList = [
-  {
-    id: 1,
-    name: "User Name",
-    sure_name: "User Sure Name",
-    email: "emailuser@gmail.com",
-  },
-  {
-    id: 2,
-    name: "User Name",
-    sure_name: "User Sure Name",
-    email: "emailuser@gmail.com",
-  },
-  {
-    id: 3,
-    name: "User Name",
-    sure_name: "User Sure Name",
-    email: "emailuser@gmail.com",
-  },
-  {
-    id: 4,
-    name: "User Name",
-    sure_name: "User Sure Name",
-    email: "emailuser@gmail.com",
-  },
-  {
-    id: 5,
-    name: "User Name",
-    sure_name: "User Sure Name",
-    email: "emailuser@gmail.com",
-  },
-  {
-    id: 6,
-    name: "User Name",
-    sure_name: "User Sure Name",
-    email: "emailuser@gmail.com",
-  },
-  {
-    id: 7,
-    name: "User Name",
-    sure_name: "User Sure Name",
-    email: "emailuser@gmail.com",
-  },
-];
-
-export const rowExchange = [
-  {
-    id: 1,
-    name: "User Number One",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 2,
-    name: "User Number Two",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 3,
-    name: "User Number Three",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 4,
-    name: "User Number Four",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 5,
-    name: "User Number Five",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 6,
-    name: "User Number Six",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-  {
-    id: 7,
-    name: "User Number Seven",
-    receive_bit: "100",
-    receive_coin: "13000",
-  },
-];
-
-export const rowLocked = [
-  {
-    id: 0,
-    coin_name: "BIT",
-    status: "active",
-    bonus: "120 ",
-  },
-  {
-    id: 1,
-    coin_name: "BIT",
-    status: "active",
-    bonus: "120 ",
-  },
-  {
-    id: 2,
-    coin_name: "BIT",
-    status: "active",
-    bonus: "120 ",
-  },
-  {
-    id: 3,
-    coin_name: "BIT",
-    status: "active",
-    bonus: "120 ",
-  },
-  {
-    id: 4,
-    coin_name: "BIT",
-    status: "active",
-    bonus: "120 ",
-  },
-  {
-    id: 5,
-    coin_name: "BIT",
-    status: "active",
-    bonus: "120 ",
-  },
-  {
-    id: 6,
-    coin_name: "BIT",
-    status: "active",
-    bonus: "120 ",
-  },
-];
-
-export const rowFlexible = [
-  {
-    id: 1,
-    coin_name: "BIT",
-    min_amount: "4 month",
-    status: "active",
-  },
-  {
-    id: 2,
-    coin_name: "BIT",
-    min_amount: "4 month",
-    status: "active",
-  },
-  {
-    id: 3,
-    coin_name: "BIT",
-    min_amount: "4 month",
-    status: "active",
-  },
-  {
-    id: 4,
-    coin_name: "BIT",
-    min_amount: "4 month",
-    status: "active",
-  },
-  {
-    id: 5,
-    coin_name: "BIT",
-    min_amount: "4 month",
-    status: "active",
-  },
-  {
-    id: 6,
-    coin_name: "BIT",
-    min_amount: "4 month",
-    status: "active",
-  },
-];
-
 const DashboardPage = () => {
   // Hooks
   const [panel, setPanel] = useState("1");
   const [users, getUsers] = useState("all");
-  const [usersCoin, setUsersCoin] = useState("320 000");
-  const [current, setCurrent] = useState("9 150 000");
   const [recevie, setRecevie] = useState("100 000");
   const [send, setSend] = useState("160 000");
   const [change, setChange] = useState("40 000");
   const [saving, setSaving] = useState("250 000");
+
+  const totlalDashboard = useSelector((state) => state.dashboard);
+
+  const rowUserList = totlalDashboard.rowUserList;
+  const rowReceive = totlalDashboard.rowReceive;
+  const rowUsers = totlalDashboard.totalUsers;
+  const rowBalance = totlalDashboard.rowBalance;
+  const rowSend = totlalDashboard.rowSend;
+  const rowExchange = totlalDashboard.rowExchange;
+  const rowLocked = totlalDashboard.rowLocked;
+  const rowFlexible = totlalDashboard.rowFlexible;
 
   const ChangeSend = (event) => {
     setSend(event.target.value);
@@ -435,20 +66,8 @@ const DashboardPage = () => {
     setSaving(event.target.value);
   };
 
-  const ChangeRecevie = (event) => {
-    setRecevie(event.target.value);
-  };
-
   const ChangeUsersStatus = (event) => {
     getUsers(event.target.value);
-  };
-
-  const ChangeUsersCoin = (event) => {
-    setUsersCoin(event.target.value);
-  };
-
-  const ChangeCurrentBalance = (event) => {
-    setCurrent(event.target.value);
   };
 
   const handleChange = (event, newPanel) => {
@@ -466,7 +85,6 @@ const DashboardPage = () => {
         </Grid>
       </Grid>
       <Divider my={6} />
-
       <Grid container justifyContent="space-between">
         <Card mb={6}>
           <CardContent flex>
@@ -474,9 +92,7 @@ const DashboardPage = () => {
           </CardContent>
         </Card>
       </Grid>
-
       <Divider my={6} />
-
       <Grid xs={12}>
         <Grid item>
           <Box sx={{ width: "100%" }}>
@@ -506,7 +122,6 @@ const DashboardPage = () => {
                             <MenuItem value="unverifyed">unverified </MenuItem>
                           </Select>
                         </FormControl>
-
                         <Divider my={2} />
                         <Typography fontWeight="bold" children="All Users" />
                       </Box>
@@ -518,33 +133,10 @@ const DashboardPage = () => {
                   <Tab
                     label={
                       <Box flex width="100%">
-                        <FormControl fullWidth>
-                          <InputLabel id="users-coin-label">
-                            Users Coin
-                          </InputLabel>
-                          <Select
-                            labelId="users-coin-label"
-                            id="users-coin"
-                            value={usersCoin}
-                            label="Users Coin"
-                            onChange={ChangeUsersCoin}
-                            defaultValue="320 000"
-                          >
-                            <MenuItem value="320 000">
-                              320 000
-                              <span>&#36;</span>
-                            </MenuItem>
-                            <MenuItem value="260 000">
-                              260 000
-                              <span> &#8364;</span>
-                            </MenuItem>
-                            <MenuItem value="1000">
-                              1000
-                              <span> &#x20BF;</span>
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
-
+                        <Box display="flex" justifyContent="space-around">
+                          <Typography fontWeight="bold">32 000 000</Typography>
+                          <User size={22} />
+                        </Box>
                         <Divider my={2} />
                         <Typography fontWeight="bold" children="Total Users" />
                       </Box>
@@ -556,31 +148,10 @@ const DashboardPage = () => {
                   <Tab
                     label={
                       <Box flex width="100%">
-                        <FormControl fullWidth>
-                          <InputLabel id="current-balance-label">
-                            Balance
-                          </InputLabel>
-                          <Select
-                            labelId="current-balance-label"
-                            id="current-balance"
-                            value={current}
-                            label="Balance"
-                            onChange={ChangeCurrentBalance}
-                          >
-                            <MenuItem value="9 150 000">
-                              9 150 000
-                              <span>&#36;</span>
-                            </MenuItem>
-                            <MenuItem value="8 400 000">
-                              8 400 000
-                              <span> &#8364;</span>
-                            </MenuItem>
-                            <MenuItem value="6000">
-                              6000
-                              <span> &#x20BF;</span>
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
+                        <Box display="flex" justifyContent="space-around">
+                          <Typography fontWeight="bold">12 200 000</Typography>
+                          <DollarSign small={22} />
+                        </Box>
                         <Divider my={2} />
                         <Typography fontWeight="bold" children="Balance" />
                       </Box>
@@ -592,31 +163,10 @@ const DashboardPage = () => {
                   <Tab
                     label={
                       <Box flex width="100%">
-                        <FormControl fullWidth>
-                          <InputLabel id="recevie-coin-label">
-                            Receive
-                          </InputLabel>
-                          <Select
-                            labelId="receive-coin-label"
-                            id="receive-coin"
-                            value={recevie}
-                            label="Receive"
-                            onChange={ChangeRecevie}
-                          >
-                            <MenuItem value="100 000">
-                              100 000
-                              <span>&#36;</span>
-                            </MenuItem>
-                            <MenuItem value="200 000">
-                              200 000
-                              <span> &#8364;</span>
-                            </MenuItem>
-                            <MenuItem value="500">
-                              500
-                              <span> &#x20BF;</span>
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
+                        <Box display="flex" justifyContent="space-around">
+                          <Typography fontWeight="bold">9 150 000</Typography>
+                          <DollarSign small={22} />
+                        </Box>
 
                         <Divider my={2} />
                         <Typography fontWeight="bold" children="Receive" />
@@ -723,7 +273,6 @@ const DashboardPage = () => {
                             </MenuItem>
                           </Select>
                         </FormControl>
-
                         <Divider my={2} />
                         <Typography fontWeight="bold" children="Saving" />
                       </Box>
@@ -744,13 +293,13 @@ const DashboardPage = () => {
               {/* Panel Two */}
               <TabPanel value="2">
                 <Grid item xs={12}>
-                  <UserBalanceTab rowUsers={rowUsers} />
+                  <TotalUsers rowUsers={rowUsers} />
                 </Grid>
               </TabPanel>
               {/* Panel Three */}
               <TabPanel value="3">
                 <Grid item xs={12}>
-                  <CurrentTab rowCurrent={rowCurrent} />
+                  <CurrentTab rowBalance={rowBalance} />
                 </Grid>
               </TabPanel>
               {/* Panel Four */}

@@ -11,15 +11,15 @@ import {
   TableBody,
   Table,
   TablePagination,
+  Grid,
   InputBase,
   Toolbar,
-  Grid,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
+import CSVButton from "../../components/CSVButton";
 import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { darken } from "polished";
-import CSVButton from "../../components/CSVButton";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -70,7 +70,7 @@ const SearchIconWrapper = styled.div`
   }
 `;
 
-const ReceiveTab = ({ rowReceive }) => {
+const BalanceTab = ({ rowBalance }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const { t } = useTranslation();
@@ -103,31 +103,24 @@ const ReceiveTab = ({ rowReceive }) => {
               <TableCell>&#35;</TableCell>
               <TableCell align="center">
                 <Typography variant="h6" gutterBottom>
-                  Users Name
+                  Coin
                 </Typography>
               </TableCell>
               <TableCell align="center">
                 <Typography variant="h6" gutterBottom>
-                  Receive
+                  Balance
                   <span> &#x20BF;</span>
-                </Typography>
-              </TableCell>
-              <TableCell align="center">
-                <Typography variant="h6" gutterBottom>
-                  Receive
-                  <span> &#8364;</span>
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography variant="h6" gutterBottom>
-                  Receive
-                  <span>&#36;</span>
+                  Balance <span> &#36;</span>
                 </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rowReceive
+            {rowBalance
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow
@@ -141,16 +134,18 @@ const ReceiveTab = ({ rowReceive }) => {
                   <TableCell component="th" scope="row">
                     {row.id}
                   </TableCell>
-                  <TableCell align="center">{row.name}</TableCell>
                   <TableCell align="center">
-                    {row.receive_bit}
-                    <span> &#x20BF;</span>
+                    <Typography gutterBottom>{row.name}</Typography>
                   </TableCell>
+
                   <TableCell align="center">
-                    {row.receive_coin} <span>&#8364;</span>
+                    <Typography gutterBottom>
+                      {row.balance_bit}
+                      <span> &#x20BF;</span>
+                    </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    {row.receive_send} <span>&#36;</span>
+                    {row.balance_coin} <span>&#36;</span>{" "}
                   </TableCell>
                 </TableRow>
               ))}
@@ -159,7 +154,7 @@ const ReceiveTab = ({ rowReceive }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 20]}
           component="div"
-          count={rowReceive.length}
+          count={rowBalance.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -170,10 +165,10 @@ const ReceiveTab = ({ rowReceive }) => {
         <Typography variant="subtitle1" color="inherit" component="div">
           Export Data
         </Typography>
-        <CSVButton data={rowReceive} />
+        <CSVButton data={rowBalance} />
       </Box>
     </Fragment>
   );
 };
 
-export default ReceiveTab;
+export default BalanceTab;

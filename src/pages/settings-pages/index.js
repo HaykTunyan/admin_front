@@ -18,6 +18,7 @@ import TransactionsSettings from "./TransactionsSettings";
 import SavingsSetting from "./SavingsSettings/SavingsSetting";
 import SwapSettings from "./SwapSettings";
 
+// Spacing.
 const Divider = styled(MuiDivider)(spacing);
 
 const Settings = () => {

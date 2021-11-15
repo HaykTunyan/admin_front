@@ -1,6 +1,5 @@
 import * as React from "react";
 import styled from "styled-components/macro";
-
 import {
   Grid,
   Hidden,
@@ -35,7 +34,7 @@ const ListItemText = styled(MuiListItemText)`
   }
 `;
 
-function Footer() {
+const Footer = () => {
   return (
     <Wrapper>
       <Grid container spacing={0}>
@@ -54,6 +53,6 @@ function Footer() {
       </Grid>
     </Wrapper>
   );
-}
+};
 
 export default Footer;

@@ -10,11 +10,13 @@ import { userListSlice } from "./slices/userListSlice";
 import { settingsSlice } from "./slices/settingsSlice";
 import { referralSlice } from "./slices/referralSlice";
 import { messageSlice } from "./slices/messageSlice";
+import { deviceManagmentSlice } from "./slices/deviceManagmentSlice";
 
 export const store = configureStore({
   reducer: {
     user: userSlice.reducer,
     auth: authReducer,
+    deviceManagment: deviceManagmentSlice.reducer,
     // message: messageSlice,
     userData: userSlice.reducer,
     allUser: userListSlice.reducer,

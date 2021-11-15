@@ -6,9 +6,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
-  Box,
   Divider,
   Typography,
   FormControl,
@@ -23,8 +21,6 @@ import EditIcon from "@material-ui/icons/EditOutlined";
 const EditSwapModal = () => {
   const [open, setOpen] = useState(false);
   const [images, setImages] = useState([]);
-  const maxNumber = 69;
-
   const [curency, setCurency] = useState("");
 
   const [curencySecound, setCurencySecound] = useState("");
@@ -187,10 +183,18 @@ const EditSwapModal = () => {
         </DialogContent>
         <Divider my={2} />
         <DialogActions>
-          <Button variant="outlined" onClick={handleClose}>
+          <Button
+            variant="outlined"
+            onClick={handleClose}
+            sx={{ width: "120px" }}
+          >
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleClose}>
+          <Button
+            variant="contained"
+            onClick={handleClose}
+            sx={{ width: "120px" }}
+          >
             Save Swap
           </Button>
         </DialogActions>

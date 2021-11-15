@@ -1,11 +1,10 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import {
   Button,
   TextField,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Box,
   Divider,
@@ -143,8 +142,12 @@ const EditNewsModal = () => {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Save News</Button>
+          <Button onClick={handleClose} sx={{ width: "120px" }}>
+            Cancel
+          </Button>
+          <Button onClick={handleClose} sx={{ width: "120px" }}>
+            Save News
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

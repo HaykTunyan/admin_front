@@ -4,7 +4,6 @@ import { spacing } from "@material-ui/system";
 import { darken } from "polished";
 import { useTranslation } from "react-i18next";
 import {
-  Card as MuiCard,
   Box,
   Paper as MuiPaper,
   Table as MuiTable,
@@ -16,7 +15,6 @@ import {
   Typography,
   Grid,
   InputBase,
-  IconButton as MuiIconButton,
   TablePagination,
 } from "@material-ui/core";
 import { Search as SearchIcon } from "react-feather";
@@ -26,10 +24,12 @@ import EditSwapModal from "../../modal/EditSwapModal";
 import DeleteModal from "../../modal/DeleteModal";
 import { useSelector } from "react-redux";
 
+// Spacing.
 const Paper = styled(MuiPaper)(spacing);
 const Toolbar = styled(MuiToolbar)(spacing);
 const Table = styled(MuiTable)(spacing);
 
+// Custom Style.
 const TableWrapper = styled.div`
   overflow-y: auto;
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
@@ -86,7 +86,6 @@ const SwapSettings = () => {
   const description = "Delete Item in this list";
 
   const swapList = useSelector((state) => state.settings);
-
   const rows = swapList.swapSettingsRow;
 
   const [page, setPage] = useState(0);

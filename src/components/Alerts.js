@@ -37,9 +37,7 @@ function SimpleAlerts() {
           The alert offers four severity levels that set a distinctive icon and
           color.
         </Typography>
-
         <Spacer mb={4} />
-
         <Alert mb={4} severity="error">
           This is an error alert — check it out!
         </Alert>
@@ -67,9 +65,7 @@ function OutlinedAlerts() {
         <Typography variant="body2" gutterBottom>
           Two additional variants are available – outlined, and filled:
         </Typography>
-
         <Spacer mb={4} />
-
         <Alert mb={4} variant="outlined" severity="error">
           This is an error alert — check it out!
         </Alert>
@@ -97,9 +93,7 @@ function FilledAlerts() {
         <Typography variant="body2" gutterBottom>
           Two additional variants are available – outlined, and filled:
         </Typography>
-
         <Spacer mb={4} />
-
         <Alert mb={4} variant="filled" severity="error">
           This is an error alert — check it out!
         </Alert>
@@ -128,9 +122,7 @@ function AdvancedAlerts() {
           You can use the AlertTitle component to display a formatted title
           above the content.
         </Typography>
-
         <Spacer mb={4} />
-
         <Alert mb={4} severity="error">
           <AlertTitle>Error</AlertTitle>
           This is an error alert — <strong>check it out!</strong>
@@ -163,9 +155,7 @@ function ActionAlerts() {
           An alert can have an action, such as a close or undo button. It is
           rendered after the message, at the end of the alert.
         </Typography>
-
         <Spacer mb={4} />
-
         <Alert mb={4} onClose={() => {}}>
           This is a success alert — check it out!
         </Alert>
@@ -196,9 +186,7 @@ function TransitionAlerts() {
           You can use a transition component such as Collapse to transition the
           appearance of the alert.
         </Typography>
-
         <Spacer mb={4} />
-
         <Collapse in={open}>
           <Alert
             mb={4}
@@ -239,7 +227,6 @@ const Alerts = () => {
       <Typography variant="h3" gutterBottom display="inline">
         Alerts
       </Typography>
-
       <Breadcrumbs aria-label="Breadcrumb" mt={2}>
         <Link component={NavLink} to="/">
           Dashboard
@@ -249,9 +236,7 @@ const Alerts = () => {
         </Link>
         <Typography>Alerts</Typography>
       </Breadcrumbs>
-
       <Divider my={6} />
-
       <Grid container spacing={6}>
         <Grid item xs={12} md={6}>
           <SimpleAlerts />

@@ -45,11 +45,20 @@ const DeleteModal = ({ dialog, description }) => {
         </DialogContent>
         <Divider my={6} />
         <DialogActions>
-          <Grid width="100%" display="flex" justifyContent="space-between">
-            <Button variant="outlined" onClick={handleClose}>
+          <Grid width="100%" display="flex" justifyContent="space-around" p={3}>
+            <Button
+              variant="outlined"
+              onClick={handleClose}
+              sx={{ width: "120px" }}
+            >
               Cancel
             </Button>
-            <Button variant="contained" color="error" onClick={handleClose}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleClose}
+              sx={{ width: "120px" }}
+            >
               Delete Item
             </Button>
           </Grid>

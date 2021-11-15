@@ -1,8 +1,7 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-
 import {
   Collapse,
   Grid,
@@ -33,18 +32,13 @@ import {
 } from "@material-ui/icons";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const CardContent = styled(MuiCardContent)(spacing);
-
 const Divider = styled(MuiDivider)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
 const ListItemButton = styled(MuiListItemButton)(spacing);
-
 const Avatar = styled(MuiAvatar)(spacing);
-
 const ListItemText = styled(MuiListItemText)(spacing);
 
 function SimpleList() {
@@ -126,7 +120,7 @@ function CondensedList() {
 }
 
 function NestedList() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
 
   const handleClick = () => {
     setOpen(!open);

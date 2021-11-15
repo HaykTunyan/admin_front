@@ -14,7 +14,6 @@ import {
   TableHead,
   TableRow,
   InputBase,
-  IconButton as MuiIconButton,
   ToggleButton,
   ToggleButtonGroup,
   TablePagination,

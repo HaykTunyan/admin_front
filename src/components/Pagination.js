@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-
 import {
   Breadcrumbs as MuiBreadcrumbs,
   Card as MuiCard,
@@ -15,14 +14,11 @@ import {
 import { Pagination as MuiPagination } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const Spacer = styled.div(spacing);
-
 const Divider = styled(MuiDivider)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
 const Pagination = styled(MuiPagination)(spacing);
 
 function BasicPagination() {

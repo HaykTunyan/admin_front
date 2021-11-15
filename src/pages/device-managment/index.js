@@ -15,6 +15,7 @@ import Stats from "../../components/Stats";
 import MobileCall from "./MobileCall";
 import TabletCell from "./TabletCall";
 import DesktopCall from "./DesktopCall";
+import { useSelector } from "react-redux";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -32,6 +33,12 @@ const DeviceManagement = ({ theme }) => {
   const [tabOne, setOpenOne] = useState(false);
   const [tabThree, setOpenThree] = useState(false);
   const [tabTwo, setOpenTwo] = useState(false);
+
+  const totalDevice = useSelector((state) => state.deviceManagment);
+
+  const desktopData = totalDevice.desktopCall;
+  const tabletData = totalDevice.tableCall;
+  const mobileDate = totalDevice.mobileCall;
 
   const data = {
     labels: ["Mobile", "Desktop", "Mac", "Other"],
@@ -119,19 +126,19 @@ const DeviceManagement = ({ theme }) => {
       <Grid container spacing={6}>
         {tabOne && (
           <Grid item xs={12} md={12}>
-            <MobileCall />
+            <MobileCall mobileDate={mobileDate} />
           </Grid>
         )}
 
         {tabTwo && (
           <Grid item xs={12} md={12}>
-            <TabletCell />
+            <TabletCell tabletData={tabletData} />
           </Grid>
         )}
 
         {tabThree && (
           <Grid item xs={12} md={12}>
-            <DesktopCall />
+            <DesktopCall desktopData={desktopData} />
           </Grid>
         )}
 
