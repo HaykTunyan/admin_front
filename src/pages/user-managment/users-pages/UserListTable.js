@@ -22,6 +22,7 @@ import {
   Chip as MuiChip,
 } from "@material-ui/core";
 import CSVButton from "../../../components/CSVButton";
+import moment from "moment";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -83,7 +84,7 @@ const UsersListTable = ({ rowUserList }) => {
           >
             <TableHead>
               <TableRow>
-                <TableCell>Number</TableCell>
+                <TableCell>ID</TableCell>
                 <TableCell align="center">Email</TableCell>
                 <TableCell align="center">Phone</TableCell>
                 <TableCell align="center">Balance</TableCell>
@@ -116,7 +117,7 @@ const UsersListTable = ({ rowUserList }) => {
                 <TableCell align="center">Date Register</TableCell>
                 <TableCell align="center">Geo Position</TableCell>
                 <TableCell align="center">Send</TableCell>
-                <TableCell align="center">Referal</TableCell>
+                <TableCell align="center">Referral</TableCell>
                 <TableCell align="center">Currency</TableCell>
                 <TableCell align="right">View</TableCell>
               </TableRow>
@@ -127,11 +128,11 @@ const UsersListTable = ({ rowUserList }) => {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <TableRow
-                      key={row.key}
+                      key={row.id}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.number}
+                        {row.id}
                       </TableCell>
                       <TableCell align="center">{row.email}</TableCell>
                       <TableCell align="center">{row.phone}</TableCell>
@@ -147,7 +148,7 @@ const UsersListTable = ({ rowUserList }) => {
                             {row?.flexible?.active}
                           </Typography>
                           <Typography color="text.primary">
-                            {row?.flexible?.finish}
+                            {row?.flexible?.finished}
                           </Typography>
                         </Breadcrumbs>
                       </TableCell>
@@ -162,7 +163,7 @@ const UsersListTable = ({ rowUserList }) => {
                             {row?.locked?.active}
                           </Typography>
                           <Typography color="text.primary">
-                            {row?.locked?.finish}
+                            {row?.locked?.finished}
                           </Typography>
                         </Breadcrumbs>
                       </TableCell>
@@ -171,17 +172,20 @@ const UsersListTable = ({ rowUserList }) => {
                         {row.status === "true" ? (
                           <Chip label="Verified" color="success" />
                         ) : (
-                          <Chip label="UnVerified" color="error" />
+                          <Chip label="Unverified" color="error" />
                         )}
                       </TableCell>
                       <TableCell align="center">
-                        {row.registrationDate}
+                        {/* {row.registrationDate} */}
+                        {moment(row.registrationDate).format(
+                          "DD/MM/YYYY HH:mm "
+                        )}
                       </TableCell>
                       <TableCell align="center">{row.geoPosition}</TableCell>
                       <TableCell align="center">
                         {row.send} <span>&#36;</span>{" "}
                       </TableCell>
-                      <TableCell align="center">{row.referal}</TableCell>
+                      <TableCell align="center">{row.referral}</TableCell>
                       <TableCell align="center">{row.currency}</TableCell>
                       <TableCell padding="none" align="right">
                         <Box mr={2}>

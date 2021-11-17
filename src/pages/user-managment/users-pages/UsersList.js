@@ -74,7 +74,6 @@ const UsersList = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [rowUserList, setRowUserList] = useState([]);
-  const rowUsers = useSelector((state) => state?.listUser?.data?.data?.users);
   console.log("row", rowUserList);
   // const rowUserList = rowUsers.listData;
 
