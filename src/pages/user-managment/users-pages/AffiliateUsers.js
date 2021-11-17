@@ -1,6 +1,10 @@
 import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { Helmet } from "react-helmet-async";
+import { spacing } from "@material-ui/system";
+import { darken } from "polished";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Divider as MuiDivider,
@@ -16,16 +20,12 @@ import {
   TableRow,
   TableSortLabel,
   Toolbar,
-  Tooltip,
   Typography,
+  InputBase,
 } from "@material-ui/core";
-import {
-  Archive as ArchiveIcon,
-  RemoveRedEye as RemoveRedEyeIcon,
-} from "@material-ui/icons";
-import { spacing } from "@material-ui/system";
+import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
 import CSVButton from "../../../components/CSVButton";
-import { useSelector } from "react-redux";
+import { Search as SearchIcon } from "react-feather";
 import AddAffiliateUser from "../../../modal/AddAffiliateUser";
 
 // Spacing.
@@ -33,12 +33,50 @@ const Divider = styled(MuiDivider)(spacing);
 const Paper = styled(MuiPaper)(spacing);
 
 // Custome Style.
-const Spacer = styled.div`
-  flex: 1 1 100%;
+
+const Search = styled.div`
+  border-radius: 2px;
+  background-color: ${(props) => props.theme.header.background};
+  display: none;
+  position: relative;
+  // width: 100%;
+
+  &:hover {
+    background-color: ${(props) => darken(0.05, props.theme.header.background)};
+  }
+
+  ${(props) => props.theme.breakpoints.up("md")} {
+    display: block;
+  }
 `;
 
-const ToolbarTitle = styled.div`
-  min-width: 150px;
+const SearchIconWrapper = styled.div`
+  width: 50px;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+`;
+
+const Input = styled(InputBase)`
+  color: inherit;
+  width: 100%;
+
+  > input {
+    color: ${(props) => props.theme.header.search.color};
+    padding-top: ${(props) => props.theme.spacing(2.5)};
+    padding-right: ${(props) => props.theme.spacing(2.5)};
+    padding-bottom: ${(props) => props.theme.spacing(2.5)};
+    padding-left: ${(props) => props.theme.spacing(12)};
+    width: 160px;
+  }
 `;
 
 const descendingComparator = (a, b, orderBy) => {
@@ -120,41 +158,6 @@ const EnhancedTableHead = (props) => {
   );
 };
 
-const EnhancedTableToolbar = (props) => {
-  // Here was 'let'
-  const { numSelected } = props;
-
-  return (
-    <Toolbar>
-      <ToolbarTitle>
-        {numSelected > 0 ? (
-          <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
-          </Typography>
-        ) : (
-          <Typography variant="h6" id="tableTitle">
-            All Affilate Users
-          </Typography>
-        )}
-      </ToolbarTitle>
-      <Spacer />
-      <div>
-        {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton aria-label="Delete" size="large">
-              <ArchiveIcon />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Add User">
-            <AddAffiliateUser />
-          </Tooltip>
-        )}
-      </div>
-    </Toolbar>
-  );
-};
-
 const EnhancedTable = () => {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("customer");
@@ -164,9 +167,11 @@ const EnhancedTable = () => {
 
   // affiliateList
 
-  const affilate = useSelector((state) => state.allUser);
+  const affilate = useSelector((state) => state.listUser);
 
   const rows = affilate.affiliateList;
+
+  const { t } = useTranslation();
 
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -181,26 +186,6 @@ const EnhancedTable = () => {
       return;
     }
     setSelected([]);
-  };
-
-  const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -220,7 +205,21 @@ const EnhancedTable = () => {
   return (
     <Fragment>
       <Paper>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <Toolbar>
+          <Grid container display="flex" justifyContent="space-between">
+            <Grid item>
+              <Search>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <Input placeholder={t("searchList")} />
+              </Search>
+            </Grid>
+            <Grid item>
+              <AddAffiliateUser />
+            </Grid>
+          </Grid>
+        </Toolbar>
         <TableContainer>
           <Table
             aria-labelledby="tableTitle"

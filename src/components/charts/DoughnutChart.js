@@ -1,20 +1,20 @@
 import React from "react";
 import styled, { withTheme } from "styled-components/macro";
 import Chart from "react-chartjs-2";
-
 import { CardContent, Card as MuiCard, Typography } from "@material-ui/core";
 import { orange, red } from "@material-ui/core/colors";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const Spacer = styled.div(spacing);
 
+// Custom Style.
 const ChartWrapper = styled.div`
   height: 300px;
 `;
 
-function DoughnutChart({ theme }) {
+const DoughnutChart = ({ theme }) => {
   const data = {
     labels: ["Social", "Search Engines", "Direct", "Other"],
     datasets: [
@@ -60,6 +60,6 @@ function DoughnutChart({ theme }) {
       </CardContent>
     </Card>
   );
-}
+};
 
 export default withTheme(DoughnutChart);

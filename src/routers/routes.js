@@ -32,6 +32,7 @@ import Administrators from "../pages/user-managment/administrator/Administrators
 import Redux from "../docs/Redux";
 import DashboardPage from "../pages/dashboard";
 import DeviceManagement from "../pages/device-managment";
+import ProfileMat from "../components/charts/MetaLineChart";
 
 const routes = [
   {
@@ -152,7 +153,7 @@ const routes = [
     children: [
       {
         path: "test",
-        element: <Calendar />,
+        element: <ProfileMat />,
       },
     ],
   },

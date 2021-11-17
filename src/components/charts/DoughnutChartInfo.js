@@ -2,7 +2,6 @@ import React from "react";
 import styled, { withTheme } from "styled-components/macro";
 import Chart from "react-chartjs-2";
 import { MoreVertical } from "react-feather";
-
 import { orange, green, red } from "@material-ui/core/colors";
 import {
   Card as MuiCard,
@@ -18,8 +17,10 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
 
+// Custome Style.
 const ChartWrapper = styled.div`
   height: 182px;
   position: relative;

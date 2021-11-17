@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState, Fragment } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-
 import {
   CardContent,
   Checkbox,
@@ -23,16 +22,14 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const Divider = styled(MuiDivider)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
 const Paper = styled(MuiPaper)(spacing);
 
 function RadioButtonsGroup() {
-  const [value, setValue] = React.useState("female");
+  const [value, setValue] = useState("female");
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -82,7 +79,7 @@ function RadioButtonsGroup() {
 }
 
 function CheckboxesGroup() {
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     gilad: true,
     jason: false,
     antoine: false,
@@ -146,7 +143,7 @@ function CheckboxesGroup() {
 }
 
 function SwitchesGroup() {
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     gilad: true,
     jason: false,
     antoine: false,
@@ -254,9 +251,9 @@ function FormControlLabelPosition() {
   );
 }
 
-function SelectionControls() {
+const SelectionControls = () => {
   return (
-    <React.Fragment>
+    <Fragment>
       <Helmet title="Selection Controls" />
       <Typography variant="h3" gutterBottom display="inline">
         Selection Controls
@@ -284,7 +281,7 @@ function SelectionControls() {
           <FormControlLabelPosition />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 }
 

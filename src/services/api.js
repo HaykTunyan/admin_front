@@ -3,10 +3,6 @@
 import axios from "axios";
 import { store } from "../redux/store";
 
-// const instance = axios.create({
-//   baseURL: process.env.REACT_APP_API_BASE_URL,
-// });
-
 const instance = axios.create({
   baseURL: "https://api.beincrypto.org/api",
 });
@@ -15,6 +11,13 @@ export const setInstance = (access_token) => {
   localStorage.setItem("accessToken", access_token);
   instance.defaults.headers.Authorization = `Bearer ${access_token}`;
 };
+
+// export default axios.create({
+//   baseURL: "http://localhost:8080/api",
+//   headers: {
+//     "Content-type": "application/json"
+//   }
+// });
 
 export const removeInstance = () => {
   localStorage.removeItem("accessToken");

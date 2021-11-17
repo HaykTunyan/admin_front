@@ -19,6 +19,7 @@ import {
   Typography as MuiTypography,
   TablePagination,
   Breadcrumbs,
+  Chip as MuiChip,
 } from "@material-ui/core";
 import CSVButton from "../../../components/CSVButton";
 
@@ -32,6 +33,15 @@ const useStyles = makeStyles({
   },
 });
 
+const Chip = styled(MuiChip)`
+  height: 20px;
+  padding: 4px 0;
+  font-size: 90%;
+  background-color: ${(props) =>
+    props.theme.palette[props.color ? props.color : "primary"].light};
+  color: ${(props) => props.theme.palette.common.white};
+`;
+
 const UsersListTable = ({ rowUserList }) => {
   // hooks
   const dispatch = useDispatch();
@@ -43,7 +53,6 @@ const UsersListTable = ({ rowUserList }) => {
       sort: "asc",
     },
   ]);
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -56,20 +65,13 @@ const UsersListTable = ({ rowUserList }) => {
     setPage(0);
   };
 
-  useEffect(() => {
-    dispatch(getUserList_req());
-  }, []);
-
   // useEffect(() => {
-  //   // POST request using axios inside useEffect React hook
-  //   const article = { title: "React Hooks POST Request Example" };
-  //   axios
-  //     .post("https://reqres.in/api/articles", article)
-  //     .then((response) => setArticleId(response.data.id));
-
-  //   // empty dependency array means this effect will only run once (like componentDidMount in classes)
+  //   dispatch(getUserList_req());
   // }, []);
-
+  if (!rowUserList) {
+    return null;
+  }
+  console.log("user", rowUserList);
   return (
     <Fragment>
       <Paper>
@@ -115,74 +117,85 @@ const UsersListTable = ({ rowUserList }) => {
                 <TableCell align="center">Geo Position</TableCell>
                 <TableCell align="center">Send</TableCell>
                 <TableCell align="center">Referal</TableCell>
+                <TableCell align="center">Currency</TableCell>
                 <TableCell align="right">View</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rowUserList
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => (
-                  <TableRow
-                    key={row.key}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {row.number}
-                    </TableCell>
-                    <TableCell align="center">{row.email}</TableCell>
-                    <TableCell align="center">{row.phone}</TableCell>
-                    <TableCell align="center">{row.balance}</TableCell>
-                    <TableCell align="center">
-                      <Breadcrumbs
-                        aria-label="breadcrumb"
-                        display="flex"
-                        justifyContent="space-around"
-                        align="center"
-                      >
-                        <Typography color="text.primary">
-                          {row.active_flexible}
-                        </Typography>
-                        <Typography color="text.primary">
-                          {row.completed_flexible}
-                        </Typography>
-                      </Breadcrumbs>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Breadcrumbs
-                        aria-label="breadcrumb"
-                        display="flex"
-                        justifyContent="space-around"
-                        align="center"
-                      >
-                        <Typography color="text.primary">
-                          {row.active_saving}
-                        </Typography>
-                        <Typography color="text.primary">
-                          {row.completed_saving}
-                        </Typography>
-                      </Breadcrumbs>
-                    </TableCell>
-                    <TableCell align="center">{row.receive}</TableCell>
-                    <TableCell align="center">{row.status_kyc}</TableCell>
-                    <TableCell align="center">{row.date_register}</TableCell>
-                    <TableCell align="center">{row.geo_positon}</TableCell>
-                    <TableCell align="center">
-                      {row.send} <span>&#36;</span>{" "}
-                    </TableCell>
-                    <TableCell align="center">{row.referal}</TableCell>
-                    <TableCell padding="none" align="right">
-                      <Box mr={2}>
-                        <IconButton
-                          aria-label="details"
-                          size="large"
-                          onClick={() => navigate("/view-user")}
+              {rowUserList &&
+                rowUserList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
+                    <TableRow
+                      key={row.key}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row.number}
+                      </TableCell>
+                      <TableCell align="center">{row.email}</TableCell>
+                      <TableCell align="center">{row.phone}</TableCell>
+                      <TableCell align="center">{row.balance}</TableCell>
+                      <TableCell align="center">
+                        <Breadcrumbs
+                          aria-label="breadcrumb"
+                          display="flex"
+                          justifyContent="space-around"
+                          align="center"
                         >
-                          <RemoveRedEyeIcon />
-                        </IconButton>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                          <Typography color="text.primary">
+                            {row?.flexible?.active}
+                          </Typography>
+                          <Typography color="text.primary">
+                            {row?.flexible?.finish}
+                          </Typography>
+                        </Breadcrumbs>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Breadcrumbs
+                          aria-label="breadcrumb"
+                          display="flex"
+                          justifyContent="space-around"
+                          align="center"
+                        >
+                          <Typography color="text.primary">
+                            {row?.locked?.active}
+                          </Typography>
+                          <Typography color="text.primary">
+                            {row?.locked?.finish}
+                          </Typography>
+                        </Breadcrumbs>
+                      </TableCell>
+                      <TableCell align="center">{row.receive}</TableCell>
+                      <TableCell align="center">
+                        {row.status === "true" ? (
+                          <Chip label="Verified" color="success" />
+                        ) : (
+                          <Chip label="UnVerified" color="error" />
+                        )}
+                      </TableCell>
+                      <TableCell align="center">
+                        {row.registrationDate}
+                      </TableCell>
+                      <TableCell align="center">{row.geoPosition}</TableCell>
+                      <TableCell align="center">
+                        {row.send} <span>&#36;</span>{" "}
+                      </TableCell>
+                      <TableCell align="center">{row.referal}</TableCell>
+                      <TableCell align="center">{row.currency}</TableCell>
+                      <TableCell padding="none" align="right">
+                        <Box mr={2}>
+                          <IconButton
+                            aria-label="details"
+                            size="large"
+                            onClick={() => navigate("/view-user")}
+                          >
+                            <RemoveRedEyeIcon />
+                          </IconButton>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
           {/* Pagination */}

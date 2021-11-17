@@ -1,8 +1,7 @@
-import React from "react";
+import React,  { useState, Fragment } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-
 import {
   CardContent,
   Grid,
@@ -24,16 +23,14 @@ import {
 } from "@material-ui/lab";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const Divider = styled(MuiDivider)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
 const Paper = styled(MuiPaper)(spacing);
 
 function DatePickerDemo() {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = useState(null);
 
   return (
     <Card mb={6}>
@@ -61,7 +58,7 @@ function DatePickerDemo() {
 }
 
 function DatePickerStaticDemo() {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = useState(null);
 
   return (
     <Card mb={6}>
@@ -91,7 +88,7 @@ function DatePickerStaticDemo() {
 }
 
 function DateTimePickerDemo() {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = useState(null);
 
   return (
     <Card mb={6}>
@@ -120,7 +117,7 @@ function DateTimePickerDemo() {
 }
 
 function DateTimePickerStaticDemo() {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = useState(null);
 
   return (
     <Card mb={6}>
@@ -148,7 +145,7 @@ function DateTimePickerStaticDemo() {
   );
 }
 function TimePickerDemo() {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = useState(null);
 
   return (
     <Card mb={6}>
@@ -176,7 +173,7 @@ function TimePickerDemo() {
 }
 
 function TimePickerStaticDemo() {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = useState(null);
 
   return (
     <Card mb={6}>
@@ -205,7 +202,7 @@ function TimePickerStaticDemo() {
 
 function Pickers() {
   return (
-    <React.Fragment>
+    <Fragment>
       <Helmet title="Pickers" />
       <Typography variant="h3" gutterBottom display="inline">
         Pickers
@@ -235,7 +232,7 @@ function Pickers() {
           <TimePickerStaticDemo />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 }
 

@@ -17,6 +17,7 @@ import {
   InputBase,
   Toolbar,
   Grid,
+  Chip as MuiChip,
 } from "@material-ui/core";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
@@ -74,6 +75,15 @@ const SearchIconWrapper = styled.div`
     width: 22px;
     height: 22px;
   }
+`;
+
+const Chip = styled(MuiChip)`
+  height: 20px;
+  padding: 4px 0;
+  font-size: 90%;
+  background-color: ${(props) =>
+    props.theme.palette[props.color ? props.color : "primary"].light};
+  color: ${(props) => props.theme.palette.common.white};
 `;
 
 const SavingTab = ({ rowLocked, rowFlexible }) => {
@@ -147,7 +157,13 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
                             {row.bonus}
                             <span>&#8364;</span>
                           </TableCell>
-                          <TableCell align="right">{row.status}</TableCell>
+                          <TableCell align="right">
+                            {row.status === "active" ? (
+                              <Chip label="Active" color="success" />
+                            ) : (
+                              <Chip label="Completed" color="primary" />
+                            )}
+                          </TableCell>
                           <TableCell align="right">{row.amount_day}</TableCell>
                         </TableRow>
                       ))}
@@ -214,7 +230,13 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
                             {row.coin}
                             <span> &#x20BF;</span>
                           </TableCell>
-                          <TableCell align="right">{row.status}</TableCell>
+                          <TableCell align="right">
+                            {row.status === "active" ? (
+                              <Chip label="Active" color="success" />
+                            ) : (
+                              <Chip label="Completed" color="primary" />
+                            )}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

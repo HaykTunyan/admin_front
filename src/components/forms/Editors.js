@@ -5,7 +5,6 @@ import { Helmet } from "react-helmet-async";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
-
 import {
   Box,
   CardContent,
@@ -18,15 +17,14 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
+const Divider = styled(MuiDivider)(spacing);
+const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
+
 const Card = styled(MuiCard)`
   ${spacing};
-
   overflow: visible;
 `;
-
-const Divider = styled(MuiDivider)(spacing);
-
-const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 const QuillWrapper = styled.div`
   .ql-editor {

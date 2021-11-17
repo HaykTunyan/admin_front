@@ -1,11 +1,10 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
 import { Search as SearchIcon } from "react-feather";
 import { darken } from "polished";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserList_req } from "../../../redux/actions/users";
 import { spacing } from "@material-ui/system";
 import {
   Box,
@@ -17,6 +16,8 @@ import {
 import UsersListTable from "./UserListTable";
 import AddUserModal from "../../../modal/AddUserModal";
 import DatePickerFilter from "../../../components/date-picker/DatePickerFilter";
+import instance from "../../../services/api";
+import { getUserList_req } from "../../../redux/slices/userListSlice";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
@@ -72,12 +73,27 @@ const UsersList = () => {
   // hooks
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [rowUserList, setRowUserList] = useState([]);
+  const rowUsers = useSelector((state) => state?.listUser?.data?.data?.users);
+  console.log("row", rowUserList);
+  // const rowUserList = rowUsers.listData;
 
-  const rowUsers = useSelector((state) => state.allUser);
-  const rowUserList = rowUsers.listData;
-
+  const getUserList_req = () => {
+    return instance
+      .get("/admin/user/all", { mode: "no-cors" })
+      .then((data) => {
+        console.log("data users list", data);
+        setRowUserList(data.data.users);
+        return data;
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      })
+      .finally(() => {});
+  };
   useEffect(() => {
-    dispatch(getUserList_req());
+    // dispatch(getUserList_req());
+    getUserList_req();
   }, []);
 
   return (
@@ -91,7 +107,6 @@ const UsersList = () => {
           </Typography>
         </Grid>
       </Grid>
-
       <Divider my={6} />
 
       <Grid container display="flex" alignItems="center">

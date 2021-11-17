@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
-import { green, orange, grey, blue, purple } from "@material-ui/core/colors";
+import { green, orange, grey, blue } from "@material-ui/core/colors";
 import {
   Grid,
   Divider as MuiDivider,
@@ -10,12 +10,13 @@ import {
   Card as MuiCard,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
+import { useSelector } from "react-redux";
 import Chart from "react-chartjs-2";
 import Stats from "../../components/Stats";
 import MobileCall from "./MobileCall";
 import TabletCell from "./TabletCall";
 import DesktopCall from "./DesktopCall";
-import { useSelector } from "react-redux";
+import BrowsersTable from "./BrowsersTable";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -28,7 +29,7 @@ const ChartWrapper = styled.div`
   height: 500px;
 `;
 
-const DeviceManagement = ({ theme }) => {
+const DeviceManagement = () => {
   // hooks.
   const [tabOne, setOpenOne] = useState(false);
   const [tabThree, setOpenThree] = useState(false);
@@ -41,11 +42,11 @@ const DeviceManagement = ({ theme }) => {
   const mobileDate = totalDevice.mobileCall;
 
   const data = {
-    labels: ["Mobile", "Desktop", "Mac", "Other"],
+    labels: ["Mobile", "Desktop", "Tablet"],
     datasets: [
       {
-        data: [220, 120, 120, 30],
-        backgroundColor: [purple[600], blue[600], grey[500], orange[900]],
+        data: [220, 120, 160],
+        backgroundColor: [blue[600], grey[500], orange[900]],
         borderColor: "transparent",
       },
     ],
@@ -94,9 +95,9 @@ const DeviceManagement = ({ theme }) => {
         <Grid item xs={12} md={4}>
           <Stats
             title="Mobile Users"
-            amount="50%"
-            chip="50%"
-            percentagetext="+50%"
+            amount="40%"
+            chip="40%"
+            percentagetext="+40%"
             percentagecolor={green[500]}
             ViewMore={openMobile}
           />
@@ -155,6 +156,11 @@ const DeviceManagement = ({ theme }) => {
                 <Chart type="pie" data={data} options={options} />
               </ChartWrapper>
             </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Card my={6}>
+            <BrowsersTable />
           </Card>
         </Grid>
       </Grid>

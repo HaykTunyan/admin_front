@@ -1,8 +1,7 @@
-import React from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-
 import {
   Grid,
   Link,
@@ -11,7 +10,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-
 import LineChart from "./LineChart";
 import BarChart from "./BarChart";
 import DoughnutChart from "./DoughnutChart";
@@ -19,13 +17,13 @@ import PieChart from "./PieChart";
 import RadarChart from "./RadarChart";
 import PolarChart from "./PolarChart";
 
+// Spacing.
 const Divider = styled(MuiDivider)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
-function Blank() {
+const Blank = () => {
   return (
-    <React.Fragment>
+    <Fragment>
       <Helmet title="Charts" />
       <Typography variant="h3" gutterBottom display="inline">
         Charts
@@ -60,7 +58,7 @@ function Blank() {
           <PolarChart />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 }
 

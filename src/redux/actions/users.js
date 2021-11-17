@@ -24,8 +24,6 @@ export const signIn_req = (values) => (dispatch) => {
           loading: false,
         },
       });
-      console.log("date auth", data);
-      console.log("date login ", data.access_token);
       return data;
     })
     .catch((err) => {

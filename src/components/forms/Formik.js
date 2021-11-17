@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import * as Yup from "yup";
 import styled from "styled-components/macro";
 import { Formik } from "formik";
-
 import {
   Alert as MuiAlert,
   Box,
@@ -14,12 +13,10 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const Alert = styled(MuiAlert)(spacing);
-
 const TextField = styled(MuiTextField)(spacing);
-
 const Button = styled(MuiButton)(spacing);
 
 const timeOut = (time) => new Promise((res) => setTimeout(res, time));

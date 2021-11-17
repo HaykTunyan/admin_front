@@ -18,6 +18,7 @@ import { ReactComponent as Logo } from "../assets/svg/logo.svg";
 import useAuth from "../hooks/useAuth";
 import { signIn_req } from "../redux/actions/users";
 import { useDispatch } from "react-redux";
+import { getUserList_req } from "../redux/slices/userListSlice";
 
 // Spacing.
 const Alert = styled(MuiAlert)(spacing);
@@ -72,7 +73,8 @@ const SignIn = () => {
       await signIn(values.email, values.password);
       console.log("value sign in", values);
       dispatch(signIn_req(values)).then();
-      if (initialValues) {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
         navigate("/dashboard");
       }
     } catch (error) {

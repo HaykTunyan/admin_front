@@ -232,10 +232,6 @@ const DashboardPage = () => {
                               30 000
                               <span> &#8364;</span>
                             </MenuItem>
-                            <MenuItem value="300">
-                              300
-                              <span> &#x20BF;</span>
-                            </MenuItem>
                           </Select>
                         </FormControl>
 
