@@ -21,11 +21,12 @@ import { UserPlus } from "react-feather";
 const AddAdminModal = () => {
   const [open, setOpen] = useState(false);
   const [verify, setVerify] = useState("");
+  const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
   const handleChange = (event) => {
     setVerify(event.target.value);
   };
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
+
   const handleClickOpen = () => {
     setOpen(true);
   };

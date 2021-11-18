@@ -1,14 +1,14 @@
 import React from "react";
 import styled, { withTheme } from "styled-components/macro";
 import Chart from "react-chartjs-2";
-
 import { CardContent, Card as MuiCard, Typography } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const Spacer = styled.div(spacing);
 
+// Custom Style.
 const ChartWrapper = styled.div`
   height: 300px;
   width: 100%;
@@ -91,9 +91,7 @@ const BarChart = ({ theme }) => {
           A bar chart provides a way of showing data values represented as
           vertical bars.
         </Typography>
-
         <Spacer mb={6} />
-
         <ChartWrapper>
           <Chart type="bar" data={data} options={options} />
         </ChartWrapper>

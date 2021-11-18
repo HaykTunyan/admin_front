@@ -18,7 +18,6 @@ import { ReactComponent as Logo } from "../assets/svg/logo.svg";
 import useAuth from "../hooks/useAuth";
 import { signIn_req } from "../redux/actions/users";
 import { useDispatch } from "react-redux";
-import { getUserList_req } from "../redux/slices/userListSlice";
 
 // Spacing.
 const Alert = styled(MuiAlert)(spacing);

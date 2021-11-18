@@ -17,6 +17,8 @@ import MobileCall from "./MobileCall";
 import TabletCell from "./TabletCall";
 import DesktopCall from "./DesktopCall";
 import BrowsersTable from "./BrowsersTable";
+import UniqueTable from "./UniqueTable";
+import OperationTable from "./OperationTable";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -31,7 +33,7 @@ const ChartWrapper = styled.div`
 
 const DeviceManagement = () => {
   // hooks.
-  const [tabOne, setOpenOne] = useState(false);
+  const [tabOne, setOpenOne] = useState(true);
   const [tabThree, setOpenThree] = useState(false);
   const [tabTwo, setOpenTwo] = useState(false);
 
@@ -40,6 +42,7 @@ const DeviceManagement = () => {
   const desktopData = totalDevice.desktopCall;
   const tabletData = totalDevice.tableCall;
   const mobileDate = totalDevice.mobileCall;
+  const uniqueData = totalDevice.uniqueCall;
 
   const data = {
     labels: ["Mobile", "Desktop", "Tablet"],
@@ -126,43 +129,139 @@ const DeviceManagement = () => {
       <Divider my={6} />
       <Grid container spacing={6}>
         {tabOne && (
-          <Grid item xs={12} md={12}>
-            <MobileCall mobileDate={mobileDate} />
-          </Grid>
+          <>
+            <Grid item xs={12} md={12}>
+              <MobileCall mobileDate={mobileDate} />
+            </Grid>
+            {/* Unique User */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <UniqueTable />
+              </Card>
+            </Grid>
+
+            {/* Operation Sistem */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <OperationTable />
+              </Card>
+            </Grid>
+
+            {/* Browsers */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <BrowsersTable uniqueData={uniqueData} />
+              </Card>
+            </Grid>
+
+            {/* Chart Data */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    Device Users
+                  </Typography>
+
+                  <Spacer my={6} />
+
+                  <ChartWrapper>
+                    <Chart type="pie" data={data} options={options} />
+                  </ChartWrapper>
+                </CardContent>
+              </Card>
+            </Grid>
+          </>
         )}
 
         {tabTwo && (
-          <Grid item xs={12} md={12}>
-            <TabletCell tabletData={tabletData} />
-          </Grid>
+          <>
+            <Grid item xs={12} md={12}>
+              <TabletCell tabletData={tabletData} />
+            </Grid>
+            {/* Unique User */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <UniqueTable />
+              </Card>
+            </Grid>
+
+            {/* Operation Sistem */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <OperationTable />
+              </Card>
+            </Grid>
+
+            {/* Browsers */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <BrowsersTable uniqueData={uniqueData} />
+              </Card>
+            </Grid>
+
+            {/* Chart Data */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    Device Users
+                  </Typography>
+
+                  <Spacer my={6} />
+
+                  <ChartWrapper>
+                    <Chart type="pie" data={data} options={options} />
+                  </ChartWrapper>
+                </CardContent>
+              </Card>
+            </Grid>
+          </>
         )}
 
         {tabThree && (
-          <Grid item xs={12} md={12}>
-            <DesktopCall desktopData={desktopData} />
-          </Grid>
+          <>
+            <Grid item xs={12} md={12}>
+              <DesktopCall desktopData={desktopData} />
+            </Grid>
+            {/* Unique User */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <UniqueTable />
+              </Card>
+            </Grid>
+
+            {/* Operation Sistem */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <OperationTable />
+              </Card>
+            </Grid>
+
+            {/* Browsers */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <BrowsersTable uniqueData={uniqueData} />
+              </Card>
+            </Grid>
+
+            {/* Chart Data */}
+            <Grid item xs={12} md={6}>
+              <Card my={6}>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    Device Users
+                  </Typography>
+
+                  <Spacer my={6} />
+
+                  <ChartWrapper>
+                    <Chart type="pie" data={data} options={options} />
+                  </ChartWrapper>
+                </CardContent>
+              </Card>
+            </Grid>
+          </>
         )}
-
-        <Grid item xs={12} md={6}>
-          <Card my={6}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Device Users
-              </Typography>
-
-              <Spacer my={6} />
-
-              <ChartWrapper>
-                <Chart type="pie" data={data} options={options} />
-              </ChartWrapper>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Card my={6}>
-            <BrowsersTable />
-          </Card>
-        </Grid>
       </Grid>
     </>
   );

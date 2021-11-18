@@ -1,11 +1,9 @@
 import React from "react";
-import styled, { withTheme } from "styled-components/macro";
-import { MoreVertical } from "react-feather";
+import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import {
   Card as MuiCard,
   CardHeader,
-  IconButton,
   Paper,
   Table,
   TableBody,
@@ -14,6 +12,7 @@ import {
   TableRow,
   LinearProgress as MuiLinearProgress,
 } from "@material-ui/core";
+import { useSelector } from "react-redux";
 
 //  Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -31,81 +30,39 @@ const LinearProgress = styled(MuiLinearProgress)`
   background: ${(props) => props.theme.palette.grey[200]};
 `;
 
-export const rowColumns = [
-  {
-    key: 1,
-    name: "Google Chrome",
-    count: "646 700",
-    percent: "64.67",
-  },
-  {
-    key: 2,
-    name: "Safari",
-    count: "190 600",
-    percent: "19.06",
-  },
-  {
-    key: 3,
-    name: "Edge",
-    count: "41 000",
-    percent: "4.10",
-  },
-  {
-    key: 4,
-    name: "Firefox",
-    count: "36 600",
-    percent: "3.66",
-  },
-  {
-    key: 5,
-    name: "Samsung Internet",
-    count: "28 100",
-    percent: "2.81",
-  },
-  {
-    key: 6,
-    name: "Opera",
-    count: "23 600",
-    percent: "2.36",
-  },
-  {
-    key: 7,
-    name: "Others",
-    count: "33 400",
-    percent: "3.34",
-  },
-];
+const OperationTable = () => {
+  const rowOperation = useSelector((state) => state.deviceManagment);
 
-const BrowsersTable = () => {
+  const operationList = rowOperation.opetionCall;
   return (
     <>
       <Card mb={6}>
-        <CardHeader title="Browsers" />
+        <CardHeader title="Operation Sistems" />
         <Paper>
           <TableWrapper>
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell component="th" scope="row">
-                    All browsers support
+                    All Operation Sistems support
                   </TableCell>
-                  <TableCell align="right">Users</TableCell>
-                  <TableCell>% Users</TableCell>
-                  <TableCell align=""> Percent </TableCell>
+                  <TableCell align="center">Users</TableCell>
+                  {/* <TableCell>% Users</TableCell> */}
+                  <TableCell>Percent %</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rowColumns.map((item) => (
+                {operationList.map((item) => (
                   <TableRow key={item.key}>
                     <TableCell scope="row">{item.name}</TableCell>
-                    <TableCell align="right">{item.count} </TableCell>
-                    <TableCell>
+                    <TableCell align="center">{item.count} </TableCell>
+                    {/* <TableCell>
                       <LinearProgress
                         variant="determinate"
                         value={item.percent}
                         color="secondary"
                       />
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell align="">{item.percent} %</TableCell>
                   </TableRow>
                 ))}
@@ -118,4 +75,4 @@ const BrowsersTable = () => {
   );
 };
 
-export default BrowsersTable;
+export default OperationTable;

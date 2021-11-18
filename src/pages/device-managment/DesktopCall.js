@@ -13,6 +13,7 @@ import {
   Typography,
   TablePagination,
 } from "@material-ui/core";
+import TopDeviceModal from "../../modal/TopDeviceModal";
 
 // Spacing.
 const Toolbar = styled(MuiToolbar)(spacing);
@@ -56,6 +57,7 @@ const DesktopCall = ({ desktopData }) => {
                 >
                   <TableCell component="th" scope="row" width="30%">
                     {row.brand_name}
+                    <TopDeviceModal />
                   </TableCell>
                   <TableCell>
                     {row.percent}

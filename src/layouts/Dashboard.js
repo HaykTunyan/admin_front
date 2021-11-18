@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { Outlet } from "react-router-dom";
-
 import { Hidden, CssBaseline, Paper as MuiPaper } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { spacing } from "@material-ui/system";
-
 import GlobalStyle from "../components/GlobalStyle";
 import Navbar from "../components/navbar/Navbar";
 import dashboardItems from "../components/sidebar/dashboardItems";

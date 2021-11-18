@@ -10,6 +10,7 @@ import { orange } from "@material-ui/core/colors";
 const Card = styled(MuiCard)(spacing);
 const Spacer = styled.div(spacing);
 
+// Custom Style.
 const ChartWrapper = styled.div`
   height: 300px;
 `;

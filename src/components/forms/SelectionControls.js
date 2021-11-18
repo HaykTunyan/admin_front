@@ -1,7 +1,6 @@
 import React, { useState, Fragment } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import {
   CardContent,
   Checkbox,
@@ -254,7 +253,6 @@ function FormControlLabelPosition() {
 const SelectionControls = () => {
   return (
     <Fragment>
-      <Helmet title="Selection Controls" />
       <Typography variant="h3" gutterBottom display="inline">
         Selection Controls
       </Typography>

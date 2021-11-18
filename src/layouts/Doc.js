@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { Outlet } from "react-router-dom";
-
 import { Hidden, CssBaseline, Paper as MuiPaper } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { spacing } from "@material-ui/system";
-
 import GlobalStyle from "../components/GlobalStyle";
 import NavbarSimple from "../components/navbar/NavbarSimple";
 import docItems from "../components/sidebar/docItems";
@@ -14,6 +12,8 @@ import Sidebar from "../components/sidebar/Sidebar";
 import SettingsCom from "../components/SettingsCom";
 
 const drawerWidth = 258;
+
+const Paper = styled(MuiPaper)(spacing);
 
 const Root = styled.div`
   display: flex;
@@ -33,8 +33,6 @@ const AppContent = styled.div`
   flex-direction: column;
   max-width: 100%;
 `;
-
-const Paper = styled(MuiPaper)(spacing);
 
 const MainContent = styled(Paper)`
   flex: 1;

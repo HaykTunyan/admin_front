@@ -1,8 +1,6 @@
-import React from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-
 import {
   CardContent,
   Grid,
@@ -16,16 +14,14 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// SPacing.
 const Card = styled(MuiCard)(spacing);
-
 const Divider = styled(MuiDivider)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
 const Paper = styled(MuiPaper)(spacing);
-
 const TextFieldSpacing = styled(MuiTextField)(spacing);
 
+// Custom Style.
 const TextField = styled(TextFieldSpacing)`
   width: 200px;
 `;
@@ -180,10 +176,9 @@ function OutlinedTextFields() {
   );
 }
 
-function TextFields() {
+const TextFields = () => {
   return (
-    <React.Fragment>
-      <Helmet title="Text Fields" />
+    <Fragment>
       <Typography variant="h3" gutterBottom display="inline">
         Text Fields
       </Typography>
@@ -206,8 +201,8 @@ function TextFields() {
           <OutlinedTextFields />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
-}
+};
 
 export default TextFields;

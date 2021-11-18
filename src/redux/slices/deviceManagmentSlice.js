@@ -3,6 +3,94 @@ import { createSlice } from "@reduxjs/toolkit";
 export const deviceManagmentSlice = createSlice({
   name: "deviceManagment",
   initialState: {
+    opetionCall: [
+      {
+        id: "01",
+        name: "Microsoft Windows",
+        count: "22 000 000",
+        percent: "48",
+        percent: "48",
+      },
+      {
+        id: "02",
+        name: "macOS",
+        count: "10 000 000",
+        percent: "28",
+        percent: "28",
+      },
+      {
+        id: "03",
+        name: "Linux",
+        count: "3 000 000",
+        percent: "10",
+        percent: "10",
+      },
+      {
+        id: "04",
+        name: "Others",
+        count: "1 400 000",
+        percent: "5",
+        percent: "5",
+      },
+    ],
+    uniqueCall: [
+      {
+        id: "01",
+        name: "User Name",
+        device: "Desktop",
+        browsers: "Google Chrome ",
+        percent: "48",
+      },
+      {
+        id: "02",
+        name: "User Name",
+        device: "Desktop",
+        browsers: "Safari ",
+        percent: "12",
+      },
+      {
+        id: "03",
+        name: "User Name",
+        device: "Tablet",
+        browsers: "Edge ",
+        percent: "18",
+      },
+      {
+        id: "04",
+        name: "User Name",
+        device: "Mobile",
+        browsers: "Firefox ",
+        percent: "8",
+      },
+      {
+        id: "05",
+        name: "User Name",
+        device: "Mobile",
+        browsers: "Samsung Internet ",
+        percent: "4",
+      },
+      {
+        id: "06",
+        name: "User Name",
+        device: "Desktop",
+        browsers: "Opera ",
+        percent: "4",
+      },
+      {
+        id: "07",
+        name: "User Name",
+        device: "Desktop",
+        browsers: "Google Chrome ",
+        percent: "8",
+      },
+      {
+        id: "08",
+        name: "User Name",
+        device: "Mobile",
+        browsers: "Google Chrome ",
+        percent: "8",
+      },
+    ],
     desktopCall: [
       {
         id: "01",

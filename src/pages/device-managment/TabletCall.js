@@ -13,41 +13,9 @@ import {
   Typography,
   TablePagination,
 } from "@material-ui/core";
+import TopDeviceModal from "../../modal/TopDeviceModal";
 
 const Toolbar = styled(MuiToolbar)(spacing);
-
-export const rows = [
-  {
-    id: "01",
-    brand_name: "Galaxy Tab S7",
-    percent: "40",
-    quantity: "4000",
-  },
-  {
-    id: "02",
-    brand_name: "Galaxy Tab S7+",
-    percent: "5",
-    quantity: "500",
-  },
-  {
-    id: "03",
-    brand_name: "Galaxy Tab S6",
-    percent: "15",
-    quantity: "1500",
-  },
-  {
-    id: "04",
-    brand_name: "Galaxy Tab A7",
-    percent: "10",
-    quantity: "1000",
-  },
-  {
-    id: "05",
-    brand_name: "Galaxy Tab A 8.0",
-    percent: "30",
-    quantity: "3000",
-  },
-];
 
 const TabletCell = ({ tabletData }) => {
   const [page, setPage] = useState(0);
@@ -88,6 +56,7 @@ const TabletCell = ({ tabletData }) => {
                 >
                   <TableCell component="th" scope="row" width="30%">
                     {row.brand_name}
+                    <TopDeviceModal />
                   </TableCell>
                   <TableCell>
                     {row.percent}

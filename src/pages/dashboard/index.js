@@ -38,7 +38,6 @@ const DashboardPage = () => {
   // Hooks
   const [panel, setPanel] = useState("1");
   const [users, getUsers] = useState("all");
-  const [recevie, setRecevie] = useState("100 000");
   const [send, setSend] = useState("160 000");
   const [change, setChange] = useState("40 000");
   const [saving, setSaving] = useState("250 000");
@@ -53,10 +52,6 @@ const DashboardPage = () => {
   const rowExchange = totlalDashboard.rowExchange;
   const rowLocked = totlalDashboard.rowLocked;
   const rowFlexible = totlalDashboard.rowFlexible;
-
-  const ChangeSend = (event) => {
-    setSend(event.target.value);
-  };
 
   const ChangeExchange = (event) => {
     setChange(event.target.value);
@@ -179,29 +174,10 @@ const DashboardPage = () => {
                   <Tab
                     label={
                       <Box flex width="100%">
-                        <FormControl fullWidth>
-                          <InputLabel id="send-coin-label">Send</InputLabel>
-                          <Select
-                            labelId="send-coin-label"
-                            id="send-coin"
-                            value={send}
-                            label="Send"
-                            onChange={ChangeSend}
-                          >
-                            <MenuItem value="160 000">
-                              160 000
-                              <span>&#36;</span>
-                            </MenuItem>
-                            <MenuItem value="130 000">
-                              130 000
-                              <span> &#8364;</span>
-                            </MenuItem>
-                            <MenuItem value="570">
-                              570
-                              <span> &#x20BF;</span>
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
+                        <Box display="flex" justifyContent="space-around">
+                          <Typography fontWeight="bold">16 200 000</Typography>
+                          <DollarSign small={22} />
+                        </Box>
                         <Divider my={2} />
                         <Typography fontWeight="bold" children="Send" />
                       </Box>

@@ -8,6 +8,7 @@ import { alpha } from "@material-ui/core/styles";
 // Spacing.
 const Card = styled(MuiCard)(spacing);
 
+// Custom Style.
 const ChartWrapper = styled.div`
   height: 100px;
   width: 220px;

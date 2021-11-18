@@ -1,9 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import styled from "styled-components/macro";
-
 import { CssBaseline } from "@material-ui/core";
-
 import SettingsCom from "../components/SettingsCom";
 import GlobalStyle from "../components/GlobalStyle";
 

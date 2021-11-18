@@ -1,7 +1,6 @@
 import React,  { useState, Fragment } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import {
   CardContent,
   Grid,
@@ -30,7 +29,7 @@ const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 const Paper = styled(MuiPaper)(spacing);
 
 function DatePickerDemo() {
-  const [value, setValue] = useState(null);
+  const [pickerOne, setPickerOne] = useState(null);
 
   return (
     <Card mb={6}>
@@ -45,9 +44,9 @@ function DatePickerDemo() {
         <Paper mt={3}>
           <DatePicker
             label="Basic example"
-            value={value}
-            onChange={(newValue) => {
-              setValue(newValue);
+            value={pickerOne}
+            onChange={(newPicker) => {
+              setPickerOne(newPicker);
             }}
             renderInput={(params) => <TextField {...params} />}
           />
@@ -144,6 +143,7 @@ function DateTimePickerStaticDemo() {
     </Card>
   );
 }
+
 function TimePickerDemo() {
   const [value, setValue] = useState(null);
 
@@ -200,10 +200,9 @@ function TimePickerStaticDemo() {
   );
 }
 
-function Pickers() {
+const Pickers = () => {
   return (
     <Fragment>
-      <Helmet title="Pickers" />
       <Typography variant="h3" gutterBottom display="inline">
         Pickers
       </Typography>
@@ -234,6 +233,6 @@ function Pickers() {
       </Grid>
     </Fragment>
   );
-}
+};
 
 export default Pickers;

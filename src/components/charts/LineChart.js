@@ -8,6 +8,7 @@ import { spacing } from "@material-ui/system";
 const Card = styled(MuiCard)(spacing);
 const Spacer = styled.div(spacing);
 
+// Custom Style.
 const ChartWrapper = styled.div`
   height: 300px;
 `;

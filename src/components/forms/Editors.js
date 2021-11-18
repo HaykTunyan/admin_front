@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
@@ -21,6 +20,7 @@ import { spacing } from "@material-ui/system";
 const Divider = styled(MuiDivider)(spacing);
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
+// Custom Style.
 const Card = styled(MuiCard)`
   ${spacing};
   overflow: visible;
@@ -46,64 +46,11 @@ const BubbleWrapper = styled.div`
   }
 `;
 
-function Quill() {
-  const [value, setValue] = useState("");
-
-  return (
-    <Card mb={6}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
-          Quill
-        </Typography>
-        <Typography variant="body2" gutterBottom>
-          Modern WYSIWYG editor built for compatibility and extensibility.
-        </Typography>
-        <Box mt={3}>
-          <QuillWrapper>
-            <ReactQuill
-              theme="snow"
-              value={value}
-              onChange={setValue}
-              placeholder="Type something.."
-            />
-          </QuillWrapper>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-}
-
-function Bubble() {
-  const [value, setValue] = useState("");
-
-  return (
-    <Card mb={6}>
-      <CardContent>
-        <Typography variant="h6" gutterBottom>
-          Bubble
-        </Typography>
-        <Typography variant="body2" gutterBottom>
-          Bubble is a simple tooltip based theme for Quill.
-        </Typography>
-        <Box mt={3}>
-          <BubbleWrapper>
-            <ReactQuill
-              theme="bubble"
-              value={value}
-              onChange={setValue}
-              placeholder="Compose an epic..."
-            />
-          </BubbleWrapper>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-}
-
 function Editors() {
+  const [value, setValue] = useState("");
+
   return (
-    <React.Fragment>
-      <Helmet title="Editors" />
+    <Fragment>
       <Typography variant="h3" gutterBottom display="inline">
         Editors
       </Typography>
@@ -122,11 +69,49 @@ function Editors() {
 
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <Quill />
-          <Bubble />
+          <Card mb={6}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Quill
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                Modern WYSIWYG editor built for compatibility and extensibility.
+              </Typography>
+              <Box mt={3}>
+                <QuillWrapper>
+                  <ReactQuill
+                    theme="snow"
+                    value={value}
+                    onChange={setValue}
+                    placeholder="Type something.."
+                  />
+                </QuillWrapper>
+              </Box>
+            </CardContent>
+          </Card>
+          <Card mb={6}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Bubble
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                Bubble is a simple tooltip based theme for Quill.
+              </Typography>
+              <Box mt={3}>
+                <BubbleWrapper>
+                  <ReactQuill
+                    theme="bubble"
+                    value={value}
+                    onChange={setValue}
+                    placeholder="Compose an epic..."
+                  />
+                </BubbleWrapper>
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
 }
 

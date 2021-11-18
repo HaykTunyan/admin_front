@@ -3,7 +3,6 @@ import styled, { withTheme } from "styled-components/macro";
 import Chart from "react-chartjs-2";
 import { MoreVertical } from "react-feather";
 import { rgba } from "polished";
-
 import {
   Card as MuiCard,
   CardContent,
@@ -12,8 +11,10 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// SPacing.
 const Card = styled(MuiCard)(spacing);
 
+// Custom Style.
 const ChartWrapper = styled.div`
   height: 320px;
   width: 100%;
@@ -96,7 +97,6 @@ const BarChartMonth = ({ theme }) => {
         }
         title="Sales / Revenue"
       />
-
       <CardContent>
         <ChartWrapper>
           <Chart type="bar" data={data} options={options} />

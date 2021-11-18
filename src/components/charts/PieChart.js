@@ -5,10 +5,11 @@ import { CardContent, Card as MuiCard, Typography } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import { orange, red } from "@material-ui/core/colors";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
 const Spacer = styled.div(spacing);
 
+// Custom Style.
 const ChartWrapper = styled.div`
   height: 300px;
 `;

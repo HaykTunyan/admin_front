@@ -1,8 +1,6 @@
-import React from "react";
+import React,  { useState, Fragment } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-
 import {
   Button as MuiButton,
   CardContent,
@@ -29,24 +27,21 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Button = styled(MuiButton)(spacing);
-
 const Card = styled(MuiCard)(spacing);
-
 const Divider = styled(MuiDivider)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
 const Paper = styled(MuiPaper)(spacing);
-
 const FormControlSpacing = styled(MuiFormControl)(spacing);
 
+// Custom Style.
 const FormControl = styled(FormControlSpacing)`
   min-width: 148px;
 `;
 
 function SimpleSelect() {
-  const [age, setAge] = React.useState("");
+  const [age, setAge] = useState("");
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -298,7 +293,7 @@ const MenuProps = {
 };
 
 function MultipleSelect() {
-  const [personName, setPersonName] = React.useState([]);
+  const [personName, setPersonName] = useState([]);
 
   const handleChange = (event) => {
     const {
@@ -391,8 +386,8 @@ function MultipleSelect() {
 }
 
 function ControlledOpenSelect() {
-  const [age, setAge] = React.useState("");
-  const [open, setOpen] = React.useState(false);
+  const [age, setAge] = useState("");
+  const [open, setOpen] = useState(false);
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -456,8 +451,8 @@ function ControlledOpenSelect() {
 }
 
 function DialogSelect() {
-  const [open, setOpen] = React.useState(false);
-  const [age, setAge] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [age, setAge] = useState("");
 
   const handleChange = (event) => {
     setAge(Number(event.target.value) || "");
@@ -543,10 +538,9 @@ function DialogSelect() {
   );
 }
 
-function Selects() {
+const Selects = () => {
   return (
-    <React.Fragment>
-      <Helmet title="Selects" />
+    <Fragment>
       <Typography variant="h3" gutterBottom display="inline">
         Selects
       </Typography>
@@ -573,8 +567,8 @@ function Selects() {
           <ControlledOpenSelect />
         </Grid>
       </Grid>
-    </React.Fragment>
+    </Fragment>
   );
-}
+};
 
 export default Selects;

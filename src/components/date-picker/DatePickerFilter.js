@@ -6,7 +6,6 @@ import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 
 const DatePickerFilter = () => {
   const [result, setResult] = useState(null);
-  console.log("value result", result);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>

@@ -17,9 +17,7 @@ const DateRange = () => {
         startText="Min Date"
         endText="Max Date"
         value={value}
-        onChange={(newValue) => {
-          setValue(newValue);
-        }}
+        onChange={onChangeTime}
         renderInput={(startProps, endProps) => (
           <Fragment>
             <TextField {...startProps} />

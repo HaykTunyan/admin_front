@@ -48,7 +48,7 @@ const validationSchema = Yup.object().shape({
   }),
 });
 
-function BasicForm() {
+const FormikPage = () => {
   const handleSubmit = async (
     values,
     { resetForm, setErrors, setStatus, setSubmitting }
@@ -66,151 +66,147 @@ function BasicForm() {
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
-      {({
-        errors,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        isSubmitting,
-        touched,
-        values,
-        status,
-      }) => (
-        <Card mb={6}>
-          <CardContent>
-            {status && status.sent && (
-              <Alert severity="success" my={3}>
-                Your data has been submitted successfully!
-              </Alert>
-            )}
-
-            {isSubmitting ? (
-              <Box display="flex" justifyContent="center" my={6}>
-                <CircularProgress />
-              </Box>
-            ) : (
-              <form onSubmit={handleSubmit}>
-                {/* Full Name */}
-                <TextField
-                  name="name"
-                  label="Full Name"
-                  value={values.fullName}
-                  error={Boolean(touched.name && errors.name)}
-                  fullWidth
-                  helperText={touched.name && errors.name}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  type="text"
-                  variant="outlined"
-                  my={2}
-                />
-
-                {/* Email */}
-                <TextField
-                  name="email"
-                  label="Email"
-                  value={values.email}
-                  error={Boolean(touched.email && errors.email)}
-                  fullWidth
-                  helperText={touched.email && errors.email}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  type="email"
-                  variant="outlined"
-                  my={2}
-                />
-
-                {/* Phone Number */}
-                <TextField
-                  name="phone"
-                  label="Phone"
-                  value={values.phone}
-                  error={Boolean(touched.phone && errors.phone)}
-                  fullWidth
-                  helperText={touched.phone && errors.phone}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  type="phone"
-                  variant="outlined"
-                  my={2}
-                />
-
-                {/* Balance */}
-                <TextField
-                  name="number"
-                  label="Banlance"
-                  value={values.balance}
-                  error={Boolean(touched.balance && errors.balance)}
-                  fullWidth
-                  helperText={touched.balance && errors.balance}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  type="number"
-                  variant="outlined"
-                  my={2}
-                />
-
-                {/* Password */}
-                <TextField
-                  name="password"
-                  label="Password"
-                  value={values.password}
-                  error={Boolean(touched.password && errors.password)}
-                  fullWidth
-                  helperText={touched.password && errors.password}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  type="password"
-                  variant="outlined"
-                  my={2}
-                />
-
-                {/* Confirm Password */}
-                <TextField
-                  name="confirmPassword"
-                  label="Confirm password"
-                  value={values.confirmPassword}
-                  error={Boolean(
-                    touched.confirmPassword && errors.confirmPassword
-                  )}
-                  fullWidth
-                  helperText={touched.confirmPassword && errors.confirmPassword}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  type="password"
-                  variant="outlined"
-                  my={2}
-                />
-
-                {/* Submit */}
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  mt={3}
-                >
-                  Save changes
-                </Button>
-              </form>
-            )}
-          </CardContent>
-        </Card>
-      )}
-    </Formik>
-  );
-}
-
-function FormikPage() {
-  return (
     <Fragment>
-      <BasicForm />
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({
+          errors,
+          handleBlur,
+          handleChange,
+          handleSubmit,
+          isSubmitting,
+          touched,
+          values,
+          status,
+        }) => (
+          <Card mb={6}>
+            <CardContent>
+              {status && status.sent && (
+                <Alert severity="success" my={3}>
+                  Your data has been submitted successfully!
+                </Alert>
+              )}
+
+              {isSubmitting ? (
+                <Box display="flex" justifyContent="center" my={6}>
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <form onSubmit={handleSubmit}>
+                  {/* Full Name */}
+                  <TextField
+                    name="name"
+                    label="Full Name"
+                    value={values.fullName}
+                    error={Boolean(touched.name && errors.name)}
+                    fullWidth
+                    helperText={touched.name && errors.name}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="text"
+                    variant="outlined"
+                    my={2}
+                  />
+
+                  {/* Email */}
+                  <TextField
+                    name="email"
+                    label="Email"
+                    value={values.email}
+                    error={Boolean(touched.email && errors.email)}
+                    fullWidth
+                    helperText={touched.email && errors.email}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="email"
+                    variant="outlined"
+                    my={2}
+                  />
+
+                  {/* Phone Number */}
+                  <TextField
+                    name="phone"
+                    label="Phone"
+                    value={values.phone}
+                    error={Boolean(touched.phone && errors.phone)}
+                    fullWidth
+                    helperText={touched.phone && errors.phone}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="phone"
+                    variant="outlined"
+                    my={2}
+                  />
+
+                  {/* Balance */}
+                  <TextField
+                    name="number"
+                    label="Banlance"
+                    value={values.balance}
+                    error={Boolean(touched.balance && errors.balance)}
+                    fullWidth
+                    helperText={touched.balance && errors.balance}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="number"
+                    variant="outlined"
+                    my={2}
+                  />
+
+                  {/* Password */}
+                  <TextField
+                    name="password"
+                    label="Password"
+                    value={values.password}
+                    error={Boolean(touched.password && errors.password)}
+                    fullWidth
+                    helperText={touched.password && errors.password}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="password"
+                    variant="outlined"
+                    my={2}
+                  />
+
+                  {/* Confirm Password */}
+                  <TextField
+                    name="confirmPassword"
+                    label="Confirm password"
+                    value={values.confirmPassword}
+                    error={Boolean(
+                      touched.confirmPassword && errors.confirmPassword
+                    )}
+                    fullWidth
+                    helperText={
+                      touched.confirmPassword && errors.confirmPassword
+                    }
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    type="password"
+                    variant="outlined"
+                    my={2}
+                  />
+
+                  {/* Submit */}
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    mt={3}
+                  >
+                    Save changes
+                  </Button>
+                </form>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </Formik>
     </Fragment>
   );
-}
+};
 
 export default FormikPage;
