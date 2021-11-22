@@ -1,19 +1,17 @@
 import React from "react";
-import styled, { withTheme } from "styled-components/macro";
-import { MoreVertical } from "react-feather";
+import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import {
   Card as MuiCard,
   CardHeader,
-  IconButton,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  LinearProgress as MuiLinearProgress,
 } from "@material-ui/core";
+import TopDeviceModal from "../../modal/TopDeviceModal";
 
 //  Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -22,13 +20,6 @@ const Card = styled(MuiCard)(spacing);
 const TableWrapper = styled.div`
   overflow-y: auto;
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
-`;
-
-const LinearProgress = styled(MuiLinearProgress)`
-  height: 14px;
-  width: 180px;
-  border-radius: 3px;
-  background: ${(props) => props.theme.palette.grey[200]};
 `;
 
 export const rowColumns = [
@@ -77,6 +68,7 @@ export const rowColumns = [
 ];
 
 const BrowsersTable = () => {
+  const title = " Browsers Version";
   return (
     <>
       <Card mb={6}>
@@ -89,23 +81,18 @@ const BrowsersTable = () => {
                   <TableCell component="th" scope="row">
                     All browsers support
                   </TableCell>
-                  <TableCell align="right">Users</TableCell>
-                  <TableCell>% Users</TableCell>
+                  <TableCell align="">Users</TableCell>
                   <TableCell align=""> Percent </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {rowColumns.map((item) => (
                   <TableRow key={item.key}>
-                    <TableCell scope="row">{item.name}</TableCell>
-                    <TableCell align="right">{item.count} </TableCell>
-                    <TableCell>
-                      <LinearProgress
-                        variant="determinate"
-                        value={item.percent}
-                        color="secondary"
-                      />
+                    <TableCell scope="row">
+                      {item.name}
+                      <TopDeviceModal title={title} />
                     </TableCell>
+                    <TableCell align="">{item.count} </TableCell>
                     <TableCell align="">{item.percent} %</TableCell>
                   </TableRow>
                 ))}

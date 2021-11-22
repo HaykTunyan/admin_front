@@ -96,9 +96,10 @@ const Stats = ({
   illustration,
   view,
   ViewMore,
+  className,
 }) => {
   return (
-    <Card illustration={illustration}>
+    <Card illustration={illustration} sx={className}>
       <CardContent>
         <Typography variant="h6" mb={4}>
           {title}

@@ -12,7 +12,6 @@ import {
   TableRow,
   Card as MuiCard,
   Typography,
-  CardHeader,
   Chip as MuiChip,
   TablePagination,
   InputBase,
@@ -103,11 +102,10 @@ const Administrators = () => {
   // hooks.
   const adminUser = useSelector((state) => state.userData);
   const rows = adminUser.adminList;
+  const [rowAdmin, getRowAdmin] = useState([]);
   const [page, setPage] = useState(0);
   const { t } = useTranslation();
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const [rowAdmin, getRowAdmin] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -201,11 +199,18 @@ const Administrators = () => {
                                       {row.email}
                                     </TableCell>
                                     <TableCell align="center">
-                                      <Chip label={row.role} color="success" />
+                                      {row.role === "4" ? (
+                                        <Chip
+                                          label="Supper Admin"
+                                          color="success"
+                                        />
+                                      ) : (
+                                        <Chip label="Admin" color="primary" />
+                                      )}
                                     </TableCell>
                                     <TableCell align="center">
                                       <Box mr={2}>
-                                        <EditAdminModal />
+                                        <EditAdminModal key={row.id} />
                                       </Box>
                                     </TableCell>
                                   </TableRow>

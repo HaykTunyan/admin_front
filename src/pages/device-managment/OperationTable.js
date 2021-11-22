@@ -13,6 +13,7 @@ import {
   LinearProgress as MuiLinearProgress,
 } from "@material-ui/core";
 import { useSelector } from "react-redux";
+import TopDeviceModal from "../../modal/TopDeviceModal";
 
 //  Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -34,6 +35,8 @@ const OperationTable = () => {
   const rowOperation = useSelector((state) => state.deviceManagment);
 
   const operationList = rowOperation.opetionCall;
+
+  const title = "Operation Sistem";
   return (
     <>
       <Card mb={6}>
@@ -47,22 +50,17 @@ const OperationTable = () => {
                     All Operation Sistems support
                   </TableCell>
                   <TableCell align="center">Users</TableCell>
-                  {/* <TableCell>% Users</TableCell> */}
                   <TableCell>Percent %</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {operationList.map((item) => (
                   <TableRow key={item.key}>
-                    <TableCell scope="row">{item.name}</TableCell>
+                    <TableCell scope="row">
+                      {item.name}
+                      <TopDeviceModal title={title} />
+                    </TableCell>
                     <TableCell align="center">{item.count} </TableCell>
-                    {/* <TableCell>
-                      <LinearProgress
-                        variant="determinate"
-                        value={item.percent}
-                        color="secondary"
-                      />
-                    </TableCell> */}
                     <TableCell align="">{item.percent} %</TableCell>
                   </TableRow>
                 ))}

@@ -18,9 +18,11 @@ import {
 } from "@material-ui/core";
 import { Edit2 } from "react-feather";
 
-const EditAdminModal = () => {
+const EditAdminModal = ({ key }) => {
   const [open, setOpen] = useState(false);
   const [verify, setVerify] = useState("");
+
+  console.log("row Id", key);
 
   const handleChange = (event) => {
     setVerify(event.target.value);
@@ -51,7 +53,7 @@ const EditAdminModal = () => {
             id="name"
             label="Admin Name"
             type="text"
-            variant="standard"
+            variant="outlined"
             fullWidth
             my={8}
           />
@@ -62,30 +64,20 @@ const EditAdminModal = () => {
             id="email"
             label="Admin Email"
             type="email"
-            variant="standard"
+            variant="outlined"
             fullWidth
             my={8}
           />
-          <Box my={8}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Admin Type</InputLabel>
-              <Select
-                tabIndex={3}
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={verify}
-                label="Verify Type"
-                onChange={handleChange}
-              >
-                <MenuItem value="">
-                  <em>Disconect</em>
-                </MenuItem>
-                <MenuItem value={10}>Active</MenuItem>
-                <MenuItem value={20}>Disabled</MenuItem>
-                <MenuItem value={30}>Procesing</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
+          <TextField
+            tabIndex={2}
+            margin="dense"
+            id="password"
+            label="Admin password"
+            type="password"
+            variant="outlined"
+            fullWidth
+            my={8}
+          />
           <Box sx={{ display: "flex", flexDirection: "column", m: 5 }}>
             <FormControlLabel label="FSend" control={<Checkbox {...label} />} />
             <FormControlLabel

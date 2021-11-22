@@ -45,10 +45,11 @@ const UniqueTable = () => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell width="30%">Screen Resolution</TableCell>
-              <TableCell>Quantity of users</TableCell>
-
-              <TableCell align="right">Percent %</TableCell>
+              <TableCell>Screen Resolution</TableCell>
+              <TableCell>
+                Percent <span> &#8453;</span>
+              </TableCell>
+              <TableCell>Quantity Users</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -59,11 +60,13 @@ const UniqueTable = () => {
                   key={row.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  <TableCell component="th" scope="row" width="30%">
+                  <TableCell component="th" scope="row">
                     {row.device}
                   </TableCell>
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell align="right">{row.percent} %</TableCell>
+                  <TableCell>
+                    {row.percent} <span> &#8453;</span>
+                  </TableCell>
+                  <TableCell>{row.users}</TableCell>
                 </TableRow>
               ))}
           </TableBody>

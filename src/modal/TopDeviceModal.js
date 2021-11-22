@@ -46,7 +46,7 @@ export const TopPhone = [
   },
 ];
 
-const TopDeviceModal = () => {
+const TopDeviceModal = ({ title }) => {
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -63,7 +63,8 @@ const TopDeviceModal = () => {
       </IconButton>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle textAlign="center">
-          Information for Top Right Device Model{" "}
+          Information for Top Right
+          <span children={title} />
         </DialogTitle>
         <DialogContent>
           <List sx={style} component="nav" aria-label="mailbox folders">

@@ -17,6 +17,8 @@ import {
   Checkbox,
 } from "@material-ui/core";
 import { UserPlus } from "react-feather";
+import { Formik } from "formik";
+import { spacing } from "@material-ui/system";
 
 const AddAdminModal = () => {
   const [open, setOpen] = useState(false);
@@ -43,79 +45,113 @@ const AddAdminModal = () => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add New Admin</DialogTitle>
         <DialogContent>
-          <Paper mt={3}></Paper>
-
-          <TextField
-            tabIndex={1}
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Admin Name"
-            type="text"
-            variant="standard"
-            fullWidth
-            my={8}
-          />
-          <TextField
-            tabIndex={2}
-            autoFocus
-            margin="dense"
-            id="email"
-            label="Admin Email"
-            type="email"
-            variant="standard"
-            fullWidth
-            my={8}
-          />
-          <Box my={8}>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Admin Type</InputLabel>
-              <Select
-                tabIndex={3}
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={verify}
-                label="Verify Type"
-                onChange={handleChange}
-              >
-                <MenuItem value={10}>Active</MenuItem>
-                <MenuItem value={20}>Disabled</MenuItem>
-                <MenuItem value={30}>Procesing</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Box sx={{ display: "flex", flexDirection: "column", m: 5 }}>
-            <FormControlLabel label="FSend" control={<Checkbox {...label} />} />
-            <FormControlLabel
-              label="Real Send"
-              control={<Checkbox {...label} />}
-            />
-            <FormControlLabel
-              label="Permission for changes on deposits"
-              control={<Checkbox {...label} />}
-            />
-            <FormControlLabel
-              label="Permissions to change KYC status"
-              control={<Checkbox {...label} />}
-            />
-            <FormControlLabel
-              label="Permission to send notifications"
-              control={<Checkbox {...label} />}
-            />
-            <FormControlLabel
-              label="Permission to download the user base"
-              control={<Checkbox {...label} />}
-            />
-          </Box>
+          <Formik
+            initialValues={{ name: "", email: "", password: "" }}
+            validate={(values) => {
+              const errors = {};
+              if (!values.email) {
+                errors.email = "Required";
+              } else if (
+                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+              ) {
+                errors.email = "Invalid email address";
+              }
+              return errors;
+            }}
+            onSubmit={(values, { setSubmitting }) => {
+              setTimeout(() => {
+                alert(JSON.stringify(values, null, 2));
+                setSubmitting(false);
+              }, 400);
+            }}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+              /* and other goodies */
+            }) => (
+              <form onSubmit={handleSubmit}>
+                <TextField
+                  tabIndex={1}
+                  margin="dense"
+                  id="name"
+                  label="Admin Name"
+                  type="text"
+                  variant="outlined"
+                  fullWidth
+                  my={8}
+                />
+                <TextField
+                  tabIndex={2}
+                  margin="dense"
+                  id="email"
+                  label="Admin Email"
+                  type="email"
+                  variant="outlined"
+                  fullWidth
+                  my={8}
+                />
+                {errors.email && touched.email && errors.email}
+                <TextField
+                  tabIndex={2}
+                  margin="dense"
+                  id="password"
+                  label="Admin password"
+                  type="password"
+                  variant="outlined"
+                  fullWidth
+                  my={8}
+                />
+                {errors.password && touched.password && errors.password}
+                <Box sx={{ display: "flex", flexDirection: "column", m: 5 }}>
+                  <FormControlLabel
+                    label="FSend"
+                    control={<Checkbox {...label} value="1" />}
+                  />
+                  <FormControlLabel
+                    label="Real Send"
+                    control={<Checkbox {...label} value="2" />}
+                  />
+                  <FormControlLabel
+                    label="Permission for changes on deposits"
+                    control={<Checkbox {...label} value="3" />}
+                  />
+                  <FormControlLabel
+                    label="Permissions to change KYC status"
+                    control={<Checkbox {...label} value="4" />}
+                  />
+                  <FormControlLabel
+                    label="Permission to send notifications"
+                    control={<Checkbox {...label} value="5" />}
+                  />
+                  <FormControlLabel
+                    label="Permission to download the user base"
+                    control={<Checkbox {...label} value="6" />}
+                  />
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Button onClick={handleClose} sx={{ width: "120px" }}>
+                    Cancel
+                  </Button>
+                  <Box mx={3} />
+                  <Button
+                    onClick={handleClose}
+                    sx={{ width: "120px" }}
+                    disabled={isSubmitting}
+                    variant="contained"
+                  >
+                    Create Admin
+                  </Button>
+                </Box>
+              </form>
+            )}
+          </Formik>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} sx={{ width: "120px" }}>
-            Cancel
-          </Button>
-          <Button onClick={handleClose} sx={{ width: "120px" }}>
-            Create Admin
-          </Button>
-        </DialogActions>
       </Dialog>
     </div>
   );

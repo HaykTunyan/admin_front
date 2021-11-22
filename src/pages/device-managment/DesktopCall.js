@@ -22,6 +22,8 @@ const DesktopCall = ({ desktopData }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const title = " Desktop Info";
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -43,7 +45,7 @@ const DesktopCall = ({ desktopData }) => {
           <TableHead>
             <TableRow>
               <TableCell width="30%">Brand Name</TableCell>
-              <TableCell>Percent</TableCell>
+              <TableCell>Percent %</TableCell>
               <TableCell align="right">Quantity People</TableCell>
             </TableRow>
           </TableHead>
@@ -57,7 +59,7 @@ const DesktopCall = ({ desktopData }) => {
                 >
                   <TableCell component="th" scope="row" width="30%">
                     {row.brand_name}
-                    <TopDeviceModal />
+                    <TopDeviceModal title={title} />
                   </TableCell>
                   <TableCell>
                     {row.percent}
