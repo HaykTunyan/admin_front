@@ -75,7 +75,7 @@ const TableWrapper = styled.div`
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
 
-const DashboardTable = ({ title, rowList, rowBody }) => {
+const LocedTable = ({ title, rowList, rowBody }) => {
   const { t } = useTranslation();
 
   const dialog = "Locked Item";
@@ -175,4 +175,4 @@ const DashboardTable = ({ title, rowList, rowBody }) => {
   );
 };
 
-export default DashboardTable;
+export default LocedTable;

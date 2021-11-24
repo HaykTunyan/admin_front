@@ -103,7 +103,7 @@ const DeviceManagement = () => {
             percentagetext="+40%"
             percentagecolor={green[500]}
             ViewMore={openMobile}
-            className={tabOne && { background: "black" }}
+            className={tabOne && { background: "#376fd0" }}
           />
         </Grid>
         <Grid item xs={12} md={4}>
@@ -114,7 +114,7 @@ const DeviceManagement = () => {
             percentagetext="+25%"
             percentagecolor={green[500]}
             ViewMore={openTablet}
-            className={tabTwo && { background: "black" }}
+            className={tabTwo && { background: "#376fd0" }}
           />
         </Grid>
         <Grid item xs={12} md={4}>
@@ -125,7 +125,7 @@ const DeviceManagement = () => {
             percentagetext="+25%"
             percentagecolor={green[500]}
             ViewMore={openDescktop}
-            className={tabThree && { background: "black" }}
+            className={tabThree && { background: "#376fd0" }}
           />
         </Grid>
       </Grid>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography, Box } from "@material-ui/core";
-import DashboardTable from "../../../components/tables/LocedTable";
+import LocedTable from "../../../components/tables/LocedTable";
 import CSVButton from "../../../components/CSVButton";
 import { useSelector } from "react-redux";
 
@@ -43,7 +43,7 @@ const Locked = () => {
 
   return (
     <>
-      <DashboardTable title={title} rowList={rowList} rowBody={rowBody} />
+      <LocedTable title={title} rowList={rowList} rowBody={rowBody} />
       <Box m={4} display="flex" justifyContent="flex-end" alignItems="center">
         <Typography variant="subtitle1" color="inherit" component="div">
           Export Data

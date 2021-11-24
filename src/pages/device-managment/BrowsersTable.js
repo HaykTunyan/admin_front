@@ -82,7 +82,7 @@ const BrowsersTable = () => {
                     All browsers support
                   </TableCell>
                   <TableCell align="">Users</TableCell>
-                  <TableCell align=""> Percent </TableCell>
+                  <TableCell align=""> Percent %</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

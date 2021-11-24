@@ -17,6 +17,7 @@ import KYCSettings from "./KYC";
 import TransactionsSettings from "./TransactionsSettings";
 import SavingsSetting from "./SavingsSettings/SavingsSetting";
 import SwapSettings from "./SwapSettings";
+import UserSettings from "./User-Settings";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
@@ -51,6 +52,7 @@ const Settings = () => {
                   <Tab label="Transactions Settings" value="3" />
                   <Tab label="Savings Setting" value="4" />
                   <Tab label="Swap Settings" value="5" />
+                  <Tab label="User Settings" value="6" />
                 </TabList>
               </Box>
               {/* <TabPanel value="1" mb={5}>
@@ -67,6 +69,9 @@ const Settings = () => {
               </TabPanel>
               <TabPanel value="5" mb={5}>
                 <SwapSettings />
+              </TabPanel>
+              <TabPanel value="6" mb={6}>
+                <UserSettings />
               </TabPanel>
             </TabContext>
           </Box>

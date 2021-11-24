@@ -44,9 +44,7 @@ const TabletCell = ({ tabletData }) => {
           <TableHead>
             <TableRow>
               <TableCell width="30%">Brand Name</TableCell>
-              <TableCell>
-                Percent <span> &#8453;</span>
-              </TableCell>
+              <TableCell>Percent %</TableCell>
               <TableCell align="right">Quantity People</TableCell>
             </TableRow>
           </TableHead>
@@ -62,10 +60,7 @@ const TabletCell = ({ tabletData }) => {
                     {row.brand_name}
                     <TopDeviceModal title={title} />
                   </TableCell>
-                  <TableCell>
-                    {row.percent}
-                    <span> &#8453;</span>
-                  </TableCell>
+                  <TableCell>{row.percent}%</TableCell>
                   <TableCell align="right">{row.quantity}</TableCell>
                 </TableRow>
               ))}

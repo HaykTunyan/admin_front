@@ -46,9 +46,7 @@ const UniqueTable = () => {
           <TableHead>
             <TableRow>
               <TableCell>Screen Resolution</TableCell>
-              <TableCell>
-                Percent <span> &#8453;</span>
-              </TableCell>
+              <TableCell>Percent %</TableCell>
               <TableCell>Quantity Users</TableCell>
             </TableRow>
           </TableHead>
@@ -63,9 +61,7 @@ const UniqueTable = () => {
                   <TableCell component="th" scope="row">
                     {row.device}
                   </TableCell>
-                  <TableCell>
-                    {row.percent} <span> &#8453;</span>
-                  </TableCell>
+                  <TableCell>{row.percent} %</TableCell>
                   <TableCell>{row.users}</TableCell>
                 </TableRow>
               ))}
