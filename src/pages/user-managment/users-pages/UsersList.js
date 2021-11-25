@@ -74,8 +74,6 @@ const UsersList = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [rowUserList, setRowUserList] = useState([]);
-  console.log("row", rowUserList);
-  // const rowUserList = rowUsers.listData;
 
   const getUserList_req = () => {
     return instance
@@ -106,6 +104,7 @@ const UsersList = () => {
           </Typography>
         </Grid>
       </Grid>
+
       <Divider my={6} />
 
       <Grid container display="flex" alignItems="center">

@@ -46,7 +46,12 @@ const AddAdminModal = () => {
         <DialogTitle>Add New Admin</DialogTitle>
         <DialogContent>
           <Formik
-            initialValues={{ name: "", email: "", password: "" }}
+            initialValues={{
+              name: "",
+              email: "",
+              password: "",
+              promision: [],
+            }}
             validate={(values) => {
               const errors = {};
               if (!values.email) {
@@ -79,16 +84,6 @@ const AddAdminModal = () => {
                 <TextField
                   tabIndex={1}
                   margin="dense"
-                  id="name"
-                  label="Admin Name"
-                  type="text"
-                  variant="outlined"
-                  fullWidth
-                  my={8}
-                />
-                <TextField
-                  tabIndex={2}
-                  margin="dense"
                   id="email"
                   label="Admin Email"
                   type="email"
@@ -96,6 +91,17 @@ const AddAdminModal = () => {
                   fullWidth
                   my={8}
                 />
+                <TextField
+                  tabIndex={2}
+                  margin="dense"
+                  id="name"
+                  label="Admin Name"
+                  type="text"
+                  variant="outlined"
+                  fullWidth
+                  my={8}
+                />
+
                 {errors.email && touched.email && errors.email}
                 <TextField
                   tabIndex={2}

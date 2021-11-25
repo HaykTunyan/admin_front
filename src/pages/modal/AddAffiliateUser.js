@@ -1,106 +1,100 @@
-// import React from "react";
-// import PropTypes from "prop-types";
-// import { styled } from "@mui/material/styles";
-// import {
-//   Button,
-//   Dialog,
-//   DialogTitle,
-//   DialogContent,
-//   DialogActions,
-//   Typography,
-// } from "@material-ui/core";
-// import { IconButton, PlusOne } from "@material-ui/icons";
-// import CloseIcon from '@mui/icons-material/Close';
+import React, { Fragment, useState } from "react";
+import {
+  Button,
+  Paper,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  FormControl,
+  DialogTitle,
+  InputLabel,
+  MenuItem,
+  Box,
+  Divider,
+  IconButton,
+  FormControlLabel,
+  Select,
+  Checkbox,
+} from "@material-ui/core";
+import { CloudUpload } from "@material-ui/icons";
+import ImageUploading from "react-images-uploading";
+import { UserPlus, Edit2 } from "react-feather";
 
-// const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-//   "& .MuiDialogContent-root": {
-//     padding: theme.spacing(2),
-//   },
-//   "& .MuiDialogActions-root": {
-//     padding: theme.spacing(1),
-//   },
-// }));
+const AddAffiliateUser = () => {
+  const [open, setOpen] = useState(false);
+  const [images, setImages] = useState([]);
+  const [verify, setVerify] = useState("");
 
-// const BootstrapDialogTitle = (props) => {
-//   const { children, onClose, ...other } = props;
+  const handleChange = (event) => {
+    setVerify(event.target.value);
+  };
+  const label = { inputProps: { "aria-label": "Checkbox demo" } };
+  const maxNumber = 69;
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
 
-//   return (
-//     <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-//       {children}
-//       {onClose ? (
-//         <IconButton
-//           aria-label="close"
-//           onClick={onClose}
-//           sx={{
-//             position: "absolute",
-//             right: 8,
-//             top: 8,
-//             color: (theme) => theme.palette.grey[500],
-//           }}
-//         >
-//           <CloseIcon />
-//         </IconButton>
-//       ) : null}
-//     </DialogTitle>
-//   );
-// };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-// const AddAffiliateUser = () => {
-//   const [open, setOpen] = useState(false);
+  const onChange = (imageList, addUpdateIndex) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setImages(imageList);
+  };
 
-//   const handleClickOpen = () => {
-//     setOpen(true);
-//   };
-//   const handleClose = () => {
-//     setOpen(false);
-//   };
+  return (
+    <div>
+      <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
+        <UserPlus />
+      </IconButton>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Add New Admin</DialogTitle>
+        <DialogContent>
+          <Paper mt={3}></Paper>
+          <TextField
+            tabIndex={1}
+            margin="dense"
+            id="email"
+            label="Admin Email"
+            type="email"
+            variant="standard"
+            fullWidth
+            my={8}
+          />
 
-//   return (
-//     <div>
-//       <Button variant="outlined" onClick={handleClickOpen}>
-//         Open dialog
-//       </Button>
-//       <BootstrapDialog
-//         onClose={handleClose}
-//         aria-labelledby="customized-dialog-title"
-//         open={open}
-//       >
-//         <BootstrapDialogTitle
-//           id="customized-dialog-title"
-//           onClose={handleClose}
-//         >
-//           Modal title
-//         </BootstrapDialogTitle>
-//         <DialogContent dividers>
-//           <Typography gutterBottom>
-//             Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-//             dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta
-//             ac consectetur ac, vestibulum at eros.
-//           </Typography>
-//           <Typography gutterBottom>
-//             Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-//             Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor
-//             auctor.
-//           </Typography>
-//           <Typography gutterBottom>
-//             Aenean lacinia bibendum nulla sed consectetur. Praesent commodo
-//             cursus magna, vel scelerisque nisl consectetur et. Donec sed odio
-//             dui. Donec ullamcorper nulla non metus auctor fringilla.
-//           </Typography>
-//         </DialogContent>
-//         <DialogActions>
-//           <Button autoFocus onClick={handleClose}>
-//             Save changes
-//           </Button>
-//         </DialogActions>
-//       </BootstrapDialog>
-//     </div>
-//   );
-// };
+          <TextField
+            tabIndex={2}
+            margin="dense"
+            id="full_name"
+            label="Full Name"
+            type="text"
+            variant="standard"
+            fullWidth
+            my={8}
+          />
 
-// // BootstrapDialogTitle.propTypes = {
-// //   children: PropTypes.node,
-// //   onClose: PropTypes.func.isRequired,
-// // };
+          <TextField
+            tabIndex={3}
+            margin="dense"
+            id="phone"
+            label="Phone"
+            type="number"
+            variant="standard"
+            fullWidth
+            my={8}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose}>Create Affiliate</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};
 
-// export default AddAffiliateUser;
+export default AddAffiliateUser;

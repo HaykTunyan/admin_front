@@ -1,10 +1,14 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components/macro";
+import { makeStyles } from "@mui/styles";
 import { Helmet } from "react-helmet-async";
 import { spacing } from "@material-ui/system";
+import { useNavigate } from "react-router-dom";
 import { darken } from "polished";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
 import { useTranslation } from "react-i18next";
+import moment from "moment";
 import {
   Box,
   Divider as MuiDivider,
@@ -16,21 +20,25 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TablePagination,
   TableRow,
   TableSortLabel,
   Toolbar,
-  Typography,
+  Typography as MuiTypography,
   InputBase,
+  TablePagination,
+  Breadcrumbs,
+  Chip as MuiChip,
 } from "@material-ui/core";
-import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
 import CSVButton from "../../../components/CSVButton";
 import { Search as SearchIcon } from "react-feather";
 import AddAffiliateUser from "../../../modal/AddAffiliateUser";
+import instance from "../../../services/api";
+import Loader from "../../../components/Loader";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
 const Paper = styled(MuiPaper)(spacing);
+const Typography = styled(MuiTypography)(spacing);
 
 // Custome Style.
 
@@ -79,34 +87,20 @@ const Input = styled(InputBase)`
   }
 `;
 
-const descendingComparator = (a, b, orderBy) => {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-};
+const Chip = styled(MuiChip)`
+  height: 20px;
+  padding: 4px 0;
+  font-size: 90%;
+  background-color: ${(props) =>
+    props.theme.palette[props.color ? props.color : "primary"].light};
+  color: ${(props) => props.theme.palette.common.white};
+`;
 
-const getComparator = (order, orderBy) => {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-};
-
-const stableSort = (array, comparator) => {
-  const stabilizedThis = array.map((el, index) => ({
-    el,
-    index,
-  }));
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a.el, b.el);
-    if (order !== 0) return order;
-    return a.index - b.index;
-  });
-  return stabilizedThis.map((element) => element.el);
-};
+const useStyles = makeStyles({
+  rootTable: {
+    margin: "10px",
+  },
+});
 
 const headCells = [
   { id: "id", alignment: "left", label: "Order ID" },
@@ -121,71 +115,39 @@ const headCells = [
   { id: "action", alignment: "right", label: "Action" },
 ];
 
-const EnhancedTableHead = (props) => {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
+const AffiliateUsers = () => {
+  // hooks
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const classes = useStyles();
 
-  return (
-    <TableHead>
-      <TableRow>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.alignment}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-};
-
-const EnhancedTable = () => {
+  const [sortModel, setSortModel] = useState([
+    {
+      field: "commodity",
+      sort: "asc",
+    },
+  ]);
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("customer");
-  const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowAffiliate, setRowAffiliate] = useState([]);
+  const rows = rowAffiliate.users;
 
-  // affiliateList
+  console.log("rowAffiliate  ", rowAffiliate);
 
-  const affilate = useSelector((state) => state.listUser);
-
-  const rows = affilate.affiliateList;
-
-  const { t } = useTranslation();
-
-  const handleRequestSort = (property) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
-  };
-
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.id);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
+  const getAffiliate = () => {
+    return instance
+      .get("/admin/user/all", { mode: "no-cors" })
+      .then((data) => {
+        console.log(" affiliate users ", data);
+        setRowAffiliate(data.data);
+        return data;
+      })
+      .catch((error) => {
+        return Promise.reject(error);
+      });
   };
 
   const handleChangePage = (event, newPage) => {
@@ -197,109 +159,18 @@ const EnhancedTable = () => {
     setPage(0);
   };
 
-  const isSelected = (id) => selected.indexOf(id) !== -1;
+  useEffect(() => {
+    getAffiliate();
+  }, []);
 
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+  if (!rows) {
+    return <Loader />;
+  }
 
-  return (
-    <Fragment>
-      <Paper>
-        <Toolbar>
-          <Grid container display="flex" justifyContent="space-between">
-            <Grid item>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <Input placeholder={t("searchList")} />
-              </Search>
-            </Grid>
-            <Grid item>
-              <AddAffiliateUser />
-            </Grid>
-          </Grid>
-        </Toolbar>
-        <TableContainer>
-          <Table
-            aria-labelledby="tableTitle"
-            size={"medium"}
-            aria-label="enhanced table"
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={`${row.id}-${index}`}
-                      selected={isItemSelected}
-                    >
-                      <TableCell align="left">#{row.id}</TableCell>
-                      <TableCell align="left">{row.email}</TableCell>
-                      <TableCell align="left">{row.phone}</TableCell>
-                      <TableCell align="left">{row.balance}</TableCell>
-                      <TableCell align="left">{row.flexible_saving}</TableCell>
-                      <TableCell align="left">{row.locked_saving}</TableCell>
-                      <TableCell align="left">{row.total_profit}</TableCell>
-                      <TableCell align="left">{row.status_kyc}</TableCell>
-                      <TableCell align="left">{row.date_register}</TableCell>
-                      <TableCell padding="none" align="right">
-                        <Box mr={2}>
-                          <IconButton aria-label="details" size="large">
-                            <RemoveRedEyeIcon />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 53 * emptyRows }}>
-                  <TableCell colSpan={11} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-      <Box mt={8} display="flex" justifyContent="flex-end" alignItems="center">
-        <Typography variant="subtitle1" color="inherit" component="div">
-          Export Data
-        </Typography>
-        <CSVButton data={rows} />
-      </Box>
-    </Fragment>
-  );
-};
-
-const AffiliateUsers = () => {
   return (
     <Fragment>
       <Helmet title="Affilate Users" />
+
       <Grid justifyContent="space-between" container spacing={10}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
@@ -310,10 +181,185 @@ const AffiliateUsers = () => {
           <div>{/* <AddAffiliateUser /> */}</div>
         </Grid>
       </Grid>
+
       <Divider my={6} />
+
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <EnhancedTable />
+          <Toolbar>
+            <Grid container display="flex" justifyContent="space-between">
+              <Grid item>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <Input placeholder={t("searchList")} />
+                </Search>
+              </Grid>
+              <Grid item>
+                <AddAffiliateUser />
+              </Grid>
+            </Grid>
+          </Toolbar>
+          <Fragment>
+            <Paper>
+              <TableContainer component={Paper} className={classes.rootTable}>
+                <Table
+                  aria-label="simple table"
+                  sortModel={sortModel}
+                  onSortModelChange={(model) => setSortModel(model)}
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>ID</TableCell>
+                      <TableCell align="center">Email</TableCell>
+                      <TableCell align="center">Phone</TableCell>
+                      <TableCell align="center">Balance</TableCell>
+                      <TableCell align="center">
+                        Flexible
+                        <Breadcrumbs
+                          aria-label="breadcrumb"
+                          display="flex"
+                          justifyContent="space-around"
+                          align="center"
+                        >
+                          <Typography color="text.primary">active</Typography>
+                          <Typography color="text.primary">finish</Typography>
+                        </Breadcrumbs>
+                      </TableCell>
+                      <TableCell align="center">
+                        Locked
+                        <Breadcrumbs
+                          aria-label="breadcrumb"
+                          display="flex"
+                          justifyContent="space-around"
+                          align="center"
+                        >
+                          <Typography color="text.primary">active</Typography>
+                          <Typography color="text.primary">finish</Typography>
+                        </Breadcrumbs>
+                      </TableCell>
+                      <TableCell align="center">Receive</TableCell>
+                      <TableCell align="center">Status KYC</TableCell>
+                      <TableCell align="center">Date Register</TableCell>
+                      <TableCell align="center">Geo Position</TableCell>
+                      <TableCell align="center">Send</TableCell>
+                      <TableCell align="center">Referral</TableCell>
+                      <TableCell align="center">Currency</TableCell>
+                      <TableCell align="right">View</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows &&
+                      rows
+                        .slice(
+                          page * rowsPerPage,
+                          page * rowsPerPage + rowsPerPage
+                        )
+                        .map((row) => (
+                          <TableRow
+                            key={row.id}
+                            sx={{
+                              "&:last-child td, &:last-child th": { border: 0 },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.id}
+                            </TableCell>
+                            <TableCell align="center">{row.email}</TableCell>
+                            <TableCell align="center">{row.phone}</TableCell>
+                            <TableCell align="center">{row.balance}</TableCell>
+                            <TableCell align="center">
+                              <Breadcrumbs
+                                aria-label="breadcrumb"
+                                display="flex"
+                                justifyContent="space-around"
+                                align="center"
+                              >
+                                <Typography color="text.primary">
+                                  {row?.flexible?.active}
+                                </Typography>
+                                <Typography color="text.primary">
+                                  {row?.flexible?.finished}
+                                </Typography>
+                              </Breadcrumbs>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Breadcrumbs
+                                aria-label="breadcrumb"
+                                display="flex"
+                                justifyContent="space-around"
+                                align="center"
+                              >
+                                <Typography color="text.primary">
+                                  {row?.locked?.active}
+                                </Typography>
+                                <Typography color="text.primary">
+                                  {row?.locked?.finished}
+                                </Typography>
+                              </Breadcrumbs>
+                            </TableCell>
+                            <TableCell align="center">{row.receive}</TableCell>
+                            <TableCell align="center">
+                              {row.status === "true" ? (
+                                <Chip label="Verified" color="success" />
+                              ) : (
+                                <Chip label="Unverified" color="error" />
+                              )}
+                            </TableCell>
+                            <TableCell align="center">
+                              {/* {row.registrationDate} */}
+                              {moment(row.registrationDate).format(
+                                "DD/MM/YYYY HH:mm "
+                              )}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.geoPosition}
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.send} <span>&#36;</span>{" "}
+                            </TableCell>
+                            <TableCell align="center">{row.referral}</TableCell>
+                            <TableCell align="center">{row.currency}</TableCell>
+                            <TableCell padding="none" align="right">
+                              <Box mr={2}>
+                                <IconButton
+                                  aria-label="details"
+                                  size="large"
+                                  onClick={() => navigate("/view-user")}
+                                >
+                                  <RemoveRedEyeIcon />
+                                </IconButton>
+                              </Box>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                  </TableBody>
+                </Table>
+                {/* Pagination */}
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 20]}
+                  component="div"
+                  count={rows.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </TableContainer>
+            </Paper>
+            <Box
+              mt={8}
+              display="flex"
+              justifyContent="flex-end"
+              alignItems="center"
+            >
+              <Typography variant="subtitle1" color="inherit" component="div">
+                Export Data
+              </Typography>
+              <CSVButton data={rows} />
+            </Box>
+          </Fragment>
         </Grid>
       </Grid>
     </Fragment>

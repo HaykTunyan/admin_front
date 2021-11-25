@@ -179,7 +179,7 @@ const Administrators = () => {
                             <TableRow>
                               <TableCell>Admin Name</TableCell>
                               <TableCell align="center">Email</TableCell>
-                              <TableCell align="center">Admin Type</TableCell>
+                              {/* <TableCell align="center">Admin Satus</TableCell> */}
                               <TableCell align="center">Action</TableCell>
                             </TableRow>
                           </TableHead>
@@ -198,16 +198,13 @@ const Administrators = () => {
                                     <TableCell align="center">
                                       {row.email}
                                     </TableCell>
-                                    <TableCell align="center">
-                                      {row.role === "4" ? (
-                                        <Chip
-                                          label="Supper Admin"
-                                          color="success"
-                                        />
+                                    {/* <TableCell align="center">
+                                      {row.status ? (
+                                        <Chip label="Active" color="success" />
                                       ) : (
-                                        <Chip label="Admin" color="primary" />
+                                        <Chip label="Passive" color="warning" />
                                       )}
-                                    </TableCell>
+                                    </TableCell> */}
                                     <TableCell align="center">
                                       <Box mr={2}>
                                         <EditAdminModal key={row.id} />

@@ -87,7 +87,7 @@ const SettingsKYC = () => {
             </Grid>
             <Spacer mx={4} />
             <Grid item item sx={6} md={2}>
-              <Button variant="contained"> Отклонить </Button>
+              <Button variant="contained"> Reject </Button>
             </Grid>
           </Grid>
         </CardContent>
