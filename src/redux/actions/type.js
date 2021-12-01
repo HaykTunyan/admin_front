@@ -49,3 +49,22 @@ export const NOTIFICATION_LIST = "NOTIFICATION_LIST";
 // News Actions.
 
 export const NEWS_INFO = "NEWS_INFO";
+
+// Administration
+
+export const ADMIN_WOTCH = "ADMIN_WOTCH";
+export const CREATE_ADMIN = "CREATE_ADMIN";
+export const EDIT_ADMIN = "EDIT_ADMIN";
+
+// Affiliate User.
+
+export const AFFIILATE_WOTCH = "AFFIILATE_WOTCH";
+export const CREATE_AFFILIATE = "CREATE_AFFILIATE";
+export const EDIT_AFFILIATE = "EDIT_AFFILIATE";
+
+// Settings.
+
+// Transactions
+
+export const TRANSACTION_WOTCH = "TRANSACTION_WOTCH";
+export const TRANSACTION_EDIT = "TRANSACTION_WOTCH";

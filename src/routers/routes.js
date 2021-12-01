@@ -27,6 +27,7 @@ import Transaction from "../pages/transactions";
 import KYC from "../pages/kyc";
 import Referral from "../pages/referral";
 import Administrators from "../pages/user-managment/administrator/Administrators";
+import AffiliateView from "../pages/user-managment/users-pages/AffiliateView";
 
 // Documentation
 import Redux from "../docs/Redux";
@@ -76,6 +77,10 @@ const routes = [
       {
         path: "view-user",
         element: <UserView />,
+      },
+      {
+        path: "view-affiliate",
+        element: <AffiliateView />,
       },
       {
         path: "news",

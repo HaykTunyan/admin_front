@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
+import { spacing } from "@material-ui/system";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useDispatch } from "react-redux";
 import {
   Button,
+  Paper,
   TextField as MuiTextField,
   Dialog,
   DialogContent,
@@ -9,12 +14,8 @@ import {
   Box,
   IconButton,
 } from "@material-ui/core";
-import { useFormik } from "formik";
-import { UserPlus } from "react-feather";
-import * as Yup from "yup";
-import { spacing } from "@material-ui/system";
-import { useDispatch } from "react-redux";
-import { createAffiliate } from "../redux/actions/user-managment";
+import { Edit2 } from "react-feather";
+import { editAffiliate } from "../redux/actions/user-managment";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
@@ -36,16 +37,17 @@ const validationSchema = Yup.object().shape({
     .required(" Passowrd is required "),
 });
 
-const AddAffiliateUser = () => {
+const EditAffiliateModal = ({ email, phone, password, userId }) => {
   const [open, setOpen] = useState(false);
-  const dispatch = useDispatch();
-
   const [state, setState] = useState({
-    email: "",
+    userId: userId,
+    email: email,
     full_name: "",
-    phone: "",
-    password: "",
+    phone: phone,
+    password: password,
+    is_affiliate: true,
   });
+  const dispatch = useDispatch();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -60,9 +62,9 @@ const AddAffiliateUser = () => {
       ...state,
     },
     validationSchema: { validationSchema },
+    initialForm: { state },
     onSubmit: (values) => {
-      alert(JSON.stringify(values));
-      dispatch(createAffiliate(values)).then();
+      dispatch(editAffiliate(values)).then();
       setOpen(false);
     },
   });
@@ -70,17 +72,20 @@ const AddAffiliateUser = () => {
   return (
     <div>
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
-        <UserPlus />
+        <Edit2 />
       </IconButton>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add New Affiliate User</DialogTitle>
+        <DialogTitle>Edit Affiliate</DialogTitle>
         <DialogContent>
+          <Paper mt={3}></Paper>
+
           <form onSubmit={formik.handleSubmit}>
             <TextField
+              tabIndex={2}
+              onChange={formik.handleChange}
+              defaultValue={state.email}
               margin="dense"
               id="email"
-              defaultValue={formik.values.email}
-              onChange={formik.handleChange}
               label="Affiliate Email"
               type="email"
               variant="outlined"
@@ -88,11 +93,11 @@ const AddAffiliateUser = () => {
               my={8}
             />
             <TextField
-              margin="dense"
-              autoFocus="true"
-              id="full_name"
-              defaultValue={formik.values.full_name}
+              tabIndex={1}
               onChange={formik.handleChange}
+              defaultValue={state.name}
+              margin="dense"
+              id="full_name"
               label="Affiliate Full Name"
               type="text"
               variant="outlined"
@@ -100,10 +105,11 @@ const AddAffiliateUser = () => {
               my={8}
             />
             <TextField
+              tabIndex={2}
               margin="dense"
-              id="phone"
-              defaultValue={formik.values.phone}
               onChange={formik.handleChange}
+              defaultValue={state.phone}
+              id="phone"
               label="Affiliate Phone"
               type="phone"
               variant="outlined"
@@ -111,10 +117,11 @@ const AddAffiliateUser = () => {
               my={8}
             />
             <TextField
+              tabIndex={2}
               margin="dense"
-              id="password"
-              defaultValue={formik.values.password}
               onChange={formik.handleChange}
+              defaultValue={state.password}
+              id="password"
               label="Affiliate Password"
               type="password"
               variant="outlined"
@@ -122,16 +129,18 @@ const AddAffiliateUser = () => {
               my={8}
             />
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              <Button
-                onClick={handleClose}
-                sx={{ width: "150px" }}
-                type="button"
-              >
+              <Button onClick={handleClose} sx={{ width: "120px" }}>
                 Cancel
               </Button>
               <Box mx={3} />
-              <Button sx={{ width: "150px" }} variant="contained" type="submit">
-                Create Affiliate
+
+              <Button
+                // onClick={() => submitReq(id)}
+                sx={{ width: "120px" }}
+                type="submit"
+                variant="contained"
+              >
+                Save Affiliate
               </Button>
             </Box>
           </form>
@@ -141,4 +150,4 @@ const AddAffiliateUser = () => {
   );
 };
 
-export default AddAffiliateUser;
+export default EditAffiliateModal;

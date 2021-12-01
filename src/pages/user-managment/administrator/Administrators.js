@@ -12,7 +12,6 @@ import {
   TableRow,
   Card as MuiCard,
   Typography,
-  Chip as MuiChip,
   TablePagination,
   InputBase,
 } from "@material-ui/core";
@@ -35,14 +34,6 @@ const Paper = styled(MuiPaper)(spacing);
 const Card = styled(MuiCard)(spacing);
 
 // Custom Style.
-const Chip = styled(MuiChip)`
-  height: 20px;
-  padding: 4px 0;
-  font-size: 90%;
-  background-color: ${(props) =>
-    props.theme.palette[props.color ? props.color : "primary"].light};
-  color: ${(props) => props.theme.palette.common.white};
-`;
 
 const TableWrapper = styled.div`
   overflow-y: auto;
@@ -94,17 +85,13 @@ const Input = styled(InputBase)`
   }
 `;
 
-const Spacer = styled.div`
-  flex: 1 1 100%;
-`;
-
 const Administrators = () => {
   // hooks.
+  const { t } = useTranslation();
   const adminUser = useSelector((state) => state.userData);
   const rows = adminUser.adminList;
   const [rowAdmin, getRowAdmin] = useState([]);
   const [page, setPage] = useState(0);
-  const { t } = useTranslation();
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event, newPage) => {
@@ -115,8 +102,6 @@ const Administrators = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
-  console.log(" row Admin ", rowAdmin);
 
   const getAdminUsers = () => {
     return instance
@@ -136,114 +121,110 @@ const Administrators = () => {
     getAdminUsers();
   }, []);
 
+  if (!rowAdmin.admins) {
+    return <Loader />;
+  }
+
   return (
     <>
       <Helmet title="Administrators" />
-      {!rowAdmin ? (
-        <Loader />
-      ) : (
-        <>
-          <Grid justifyContent="space-between" container spacing={10}>
-            <Grid item>
-              <Typography variant="h3" gutterBottom display="inline">
-                Administrators
-              </Typography>
-            </Grid>
-            <Grid item></Grid>
-          </Grid>
-          <Divider my={6} />
+      <Grid justifyContent="space-between" container spacing={10}>
+        <Grid item>
+          <Typography variant="h3" gutterBottom display="inline">
+            Administrators
+          </Typography>
+        </Grid>
+        <Grid item></Grid>
+      </Grid>
+      <Divider my={6} />
 
-          <Grid container spacing={6}>
-            <Grid item xs={12}>
+      <Grid container spacing={6}>
+        <Grid item xs={12}>
+          <Card mb={6}>
+            <CardContent>
               <Card mb={6}>
-                <CardContent>
-                  <Card mb={6}>
-                    <Grid display="flex" justifyContent="space-between">
-                      <Grid item>
-                        <Search>
-                          <SearchIconWrapper>
-                            <SearchIcon />
-                          </SearchIconWrapper>
-                          <Input placeholder={t("searchList")} />
-                        </Search>
-                      </Grid>
-                      <Grid item>
-                        <AddAdminModal />
-                      </Grid>
-                    </Grid>
+                <Grid display="flex" justifyContent="space-between">
+                  <Grid item>
+                    <Search>
+                      <SearchIconWrapper>
+                        <SearchIcon />
+                      </SearchIconWrapper>
+                      <Input placeholder={t("searchList")} />
+                    </Search>
+                  </Grid>
+                  <Grid item>
+                    <AddAdminModal />
+                  </Grid>
+                </Grid>
 
-                    <Paper>
-                      <TableWrapper>
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>Admin Name</TableCell>
-                              <TableCell align="center">Email</TableCell>
-                              {/* <TableCell align="center">Admin Satus</TableCell> */}
-                              <TableCell align="center">Action</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {rowAdmin.admins &&
-                              rowAdmin.admins
-                                .slice(
-                                  page * rowsPerPage,
-                                  page * rowsPerPage + rowsPerPage
-                                )
-                                .map((row) => (
-                                  <TableRow key={row.id}>
-                                    <TableCell component="th" scope="row">
-                                      {row.name}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                      {row.email}
-                                    </TableCell>
-                                    {/* <TableCell align="center">
-                                      {row.status ? (
-                                        <Chip label="Active" color="success" />
-                                      ) : (
-                                        <Chip label="Passive" color="warning" />
-                                      )}
-                                    </TableCell> */}
-                                    <TableCell align="center">
-                                      <Box mr={2}>
-                                        <EditAdminModal key={row.id} />
-                                      </Box>
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                          </TableBody>
-                        </Table>
-                      </TableWrapper>
-                    </Paper>
-                  </Card>
-                  {/* Pagination */}
-                  <TablePagination
-                    rowsPerPageOptions={[5, 10, 20]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                  />
-                </CardContent>
+                <Paper>
+                  <TableWrapper>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Admin Name</TableCell>
+                          <TableCell align="center">Email</TableCell>
+                          <TableCell align="center">Action</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rowAdmin.admins &&
+                          rowAdmin.admins
+                            .slice(
+                              page * rowsPerPage,
+                              page * rowsPerPage + rowsPerPage
+                            )
+                            .map((row) => (
+                              <TableRow key={row.id}>
+                                <TableCell component="th" scope="row">
+                                  {row.name}
+                                </TableCell>
+                                <TableCell align="center">
+                                  {row.email}
+                                </TableCell>
+                                <TableCell align="center">
+                                  <Box mr={2}>
+                                    <EditAdminModal
+                                      email={row.email}
+                                      name={row.name}
+                                      id={row.id}
+                                      permissions={row.permissions}
+                                      role={row.role}
+                                    />
+                                  </Box>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                      </TableBody>
+                    </Table>
+                  </TableWrapper>
+                </Paper>
               </Card>
-              <Box
-                mt={8}
-                display="flex"
-                justifyContent="flex-end"
-                alignItems="center"
-              >
-                <Typography variant="subtitle1" color="inherit" component="div">
-                  Export Data
-                </Typography>
-                <CSVButton data={rows} />
-              </Box>
-            </Grid>
-          </Grid>
-        </>
-      )}
+              {/* Pagination */}
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 20]}
+                component="div"
+                count={rows.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </CardContent>
+          </Card>
+          <Box
+            mt={8}
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="center"
+          >
+            <Typography variant="subtitle1" color="inherit" component="div">
+              Export Data
+            </Typography>
+            <CSVButton data={rows} />
+          </Box>
+        </Grid>
+      </Grid>
     </>
   );
 };

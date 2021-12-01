@@ -4,8 +4,8 @@ import styled from "styled-components/macro";
 import { Search as SearchIcon } from "react-feather";
 import { darken } from "polished";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
 import { spacing } from "@material-ui/system";
+import instance from "../../../services/api";
 import {
   Box,
   Grid,
@@ -16,8 +16,7 @@ import {
 import UsersListTable from "./UserListTable";
 import AddUserModal from "../../../modal/AddUserModal";
 import DatePickerFilter from "../../../components/date-picker/DatePickerFilter";
-import instance from "../../../services/api";
-import { getUserList_req } from "../../../redux/slices/userListSlice";
+import Loader from "../../../components/Loader";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
@@ -71,7 +70,6 @@ const Input = styled(InputBase)`
 
 const UsersList = () => {
   // hooks
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const [rowUserList, setRowUserList] = useState([]);
 
@@ -79,8 +77,7 @@ const UsersList = () => {
     return instance
       .get("/admin/user/all", { mode: "no-cors" })
       .then((data) => {
-        console.log("data users list", data);
-        setRowUserList(data.data.users);
+        setRowUserList(data.data);
         return data;
       })
       .catch((err) => {
@@ -89,10 +86,12 @@ const UsersList = () => {
       .finally(() => {});
   };
   useEffect(() => {
-    // dispatch(getUserList_req());
     getUserList_req();
   }, []);
 
+  if (!rowUserList?.users) {
+    return <Loader />;
+  }
   return (
     <Fragment>
       <Helmet title="Users" />
@@ -104,7 +103,6 @@ const UsersList = () => {
           </Typography>
         </Grid>
       </Grid>
-
       <Divider my={6} />
 
       <Grid container display="flex" alignItems="center">
@@ -120,21 +118,18 @@ const UsersList = () => {
         <Grid item md={3}>
           <DatePickerFilter />
         </Grid>
-
-        <Grid item md={3}></Grid>
-
-        <Grid item md={3}>
-          <Box display="flex" justifyContent="flex-end">
-            <AddUserModal />
-          </Box>
-        </Grid>
       </Grid>
 
       <Divider my={6} />
 
       <Grid container spacing={6}>
+        {console.log("rorrrr", rowUserList)}
         <Grid item xs={12}>
-          <UsersListTable rowUserList={rowUserList} />
+          {rowUserList ? (
+            <UsersListTable rowUserList={rowUserList} />
+          ) : (
+            <Loader />
+          )}
         </Grid>
       </Grid>
     </Fragment>

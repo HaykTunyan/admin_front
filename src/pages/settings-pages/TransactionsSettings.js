@@ -4,7 +4,6 @@ import { makeStyles } from "@mui/styles";
 import { spacing } from "@material-ui/system";
 import {
   Card as MuiCard,
-  CardContent,
   Input,
   Table,
   TableBody,
@@ -17,16 +16,24 @@ import {
   Typography,
   Box,
   TablePagination,
+  Chip as MuiChip,
+  Grid,
 } from "@material-ui/core";
-import EditIcon from "@material-ui/icons/EditOutlined";
-import DoneIcon from "@material-ui/icons/DoneAllTwoTone";
+import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
 import CSVButton from "../../components/CSVButton";
-import { XCircle } from "react-feather";
 import { useSelector } from "react-redux";
+import Loader from "../../components/Loader";
+import { useNavigate } from "react-router-dom";
+import EditTransactionModal from "../../modal/EditTransactionModal";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
 const Toolbar = styled(MuiToolbar)(spacing);
+
+const TableWrapper = styled.div`
+  overflow-y: auto;
+  max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
+`;
 
 // Custom Style.
 const useStyles = makeStyles({
@@ -58,6 +65,15 @@ const useStyles = makeStyles({
   },
 });
 
+const Chip = styled(MuiChip)`
+  height: 20px;
+  padding: 4px 0;
+  font-size: 90%;
+  background-color: ${(props) =>
+    props.theme.palette[props.color ? props.color : "primary"].light};
+  color: ${(props) => props.theme.palette.common.white};
+`;
+
 const CustomTableCell = ({ row, name, onChange }) => {
   const classes = useStyles();
   const { isEditMode } = row;
@@ -78,8 +94,9 @@ const CustomTableCell = ({ row, name, onChange }) => {
   );
 };
 
-const TransactionsSettings = () => {
+const TransactionsSettings = ({ coins }) => {
   const transactionList = useSelector((state) => state.settings);
+  const navigate = useNavigate();
 
   const [rows, setRows] = useState([
     {
@@ -139,12 +156,13 @@ const TransactionsSettings = () => {
       suspend: "400",
     },
   ]);
-
   const [previous, setPrevious] = useState({});
   const classes = useStyles();
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  // const [rowTransaction, getRowTransaction] = useState([]);
+
+  console.log("coins  data", coins);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -155,131 +173,166 @@ const TransactionsSettings = () => {
     setPage(0);
   };
 
-  const onToggleEditMode = (id) => {
-    setRows((state) => {
-      return rows.map((row) => {
-        if (row.id === id) {
-          return { ...row, isEditMode: !row.isEditMode };
-        }
-        return row;
-      });
-    });
-  };
+  // const onToggleEditMode = (id) => {
+  //   setRows((state) => {
+  //     return rows.map((row) => {
+  //       if (row.id === id) {
+  //         return { ...row, isEditMode: !row.isEditMode };
+  //       }
+  //       return row;
+  //     });
+  //   });
+  // };
 
-  const onChange = (e, row) => {
-    if (!previous[row.id]) {
-      setPrevious((state) => ({ ...state, [row.id]: row }));
-    }
-    const value = e.target.value;
-    const name = e.target.name;
-    const { id } = row;
-    const newRows = rows.map((row) => {
-      if (row.id === id) {
-        return { ...row, [name]: value };
-      }
-      return row;
-    });
-    setRows(newRows);
-  };
+  // const onChange = (e, row) => {
+  //   if (!previous[row.id]) {
+  //     setPrevious((state) => ({ ...state, [row.id]: row }));
+  //   }
+  //   const value = e.target.value;
+  //   const name = e.target.name;
+  //   const { id } = row;
+  //   const newRows = rows.map((row) => {
+  //     if (row.id === id) {
+  //       return { ...row, [name]: value };
+  //     }
+  //     return row;
+  //   });
+  //   setRows(newRows);
+  // };
 
-  const onRevert = (id) => {
-    const newRows = rows.map((row) => {
-      if (row.id === id) {
-        return previous[id] ? previous[id] : row;
-      }
-      return row;
-    });
-    setRows(newRows);
-    setPrevious((state) => {
-      delete state[id];
-      return state;
-    });
-    onToggleEditMode(id);
-  };
+  // const onRevert = (id) => {
+  //   const newRows = rows.map((row) => {
+  //     if (row.id === id) {
+  //       return previous[id] ? previous[id] : row;
+  //     }
+  //     return row;
+  //   });
+  //   setRows(newRows);
+  //   setPrevious((state) => {
+  //     delete state[id];
+  //     return state;
+  //   });
+  //   onToggleEditMode(id);
+  // };
+
+  if (!coins) {
+    return <Loader />;
+  }
 
   return (
     <Fragment>
-      <Card mb={6}>
-        <CardContent>
-          <Paper className={classes.root}>
-            <Toolbar className={classes.toolbar}>
+      <Paper>
+        <Toolbar pt={5}>
+          <Grid flex justifyContent="space-between" container spacing={6}>
+            <Grid item>
               <Typography variant="h6" color="inherit" component="div">
                 Transaction Settings List
               </Typography>
-            </Toolbar>
-            <Table className={classes.table} aria-label="caption table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="left">Min Send amount</TableCell>
-                  <TableCell align="left">Fee(%)</TableCell>
-                  <TableCell align="left">Decimals</TableCell>
-                  <TableCell align="left">Suspend Transactions</TableCell>
-                  <TableCell align="left">Action</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows
+            </Grid>
+          </Grid>
+        </Toolbar>
+        <TableWrapper>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell align="center"> Update </TableCell>
+                <TableCell align="center">Coin</TableCell>
+                <TableCell align="center">Decimals</TableCell>
+                <TableCell align="center">Fee</TableCell>
+                <TableCell align="center">Alt Coin</TableCell>
+                <TableCell align="center">Send Amount</TableCell>
+                <TableCell align="center">Name</TableCell>
+                <TableCell align="center">Price</TableCell>
+                <TableCell align="center">Price Change</TableCell>
+                <TableCell align="center">Price Change Percent </TableCell>
+                <TableCell align="right">Suspend Transaction</TableCell>
+                <TableCell align="right">Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {coins &&
+                coins
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <TableRow key={row.id}>
-                      <CustomTableCell
-                        {...{ row, name: "min_send", onChange }}
-                      />
-                      <CustomTableCell {...{ row, name: "fee", onChange }} />
-                      <CustomTableCell
-                        {...{ row, name: "decimals", onChange }}
-                      />
-                      <CustomTableCell
-                        {...{ row, name: "suspend", onChange }}
-                      />
-                      <TableCell className={classes.selectTableCell}>
-                        {row.isEditMode ? (
-                          <>
-                            <IconButton
-                              aria-label="done"
-                              onClick={() => onToggleEditMode(row.id)}
-                            >
-                              <DoneIcon />
-                            </IconButton>
-                            <IconButton
-                              aria-label="revert"
-                              onClick={() => onRevert(row.id)}
-                            >
-                              <XCircle />
-                            </IconButton>
-                          </>
+                    <TableRow
+                      key={row.id}
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                      }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row.id}
+                      </TableCell>
+                      <TableCell align="center">
+                        {row.autoUpdate === true ? (
+                          <Chip label="Active" color="success" />
                         ) : (
-                          <IconButton
-                            aria-label="delete"
-                            onClick={() => onToggleEditMode(row.id)}
-                          >
-                            <EditIcon />
-                          </IconButton>
+                          <Chip label="Passive" color="error" />
                         )}
+                      </TableCell>
+                      <TableCell align="center">{row.coin}</TableCell>
+                      <TableCell align="center">{row.decimals}</TableCell>
+                      <TableCell align="center">{row.fee}</TableCell>
+                      <TableCell align="center">
+                        {row.isAltCoin === true ? (
+                          <Chip label="Active" color="success" />
+                        ) : (
+                          <Chip label="Passive" color="error" />
+                        )}
+                      </TableCell>
+                      <TableCell align="center">{row.minSendAmount}</TableCell>
+                      <TableCell align="center">{row.name}</TableCell>
+                      <TableCell align="center">{row.price}</TableCell>
+                      <TableCell align="center">{row.priceChange}</TableCell>
+                      <TableCell align="center">
+                        {row.priceChangePercent}
+                      </TableCell>
+                      <TableCell align="center">
+                        {row.suspendTransaction === true ? (
+                          <Chip label="Active" color="success" />
+                        ) : (
+                          <Chip label="Passive" color="error" />
+                        )}
+                      </TableCell>
+
+                      <TableCell padding="none" align="right">
+                        <EditTransactionModal
+                          coinId={row.id}
+                          name={row.name}
+                          coin={row.coin}
+                          minSendAmount={row.minSendAmount}
+                          decimals={row.decimals}
+                          fee={row.fee}
+                          price={row.price}
+                          priceChange={row.priceChange}
+                          priceChangePercent={row.priceChangePercent}
+                          suspendTransaction={row.suspendTransaction}
+                          autoUpdate={row.autoUpdate}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
-              </TableBody>
-            </Table>
+            </TableBody>
+          </Table>
+          {/* Pagination */}
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 20]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </TableWrapper>
+      </Paper>
 
-            {/* Pagination */}
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 20]}
-              component="div"
-              count={rows.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </Paper>
-        </CardContent>
-      </Card>
-      <Box mt={8} display="flex" justifyContent="flex-end" alignItems="center">
+      <Box m={4} display="flex" justifyContent="flex-end" alignItems="center">
         <Typography variant="subtitle1" color="inherit" component="div">
           Export Data
         </Typography>
-        <CSVButton data={rows} />
+        <CSVButton data={coins} />
       </Box>
     </Fragment>
   );

@@ -62,7 +62,7 @@ const SignIn = () => {
       .max(255)
       .required("Email is required"),
     password: Yup.string()
-      .min(6, " Mus be a last 6 characters ")
+      .min(6, " Must be a last 6 characters ")
       .max(255)
       .required("Password is required"),
   });

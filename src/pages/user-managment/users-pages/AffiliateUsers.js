@@ -1,44 +1,41 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { makeStyles } from "@mui/styles";
 import { Helmet } from "react-helmet-async";
 import { spacing } from "@material-ui/system";
-import { useNavigate } from "react-router-dom";
 import { darken } from "polished";
-import { useSelector, useDispatch } from "react-redux";
-import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
 import { useTranslation } from "react-i18next";
+import { useHistory, useNavigate } from "react-router-dom";
 import moment from "moment";
+import instance from "../../../services/api";
 import {
   Box,
   Divider as MuiDivider,
   Grid,
   IconButton,
   Paper as MuiPaper,
+  Breadcrumbs,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
-  TableSortLabel,
-  Toolbar,
-  Typography as MuiTypography,
-  InputBase,
   TablePagination,
-  Breadcrumbs,
+  TableRow,
+  Toolbar,
+  Typography,
+  InputBase,
   Chip as MuiChip,
 } from "@material-ui/core";
+import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
 import CSVButton from "../../../components/CSVButton";
 import { Search as SearchIcon } from "react-feather";
 import AddAffiliateUser from "../../../modal/AddAffiliateUser";
-import instance from "../../../services/api";
 import Loader from "../../../components/Loader";
+import EditAffiliateModal from "../../../modal/EditAffiliateUser";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
 const Paper = styled(MuiPaper)(spacing);
-const Typography = styled(MuiTypography)(spacing);
 
 // Custome Style.
 
@@ -96,59 +93,15 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
-const useStyles = makeStyles({
-  rootTable: {
-    margin: "10px",
-  },
-});
-
-const headCells = [
-  { id: "id", alignment: "left", label: "Order ID" },
-  { id: "email", alignment: "left", label: "Email" },
-  { id: "phone", alignment: "left", label: "Phone" },
-  { id: "balance", alignment: "left", label: "Balance" },
-  { id: "flexible_saving", alignment: "left", label: "Flexible Saving" },
-  { id: "locked_saving", alignment: "left", label: "Locked Saving" },
-  { id: "total_profit", alignment: "left", label: "Total Profit" },
-  { id: "status_kyc", alignment: "left", label: "Status KYC" },
-  { id: "date_register", alignment: "left", label: "Date Register" },
-  { id: "action", alignment: "right", label: "Action" },
-];
-
 const AffiliateUsers = () => {
-  // hooks
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const classes = useStyles();
 
-  const [sortModel, setSortModel] = useState([
-    {
-      field: "commodity",
-      sort: "asc",
-    },
-  ]);
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("customer");
+  // const history = useHistory();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowAffiliate, setRowAffiliate] = useState([]);
-  const rows = rowAffiliate.users;
-
-  console.log("rowAffiliate  ", rowAffiliate);
-
-  const getAffiliate = () => {
-    return instance
-      .get("/admin/user/all", { mode: "no-cors" })
-      .then((data) => {
-        console.log(" affiliate users ", data);
-        setRowAffiliate(data.data);
-        return data;
-      })
-      .catch((error) => {
-        return Promise.reject(error);
-      });
-  };
+  const affiliateList = rowAffiliate.users;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -159,55 +112,67 @@ const AffiliateUsers = () => {
     setPage(0);
   };
 
+  const openProfile = () => {
+    navigate("/view-affiliate", { name: "Mr", age: 23 });
+  };
+
+  const getAffiliate = () => {
+    return instance
+      .get("/admin/user/all", { params: { isAffiliate: true } })
+      .then((data) => {
+        setRowAffiliate(data.data);
+        return data;
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      })
+      .finally(() => {});
+  };
+
   useEffect(() => {
     getAffiliate();
   }, []);
 
-  if (!rows) {
+  if (!affiliateList) {
     return <Loader />;
   }
 
+  console.log(" affiliateList ", affiliateList);
   return (
     <Fragment>
       <Helmet title="Affilate Users" />
-
       <Grid justifyContent="space-between" container spacing={10}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
             Affilate Users
           </Typography>
         </Grid>
-        <Grid item>
-          <div>{/* <AddAffiliateUser /> */}</div>
-        </Grid>
       </Grid>
-
       <Divider my={6} />
-
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <Toolbar>
-            <Grid container display="flex" justifyContent="space-between">
-              <Grid item>
-                <Search>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <Input placeholder={t("searchList")} />
-                </Search>
-              </Grid>
-              <Grid item>
-                <AddAffiliateUser />
-              </Grid>
-            </Grid>
-          </Toolbar>
           <Fragment>
             <Paper>
-              <TableContainer component={Paper} className={classes.rootTable}>
+              <Toolbar>
+                <Grid container display="flex" justifyContent="space-between">
+                  <Grid item>
+                    <Search>
+                      <SearchIconWrapper>
+                        <SearchIcon />
+                      </SearchIconWrapper>
+                      <Input placeholder={t("searchList")} />
+                    </Search>
+                  </Grid>
+                  <Grid item>
+                    <AddAffiliateUser />
+                  </Grid>
+                </Grid>
+              </Toolbar>
+              <TableContainer>
                 <Table
-                  aria-label="simple table"
-                  sortModel={sortModel}
-                  onSortModelChange={(model) => setSortModel(model)}
+                  aria-labelledby="tableTitle"
+                  size={"medium"}
+                  aria-label="enhanced table"
                 >
                   <TableHead>
                     <TableRow>
@@ -250,8 +215,8 @@ const AffiliateUsers = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {rows &&
-                      rows
+                    {affiliateList &&
+                      affiliateList
                         .slice(
                           page * rowsPerPage,
                           page * rowsPerPage + rowsPerPage
@@ -308,7 +273,6 @@ const AffiliateUsers = () => {
                               )}
                             </TableCell>
                             <TableCell align="center">
-                              {/* {row.registrationDate} */}
                               {moment(row.registrationDate).format(
                                 "DD/MM/YYYY HH:mm "
                               )}
@@ -323,10 +287,17 @@ const AffiliateUsers = () => {
                             <TableCell align="center">{row.currency}</TableCell>
                             <TableCell padding="none" align="right">
                               <Box mr={2}>
+                                <EditAffiliateModal
+                                  email={row.email}
+                                  phone={row.phone}
+                                  password={row.password}
+                                  userId={row.id}
+                                />
                                 <IconButton
                                   aria-label="details"
                                   size="large"
-                                  onClick={() => navigate("/view-user")}
+                                  // onClick={() => navigate("/view-affiliate")}
+                                  onClick={openProfile}
                                 >
                                   <RemoveRedEyeIcon />
                                 </IconButton>
@@ -336,17 +307,16 @@ const AffiliateUsers = () => {
                         ))}
                   </TableBody>
                 </Table>
-                {/* Pagination */}
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 20]}
-                  component="div"
-                  count={rows.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                />
               </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={affiliateList.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </Paper>
             <Box
               mt={8}
@@ -357,7 +327,7 @@ const AffiliateUsers = () => {
               <Typography variant="subtitle1" color="inherit" component="div">
                 Export Data
               </Typography>
-              <CSVButton data={rows} />
+              <CSVButton data={affiliateList} />
             </Box>
           </Fragment>
         </Grid>

@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { Helmet } from "react-helmet-async";
 import {
@@ -9,6 +9,7 @@ import {
   Tab,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
+import instance from "../../services/api";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
@@ -25,9 +26,32 @@ const Divider = styled(MuiDivider)(spacing);
 const Settings = () => {
   const [value, setValue] = useState("2");
 
+  const [coins, setCoins] = useState([]);
+
   const handleChange = (e, newValue) => {
     setValue(newValue);
   };
+
+  //  Get coins
+  const getCoins = () => {
+    return instance
+      .get("/admin-coin-settings")
+      .then((data) => {
+        setCoins(data.data);
+        return data;
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    getCoins();
+  }, []);
+
+  console.log("coins", coins);
+
   return (
     <Fragment>
       <Helmet title="Settings" />
@@ -62,7 +86,7 @@ const Settings = () => {
                 <KYCSettings />
               </TabPanel>
               <TabPanel value="3" mb={5}>
-                <TransactionsSettings />
+                <TransactionsSettings coins={coins} />
               </TabPanel>
               <TabPanel value="4" mb={5}>
                 <SavingsSetting />

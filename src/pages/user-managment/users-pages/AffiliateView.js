@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import instance from "../../../services/api";
 import {
   Divider as MuiDivider,
@@ -15,7 +15,7 @@ import {
   Box,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ArrowLeft } from "react-feather";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
@@ -37,18 +37,26 @@ const Grid = styled(MuiGrid)(spacing);
 const Spacer = styled.div(spacing);
 const Avatar = styled(MuiAvatar)``;
 
-const UserView = () => {
+const AffiliateView = ({ userId }) => {
   const navigate = useNavigate();
+  const params = useParams();
+  const locetion = useLocation();
+  const dispatch = useDispatch();
   const [tab, setTab] = useState("1");
   const [profile, getProfile] = useState([]);
   const totlalDashboard = useSelector((state) => state.dashboard);
   const rowExchange = totlalDashboard.rowExchange;
 
+  console.log("params", params);
+  console.log("locetion", locetion);
+  console.log("dispatch", dispatch);
+  console.log("navigate", navigate);
+
   const handleChangeTab = (event, newTab) => {
     setTab(newTab);
   };
 
-  const userId = null;
+  console.log("userId", userId);
 
   const getProfile_req = () => {
     return instance
@@ -66,14 +74,16 @@ const UserView = () => {
     getProfile_req();
   }, []);
 
+  console.log(" profile ", profile);
+
   return (
     <Fragment>
-      <Helmet title="User Info" />
+      <Helmet title="Affiliate Info" />
 
       <Grid flex justifyContent="space-between" container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
-            User Information
+            Affilate Information
           </Typography>
         </Grid>
         <Grid item>
@@ -240,4 +250,4 @@ const UserView = () => {
   );
 };
 
-export default UserView;
+export default AffiliateView;

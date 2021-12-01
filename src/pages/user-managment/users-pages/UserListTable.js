@@ -1,10 +1,9 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
 import { useNavigate } from "react-router-dom";
 import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
 import { useDispatch } from "react-redux";
-import { getUserList_req } from "../../../redux/actions/users";
 import { spacing } from "@material-ui/system";
 import {
   Box,
@@ -23,6 +22,7 @@ import {
 } from "@material-ui/core";
 import CSVButton from "../../../components/CSVButton";
 import moment from "moment";
+import Loader from "../../../components/Loader";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -45,7 +45,6 @@ const Chip = styled(MuiChip)`
 
 const UsersListTable = ({ rowUserList }) => {
   // hooks
-  const dispatch = useDispatch();
   const classes = useStyles();
   const navigate = useNavigate();
   const [sortModel, setSortModel] = useState([
@@ -57,6 +56,10 @@ const UsersListTable = ({ rowUserList }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  console.log(" rowUserList ", rowUserList);
+
+  const rowList = rowUserList.users;
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -66,13 +69,10 @@ const UsersListTable = ({ rowUserList }) => {
     setPage(0);
   };
 
-  // useEffect(() => {
-  //   dispatch(getUserList_req());
-  // }, []);
-  if (!rowUserList) {
-    return null;
+  if (!rowList) {
+    return <Loader />;
   }
-  console.log("user", rowUserList);
+
   return (
     <Fragment>
       <Paper>
@@ -123,8 +123,8 @@ const UsersListTable = ({ rowUserList }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rowUserList &&
-                rowUserList
+              {rowList &&
+                rowList
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <TableRow
@@ -206,7 +206,7 @@ const UsersListTable = ({ rowUserList }) => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 20]}
             component="div"
-            count={rowUserList.length}
+            count={rowList.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -218,7 +218,7 @@ const UsersListTable = ({ rowUserList }) => {
         <Typography variant="subtitle1" color="inherit" component="div">
           Export Data
         </Typography>
-        <CSVButton data={rowUserList} />
+        <CSVButton data={rowList} />
       </Box>
     </Fragment>
   );

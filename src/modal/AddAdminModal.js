@@ -1,32 +1,82 @@
 import React, { useState } from "react";
+import styled from "styled-components/macro";
+import { UserPlus } from "react-feather";
+import { Formik, useFormik, Form, useField, useFormikContext } from "formik";
+import * as Yup from "yup";
+import { spacing } from "@material-ui/system";
+import useAuth from "../hooks/useAuth";
+import { useDispatch } from "react-redux";
 import {
   Button,
-  Paper,
-  TextField,
+  TextField as MuiTextField,
   Dialog,
-  DialogActions,
   DialogContent,
-  FormControl,
   DialogTitle,
-  InputLabel,
-  MenuItem,
   Box,
   IconButton,
   FormControlLabel,
-  Select,
   Checkbox,
+  Typography,
 } from "@material-ui/core";
-import { UserPlus } from "react-feather";
-import { Formik } from "formik";
-import { spacing } from "@material-ui/system";
+import { createAdmin } from "../redux/actions/user-managment";
+import { create_req } from "../api/edit.api";
+
+// Spacing.
+const TextField = styled(MuiTextField)(spacing);
+const Spacer = styled.div(spacing);
+
+// Validation Schema.
+const validationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("Must be a valid email")
+    .min(8, "Must be at least 8 characters")
+    .max(255)
+    .required("Email is requried"),
+  name: Yup.string().required("Name is requrired"),
+  password: Yup.string()
+    .min(6, " Must be a last 8 characters ")
+    .max(255, " Must be a last 355 characters")
+    .required(" Passowrd is required "),
+});
+
+// Initial Values.
+const initialValues = {
+  email: "",
+  name: "",
+  role: "4", // 1 is super admin
+  permissions: [], //permissions are 1, 2, 3, 4, 5, 6
+  password: "",
+};
 
 const AddAdminModal = () => {
+  //   //  hooks.
   const [open, setOpen] = useState(false);
-  const [verify, setVerify] = useState("");
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
+  const { addAdmin } = useAuth();
+  const dispatch = useDispatch();
+
+  const [state, setState] = useState({
+    email: "",
+    name: "",
+    role: "4", // 1 is super admin
+    permissions: [], //permissions are 1, 2, 3, 4, 5, 6
+    password: "",
+  });
+
+  const submitReq = async () => {
+    try {
+      debugger;
+      const createReq = await create_req(state);
+      console.log("createReq", createReq);
+    } catch (e) {}
+  };
 
   const handleChange = (event) => {
-    setVerify(event.target.value);
+    const value = event.target.value;
+    setState({
+      ...state,
+      [event.target.name]: value,
+    });
   };
 
   const handleClickOpen = () => {
@@ -37,6 +87,35 @@ const AddAdminModal = () => {
     setOpen(false);
   };
 
+  // const onSubmitReq = async (
+  //   state,
+  //   { setErrors, setStatus, setSubmitting }
+  // ) => {
+  //   try {
+  //     await addAdmin(state);
+  //     console.log("value sign in", state);
+  //     dispatch(create_req(state)).then();
+  //     // await create_req(state);
+  //   } catch (error) {
+  //     const message = error.message || "Something went wrong";
+  //     setStatus({ succes: false });
+  //     setErrors({ submit: message });
+  //     setSubmitting(false);
+  //   }
+  // };
+
+  const formik = useFormik({
+    initialValues: {
+      ...state,
+    },
+    validationSchema: { validationSchema },
+    onSubmit: (values) => {
+      alert(JSON.stringify(values));
+      dispatch(createAdmin(values)).then();
+      setOpen(false);
+    },
+  });
+
   return (
     <div>
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
@@ -45,118 +124,140 @@ const AddAdminModal = () => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add New Admin</DialogTitle>
         <DialogContent>
-          <Formik
-            initialValues={{
-              name: "",
-              email: "",
-              password: "",
-              promision: [],
-            }}
-            validate={(values) => {
-              const errors = {};
-              if (!values.email) {
-                errors.email = "Required";
-              } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-              ) {
-                errors.email = "Invalid email address";
-              }
-              return errors;
-            }}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                setSubmitting(false);
-              }, 400);
-            }}
-          >
-            {({
-              values,
-              errors,
-              touched,
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              isSubmitting,
-              /* and other goodies */
-            }) => (
-              <form onSubmit={handleSubmit}>
-                <TextField
-                  tabIndex={1}
-                  margin="dense"
-                  id="email"
-                  label="Admin Email"
-                  type="email"
-                  variant="outlined"
-                  fullWidth
-                  my={8}
-                />
-                <TextField
-                  tabIndex={2}
-                  margin="dense"
-                  id="name"
-                  label="Admin Name"
-                  type="text"
-                  variant="outlined"
-                  fullWidth
-                  my={8}
-                />
-
-                {errors.email && touched.email && errors.email}
-                <TextField
-                  tabIndex={2}
-                  margin="dense"
-                  id="password"
-                  label="Admin password"
-                  type="password"
-                  variant="outlined"
-                  fullWidth
-                  my={8}
-                />
-                {errors.password && touched.password && errors.password}
-                <Box sx={{ display: "flex", flexDirection: "column", m: 5 }}>
-                  <FormControlLabel
-                    label="FSend"
-                    control={<Checkbox {...label} value="1" />}
+          <form onSubmit={formik.handleSubmit}>
+            <TextField
+              margin="dense"
+              autoFocus="true"
+              id="name"
+              defaultValue={formik.values.name}
+              // error={Boolean(touched.name && errors.name)}
+              // helperText={touched.name && errors.name}
+              // onBlur={handleBlur}
+              onChange={formik.handleChange}
+              label="Admin Name"
+              type="text"
+              variant="outlined"
+              fullWidth
+              my={8}
+            />
+            <TextField
+              margin="dense"
+              id="email"
+              defaultValue={formik.values.email}
+              // error={Boolean(touched.email && errors.email)}
+              // helperText={touched.email && errors.email}
+              // onBlur={handleBlur}
+              onChange={formik.handleChange}
+              label="Admin Email"
+              type="email"
+              variant="outlined"
+              fullWidth
+              my={8}
+            />
+            <TextField
+              margin="dense"
+              id="password"
+              defaultValue={formik.values.password}
+              // error={Boolean(touched.password && errors.password)}
+              // helperText={touched.email && errors.email}
+              // onBlur={handleBlur}
+              onChange={formik.handleChange}
+              label="Admin password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              my={8}
+            />
+            <Typography variant="subtitle1">Permissions</Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", m: 5 }}>
+              <FormControlLabel
+                label="FSend"
+                control={
+                  <Checkbox
+                    {...label}
+                    // value={formik.values.permissions[1]}
+                    // onBlur={handleBlur}
+                    onChange={formik.handleChange}
                   />
-                  <FormControlLabel
-                    label="Real Send"
-                    control={<Checkbox {...label} value="2" />}
+                }
+              />
+              <FormControlLabel
+                label="Real Send"
+                control={
+                  <Checkbox
+                    {...label}
+                    // value={formik.values.permissions[2]}
+                    // onBlur={handleBlur}
+                    onChange={formik.handleChange}
                   />
-                  <FormControlLabel
-                    label="Permission for changes on deposits"
-                    control={<Checkbox {...label} value="3" />}
+                }
+              />
+              <FormControlLabel
+                label="Permission for changes on deposits"
+                control={
+                  <Checkbox
+                    {...label}
+                    // value={formik.values.permissions[3]}
+                    // onBlur={handleBlur}
+                    onChange={formik.handleChange}
                   />
-                  <FormControlLabel
-                    label="Permissions to change KYC status"
-                    control={<Checkbox {...label} value="4" />}
+                }
+              />
+              <FormControlLabel
+                label="Permissions to change KYC status"
+                control={
+                  <Checkbox
+                    {...label}
+                    // value={formik.values.permissions[4]}
+                    // onBlur={handleBlur}
+                    onChange={formik.handleChange}
                   />
-                  <FormControlLabel
-                    label="Permission to send notifications"
-                    control={<Checkbox {...label} value="5" />}
+                }
+              />
+              <FormControlLabel
+                label="Permission to send notifications"
+                control={
+                  <Checkbox
+                    {...label}
+                    // value={formik.values.permissions[5]}
+                    // onBlur={handleBlur}
+                    onChange={formik.handleChange}
                   />
-                  <FormControlLabel
-                    label="Permission to download the user base"
-                    control={<Checkbox {...label} value="6" />}
+                }
+              />
+              <FormControlLabel
+                label="Permission to download the user base"
+                control={
+                  <Checkbox
+                    {...label}
+                    // value={formik.values.permissions[6]}
+                    // onBlur={handleBlur}
+                    onChange={formik.handleChange}
                   />
-                </Box>
-                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                  <Button onClick={handleClose} sx={{ width: "120px" }}>
-                    Cancel
-                  </Button>
-                  <Box mx={3} />
-                  <Button
-                    onClick={handleClose}
-                    sx={{ width: "120px" }}
-                    disabled={isSubmitting}
-                    variant="contained"
-                  >
-                    Create Admin
-                  </Button>
-                </Box>
-              </form>
-            )}
-          </Formik>
+                }
+              />
+            </Box>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Button
+                onClick={handleClose}
+                sx={{ width: "120px" }}
+                type="button"
+              >
+                Cancel
+              </Button>
+              <Box mx={3} />
+              <Button
+                sx={{ width: "120px" }}
+                // disabled={isSubmitting}
+                // onClick={handleSubmit}
+                // onClick={submitReq}
+                variant="contained"
+                type="submit"
+              >
+                Create Admin
+              </Button>
+            </Box>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
