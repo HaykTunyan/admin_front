@@ -1,6 +1,7 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
+import instance from "../../services/api";
 import {
   Box,
   Paper as MuiPaper,
@@ -16,6 +17,7 @@ import {
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
 import { useSelector } from "react-redux";
+import Loader from "../../components/Loader";
 
 const Paper = styled(MuiPaper)(spacing);
 
@@ -27,12 +29,11 @@ const useStyles = makeStyles({
 
 const SavingsTable = () => {
   const classes = useStyles();
-  const callList = useSelector((state) => state.transaction);
-
-  const rows = callList.savingList;
-
+  const [savings, setSavings] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const rows = savings?.transactions;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -42,6 +43,34 @@ const SavingsTable = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  // get Savings.
+  const getSavings = () => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          limit: null,
+          page: 1,
+          type: "Savings",
+        },
+      })
+      .then((data) => {
+        setSavings(data.data);
+        return data;
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => getSavings(), []);
+
+  console.log(" savings ", savings);
+
+  if (savings.transactionsCount === 0) {
+    return <Loader />;
+  }
 
   return (
     <Fragment>
@@ -61,32 +90,33 @@ const SavingsTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => (
-                  <TableRow
-                    key={row.key}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {row.date_operation}
-                    </TableCell>
-                    <TableCell align="center">{row.email}</TableCell>
-                    <TableCell align="center">{row.phone}</TableCell>
-                    <TableCell align="center">{row.sum}</TableCell>
-                    <TableCell align="center">{row.coin}</TableCell>
-                    <TableCell align="center">{row.tx_id}</TableCell>
-                    <TableCell align="center">{row.type}</TableCell>
-                    <TableCell align="center">{row.operation_type}</TableCell>
-                  </TableRow>
-                ))}
+              {rows &&
+                rows
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
+                    <TableRow
+                      key={row.key}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {row.date_operation}
+                      </TableCell>
+                      <TableCell align="center">{row.email}</TableCell>
+                      <TableCell align="center">{row.phone}</TableCell>
+                      <TableCell align="center">{row.sum}</TableCell>
+                      <TableCell align="center">{row.coin}</TableCell>
+                      <TableCell align="center">{row.tx_id}</TableCell>
+                      <TableCell align="center">{row.type}</TableCell>
+                      <TableCell align="center">{row.operation_type}</TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
           {/* Pagination */}
           <TablePagination
             rowsPerPageOptions={[5, 10, 20]}
             component="div"
-            count={rows.length}
+            count={rows?.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -94,12 +124,19 @@ const SavingsTable = () => {
           />
         </TableContainer>
       </Paper>
-      <Box mt={8} display="flex" justifyContent="flex-end" alignItems="center">
-        <Typography variant="subtitle1" color="inherit" component="div">
-          Export Data
-        </Typography>
-        <CSVButton data={rows} />
-      </Box>
+      {rows && (
+        <Box
+          mt={8}
+          display="flex"
+          justifyContent="flex-end"
+          alignItems="center"
+        >
+          <Typography variant="subtitle1" color="inherit" component="div">
+            Export Data
+          </Typography>
+          <CSVButton data={rows} />
+        </Box>
+      )}
     </Fragment>
   );
 };

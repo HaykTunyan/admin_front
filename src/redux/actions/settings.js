@@ -7,7 +7,7 @@ export const editCoin = (values) => (dispatch) => {
     payload: true,
   });
   return instance
-    .put("/admin-coin-settings", values)
+    .put("/admin/coin-settings", values)
     .then(({ data }) => {
       console.log("TRANSACTION_EDIT", data);
       setInstance(data.access_token);

@@ -37,7 +37,7 @@ const Grid = styled(MuiGrid)(spacing);
 const Spacer = styled.div(spacing);
 const Avatar = styled(MuiAvatar)``;
 
-const AffiliateView = ({ userId }) => {
+const AffiliateView = (id) => {
   const navigate = useNavigate();
   const params = useParams();
   const locetion = useLocation();
@@ -51,16 +51,15 @@ const AffiliateView = ({ userId }) => {
   console.log("locetion", locetion);
   console.log("dispatch", dispatch);
   console.log("navigate", navigate);
+  console.log("userId open ", id);
 
   const handleChangeTab = (event, newTab) => {
     setTab(newTab);
   };
 
-  console.log("userId", userId);
-
   const getProfile_req = () => {
     return instance
-      .get(`/admin/user/${userId}`, { mode: "no-cors" })
+      .get(`/admin/user/${id}`, { mode: "no-cors" })
       .then((data) => {
         getProfile(data.data);
         return data;
@@ -70,9 +69,9 @@ const AffiliateView = ({ userId }) => {
       })
       .finally(() => {});
   };
-  useEffect(() => {
-    getProfile_req();
-  }, []);
+  // useEffect(() => {
+  //   getProfile_req();
+  // }, []);
 
   console.log(" profile ", profile);
 
@@ -111,18 +110,6 @@ const AffiliateView = ({ userId }) => {
                   <Typography variant="subtitle1"> User Name </Typography>
                 </Grid>
               </Grid>
-              <Grid container direction="row" alignItems="center" mb={2}>
-                <Grid item sx={6} md={2}>
-                  <Typography variant="inherit" fontWeight="bold">
-                    Phone
-                  </Typography>
-                </Grid>
-                <Spacer mx={4} />
-                <Grid item item sx={6} md={2}>
-                  <Typography variant="subtitle1">+11 11 00 00 00</Typography>
-                </Grid>
-              </Grid>
-
               <Grid container direction="row" alignItems="center" mb={2}>
                 <Grid item item sx={6} md={2}>
                   <Typography variant="inherit" fontWeight="bold">

@@ -112,8 +112,9 @@ const AffiliateUsers = () => {
     setPage(0);
   };
 
-  const openProfile = () => {
-    navigate("/view-affiliate", { name: "Mr", age: 23 });
+  const openProfile = (id) => {
+    navigate("/view-affiliate", id);
+    console.log(" open profile  id ", id);
   };
 
   const getAffiliate = () => {
@@ -297,7 +298,7 @@ const AffiliateUsers = () => {
                                   aria-label="details"
                                   size="large"
                                   // onClick={() => navigate("/view-affiliate")}
-                                  onClick={openProfile}
+                                  onClick={() => openProfile(row.id)}
                                 >
                                   <RemoveRedEyeIcon />
                                 </IconButton>

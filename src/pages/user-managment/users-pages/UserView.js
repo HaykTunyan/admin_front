@@ -101,17 +101,6 @@ const UserView = () => {
                   <Typography variant="subtitle1"> User Name </Typography>
                 </Grid>
               </Grid>
-              <Grid container direction="row" alignItems="center" mb={2}>
-                <Grid item sx={6} md={2}>
-                  <Typography variant="inherit" fontWeight="bold">
-                    Phone
-                  </Typography>
-                </Grid>
-                <Spacer mx={4} />
-                <Grid item item sx={6} md={2}>
-                  <Typography variant="subtitle1">+11 11 00 00 00</Typography>
-                </Grid>
-              </Grid>
 
               <Grid container direction="row" alignItems="center" mb={2}>
                 <Grid item item sx={6} md={2}>

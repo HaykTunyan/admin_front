@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import {
   Divider,
@@ -9,6 +9,7 @@ import {
   InputBase,
   Card as MuiCard,
 } from "@material-ui/core";
+
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
@@ -70,6 +71,7 @@ const Input = styled(InputBase)`
 `;
 
 const Transaction = () => {
+  // hooks.
   const [value, setValue] = useState("1");
   const { t } = useTranslation();
 

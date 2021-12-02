@@ -235,18 +235,19 @@ const TransactionsSettings = ({ coins }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell align="center"> Update </TableCell>
-                <TableCell align="center">Coin</TableCell>
-                <TableCell align="center">Decimals</TableCell>
+                {/* <TableCell>ID</TableCell> */}
+                {/* <TableCell align="center"> Update </TableCell> */}
+                {/* <TableCell align="center">Coin</TableCell> */}
+                <TableCell align="">Coin Name</TableCell>
+                {/* <TableCell align="center">Decimals</TableCell> */}
                 <TableCell align="center">Fee</TableCell>
-                <TableCell align="center">Alt Coin</TableCell>
-                <TableCell align="center">Send Amount</TableCell>
-                <TableCell align="center">Name</TableCell>
-                <TableCell align="center">Price</TableCell>
+                {/* <TableCell align="center">Alt Coin</TableCell> */}
+                <TableCell align="center">Min Send Amount</TableCell>
+
+                {/* <TableCell align="center">Price</TableCell>
                 <TableCell align="center">Price Change</TableCell>
-                <TableCell align="center">Price Change Percent </TableCell>
-                <TableCell align="right">Suspend Transaction</TableCell>
+                <TableCell align="center">Price Change Percent </TableCell> */}
+                <TableCell align="center">Suspend Transaction</TableCell>
                 <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -261,38 +262,40 @@ const TransactionsSettings = ({ coins }) => {
                         "&:last-child td, &:last-child th": { border: 0 },
                       }}
                     >
-                      <TableCell component="th" scope="row">
+                      {/* <TableCell component="th" scope="row">
                         {row.id}
-                      </TableCell>
-                      <TableCell align="center">
+                      </TableCell> */}
+                      {/* <TableCell align="center">
                         {row.autoUpdate === true ? (
                           <Chip label="Active" color="success" />
                         ) : (
                           <Chip label="Passive" color="error" />
                         )}
-                      </TableCell>
-                      <TableCell align="center">{row.coin}</TableCell>
-                      <TableCell align="center">{row.decimals}</TableCell>
-                      <TableCell align="center">{row.fee}</TableCell>
-                      <TableCell align="center">
+                      </TableCell> */}
+                      {/* <TableCell align="center">{row.coin}</TableCell> */}
+                      <TableCell align="">{row.name}</TableCell>
+                      {/* <TableCell align="center">{row.decimals}</TableCell> */}
+                      <TableCell align="center">{row.fee}%</TableCell>
+                      {/* <TableCell align="center">
                         {row.isAltCoin === true ? (
                           <Chip label="Active" color="success" />
                         ) : (
                           <Chip label="Passive" color="error" />
                         )}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell align="center">{row.minSendAmount}</TableCell>
-                      <TableCell align="center">{row.name}</TableCell>
-                      <TableCell align="center">{row.price}</TableCell>
+
+                      {/* <TableCell align="center">{row.price}</TableCell>
                       <TableCell align="center">{row.priceChange}</TableCell>
                       <TableCell align="center">
                         {row.priceChangePercent}
                       </TableCell>
+                      */}
                       <TableCell align="center">
-                        {row.suspendTransaction === true ? (
-                          <Chip label="Active" color="success" />
+                        {row.suspendSendTransaction === true ? (
+                          <Chip label="Enable" color="success" />
                         ) : (
-                          <Chip label="Passive" color="error" />
+                          <Chip label="Disable" color="error" />
                         )}
                       </TableCell>
 
@@ -307,8 +310,10 @@ const TransactionsSettings = ({ coins }) => {
                           price={row.price}
                           priceChange={row.priceChange}
                           priceChangePercent={row.priceChangePercent}
-                          suspendTransaction={row.suspendTransaction}
-                          autoUpdate={row.autoUpdate}
+                          suspendSendTransaction={row.suspendSendTransaction}
+                          suspendReceiveTransaction={
+                            row.suspendReceiveTransaction
+                          }
                         />
                       </TableCell>
                     </TableRow>

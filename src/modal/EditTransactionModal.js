@@ -55,8 +55,8 @@ const EditTransactionModal = ({
   price,
   priceChange,
   priceChangePercent,
-  suspendTransaction,
-  autoUpdate,
+  suspendSendTransaction,
+  suspendReceiveTransaction,
 }) => {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState({
@@ -69,8 +69,8 @@ const EditTransactionModal = ({
     price: price,
     priceChange: priceChange,
     priceChangePercent: priceChangePercent,
-    suspendTransaction: suspendTransaction,
-    autoUpdate: autoUpdate,
+    suspendSendTransaction: suspendSendTransaction,
+    suspendReceiveTransaction: suspendReceiveTransaction,
   });
 
   const label = { inputProps: { "aria-label": "Checkbox" } };
@@ -90,10 +90,10 @@ const EditTransactionModal = ({
     },
     initialForm: { state },
     onSubmit: (values) => {
-      //   alert(JSON.stringify(values, null, 2));
+      // alert(JSON.stringify(values, null, 2));
       dispatch(editCoin(values)).then();
       //   dispatch(editAdmin(values)).then();
-      //   setOpen(false);
+      setOpen(false);
     },
   });
 
@@ -225,23 +225,23 @@ const EditTransactionModal = ({
             </Box>
             <Box sx={{ display: "flex", justifyContent: "space-around" }}>
               <FormControlLabel
-                label="Suspend Transaction"
-                name="suspendTransaction"
+                label="Suspend Send"
+                name="suspendSendTransaction"
                 control={
                   <Checkbox
                     {...label}
-                    defaultChecked={state.suspendTransaction}
+                    defaultChecked={state.suspendSendTransaction}
                     onChange={formik.handleChange}
                   />
                 }
               />
               <FormControlLabel
-                label="Auto Update"
-                name="autoUpdate"
+                label="Suspend Receive"
+                name="suspendReceiveTransaction"
                 control={
                   <Checkbox
                     {...label}
-                    defaultChecked={state.autoUpdate}
+                    defaultChecked={state.suspendReceiveTransaction}
                     onChange={formik.handleChange}
                   />
                 }

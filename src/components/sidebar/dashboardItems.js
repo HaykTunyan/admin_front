@@ -10,6 +10,7 @@ import {
   List,
   Smartphone,
   Archive,
+  Key,
 } from "react-feather";
 
 // List of Dashboard Name and Link.
@@ -47,11 +48,6 @@ const pagesSection = [
         icon: Archive,
         title: "Administrators",
       },
-      // {
-      //   href: "/kyc",
-      //   icon: Key,
-      //   title: "KYC",
-      // },
     ],
   },
   // Transactions.
@@ -71,6 +67,12 @@ const pagesSection = [
     href: "/notifications",
     icon: Bell,
     title: "Notifications",
+  },
+  // KYC.
+  {
+    href: "/kyc",
+    icon: Key,
+    title: "KYC",
   },
   // News.
   {

@@ -19,6 +19,7 @@ import TransactionsSettings from "./TransactionsSettings";
 import SavingsSetting from "./SavingsSettings/SavingsSetting";
 import SwapSettings from "./SwapSettings";
 import UserSettings from "./User-Settings";
+import Loader from "../../components/Loader";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
@@ -35,7 +36,7 @@ const Settings = () => {
   //  Get coins
   const getCoins = () => {
     return instance
-      .get("/admin-coin-settings")
+      .get("/admin/coin-settings")
       .then((data) => {
         setCoins(data.data);
         return data;
@@ -49,6 +50,10 @@ const Settings = () => {
   useEffect(() => {
     getCoins();
   }, []);
+
+  if (!coins) {
+    return <Loader />;
+  }
 
   console.log("coins", coins);
 
@@ -76,7 +81,7 @@ const Settings = () => {
                   <Tab label="Transactions Settings" value="3" />
                   <Tab label="Savings Setting" value="4" />
                   <Tab label="Swap Settings" value="5" />
-                  <Tab label="User Settings" value="6" />
+                  {/* <Tab label="User Settings" value="6" /> */}
                 </TabList>
               </Box>
               {/* <TabPanel value="1" mb={5}>
@@ -94,9 +99,9 @@ const Settings = () => {
               <TabPanel value="5" mb={5}>
                 <SwapSettings />
               </TabPanel>
-              <TabPanel value="6" mb={6}>
+              {/* <TabPanel value="6" mb={6}>
                 <UserSettings />
-              </TabPanel>
+              </TabPanel> */}
             </TabContext>
           </Box>
         </Grid>
