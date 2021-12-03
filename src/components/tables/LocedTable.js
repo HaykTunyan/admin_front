@@ -127,8 +127,9 @@ const LocedTable = ({ title, rowList, rowBody }) => {
                 {rowBody
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>{item.coin_name}</TableCell>
+                    <TableRow key={item._id}>
+                      <TableCell>{item._id}</TableCell>
+                      <TableCell>{item.coin}</TableCell>
                       <TableCell>
                         <ToggleButtonGroup
                           value={alignment}
@@ -136,18 +137,18 @@ const LocedTable = ({ title, rowList, rowBody }) => {
                           onChange={handleAlignment}
                           aria-label="text alignment"
                         >
-                          <ToggleButton value="1" aria-label="left aligned">
-                            {item.period_one}
-                          </ToggleButton>
-                          <ToggleButton value="2" aria-label="right aligned">
-                            {item.period_two}
-                          </ToggleButton>
+                          {item.duration.map((day) => (
+                            <ToggleButton value={day.days} aria-label="aligned">
+                              {day.days}
+                              <spam>/</spam>
+                              {day.percent}
+                            </ToggleButton>
+                          ))}
                         </ToggleButtonGroup>
                       </TableCell>
-                      <TableCell>{item.air}</TableCell>
-                      <TableCell>{item.min_amount}</TableCell>
-                      <TableCell>{item.status}</TableCell>
-                      <TableCell>{item.bonus}</TableCell>
+                      <TableCell>{item.max}</TableCell>
+                      <TableCell>{item.min}</TableCell>
+                      <TableCell>{item.type}</TableCell>
                       <TableCell>
                         <DeleteModal
                           dialog={dialog}

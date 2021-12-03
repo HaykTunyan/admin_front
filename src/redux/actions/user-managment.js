@@ -47,7 +47,6 @@ export const editAdmin = (values) => (dispatch) => {
   return instance
     .put("/admin", values)
     .then(({ data }) => {
-      console.log("Data Admin Create", data);
       setInstance(data.access_token);
       dispatch({
         type: EDIT_ADMIN,

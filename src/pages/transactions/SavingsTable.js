@@ -14,13 +14,15 @@ import {
   TableHead,
   TablePagination,
 } from "@material-ui/core";
+import moment from "moment";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
-import { useSelector } from "react-redux";
 import Loader from "../../components/Loader";
 
+// Spacing.
 const Paper = styled(MuiPaper)(spacing);
 
+// Custom Style.
 const useStyles = makeStyles({
   rootTable: {
     margin: "10px",
@@ -28,11 +30,11 @@ const useStyles = makeStyles({
 });
 
 const SavingsTable = () => {
+  // hooks.
   const classes = useStyles();
   const [savings, setSavings] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const rows = savings?.transactions;
 
   const handleChangePage = (event, newPage) => {
@@ -64,9 +66,8 @@ const SavingsTable = () => {
       .finally(() => {});
   };
 
+  // Use Effect.
   useEffect(() => getSavings(), []);
-
-  console.log(" savings ", savings);
 
   if (savings.transactionsCount === 0) {
     return <Loader />;
@@ -79,14 +80,17 @@ const SavingsTable = () => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Date Opetation</TableCell>
-                <TableCell align="center">Email</TableCell>
-                <TableCell align="center">Phone</TableCell>
-                <TableCell align="center">Sum</TableCell>
-                <TableCell align="center">Coin / Coin</TableCell>
-                <TableCell align="center">TX ID</TableCell>
-                <TableCell align="center">Type</TableCell>
-                <TableCell align="center">Operation Type</TableCell>
+                <TableCell>Amount Received</TableCell>
+                <TableCell>Amount Sent</TableCell>
+                <TableCell>Amount Usd Received</TableCell>
+                <TableCell>Amount Usd Sent</TableCell>
+                <TableCell>Amount Received</TableCell>
+                <TableCell>Coin From</TableCell>
+                <TableCell>Coin To</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Phone</TableCell>
+                <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -99,15 +103,19 @@ const SavingsTable = () => {
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.date_operation}
+                        {row.amount_received}
                       </TableCell>
-                      <TableCell align="center">{row.email}</TableCell>
-                      <TableCell align="center">{row.phone}</TableCell>
-                      <TableCell align="center">{row.sum}</TableCell>
-                      <TableCell align="center">{row.coin}</TableCell>
-                      <TableCell align="center">{row.tx_id}</TableCell>
-                      <TableCell align="center">{row.type}</TableCell>
-                      <TableCell align="center">{row.operation_type}</TableCell>
+                      <TableCell>{row.amount_sent}</TableCell>
+                      <TableCell>{row.amount_usd_received}</TableCell>
+                      <TableCell>{row.amount_usd_sent}</TableCell>
+                      <TableCell>{row.coinFrom}</TableCell>
+                      <TableCell>{row.coinTo}</TableCell>
+                      <TableCell>
+                        {moment(row.date).format("DD/MM/YYYY HH:mm ")}
+                      </TableCell>
+                      <TableCell>{row.email}</TableCell>
+                      <TableCell>{row.phone}</TableCell>
+                      <TableCell>{row.status}</TableCell>
                     </TableRow>
                   ))}
             </TableBody>

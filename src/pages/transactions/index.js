@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import {
   Divider,
@@ -9,7 +9,6 @@ import {
   InputBase,
   Card as MuiCard,
 } from "@material-ui/core";
-
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
@@ -25,6 +24,7 @@ import { spacing } from "@material-ui/system";
 // Spacing.
 const Card = styled(MuiCard)(spacing);
 
+// Custom Style.
 const Search = styled.div`
   border-radius: 2px;
   background-color: ${(props) => props.theme.header.background};

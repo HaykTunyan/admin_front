@@ -1,8 +1,9 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import instance from "../../../services/api";
+import moment from "moment";
 import {
   Divider as MuiDivider,
   Typography as MuiTypography,
@@ -37,19 +38,22 @@ const Grid = styled(MuiGrid)(spacing);
 const Spacer = styled.div(spacing);
 const Avatar = styled(MuiAvatar)``;
 
-const UserView = () => {
+const UserView = (state) => {
+  //  hooks.
   const navigate = useNavigate();
   const [tab, setTab] = useState("1");
   const [profile, getProfile] = useState([]);
+  const location = useLocation();
   const totlalDashboard = useSelector((state) => state.dashboard);
   const rowExchange = totlalDashboard.rowExchange;
+  const profileId = location.state;
+  const userId = profileId.id;
 
   const handleChangeTab = (event, newTab) => {
     setTab(newTab);
   };
 
-  const userId = null;
-
+  // Get Req.
   const getProfile_req = () => {
     return instance
       .get(`/admin/user/${userId}`, { mode: "no-cors" })
@@ -62,6 +66,8 @@ const UserView = () => {
       })
       .finally(() => {});
   };
+
+  // useEffect.
   useEffect(() => {
     getProfile_req();
   }, []);
@@ -98,7 +104,10 @@ const UserView = () => {
                 </Grid>
                 <Spacer mx={4} />
                 <Grid item item sx={6} md={2}>
-                  <Typography variant="subtitle1"> User Name </Typography>
+                  <Typography variant="subtitle1">
+                    {" "}
+                    {profile?.userAccountInfo?.full_name}{" "}
+                  </Typography>
                 </Grid>
               </Grid>
 
@@ -110,7 +119,11 @@ const UserView = () => {
                 </Grid>
                 <Spacer mx={4} />
                 <Grid item item sx={6} md={2}>
-                  <Typography variant="subtitle1"> 01/09/21 </Typography>
+                  <Typography variant="subtitle1">
+                    {moment(profile?.userAccountInfo?.created_date).format(
+                      "DD/MM/YYYY HH:mm "
+                    )}
+                  </Typography>
                 </Grid>
               </Grid>
               <Grid container direction="row" alignItems="center" mb={2}>
@@ -144,8 +157,7 @@ const UserView = () => {
                 <Spacer mx={4} />
                 <Grid item item sx={6} md={2}>
                   <Typography variant="subtitle1">
-                    {" "}
-                    2111121221212122{" "}
+                    {profile?.userAccountInfo?.id}
                   </Typography>
                 </Grid>
               </Grid>

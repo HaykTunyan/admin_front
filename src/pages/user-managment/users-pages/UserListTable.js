@@ -60,6 +60,11 @@ const UsersListTable = ({ rowUserList }) => {
 
   const rowList = rowUserList.users;
 
+  const openUser = (id) => {
+    navigate("/view-user", { state: { id } });
+    console.log(" open profile  id ", id);
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -192,7 +197,7 @@ const UsersListTable = ({ rowUserList }) => {
                           <IconButton
                             aria-label="details"
                             size="large"
-                            onClick={() => navigate("/view-user")}
+                            onClick={() => openUser(row.id)}
                           >
                             <RemoveRedEyeIcon />
                           </IconButton>

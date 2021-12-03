@@ -68,3 +68,10 @@ export const EDIT_AFFILIATE = "EDIT_AFFILIATE";
 
 export const TRANSACTION_WOTCH = "TRANSACTION_WOTCH";
 export const TRANSACTION_EDIT = "TRANSACTION_WOTCH";
+
+// Swap.
+
+export const SWAP_WOTCH = "SWAP_WOTCH";
+export const SWAP_EDIT = "SWAP_EDIT";
+export const SWAP_DELETE = "SWAP_DELETE";
+export const SWAP_ADD = "SWAP_ADD";

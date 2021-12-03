@@ -97,7 +97,7 @@ const AffiliateUsers = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // const history = useHistory();
+  // const history = useHistory()
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowAffiliate, setRowAffiliate] = useState([]);
@@ -113,7 +113,7 @@ const AffiliateUsers = () => {
   };
 
   const openProfile = (id) => {
-    navigate("/view-affiliate", id);
+    navigate("/view-affiliate", { state: { id } });
     console.log(" open profile  id ", id);
   };
 

@@ -126,28 +126,15 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
                 {rowBody
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell>{item.coin_name}</TableCell>
-                      <TableCell>
-                        <ToggleButtonGroup
-                          value={alignment}
-                          exclusive
-                          onChange={handleAlignment}
-                          aria-label="text alignment"
-                        >
-                          <ToggleButton value="30" aria-label="left aligned">
-                            {item.week_price_one}
-                          </ToggleButton>
-                          <ToggleButton value="60" aria-label="centered">
-                            {item.week_price_two}
-                          </ToggleButton>
-                          <ToggleButton value="90" aria-label="right aligned">
-                            {item.week_price_three}
-                          </ToggleButton>
-                        </ToggleButtonGroup>
-                      </TableCell>
-                      <TableCell>{item.min_amount}</TableCell>
-                      <TableCell>{item.status}</TableCell>
+                    <TableRow key={item._id}>
+                      <TableCell>{item._id}</TableCell>
+                      <TableCell>{item.coin}</TableCell>
+                      <TableCell>{item.fromPercent}</TableCell>
+                      <TableCell>{item.max}</TableCell>
+                      <TableCell>{item.min}</TableCell>
+                      <TableCell>{item.toPercent}</TableCell>
+                      <TableCell>{item.type}</TableCell>
+                      <TableCell>{item.apy}</TableCell>
                       <TableCell>
                         <DeleteModal
                           dialog={dialog}

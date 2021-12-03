@@ -1,8 +1,14 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import instance from "../../../services/api";
+import moment from "moment";
 import {
   Divider as MuiDivider,
   Typography as MuiTypography,
@@ -37,21 +43,18 @@ const Grid = styled(MuiGrid)(spacing);
 const Spacer = styled.div(spacing);
 const Avatar = styled(MuiAvatar)``;
 
-const AffiliateView = (id) => {
+const AffiliateView = (state) => {
   const navigate = useNavigate();
-  const params = useParams();
+  const search = useSearchParams();
   const locetion = useLocation();
-  const dispatch = useDispatch();
   const [tab, setTab] = useState("1");
   const [profile, getProfile] = useState([]);
   const totlalDashboard = useSelector((state) => state.dashboard);
   const rowExchange = totlalDashboard.rowExchange;
 
-  console.log("params", params);
-  console.log("locetion", locetion);
-  console.log("dispatch", dispatch);
-  console.log("navigate", navigate);
-  console.log("userId open ", id);
+  const profileId = locetion.state;
+
+  const userId = profileId.id;
 
   const handleChangeTab = (event, newTab) => {
     setTab(newTab);
@@ -59,7 +62,7 @@ const AffiliateView = (id) => {
 
   const getProfile_req = () => {
     return instance
-      .get(`/admin/user/${id}`, { mode: "no-cors" })
+      .get(`/admin/user/${userId}`, { mode: "no-cors" })
       .then((data) => {
         getProfile(data.data);
         return data;
@@ -69,11 +72,10 @@ const AffiliateView = (id) => {
       })
       .finally(() => {});
   };
-  // useEffect(() => {
-  //   getProfile_req();
-  // }, []);
 
-  console.log(" profile ", profile);
+  useEffect(() => {
+    getProfile_req();
+  }, []);
 
   return (
     <Fragment>
@@ -107,7 +109,9 @@ const AffiliateView = (id) => {
                 </Grid>
                 <Spacer mx={4} />
                 <Grid item item sx={6} md={2}>
-                  <Typography variant="subtitle1"> User Name </Typography>
+                  <Typography variant="subtitle1">
+                    {profile?.userAccountInfo?.full_name}
+                  </Typography>
                 </Grid>
               </Grid>
               <Grid container direction="row" alignItems="center" mb={2}>
@@ -118,7 +122,11 @@ const AffiliateView = (id) => {
                 </Grid>
                 <Spacer mx={4} />
                 <Grid item item sx={6} md={2}>
-                  <Typography variant="subtitle1"> 01/09/21 </Typography>
+                  <Typography variant="subtitle1">
+                    {moment(profile?.userAccountInfo?.created_date).format(
+                      "DD/MM/YYYY HH:mm "
+                    )}
+                  </Typography>
                 </Grid>
               </Grid>
               <Grid container direction="row" alignItems="center" mb={2}>
@@ -152,8 +160,7 @@ const AffiliateView = (id) => {
                 <Spacer mx={4} />
                 <Grid item item sx={6} md={2}>
                   <Typography variant="subtitle1">
-                    {" "}
-                    2111121221212122{" "}
+                    {profile?.userAccountInfo?.id}
                   </Typography>
                 </Grid>
               </Grid>

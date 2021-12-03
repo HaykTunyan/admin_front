@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { darken } from "polished";
@@ -16,13 +16,14 @@ import {
   Grid,
   InputBase,
   TablePagination,
+  Breadcrumbs,
 } from "@material-ui/core";
 import { Search as SearchIcon } from "react-feather";
 import AddSwapModal from "../../modal/AddSwapModal";
 import CSVButton from "../../components/CSVButton";
 import EditSwapModal from "../../modal/EditSwapModal";
-import DeleteModal from "../../modal/DeleteModal";
-import { useSelector } from "react-redux";
+import instance from "../../services/api";
+import DeleteSwapModal from "./DeleteSwapModal";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -81,15 +82,11 @@ const Input = styled(InputBase)`
 `;
 
 const SwapSettings = () => {
+  // hooks.
   const { t } = useTranslation();
-  const dialog = "Swap Item";
-  const description = "Delete Item in this list";
-
-  const swapList = useSelector((state) => state.settings);
-  const rows = swapList.swapSettingsRow;
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [swap, setSwap] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -99,6 +96,24 @@ const SwapSettings = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  // get Swap.
+  const getSwap = () => {
+    return instance
+      .get("/admin/swap-settings")
+      .then((data) => {
+        setSwap(data.data);
+        return data;
+      })
+      .catch((error) => {
+        return Promise.reject(error);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    getSwap();
+  }, []);
 
   return (
     <Fragment>
@@ -123,25 +138,57 @@ const SwapSettings = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Pair</TableCell>
+                <TableCell>
+                  <Breadcrumbs aria-label="breadcrumb" pb={4}>
+                    <Typography
+                      color="text.primary"
+                      sx={{ marginRight: "5px" }}
+                    >
+                      From Coin
+                    </Typography>
+                    <Typography color="text.primary" sx={{ marginLeft: "5px" }}>
+                      To Coin
+                    </Typography>
+                  </Breadcrumbs>
+                </TableCell>
+
                 <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows
+              {swap
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow key={row.id}>
-                    <TableCell component="th" scope="row">
-                      {row.pair}
+                    <TableCell>
+                      <Breadcrumbs aria-label="breadcrumb">
+                        <Typography
+                          color="text.primary"
+                          sx={{ marginRight: "5px" }}
+                        >
+                          {row.fromCoin}
+                        </Typography>
+
+                        <Typography
+                          color="text.primary"
+                          sx={{ marginLeft: "5px" }}
+                        >
+                          {row.toCoin}
+                        </Typography>
+                      </Breadcrumbs>
                     </TableCell>
+
                     <TableCell align="right">
                       <Box flex justifyContent="space-between">
-                        <EditSwapModal />
-                        <DeleteModal
-                          dialog={dialog}
-                          description={description}
+                        <EditSwapModal
+                          idSwap={row.id}
+                          decimalsSwap={row.decimals}
+                          feeSwap={row.fee}
+                          minSwap={row.min}
+                          limitSwap={row.limit}
+                          limitEnabledSwap={row.limitEnabled}
                         />
+                        <DeleteSwapModal swapId={row.id} />
                       </Box>
                     </TableCell>
                   </TableRow>
@@ -152,7 +199,7 @@ const SwapSettings = () => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 20]}
             component="div"
-            count={rows.length}
+            count={swap.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -165,7 +212,7 @@ const SwapSettings = () => {
         <Typography variant="subtitle1" color="inherit" component="div">
           Export Data
         </Typography>
-        <CSVButton data={rows} />
+        <CSVButton data={swap} />
       </Box>
     </Fragment>
   );

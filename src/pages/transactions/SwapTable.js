@@ -67,6 +67,7 @@ const SwapTable = () => {
       .finally(() => {});
   };
 
+  // Use Effect.
   useEffect(() => {
     getSwap();
   });
