@@ -6,7 +6,6 @@ import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import {
   Card as MuiCard,
-  CardHeader,
   Paper as MuiPaper,
   Table,
   TableBody,
@@ -14,11 +13,13 @@ import {
   TableHead,
   TableRow,
   InputBase,
-  ToggleButton,
-  ToggleButtonGroup,
   TablePagination,
+  Toolbar,
+  Grid,
 } from "@material-ui/core";
 import DeleteModal from "../../modal/DeleteModal";
+import AddFlexibleSavingModal from "../../modal/AddFlexibleSavingModal";
+import EditFlexibleSavingModal from "../../modal/EditFlexibleSavingModal";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -80,12 +81,6 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
   const dialog = "Flexible Item";
   const description = "Delete Item in this list";
 
-  const [alignment, setAlignment] = useState("");
-
-  const handleAlignment = (event, newAlignment) => {
-    setAlignment(newAlignment);
-  };
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -101,24 +96,30 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
   return (
     <Fragment>
       <Card mb={6}>
-        <CardHeader
-          action={
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("Search")} />
-            </Search>
-          }
-          title={title}
-        />
         <Paper>
+          <Toolbar pt={5}>
+            <Grid flex justifyContent="space-between" container spacing={6}>
+              <Grid item>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <Input placeholder={t("Search")} />
+                </Search>
+              </Grid>
+              <Grid item>
+                <AddFlexibleSavingModal />
+              </Grid>
+            </Grid>
+          </Toolbar>
           <TableWrapper>
             <Table>
               <TableHead>
                 <TableRow>
                   {rowList?.map((item) => (
-                    <TableCell key={item.id}>{item.head}</TableCell>
+                    <TableCell key={item.id} align={item.align}>
+                      {item.head}
+                    </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
@@ -127,15 +128,19 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((item) => (
                     <TableRow key={item._id}>
-                      <TableCell>{item._id}</TableCell>
-                      <TableCell>{item.coin}</TableCell>
-                      <TableCell>{item.fromPercent}</TableCell>
+                      <TableCell>{item.coinName}</TableCell>
+                      <TableCell>{item.fromPercent}%</TableCell>
+                      <TableCell>{item.toPercent}%</TableCell>
                       <TableCell>{item.max}</TableCell>
                       <TableCell>{item.min}</TableCell>
-                      <TableCell>{item.toPercent}</TableCell>
-                      <TableCell>{item.type}</TableCell>
-                      <TableCell>{item.apy}</TableCell>
-                      <TableCell>
+                      <TableCell align="right">
+                        <EditFlexibleSavingModal
+                          savingId={item._id}
+                          min={item.min}
+                          max={item.max}
+                          fromPercent={item.fromPercent}
+                          toPercent={item.toPercent}
+                        />
                         <DeleteModal
                           dialog={dialog}
                           description={description}

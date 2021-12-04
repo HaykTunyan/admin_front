@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -16,8 +16,13 @@ import {
   FormControlLabel,
   Checkbox,
   Box,
+  Select,
+  FormControl,
+  MenuItem,
+  InputLabel,
 } from "@material-ui/core";
 import { addSwap } from "../redux/actions/settings";
+import instance from "../services/api";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -37,15 +42,22 @@ const AddSwapModal = () => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const label = { inputProps: { "aria-label": "Checkbox" } };
+  const [coinSettings, getCoinSettings] = useState([]);
   const [state, setState] = useState({
-    fromCoin: "",
-    toCoin: "",
+    fromCoin: coinSettings.name,
+    toCoin: coinSettings.name,
     decimals: "",
     fee: "",
     min: "",
     limit: "",
     limitEnabled: true,
   });
+
+  const [age, setAge] = useState("");
+
+  const handleChangeA = (event) => {
+    setAge(event.target.value);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -55,10 +67,30 @@ const AddSwapModal = () => {
     setOpen(false);
   };
 
+  // get getSettingCoin.
+  const getSettingCoin = () => {
+    return instance
+      .get("/admin/settings/coins")
+      .then((data) => {
+        getCoinSettings(data.data);
+        return data;
+      })
+      .catch((error) => {
+        return Promise.reject(error);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    getSettingCoin();
+  }, []);
+
+  console.log("coinSettings", coinSettings);
+
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(addSwap(values)).then();
-    setOpen(false);
+    // dispatch(addSwap(values)).then();
+    // setOpen(false);
   };
 
   return (
@@ -69,7 +101,7 @@ const AddSwapModal = () => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
           <Typography variant="h4" color="inherit" component="div">
-            Add Swap Info
+            {/* {fromCoin.toUpperCase()} - <strong>{toCoin.toUpperCase()}</strong>{" "} */}
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -95,7 +127,23 @@ const AddSwapModal = () => {
                     </Typography>
                   </Grid>
                   <Grid item md={8}>
-                    <TextField
+                    <FormControl fullWidth>
+                      <InputLabel id="select-from-coin">Coin Name</InputLabel>
+                      <Select
+                        labelId="select-from-coin"
+                        id="select-from-coin"
+                        label="From Coin Name"
+                        fullWidth
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        defaultValue={state.fromCoin}
+                      >
+                        {coinSettings.map((item) => (
+                          <MenuItem value={item.id}>{item.name}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    {/* <TextField
                       margin="dense"
                       id="fromCoin"
                       name="fromCoin"
@@ -108,7 +156,7 @@ const AddSwapModal = () => {
                       onChange={handleChange}
                       defaultValue={state.fromCoin}
                       tabIndex={1}
-                    />
+                    /> */}
                   </Grid>
                   {/* To Coin */}
                   <Grid display="flex" item md={4} alignItems="center">
@@ -121,7 +169,23 @@ const AddSwapModal = () => {
                     </Typography>
                   </Grid>
                   <Grid item md={8}>
-                    <TextField
+                    <FormControl fullWidth>
+                      <InputLabel id="select-to-coin">To Coin Name</InputLabel>
+                      <Select
+                        labelId="select-to-coin"
+                        id="select-to-coin"
+                        label="To Coin Name"
+                        fullWidth
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        defaultValue={state.toCoin}
+                      >
+                        {coinSettings.map((item) => (
+                          <MenuItem value={item.id}>{item.name}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    {/* <TextField
                       margin="dense"
                       id="toCoin"
                       name="toCoin"
@@ -134,7 +198,7 @@ const AddSwapModal = () => {
                       onChange={handleChange}
                       defaultValue={state.toCoin}
                       tabIndex={1}
-                    />
+                    /> */}
                   </Grid>
                   {/* Decimals */}
                   <Grid display="flex" item md={4} alignItems="center">
@@ -214,6 +278,29 @@ const AddSwapModal = () => {
                       tabIndex={2}
                     />
                   </Grid>
+                  {/* Limit Enabled */}
+                  <Grid display="flex" alignItems="center" item md={4}>
+                    <Typography
+                      variant="subtitle1"
+                      color="inherit"
+                      component="div"
+                    >
+                      Limit Enabled
+                    </Typography>
+                  </Grid>
+                  <Grid item md={8}>
+                    <FormControlLabel
+                      label="Limit Enabled Swap"
+                      name="limitEnabled"
+                      control={
+                        <Checkbox
+                          {...label}
+                          defaultChecked={state.limitEnabled}
+                          onChange={handleChange}
+                        />
+                      }
+                    />
+                  </Grid>
                   {/* Limit  */}
                   <Grid display="flex" alignItems="center" item md={4}>
                     <Typography
@@ -238,29 +325,6 @@ const AddSwapModal = () => {
                       onChange={handleChange}
                       defaultValue={state.limit}
                       tabIndex={2}
-                    />
-                  </Grid>
-                  {/* Limit Enabled */}
-                  <Grid display="flex" alignItems="center" item md={4}>
-                    <Typography
-                      variant="subtitle1"
-                      color="inherit"
-                      component="div"
-                    >
-                      Limit Enabled
-                    </Typography>
-                  </Grid>
-                  <Grid item md={8}>
-                    <FormControlLabel
-                      label="Limit Enabled Swap"
-                      name="limitEnabled"
-                      control={
-                        <Checkbox
-                          {...label}
-                          defaultChecked={state.limitEnabled}
-                          onChange={handleChange}
-                        />
-                      }
                     />
                   </Grid>
                 </Grid>

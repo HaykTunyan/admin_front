@@ -9,39 +9,33 @@ import instance, { setInstance } from "../../../services/api";
 export const rowList = [
   {
     id: "1",
-    head: "Number",
+    head: "Coin",
+    align: "",
   },
   {
     id: "2",
-    head: "Coin",
+    head: "From Percent",
+    align: "",
   },
   {
     id: "3",
-    head: "From Percent",
+    head: "To Percent",
+    align: "",
   },
   {
     id: "4",
     head: "Max",
+    align: "",
   },
   {
     id: "5",
     head: "Min",
+    align: "",
   },
   {
     id: "6",
-    head: "To Percent",
-  },
-  {
-    id: "7",
-    head: "Type",
-  },
-  {
-    id: "8",
-    head: "Apy",
-  },
-  {
-    id: "9",
     head: "Action",
+    align: "right",
   },
 ];
 

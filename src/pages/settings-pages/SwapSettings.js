@@ -115,6 +115,8 @@ const SwapSettings = () => {
     getSwap();
   }, []);
 
+  console.log("swap", swap);
+
   return (
     <Fragment>
       <Paper>
@@ -139,17 +141,9 @@ const SwapSettings = () => {
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Breadcrumbs aria-label="breadcrumb" pb={4}>
-                    <Typography
-                      color="text.primary"
-                      sx={{ marginRight: "5px" }}
-                    >
-                      From Coin
-                    </Typography>
-                    <Typography color="text.primary" sx={{ marginLeft: "5px" }}>
-                      To Coin
-                    </Typography>
-                  </Breadcrumbs>
+                  <Typography color="text.primary" sx={{ marginLeft: "5px" }}>
+                    Pair
+                  </Typography>
                 </TableCell>
 
                 <TableCell align="right">Action</TableCell>
@@ -187,6 +181,8 @@ const SwapSettings = () => {
                           minSwap={row.min}
                           limitSwap={row.limit}
                           limitEnabledSwap={row.limitEnabled}
+                          fromCoin={row.fromCoin}
+                          toCoin={row.toCoin}
                         />
                         <DeleteSwapModal swapId={row.id} />
                       </Box>

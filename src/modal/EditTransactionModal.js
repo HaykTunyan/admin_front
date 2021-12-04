@@ -30,7 +30,6 @@ const Divider = styled(MuiDivider)(spacing);
 // validation Schema.
 const editTransactionSchema = Yup.object().shape({
   name: Yup.string().required("Name is requrired"),
-  coin: Yup.string().required("coin is requrired"),
   minSendAmount: Yup.string().required("minSendAmount is requrired"),
   decimals: Yup.string().required("decimals is requrired"),
   fee: Yup.string().required("fee is requrired"),
@@ -56,7 +55,6 @@ const EditTransactionModal = ({
   const [state, setState] = useState({
     coinId: coinId, //is id on list
     name: name,
-    coin: coin,
     minSendAmount: minSendAmount,
     decimals: decimals,
     fee: fee,
@@ -112,22 +110,6 @@ const EditTransactionModal = ({
                       margin="dense"
                       id="name"
                       label="Name"
-                      type="text"
-                      variant="outlined"
-                      fullWidth
-                      my={8}
-                    />
-                  </Box>
-                  <Box sx={{ width: "100%", marginLeft: "10px" }}>
-                    <TextField
-                      defaultValue={state.coin}
-                      error={Boolean(touched.coin && errors.coin)}
-                      helperText={touched.coin && errors.coin}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      margin="dense"
-                      id="coin"
-                      label="Coin"
                       type="text"
                       variant="outlined"
                       fullWidth

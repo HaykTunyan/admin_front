@@ -6,7 +6,6 @@ import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import {
   Card as MuiCard,
-  CardHeader,
   InputBase,
   Paper as MuiPaper,
   Table,
@@ -14,11 +13,16 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  ToggleButton,
   ToggleButtonGroup,
   TablePagination,
+  Box,
+  Toolbar,
+  Grid,
+  Chip,
 } from "@material-ui/core";
 import DeleteModal from "../../modal/DeleteModal";
+import AddLockedSavingModal from "../../modal/AddLockedSavingModal";
+import EditLockedSavingModal from "../../modal/EditLocledSavingModal";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -102,24 +106,30 @@ const LocedTable = ({ title, rowList, rowBody }) => {
   return (
     <Fragment>
       <Card mb={6}>
-        <CardHeader
-          action={
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("Search")} />
-            </Search>
-          }
-          title={title}
-        />
         <Paper>
+          <Toolbar pt={5}>
+            <Grid flex justifyContent="space-between" container spacing={6}>
+              <Grid item>
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <Input placeholder={t("Search")} />
+                </Search>
+              </Grid>
+              <Grid item>
+                <AddLockedSavingModal />
+              </Grid>
+            </Grid>
+          </Toolbar>
           <TableWrapper>
             <Table>
               <TableHead>
                 <TableRow>
                   {rowList?.map((item) => (
-                    <TableCell key={item.id}>{item.head}</TableCell>
+                    <TableCell key={item.id} align={item.align}>
+                      {item.head}
+                    </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
@@ -128,7 +138,6 @@ const LocedTable = ({ title, rowList, rowBody }) => {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((item) => (
                     <TableRow key={item._id}>
-                      <TableCell>{item._id}</TableCell>
                       <TableCell>{item.coin}</TableCell>
                       <TableCell>
                         <ToggleButtonGroup
@@ -138,18 +147,30 @@ const LocedTable = ({ title, rowList, rowBody }) => {
                           aria-label="text alignment"
                         >
                           {item.duration.map((day) => (
-                            <ToggleButton value={day.days} aria-label="aligned">
-                              {day.days}
-                              <spam>/</spam>
-                              {day.percent}
-                            </ToggleButton>
+                            <Box key={day.days} sx={{ marginRight: "25px" }}>
+                              <Chip
+                                label={
+                                  <>
+                                    {day.days}day
+                                    <span> / </span>
+                                    {day.percent}%
+                                  </>
+                                }
+                              />
+                            </Box>
                           ))}
                         </ToggleButtonGroup>
                       </TableCell>
                       <TableCell>{item.max}</TableCell>
                       <TableCell>{item.min}</TableCell>
-                      <TableCell>{item.type}</TableCell>
-                      <TableCell>
+                      <TableCell align="right">
+                        <EditLockedSavingModal
+                          savingId={item._id}
+                          min={item.min}
+                          max={item.max}
+                          duration={item.duration}
+                        />
+
                         <DeleteModal
                           dialog={dialog}
                           description={description}

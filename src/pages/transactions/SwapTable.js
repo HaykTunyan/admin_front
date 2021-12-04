@@ -83,16 +83,15 @@ const SwapTable = () => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Amount Received</TableCell>
-                <TableCell align="center">Amount Send</TableCell>
-                <TableCell align="center">Amount Usd Received </TableCell>
-                <TableCell align="center">Amount Usd Sent</TableCell>
-                <TableCell align="center">Coin From</TableCell>
-                <TableCell align="center">Coin To</TableCell>
-                <TableCell align="center">Date</TableCell>
-                <TableCell align="center">Email</TableCell>
-                <TableCell align="center">Phone</TableCell>
-                <TableCell align="center">Status</TableCell>
+                <TableCell>Date</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Phone</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Coin</TableCell>
+                <TableCell>TX ID</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Type of operations:</TableCell>
+                <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -105,23 +104,24 @@ const SwapTable = () => {
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.amount_received}
+                        {moment(row.date).format("DD/MM/YYYY HH:mm ")}{" "}
                       </TableCell>
-                      <TableCell align="center">{row.amount_sent}</TableCell>
-                      <TableCell align="center">
-                        {row.amount_usd_received}
+                      <TableCell>{row.email}</TableCell>
+                      <TableCell>{row.phone}</TableCell>
+                      <TableCell>
+                        {row.amount_sent != null ? (
+                          <>{row.amount_sent}</>
+                        ) : (
+                          <>{row.amount_received}</>
+                        )}
                       </TableCell>
-                      <TableCell align="center">
-                        {row.amount_usd_sent}
-                      </TableCell>
-                      <TableCell align="center">{row.coinFrom}</TableCell>
-                      <TableCell align="center">{row.coinTo}</TableCell>
-                      <TableCell align="center">
-                        {moment(row.date).format("DD/MM/YYYY HH:mm ")}
-                      </TableCell>
-                      <TableCell align="center">{row.email}</TableCell>
-                      <TableCell align="center">{row.phone}</TableCell>
-                      <TableCell align="center">{row.status}</TableCell>
+
+                      <TableCell>{row.coinFrom}</TableCell>
+
+                      <TableCell>{row.typeFromat}</TableCell>
+                      <TableCell>{row.type}</TableCell>
+                      <TableCell>{row.isReal}</TableCell>
+                      <TableCell>{row.status}</TableCell>
                     </TableRow>
                   ))}
             </TableBody>

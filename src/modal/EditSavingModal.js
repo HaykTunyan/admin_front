@@ -35,34 +35,32 @@ const IconButton = styled(MuiIconButton)`
 `;
 
 // Yup Validation.
-const editSwapSchema = Yup.object().shape({
+const editSavingSchema = Yup.object().shape({
   decimals: Yup.string().required("Field is required"),
   fee: Yup.string().required("Field is required"),
   min: Yup.string().required("Field is required"),
   limit: Yup.string().required("Field is required"),
 });
 
-const EditSwapModal = ({
-  idSwap,
-  decimalsSwap,
-  feeSwap,
-  minSwap,
-  limitSwap,
-  limitEnabledSwap,
-  fromCoin,
-  toCoin,
+const EditSavingModal = ({
+  savingId,
+  min,
+  max,
+  fromPersent,
+  toPercent,
+  duration,
 }) => {
   // hooks.
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const label = { inputProps: { "aria-label": "Checkbox" } };
   const [state, setState] = useState({
-    swapId: idSwap, //is required
-    decimals: decimalsSwap,
-    fee: feeSwap,
-    min: minSwap,
-    limit: limitSwap,
-    limitEnabled: limitEnabledSwap,
+    swapId: "", //is required
+    decimals: "",
+    fee: "",
+    min: "",
+    limit: "",
+    limitEnabled: "",
   });
 
   const handleClickOpen = () => {
@@ -88,8 +86,7 @@ const EditSwapModal = ({
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
           <Typography variant="h4" color="inherit" component="div">
-            {fromCoin.toUpperCase()} - <strong>{toCoin.toUpperCase()}</strong>{" "}
-            Settings
+            Edit Settings
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -98,7 +95,7 @@ const EditSwapModal = ({
               ...state,
             }}
             initialForms={state}
-            validationSchema={editSwapSchema}
+            validationSchema={editSavingSchema}
             onSubmit={handleSubmit}
           >
             {({ errors, touched, handleChange, handleBlur }) => (
@@ -271,4 +268,4 @@ const EditSwapModal = ({
   );
 };
 
-export default EditSwapModal;
+export default EditSavingModal;

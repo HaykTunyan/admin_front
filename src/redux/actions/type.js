@@ -75,3 +75,9 @@ export const SWAP_WOTCH = "SWAP_WOTCH";
 export const SWAP_EDIT = "SWAP_EDIT";
 export const SWAP_DELETE = "SWAP_DELETE";
 export const SWAP_ADD = "SWAP_ADD";
+
+// Saving Settings.
+
+export const SAVING_WOTCH = "SAVING_WOTCH";
+export const SAVING_EDIT = "SAVING_EDIT";
+export const SAVING_ADD = "SAVING_ADD";

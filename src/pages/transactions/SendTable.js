@@ -82,15 +82,14 @@ const SendTable = () => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Amount Received</TableCell>
-                <TableCell>Amount Sent</TableCell>
-                <TableCell>Amount Usd Received</TableCell>
-                <TableCell>AMount Usd Sent</TableCell>
-                <TableCell>Coin From</TableCell>
-                <TableCell>Coin To</TableCell>
                 <TableCell>Date</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Phone</TableCell>
+                <TableCell>Amount</TableCell>
+                <TableCell>Coin</TableCell>
+                <TableCell>TX Id</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Type of operations:</TableCell>
                 <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
@@ -104,18 +103,23 @@ const SendTable = () => {
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.amount_received}
-                      </TableCell>
-                      <TableCell>{row.amount_sent}</TableCell>
-                      <TableCell>{row.amount_usd_received}</TableCell>
-                      <TableCell>{row.amount_usd_sent}</TableCell>
-                      <TableCell>{row.coinFrom}</TableCell>
-                      <TableCell>{row.coinTo}</TableCell>
-                      <TableCell>
                         {moment(row.date).format("DD/MM/YYYY HH:mm ")}{" "}
                       </TableCell>
                       <TableCell>{row.email}</TableCell>
                       <TableCell>{row.phone}</TableCell>
+                      <TableCell>
+                        {row.amount_sent != null ? (
+                          <>{row.amount_sent}</>
+                        ) : (
+                          <>{row.amount_received}</>
+                        )}
+                      </TableCell>
+
+                      <TableCell>{row.coinFrom}</TableCell>
+
+                      <TableCell>{row.typeFromat}</TableCell>
+                      <TableCell>{row.type}</TableCell>
+                      <TableCell>{row.isReal}</TableCell>
                       <TableCell>{row.status}</TableCell>
                     </TableRow>
                   ))}
