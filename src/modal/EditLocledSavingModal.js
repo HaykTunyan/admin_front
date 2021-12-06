@@ -23,6 +23,7 @@ import {
   InputLabel,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/EditOutlined";
+import { editSaving } from "../redux/actions/settings";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -46,6 +47,7 @@ const AddSavingSchema = Yup.object().shape({
 
 const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
   const label = { inputProps: { "aria-label": "Checkbox" } };
   const [state, setState] = useState({
     savingId: savingId,
@@ -66,8 +68,8 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    // dispatch(addSwap(values)).then();
-    // setOpen(false);
+    dispatch(editSaving(values)).then();
+    setOpen(false);
   };
 
   return (

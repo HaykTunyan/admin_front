@@ -61,9 +61,14 @@ const EditSwapModal = ({
     decimals: decimalsSwap,
     fee: feeSwap,
     min: minSwap,
-    limit: limitSwap,
     limitEnabled: limitEnabledSwap,
+    limit: limitSwap,
   });
+  const [checkedLimit, SetCheckedLimit] = useState(state.limitEnabled);
+
+  console.log("state", state);
+
+  console.log(" checked Limit ", checkedLimit);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -73,10 +78,14 @@ const EditSwapModal = ({
     setOpen(false);
   };
 
+  const handleChangeCheckbox = (event) => {
+    SetCheckedLimit(event.target.value);
+  };
+
   const handleSubmit = (values) => {
     console.log("values", values);
-    // dispatch(editSwap(values)).then();
-    // setOpen(false);
+    dispatch(editSwap(values)).then();
+    setOpen(false);
   };
 
   return (
@@ -200,7 +209,7 @@ const EditSwapModal = ({
                         <Checkbox
                           {...label}
                           defaultChecked={state.limitEnabled}
-                          onChange={handleChange}
+                          onChange={handleChangeCheckbox}
                         />
                       }
                     />
@@ -208,7 +217,7 @@ const EditSwapModal = ({
 
                   {/* Limit  */}
                   {console.log(" limitEnabled ", state.limitEnabled)}
-                  {state.limitEnabled === false && (
+                  {state.limitEnabled === true ? (
                     <>
                       <Grid display="flex" alignItems="center" item md={4}>
                         <Typography
@@ -236,7 +245,7 @@ const EditSwapModal = ({
                         />
                       </Grid>
                     </>
-                  )}
+                  ) : null}
                 </Grid>
                 <Spacer my={5} />
                 <Divider my={2} />

@@ -15,6 +15,7 @@ import {
   Grid,
   Box,
 } from "@material-ui/core";
+import { addSwap } from "../redux/actions/settings";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -30,6 +31,7 @@ const AddSavingSchema = Yup.object().shape({
 
 const AddLockedSavingModal = () => {
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
   const label = { inputProps: { "aria-label": "Checkbox" } };
   const [state, setState] = useState({
     coin: "",
@@ -53,8 +55,8 @@ const AddLockedSavingModal = () => {
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    // dispatch(addSwap(values)).then();
-    // setOpen(false);
+    dispatch(addSwap(values)).then();
+    setOpen(false);
   };
 
   return (

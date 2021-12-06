@@ -57,18 +57,6 @@ const AddAffiliateUser = () => {
     setOpen(false);
   };
 
-  // const formik = useFormik({
-  //   initialValues: {
-  //     ...state,
-  //   },
-  //   validationSchema: { addAffilateValidation },
-  //   onSubmit: (values) => {
-  //     alert(JSON.stringify(values));
-  //     dispatch(createAffiliate(values)).then();
-  //     setOpen(false);
-  //   },
-  // });
-
   const handleSubmit = (values) => {
     console.log("values", values);
     dispatch(createAffiliate(values)).then();
@@ -173,78 +161,6 @@ const AddAffiliateUser = () => {
               </Form>
             )}
           </Formik>
-
-          {/* <form onSubmit={formik.handleSubmit}>
-              <TextField
-                margin="dense"
-                id="email"
-                name="email"
-                defaultValue={formik.values.email}
-                error={Boolean(touched.decimals && errors.decimals)}
-                onChange={formik.handleChange}
-                helperText={touched.email && errors.email}
-                onBlur={formik.handleBlur}
-                label="Affiliate Email"
-                type="email"
-                variant="outlined"
-                fullWidth
-                my={8}
-              />
-              <TextField
-                margin="dense"
-                autoFocus="true"
-                id="full_name"
-                name="full_name"
-                defaultValue={formik.values.full_name}
-                onChange={formik.handleChange}
-                label="Affiliate Full Name"
-                type="text"
-                variant="outlined"
-                fullWidth
-                my={8}
-              />
-              <TextField
-                margin="dense"
-                id="phone"
-                name="phone"
-                defaultValue={formik.values.phone}
-                onChange={formik.handleChange}
-                label="Affiliate Phone"
-                type="phone"
-                variant="outlined"
-                fullWidth
-                my={8}
-              />
-              <TextField
-                margin="dense"
-                id="password"
-                name="password"
-                defaultValue={formik.values.password}
-                onChange={formik.handleChange}
-                label="Affiliate Password"
-                type="password"
-                variant="outlined"
-                fullWidth
-                my={8}
-              />
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Button
-                  onClick={handleClose}
-                  sx={{ width: "150px" }}
-                  type="button"
-                >
-                  Cancel
-                </Button>
-                <Box mx={3} />
-                <Button
-                  sx={{ width: "150px" }}
-                  variant="contained"
-                  type="submit"
-                >
-                  Create Affiliate
-                </Button>
-              </Box>
-            </form> */}
         </DialogContent>
       </Dialog>
     </div>

@@ -23,6 +23,7 @@ import {
   InputLabel,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/EditOutlined";
+import { editSaving } from "../redux/actions/settings";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -52,6 +53,7 @@ const EditFlexibleSavingModal = ({
   fromPercent,
 }) => {
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
   const label = { inputProps: { "aria-label": "Checkbox" } };
   const [state, setState] = useState({
     savingId: savingId,
@@ -74,8 +76,8 @@ const EditFlexibleSavingModal = ({
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    // dispatch(addSwap(values)).then();
-    // setOpen(false);
+    dispatch(editSaving(values)).then();
+    setOpen(false);
   };
 
   return (
