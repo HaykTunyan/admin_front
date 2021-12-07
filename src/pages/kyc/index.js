@@ -1,37 +1,40 @@
 import React, { Fragment, useState } from "react";
-import styled from "styled-components/macro";
 import { Helmet } from "react-helmet-async";
-import { useTranslation } from "react-i18next";
 import {
-  Box,
+  Divider,
   Grid,
-  Divider as MuiDivider,
-  Typography as MuiTypography,
+  Typography,
+  Box,
+  Tab,
   InputBase,
-  AccordionDetails,
-  AccordionSummary,
-  Accordion,
+  Card as MuiCard,
 } from "@material-ui/core";
-import { ExpandMore as ExpandMoreIcon } from "@material-ui/icons";
-import { spacing } from "@material-ui/system";
+import TabContext from "@material-ui/lab/TabContext";
+import TabList from "@material-ui/lab/TabList";
+import TabPanel from "@material-ui/lab/TabPanel";
 import { Search as SearchIcon } from "react-feather";
+import { useTranslation } from "react-i18next";
+import styled from "styled-components/macro";
 import { darken } from "polished";
+import { spacing } from "@material-ui/system";
+import PandingTable from "./Panding";
+import VerifiedTable from "./VerifiedTab";
+import NotVerifiedTable from "./NotVerifiedTab";
+import Loader from "../../components/Loader";
 
-const Divider = styled(MuiDivider)(spacing);
+// Spacing.
+const Card = styled(MuiCard)(spacing);
 
-const Typography = styled(MuiTypography)(spacing);
-
+// Custom Style.
 const Search = styled.div`
   border-radius: 2px;
   background-color: ${(props) => props.theme.header.background};
   display: none;
   position: relative;
   width: 100%;
-
   &:hover {
     background-color: ${(props) => darken(0.05, props.theme.header.background)};
   }
-
   ${(props) => props.theme.breakpoints.up("md")} {
     display: block;
   }
@@ -45,7 +48,6 @@ const SearchIconWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-
   svg {
     width: 22px;
     height: 22px;
@@ -55,7 +57,6 @@ const SearchIconWrapper = styled.div`
 const Input = styled(InputBase)`
   color: inherit;
   width: 100%;
-
   > input {
     color: ${(props) => props.theme.header.search.color};
     padding-top: ${(props) => props.theme.spacing(2.5)};
@@ -67,12 +68,13 @@ const Input = styled(InputBase)`
 `;
 
 const KYC = () => {
+  // hooks.
+  const [step, setStep] = useState("1");
   const { t } = useTranslation();
+  const rows = [];
 
-  const [expanded, setExpanded] = useState(false);
-
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
+  const handleChangeTab = (event, newStep) => {
+    setStep(newStep);
   };
 
   return (
@@ -84,114 +86,80 @@ const KYC = () => {
             KYC
           </Typography>
         </Grid>
-        <Grid item>
-          <Box component="div">
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("searchList")} />
-            </Search>
+      </Grid>
+
+      <Divider my={6} />
+      <Grid container spacing={6} mt={6}>
+        <Grid item sx={{ width: "100%" }}>
+          <Box sx={{ width: "100%", typography: "body1" }}>
+            <TabContext value={step} sx={{ width: "100%" }}>
+              <Box
+                sx={{ width: "100%", borderBottom: 1, borderColor: "divider" }}
+              >
+                <TabList
+                  onChange={handleChangeTab}
+                  aria-label="lab API tabs example"
+                  sx={{ width: "100%" }}
+                >
+                  <Tab label="Pending" value="1" sx={{ width: "33.33%" }} />
+                  <Tab label="Verified" value="2" sx={{ width: "33.33%" }} />
+                  <Tab
+                    label="Not Verified"
+                    value="3"
+                    sx={{ width: "33.33%" }}
+                  />
+                </TabList>
+              </Box>
+              <TabPanel value="1">
+                <Card p={4}>
+                  <Grid item xs={3}>
+                    <Box component="div">
+                      <Search>
+                        <SearchIconWrapper>
+                          <SearchIcon />
+                        </SearchIconWrapper>
+                        <Input placeholder={t("searchList")} />
+                      </Search>
+                    </Box>
+                  </Grid>
+                </Card>
+                <PandingTable />
+              </TabPanel>
+              <TabPanel value="2">
+                <Card p={4}>
+                  <Grid item xs={3}>
+                    <Box component="div">
+                      <Search>
+                        <SearchIconWrapper>
+                          <SearchIcon />
+                        </SearchIconWrapper>
+                        <Input placeholder={t("searchList")} />
+                      </Search>
+                    </Box>
+                  </Grid>
+                </Card>
+                <VerifiedTable />
+              </TabPanel>
+              <TabPanel value="3">
+                <Card p={4}>
+                  <Grid item xs={3}>
+                    <Box component="div">
+                      <Search>
+                        <SearchIconWrapper>
+                          <SearchIcon />
+                        </SearchIconWrapper>
+                        <Input placeholder={t("searchList")} />
+                      </Search>
+                    </Box>
+                  </Grid>
+                </Card>
+                <NotVerifiedTable />
+              </TabPanel>
+            </TabContext>
           </Box>
         </Grid>
       </Grid>
       <Divider my={6} />
-      <Grid container spacing={6} center>
-        <Grid item xs={12} lg={12}>
-          <Accordion
-            expanded={expanded === "panel1"}
-            onChange={handleChange("panel1")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1bh-content"
-              id="panel1bh-header"
-            >
-              <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                General settings
-              </Typography>
-              <Typography sx={{ color: "text.secondary" }}>
-                I am an accordion
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                Nulla facilisi. Phasellus sollicitudin nulla et quam mattis
-                feugiat. Aliquam eget maximus est, id dignissim quam.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            expanded={expanded === "panel2"}
-            onChange={handleChange("panel2")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel2bh-content"
-              id="panel2bh-header"
-            >
-              <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                Users
-              </Typography>
-              <Typography sx={{ color: "text.secondary" }}>
-                You are currently not an owner
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                Donec placerat, lectus sed mattis semper, neque lectus feugiat
-                lectus, varius pulvinar diam eros in elit. Pellentesque
-                convallis laoreet laoreet.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            expanded={expanded === "panel3"}
-            onChange={handleChange("panel3")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel3bh-content"
-              id="panel3bh-header"
-            >
-              <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                Advanced settings
-              </Typography>
-              <Typography sx={{ color: "text.secondary" }}>
-                Filtering has been entirely disabled for whole web server
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                Nunc vitae orci ultricies, auctor nunc in, volutpat nisl.
-                Integer sit amet egestas eros, vitae egestas augue. Duis vel est
-                augue.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            expanded={expanded === "panel4"}
-            onChange={handleChange("panel4")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel4bh-content"
-              id="panel4bh-header"
-            >
-              <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                Personal data
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                Nunc vitae orci ultricies, auctor nunc in, volutpat nisl.
-                Integer sit amet egestas eros, vitae egestas augue. Duis vel est
-                augue.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-        </Grid>
-      </Grid>
     </Fragment>
   );
 };

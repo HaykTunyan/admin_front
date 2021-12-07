@@ -54,7 +54,7 @@ const ReferralTable = () => {
                     <TableCell>Users Name</TableCell>
                     <TableCell align="center">URL link</TableCell>
                     <TableCell align="center">Register Users</TableCell>
-                    <TableCell align="center">Import Users</TableCell>
+                    <TableCell align="center">Started using</TableCell>
                     <TableCell align="center">Big Coin/Price</TableCell>
                     <TableCell align="center">
                       All Coint/Price Friends{" "}

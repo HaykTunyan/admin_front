@@ -69,6 +69,7 @@ const SavingsTable = () => {
   // Use Effect.
   useEffect(() => getSavings(), []);
 
+  // Loader.
   if (savings.transactionsCount === 0) {
     return <Loader />;
   }

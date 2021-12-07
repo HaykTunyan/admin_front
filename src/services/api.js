@@ -39,8 +39,8 @@ instance.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      store.dispatch({ type: "USER_LOGOUT" });
-      removeInstance();
+      // store.dispatch({ type: "USER_LOGOUT" });
+      // removeInstance();
     }
     if (error.config.method !== "get" && error.response?.data?.message) {
       let message = error.response.data.message;

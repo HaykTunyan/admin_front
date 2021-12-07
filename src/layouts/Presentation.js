@@ -20,8 +20,8 @@ const AppContent = styled.div`
 
 const Presentation = ({ children }) => {
   return (
-    <MuiThemeProvider theme={createTheme(THEMES.DEFAULT)}>
-      <ThemeProvider theme={createTheme(THEMES.DEFAULT)}>
+    <MuiThemeProvider theme={createTheme(THEMES.DARK)}>
+      <ThemeProvider theme={createTheme(THEMES.DARK)}>
         <Root>
           <CssBaseline />
           <GlobalStyle />

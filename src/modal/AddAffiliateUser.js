@@ -15,6 +15,8 @@ import * as Yup from "yup";
 import { spacing } from "@material-ui/system";
 import { useDispatch } from "react-redux";
 import { createAffiliate } from "../redux/actions/user-managment";
+import instance, { setInstance } from "../services/api";
+import userSingleton from "../singletons/user.singleton";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
@@ -48,9 +50,11 @@ const AddAffiliateUser = () => {
     phone: "",
     password: "",
   });
+  const [errorMes, setErrorMes] = useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
+    userSingleton._affiliateList = false;
   };
 
   const handleClose = () => {
@@ -59,9 +63,25 @@ const AddAffiliateUser = () => {
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(createAffiliate(values)).then();
-    setOpen(false);
+
+    dispatch(createAffiliate(values))
+      .then((data) => {
+        if (data.success) {
+          console.log(" data affiliate", userSingleton._affiliateList);
+          userSingleton._affiliateList = true;
+          console.log(" data affilaate ", userSingleton._affiliateList);
+          setOpen(false);
+        }
+      })
+      .catch((error) => {
+        console.log(" error messages ", error?.response?.data);
+        setErrorMes(error?.response?.data?.message);
+      });
+
+    // setOpen(false);
   };
+
+  console.log("errorMes", errorMes);
 
   return (
     <div>

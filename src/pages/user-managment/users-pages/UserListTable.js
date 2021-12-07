@@ -19,6 +19,7 @@ import {
   TablePagination,
   Breadcrumbs,
   Chip as MuiChip,
+  Button,
 } from "@material-ui/core";
 import CSVButton from "../../../components/CSVButton";
 import moment from "moment";
@@ -55,9 +56,6 @@ const UsersListTable = ({ rowUserList }) => {
   ]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  console.log(" rowUserList ", rowUserList);
-
   const rowList = rowUserList.users;
 
   const openUser = (id) => {
@@ -139,7 +137,9 @@ const UsersListTable = ({ rowUserList }) => {
                       <TableCell component="th" scope="row">
                         {row.id}
                       </TableCell>
-                      <TableCell align="center">{row.email}</TableCell>
+                      <TableCell align="center">
+                        <Button onClick={openUser}>{row.email}</Button>
+                      </TableCell>
                       <TableCell align="center">{row.phone}</TableCell>
                       <TableCell align="center">{row.balance}</TableCell>
                       <TableCell align="center">

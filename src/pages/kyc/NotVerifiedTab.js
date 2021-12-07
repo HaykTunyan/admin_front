@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
 import instance from "../../services/api";
@@ -10,9 +10,10 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  TableHead,
   Typography,
+  TableHead,
   TablePagination,
+  Button,
 } from "@material-ui/core";
 import moment from "moment";
 import { spacing } from "@material-ui/system";
@@ -29,13 +30,13 @@ const useStyles = makeStyles({
   },
 });
 
-const SendTable = () => {
-  //  hooks.
+const NotVerifiedTable = () => {
+  // hooks.
   const classes = useStyles();
-  const [send, setSend] = useState([]);
+  const [rowVerified, setRowVerified] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const rows = send.transactions;
+  const rows = rowVerified?.kyc;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -46,18 +47,17 @@ const SendTable = () => {
     setPage(0);
   };
 
-  //  get Send/Receive
-  const getSend = () => {
+  const getKyc = () => {
     return instance
-      .get("/admin/transaction/all", {
+      .get("/admin/kyc/all", {
         params: {
           limit: null,
-          page: 1,
-          type: "Send/Receive",
+          page: page,
+          type: 1,
         },
       })
       .then((data) => {
-        setSend(data.data);
+        setRowVerified(data.data);
         return data;
       })
       .catch((err) => {
@@ -68,13 +68,15 @@ const SendTable = () => {
 
   // Use Effect.
   useEffect(() => {
-    getSend();
+    getKyc();
   }, []);
 
   // Loader.
-  if (send.transactionsCount === 0) {
+  if (!rows) {
     return <Loader />;
   }
+
+  console.log("rowVerified", rowVerified);
 
   return (
     <Fragment>
@@ -83,45 +85,37 @@ const SendTable = () => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Date</TableCell>
+                <TableCell align="left">ID</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Coin</TableCell>
-                <TableCell>TX Id</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Type of operations:</TableCell>
-                <TableCell>Status</TableCell>
+                <TableCell>Registration Date</TableCell>
+                <TableCell>Verification Date</TableCell>
+                <TableCell align="right">Verify again now</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows &&
-                send.transactions
+                rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <TableRow
-                      key={row.key}
+                      key={row.user_id}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
-                      <TableCell component="th" scope="row">
-                        {moment(row.date).format("DD/MM/YYYY HH:mm ")}{" "}
-                      </TableCell>
+                      <TableCell align="left">{row.user_id}</TableCell>
                       <TableCell>{row.email}</TableCell>
-                      <TableCell>{row.phone}</TableCell>
                       <TableCell>
-                        {row.amount_sent != null ? (
-                          <>{row.amount_sent}</>
-                        ) : (
-                          <>{row.amount_received}</>
+                        {moment(row.registration_date).format(
+                          "DD/MM/YYYY HH:mm "
                         )}
                       </TableCell>
-
-                      <TableCell>{row.coinFrom}</TableCell>
-
-                      <TableCell>{row.typeFromat}</TableCell>
-                      <TableCell>{row.type}</TableCell>
-                      <TableCell>{row.isReal}</TableCell>
-                      <TableCell>{row.status}</TableCell>
+                      <TableCell>
+                        {moment(row.verification_date).format(
+                          "DD/MM/YYYY HH:mm "
+                        )}
+                      </TableCell>
+                      <TableCell align="right">
+                        <Button variant="contained">Verified</Button>
+                      </TableCell>
                     </TableRow>
                   ))}
             </TableBody>
@@ -155,4 +149,4 @@ const SendTable = () => {
   );
 };
 
-export default SendTable;
+export default NotVerifiedTable;

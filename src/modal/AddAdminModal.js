@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { UserPlus } from "react-feather";
-import { Formik, Form } from "formik";
+import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { spacing } from "@material-ui/system";
 import useAuth from "../hooks/useAuth";
@@ -63,8 +63,12 @@ const AddAdminModal = () => {
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(createAdmin(values)).then();
-    setOpen(false);
+    dispatch(createAdmin(values))
+      .then((data) => {
+        console.log(" data ", data);
+        setOpen(false);
+      })
+      .catch((error) => console.log("error", error.message));
   };
 
   return (
@@ -134,9 +138,9 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        // value={formik.values.permissions[1]}
-                        // onBlur={handleBlur}
                         onChange={handleChange}
+                        name="permissions"
+                        defaultValue={state.permissions}
                       />
                     }
                   />
@@ -145,7 +149,8 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        // value={formik.values.permissions[2]}
+                        defaultValue={state.permissions}
+                        name="permissions"
                         onChange={handleChange}
                       />
                     }
@@ -155,8 +160,8 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        // value={formik.values.permissions[3]}
-                        // onBlur={handleBlur}
+                        defaultValue={state.permissions}
+                        name="permissions"
                         onChange={handleChange}
                       />
                     }
@@ -166,8 +171,8 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        // value={formik.values.permissions[4]}
-                        // onBlur={handleBlur}
+                        defaultValue={state.permissions}
+                        name="permissions"
                         onChange={handleChange}
                       />
                     }
@@ -177,8 +182,8 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        // value={formik.values.permissions[5]}
-                        // onBlur={handleBlur}
+                        defaultValue={state.permissions}
+                        name="permissions"
                         onChange={handleChange}
                       />
                     }
@@ -188,8 +193,8 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        // value={formik.values.permissions[6]}
-                        // onBlur={handleBlur}
+                        defaultValue={state.permissions}
+                        name="permissions"
                         onChange={handleChange}
                       />
                     }

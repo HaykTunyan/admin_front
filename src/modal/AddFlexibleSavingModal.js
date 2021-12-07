@@ -52,8 +52,10 @@ const AddFlexibleSavingModal = () => {
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(addSwap(values)).then();
-    setOpen(false);
+    dispatch(addSwap(values)).then((data) => {
+      console.log("data", data);
+      setOpen(false);
+    });
   };
 
   return (

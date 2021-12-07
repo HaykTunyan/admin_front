@@ -81,3 +81,18 @@ export const SWAP_ADD = "SWAP_ADD";
 export const SAVING_WOTCH = "SAVING_WOTCH";
 export const SAVING_EDIT = "SAVING_EDIT";
 export const SAVING_ADD = "SAVING_ADD";
+
+// KYC
+
+// Pending.
+
+export const KYC_WOTCH = "KYC_WOTCH";
+export const KYC_LOADING = "KYC_LOADING";
+export const KYC_LIST = "KYC_LIST";
+export const KYC_PANDING = "KYC_PANDING";
+export const KYC_VERIFYED = "KYC_VERIFYED";
+export const KYC_UNVERIFYED = "KYC_UNVERFIYED";
+
+// Verified
+
+// Not Verifyed.

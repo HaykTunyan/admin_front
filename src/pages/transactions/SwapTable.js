@@ -35,7 +35,6 @@ const SwapTable = () => {
   const [swap, setSwap] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const rows = swap?.transactions;
 
   const handleChangePage = (event, newPage) => {
@@ -70,8 +69,9 @@ const SwapTable = () => {
   // Use Effect.
   useEffect(() => {
     getSwap();
-  });
+  }, []);
 
+  // Loader.
   if (swap.transactionsCount === 0) {
     return <Loader />;
   }
@@ -115,9 +115,7 @@ const SwapTable = () => {
                           <>{row.amount_received}</>
                         )}
                       </TableCell>
-
                       <TableCell>{row.coinFrom}</TableCell>
-
                       <TableCell>{row.typeFromat}</TableCell>
                       <TableCell>{row.type}</TableCell>
                       <TableCell>{row.isReal}</TableCell>

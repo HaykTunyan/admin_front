@@ -25,15 +25,15 @@ import Loader from "../../components/Loader";
 const Divider = styled(MuiDivider)(spacing);
 
 const Settings = () => {
+  // hooks.
   const [value, setValue] = useState("2");
-
   const [coins, setCoins] = useState([]);
 
   const handleChange = (e, newValue) => {
     setValue(newValue);
   };
 
-  //  Get coins
+  //  Get Coins
   const getCoins = () => {
     return instance
       .get("/admin/coin-settings")
@@ -47,15 +47,15 @@ const Settings = () => {
       .finally(() => {});
   };
 
+  // Use Effect.
   useEffect(() => {
     getCoins();
   }, []);
 
+  // Loader.
   if (!coins) {
     return <Loader />;
   }
-
-  console.log("coins", coins);
 
   return (
     <Fragment>

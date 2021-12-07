@@ -16,12 +16,11 @@ import {
 import { spacing } from "@material-ui/system";
 
 const Card = styled(MuiCard)(spacing);
-
 const Button = styled(MuiButton)(spacing);
-
 const TextField = styled(MuiTextField)(spacing);
 
 const KYCSettings = () => {
+  // hooks.
   const [age, setAge] = useState("");
 
   const handleChange = (event) => {

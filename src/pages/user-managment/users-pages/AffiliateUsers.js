@@ -25,6 +25,7 @@ import {
   Typography,
   InputBase,
   Chip as MuiChip,
+  Button,
 } from "@material-ui/core";
 import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
 import CSVButton from "../../../components/CSVButton";
@@ -32,6 +33,7 @@ import { Search as SearchIcon } from "react-feather";
 import AddAffiliateUser from "../../../modal/AddAffiliateUser";
 import Loader from "../../../components/Loader";
 import EditAffiliateModal from "../../../modal/EditAffiliateUser";
+import userSingleton from "../../../singletons/user.singleton";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
@@ -100,8 +102,9 @@ const AffiliateUsers = () => {
   // const history = useHistory()
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [rowAffiliate, setRowAffiliate] = useState([]);
-  const affiliateList = rowAffiliate.users;
+  const [rowAffiliate, setRowAffiliate] = useState(null);
+  // const rowList = userSingleton._affiliateList;
+  const affiliateList = rowAffiliate?.users;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -130,9 +133,18 @@ const AffiliateUsers = () => {
       .finally(() => {});
   };
 
-  useEffect(() => {
-    getAffiliate();
-  }, []);
+  useEffect(
+    () => {
+      // console.log(" rowlist ", rowList);
+      // if (rowList) {
+      //   getAffiliate();
+      // }
+      getAffiliate();
+    },
+    [
+      // rowList
+    ]
+  );
 
   if (!affiliateList) {
     return <Loader />;
@@ -232,7 +244,12 @@ const AffiliateUsers = () => {
                             <TableCell component="th" scope="row">
                               {row.id}
                             </TableCell>
-                            <TableCell align="center">{row.email}</TableCell>
+                            <TableCell align="center">
+                              <Button onClick={openProfile}>
+                                {" "}
+                                {row.email}
+                              </Button>
+                            </TableCell>
                             <TableCell align="center">{row.phone}</TableCell>
                             <TableCell align="center">{row.balance}</TableCell>
                             <TableCell align="center">
@@ -312,7 +329,7 @@ const AffiliateUsers = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
-                count={affiliateList.length}
+                count={affiliateList?.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
