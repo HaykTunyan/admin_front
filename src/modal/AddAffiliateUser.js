@@ -8,6 +8,7 @@ import {
   DialogTitle,
   Box,
   IconButton,
+  Alert as MuiAlert,
 } from "@material-ui/core";
 import { useFormik, Form, Formik } from "formik";
 import { UserPlus } from "react-feather";
@@ -20,6 +21,7 @@ import userSingleton from "../singletons/user.singleton";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
+const Alert = styled(MuiAlert)(spacing);
 
 // validation Schema.
 const addAffilateValidation = Yup.object().shape({
@@ -101,6 +103,31 @@ const AddAffiliateUser = () => {
           >
             {({ errors, touched, handleChange, handleBlur }) => (
               <Form>
+                {errorMes && (
+                  <>
+                    {errorMes[0]?.messages && (
+                      <Alert my={2} severity="error">
+                        {errorMes[0]?.messages}
+                      </Alert>
+                    )}
+
+                    {errorMes[1]?.messages && (
+                      <Alert my={2} severity="error">
+                        {errorMes[1]?.messages}
+                      </Alert>
+                    )}
+                    {errorMes[2]?.messages && (
+                      <Alert my={2} severity="error">
+                        {errorMes[2]?.messages}
+                      </Alert>
+                    )}
+                    {errorMes[3]?.messages && (
+                      <Alert my={2} severity="error">
+                        {errorMes[3]?.messages}
+                      </Alert>
+                    )}
+                  </>
+                )}
                 <TextField
                   margin="dense"
                   id="email"

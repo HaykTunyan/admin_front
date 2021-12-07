@@ -44,6 +44,7 @@ const AddLockedSavingModal = () => {
       },
     ], //for locked
   });
+  const [newDuretion, setNewDuretion] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -68,7 +69,7 @@ const AddLockedSavingModal = () => {
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>
             <Typography variant="h4" color="inherit" component="div">
-              Add Saving
+              Add Locked Savings
             </Typography>
           </DialogTitle>
           <DialogContent>
@@ -160,47 +161,105 @@ const AddLockedSavingModal = () => {
                     </Grid>
 
                     {/* Duretion */}
-                    <Grid display="flex" alignItems="center" item md={4}>
-                      <Typography
-                        variant="subtitle1"
-                        color="inherit"
-                        component="div"
-                      >
-                        Duretion
-                      </Typography>
+
+                    <Grid item md={12}>
+                      <Box display="flex" justifyContent="center">
+                        <Typography
+                          variant="subtitle1"
+                          color="inherit"
+                          component="div"
+                        >
+                          Duration
+                        </Typography>
+                        <Spacer mx={3} />
+                        <Button
+                          size="small"
+                          variant="contained"
+                          onClick={() => setNewDuretion(true)}
+                        >
+                          Add
+                        </Button>
+                      </Box>
+
+                      <Box display="flex" justifyContent="">
+                        <Grid item md={5}>
+                          <TextField
+                            margin="dense"
+                            id="days"
+                            name="days"
+                            label="Number of Days"
+                            type="number"
+                            fullWidth
+                            error={Boolean(touched.days && errors.days)}
+                            helperText={touched.days && errors.days}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            defaultValue={state.duration}
+                            tabIndex={2}
+                          />
+                        </Grid>
+                        <Grid item md={2}></Grid>
+                        <Grid item md={5}>
+                          <TextField
+                            margin="dense"
+                            id="percent"
+                            name="percent"
+                            label="%"
+                            type="number"
+                            fullWidth
+                            error={Boolean(touched.percent && errors.percent)}
+                            helperText={touched.percent && errors.percent}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            defaultValue={state.duration}
+                            tabIndex={2}
+                          />
+                        </Grid>
+                      </Box>
+
+                      {/*  */}
+
+                      {/* Add New Duretion */}
+                      {newDuretion && (
+                        <Box display="flex" justifyContent="space-between">
+                          <Grid item md={5}>
+                            <TextField
+                              margin="dense"
+                              id="days"
+                              name="days"
+                              label="Number of Days"
+                              type="number"
+                              fullWidth
+                              error={Boolean(touched.days && errors.days)}
+                              helperText={touched.days && errors.days}
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              defaultValue={state.duration}
+                              tabIndex={2}
+                            />
+                          </Grid>
+                          <Grid item md={2}></Grid>
+                          <Grid item md={5}>
+                            <TextField
+                              margin="dense"
+                              id="percent"
+                              name="percent"
+                              label="%"
+                              type="number"
+                              fullWidth
+                              error={Boolean(touched.percent && errors.percent)}
+                              helperText={touched.percent && errors.percent}
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              defaultValue={state.duration}
+                              tabIndex={2}
+                            />
+                          </Grid>
+                        </Box>
+                      )}
                     </Grid>
-                    <Grid item md={4}>
-                      <TextField
-                        margin="dense"
-                        id="days"
-                        name="days"
-                        label="Days"
-                        type="number"
-                        fullWidth
-                        error={Boolean(touched.days && errors.days)}
-                        helperText={touched.days && errors.days}
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        defaultValue={state.duration.days}
-                        tabIndex={2}
-                      />
-                    </Grid>
-                    <Grid item md={4}>
-                      <TextField
-                        margin="dense"
-                        id="percent"
-                        name="percent"
-                        label="Percent"
-                        type="number"
-                        fullWidth
-                        error={Boolean(touched.percent && errors.percent)}
-                        helperText={touched.percent && errors.percent}
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        defaultValue={state.duration.percent}
-                        tabIndex={2}
-                      />
-                    </Grid>
+
+                    {/*  */}
                   </Grid>
                   <Spacer my={5} />
                   <Divider my={2} />

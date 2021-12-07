@@ -160,14 +160,14 @@ const SwapSettings = () => {
                           color="text.primary"
                           sx={{ marginRight: "5px" }}
                         >
-                          {row.fromCoin}
+                          {row.fromCoinName}
                         </Typography>
 
                         <Typography
                           color="text.primary"
                           sx={{ marginLeft: "5px" }}
                         >
-                          {row.toCoin}
+                          {row.toCoinName}
                         </Typography>
                       </Breadcrumbs>
                     </TableCell>

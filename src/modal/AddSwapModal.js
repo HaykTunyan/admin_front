@@ -52,6 +52,7 @@ const AddSwapModal = () => {
     limit: "",
     limitEnabled: true,
   });
+  const [check, setCheck] = useState(false);
 
   const [age, setAge] = useState("");
 
@@ -123,7 +124,7 @@ const AddSwapModal = () => {
                       color="inherit"
                       component="div"
                     >
-                      From Coin Swap
+                      From Coin
                     </Typography>
                   </Grid>
                   <Grid item md={8}>
@@ -165,7 +166,7 @@ const AddSwapModal = () => {
                       color="inherit"
                       component="div"
                     >
-                      To Coin Swap
+                      To Coin
                     </Typography>
                   </Grid>
                   <Grid item md={8}>
@@ -207,7 +208,7 @@ const AddSwapModal = () => {
                       color="inherit"
                       component="div"
                     >
-                      Decimals Swap
+                      Decimals
                     </Typography>
                   </Grid>
                   <Grid item md={8}>
@@ -233,7 +234,7 @@ const AddSwapModal = () => {
                       color="inherit"
                       component="div"
                     >
-                      Fee Swap
+                      Fee %
                     </Typography>
                   </Grid>
                   <Grid item md={8}>
@@ -259,7 +260,7 @@ const AddSwapModal = () => {
                       color="inherit"
                       component="div"
                     >
-                      Min Swap
+                      Min
                     </Typography>
                   </Grid>
                   <Grid item md={8}>
@@ -285,48 +286,53 @@ const AddSwapModal = () => {
                       color="inherit"
                       component="div"
                     >
-                      Limit Enabled
+                      Limit
                     </Typography>
                   </Grid>
                   <Grid item md={8}>
                     <FormControlLabel
-                      label="Limit Enabled Swap"
+                      label="Enable Limit"
                       name="limitEnabled"
                       control={
                         <Checkbox
                           {...label}
-                          defaultChecked={state.limitEnabled}
-                          onChange={handleChange}
+                          // defaultChecked={state.limitEnabled}
+                          // onChange={handleChange}
+                          onChange={() => setCheck(!check)}
                         />
                       }
                     />
                   </Grid>
                   {/* Limit  */}
-                  <Grid display="flex" alignItems="center" item md={4}>
-                    <Typography
-                      variant="subtitle1"
-                      color="inherit"
-                      component="div"
-                    >
-                      Limit Swap
-                    </Typography>
-                  </Grid>
-                  <Grid item md={8}>
-                    <TextField
-                      margin="dense"
-                      id="limit"
-                      name="limit"
-                      label="Limit"
-                      type="number"
-                      fullWidth
-                      error={Boolean(touched.limit && errors.limit)}
-                      helperText={touched.limit && errors.limit}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      defaultValue={state.limit}
-                      tabIndex={2}
-                    />
-                  </Grid>
+                  {check ? (
+                    <>
+                      <Grid display="flex" alignItems="center" item md={4}>
+                        <Typography
+                          variant="subtitle1"
+                          color="inherit"
+                          component="div"
+                        >
+                          Limit Swap
+                        </Typography>
+                      </Grid>
+                      <Grid item md={8}>
+                        <TextField
+                          margin="dense"
+                          id="limit"
+                          name="limit"
+                          label="Limit"
+                          type="number"
+                          fullWidth
+                          error={Boolean(touched.limit && errors.limit)}
+                          helperText={touched.limit && errors.limit}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          defaultValue={state.limit}
+                          tabIndex={2}
+                        />
+                      </Grid>
+                    </>
+                  ) : null}
                 </Grid>
                 <Spacer my={5} />
                 <Divider my={2} />

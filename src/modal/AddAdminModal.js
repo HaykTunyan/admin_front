@@ -17,12 +17,14 @@ import {
   FormControlLabel,
   Checkbox,
   Typography,
+  Alert as MuiAlert,
 } from "@material-ui/core";
 import { createAdmin } from "../redux/actions/user-managment";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
 const Spacer = styled.div(spacing);
+const Alert = styled(MuiAlert)(spacing);
 
 // Validation Schema.
 const addAdminValidation = Yup.object().shape({
@@ -44,6 +46,7 @@ const AddAdminModal = () => {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const { addAdmin } = useAuth();
   const dispatch = useDispatch();
+  const [messageError, setMessageError] = useState([]);
 
   const [state, setState] = useState({
     email: "",
@@ -65,11 +68,21 @@ const AddAdminModal = () => {
     console.log("values", values);
     dispatch(createAdmin(values))
       .then((data) => {
-        console.log(" data ", data);
-        setOpen(false);
+        if (data.success) {
+          console.log(" data success ", data.success);
+          setOpen(false);
+        }
       })
-      .catch((error) => console.log("error", error.message));
+      .catch((error) => {
+        console.log("error", error?.message);
+        setMessageError(error?.response?.data);
+      });
   };
+
+  console.log("messageError", messageError);
+  const invalid = messageError?.message;
+
+  // console.log("invalid", invalid[0]);
 
   return (
     <div>
@@ -89,6 +102,32 @@ const AddAdminModal = () => {
           >
             {({ errors, touched, handleChange, handleBlur }) => (
               <Form>
+                {invalid && (
+                  <>
+                    {invalid[0]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[0]?.messages}
+                      </Alert>
+                    )}
+
+                    {invalid[1]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[1]?.messages}
+                      </Alert>
+                    )}
+                    {invalid[2]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[2]?.messages}
+                      </Alert>
+                    )}
+                    {invalid[3]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[3]?.messages}
+                      </Alert>
+                    )}
+                  </>
+                )}
+
                 <TextField
                   margin="dense"
                   id="name"
@@ -103,6 +142,7 @@ const AddAdminModal = () => {
                   fullWidth
                   my={8}
                 />
+
                 <TextField
                   margin="dense"
                   id="email"

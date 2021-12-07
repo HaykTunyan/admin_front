@@ -32,6 +32,7 @@ export const createAdmin = (values) => (dispatch) => {
     .catch((err) => {
       dispatch({
         type: CREATE_ADMIN,
+        authorized: true,
         payload: false,
       });
       console.log("err", err);

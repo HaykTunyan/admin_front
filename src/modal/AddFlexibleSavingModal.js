@@ -67,7 +67,7 @@ const AddFlexibleSavingModal = () => {
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>
             <Typography variant="h4" color="inherit" component="div">
-              Add Saving
+              Add Flexible Saving
             </Typography>
           </DialogTitle>
           <DialogContent>
@@ -164,15 +164,32 @@ const AddFlexibleSavingModal = () => {
                         color="inherit"
                         component="div"
                       >
-                        To Percent
+                        7 Day API
                       </Typography>
                     </Grid>
-                    <Grid item md={8}>
+                    <Grid item md={4}>
+                      <TextField
+                        margin="dense"
+                        id="fromPercent"
+                        name="fromPercent"
+                        label="From"
+                        type="number"
+                        fullWidth
+                        error={Boolean(
+                          touched.fromPercent && errors.fromPercent
+                        )}
+                        helperText={touched.fromPercent && errors.fromPercent}
+                        onBlur={handleBlur}
+                        onChange={handleChange}
+                        defaultValue={state.fromPercent}
+                      />
+                    </Grid>
+                    <Grid item md={4}>
                       <TextField
                         margin="dense"
                         id="toPercent"
                         name="toPercent"
-                        label="toPercent"
+                        label="To"
                         type="number"
                         fullWidth
                         error={Boolean(touched.toPercent && errors.toPercent)}
@@ -183,7 +200,7 @@ const AddFlexibleSavingModal = () => {
                       />
                     </Grid>
                     {/* From Percent */}
-                    <Grid display="flex" alignItems="center" item md={4}>
+                    {/* <Grid display="flex" alignItems="center" item md={4}>
                       <Typography
                         variant="subtitle1"
                         color="inherit"
@@ -208,7 +225,7 @@ const AddFlexibleSavingModal = () => {
                         onChange={handleChange}
                         defaultValue={state.fromPercent}
                       />
-                    </Grid>
+                    </Grid> */}
                   </Grid>
                   <Spacer my={5} />
                   <Divider my={2} />

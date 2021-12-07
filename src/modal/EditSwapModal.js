@@ -65,6 +65,7 @@ const EditSwapModal = ({
     limit: limitSwap,
   });
   const [checkedLimit, SetCheckedLimit] = useState(state.limitEnabled);
+  const [check, setCheck] = useState(false);
 
   console.log("state", state);
 
@@ -203,13 +204,14 @@ const EditSwapModal = ({
                   </Grid>
                   <Grid item md={8}>
                     <FormControlLabel
-                      label="Limit Enabled Swap"
+                      label="Enabled Limit"
                       name="limitEnabled"
                       control={
                         <Checkbox
                           {...label}
-                          defaultChecked={state.limitEnabled}
-                          onChange={handleChangeCheckbox}
+                          // defaultChecked={state.limitEnabled}
+                          // onChange={handleChangeCheckbox}
+                          onChange={() => setCheck(!check)}
                         />
                       }
                     />
@@ -217,35 +219,39 @@ const EditSwapModal = ({
 
                   {/* Limit  */}
                   {console.log(" limitEnabled ", state.limitEnabled)}
-                  {state.limitEnabled === true ? (
-                    <>
-                      <Grid display="flex" alignItems="center" item md={4}>
-                        <Typography
-                          variant="subtitle1"
-                          color="inherit"
-                          component="div"
-                        >
-                          Limit Swap
-                        </Typography>
-                      </Grid>
-                      <Grid item md={8}>
-                        <TextField
-                          margin="dense"
-                          id="limit"
-                          name="limit"
-                          label="Limit"
-                          type="number"
-                          fullWidth
-                          error={Boolean(touched.limit && errors.limit)}
-                          helperText={touched.limit && errors.limit}
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                          defaultValue={state.limit}
-                          tabIndex={2}
-                        />
-                      </Grid>
-                    </>
-                  ) : null}
+                  {
+                    // state.limitEnabled
+
+                    check ? (
+                      <>
+                        <Grid display="flex" alignItems="center" item md={4}>
+                          <Typography
+                            variant="subtitle1"
+                            color="inherit"
+                            component="div"
+                          >
+                            Limit Swap
+                          </Typography>
+                        </Grid>
+                        <Grid item md={8}>
+                          <TextField
+                            margin="dense"
+                            id="limit"
+                            name="limit"
+                            label="Limit"
+                            type="number"
+                            fullWidth
+                            error={Boolean(touched.limit && errors.limit)}
+                            helperText={touched.limit && errors.limit}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            // defaultValue={state.limit}
+                            tabIndex={2}
+                          />
+                        </Grid>
+                      </>
+                    ) : null
+                  }
                 </Grid>
                 <Spacer my={5} />
                 <Divider my={2} />

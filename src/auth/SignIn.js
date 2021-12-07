@@ -71,14 +71,13 @@ const SignIn = () => {
     try {
       await signIn(values.email, values.password);
       console.log("value sign in", values);
-      dispatch(signIn_req(values)).then();
-      const token = localStorage.getItem("accessToken");
-      if (token) {
+      dispatch(signIn_req(values)).then(navigate("/dashboard"));
+      const accessToken = localStorage.getItem("accessToken");
+      if (accessToken) {
         navigate("/dashboard");
       }
     } catch (error) {
       const message = error.message || "Something went wrong";
-
       setStatus({ success: false });
       setErrors({ submit: message });
       setSubmitting(false);

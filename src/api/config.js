@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseURL = "https://api.beincrypto.org/api";
 
-const token = localStorage.getItem("accessToken");
+const accessToken = localStorage.getItem("accessToken");
 export const axiosInstance = axios.create({
   baseURL: baseURL,
   timeout: 6000,
@@ -17,10 +17,10 @@ const errorResponse = (error) => {
 
 const setHeaders = (reqConfig) => {
   reqConfig.headers["Content-Type"] = "application / json";
-  if (token) {
-    reqConfig.headers.Authorization = "Bearer " + token;
+  if (accessToken) {
+    reqConfig.headers.Authorization = "Bearer " + accessToken;
   }
-  console.log("token", token);
+  console.log("accessToken", accessToken);
 
   return reqConfig;
 };

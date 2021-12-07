@@ -12,18 +12,10 @@ export const setInstance = (access_token) => {
   instance.defaults.headers.Authorization = `Bearer ${access_token}`;
 };
 
-// export default axios.create({
-//   baseURL: "http://localhost:8080/api",
-//   headers: {
-//     "Content-type": "application/json"
-//   }
-// });
-
 export const removeInstance = () => {
   localStorage.removeItem("accessToken");
   instance.defaults.headers.Authorization = "";
 };
-
 const storedToken = localStorage.getItem("accessToken");
 
 if (storedToken) {

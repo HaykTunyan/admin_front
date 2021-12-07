@@ -60,6 +60,7 @@ export const editSwap = (values) => (dispatch) => {
     .catch((error) => {
       dispatch({
         type: SWAP_EDIT,
+        authorized: true,
         payload: false,
       });
       return Promise.reject(error);
@@ -89,6 +90,7 @@ export const addSwap = (values) => (dispatch) => {
     .catch((error) => {
       dispatch({
         type: SWAP_ADD,
+        authorized: true,
         payload: false,
       });
       return Promise.reject(error);
@@ -118,6 +120,7 @@ export const editSaving = (values) => (dispatch) => {
     .catch((error) => {
       dispatch({
         type: SAVING_EDIT,
+        authorized: true,
         payload: false,
       });
       return Promise.reject(error);

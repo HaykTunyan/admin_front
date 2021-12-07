@@ -24,7 +24,6 @@ import EditAdminModal from "../../../modal/EditAdminModal";
 import { Search as SearchIcon } from "react-feather";
 import CSVButton from "../../../components/CSVButton";
 import { darken } from "polished";
-import { useSelector } from "react-redux";
 import instance from "../../../services/api";
 import Loader from "../../../components/Loader";
 
@@ -88,9 +87,7 @@ const Input = styled(InputBase)`
 const Administrators = () => {
   // hooks.
   const { t } = useTranslation();
-  const adminUser = useSelector((state) => state.userData);
-  const rows = adminUser.adminList;
-  const [rowAdmin, getRowAdmin] = useState([]);
+  const [rowAdmin, getRowAdmin] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -103,11 +100,11 @@ const Administrators = () => {
     setPage(0);
   };
 
+  // Get Admins.
   const getAdminUsers = () => {
     return instance
       .get("/admin/all", { mode: "no-cors" })
       .then((data) => {
-        console.log("Admin Users", data);
         getRowAdmin(data.data);
         return data;
       })
@@ -117,11 +114,12 @@ const Administrators = () => {
       .finally(() => {});
   };
 
+  // use Effect.
   useEffect(() => {
     getAdminUsers();
   }, []);
 
-  if (!rowAdmin.admins) {
+  if (!rowAdmin?.admins) {
     return <Loader />;
   }
 
@@ -168,8 +166,8 @@ const Administrators = () => {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {rowAdmin.admins &&
-                          rowAdmin.admins
+                        {rowAdmin?.admins &&
+                          rowAdmin?.admins
                             .slice(
                               page * rowsPerPage,
                               page * rowsPerPage + rowsPerPage
@@ -204,7 +202,7 @@ const Administrators = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={rows.length}
+                count={rowAdmin?.admins.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -221,7 +219,7 @@ const Administrators = () => {
             <Typography variant="subtitle1" color="inherit" component="div">
               Export Data
             </Typography>
-            <CSVButton data={rows} />
+            <CSVButton data={rowAdmin?.admins} />
           </Box>
         </Grid>
       </Grid>

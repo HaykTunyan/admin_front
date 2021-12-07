@@ -141,10 +141,10 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
                           fromPercent={item.fromPercent}
                           toPercent={item.toPercent}
                         />
-                        <DeleteModal
+                        {/* <DeleteModal
                           dialog={dialog}
                           description={description}
-                        />
+                        /> */}
                       </TableCell>
                     </TableRow>
                   ))}

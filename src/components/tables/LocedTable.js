@@ -138,7 +138,7 @@ const LocedTable = ({ title, rowList, rowBody }) => {
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((item) => (
                     <TableRow key={item._id}>
-                      <TableCell>{item.coin}</TableCell>
+                      <TableCell>{item.coinName}</TableCell>
                       <TableCell>
                         <ToggleButtonGroup
                           value={alignment}
@@ -171,10 +171,10 @@ const LocedTable = ({ title, rowList, rowBody }) => {
                           duration={item.duration}
                         />
 
-                        <DeleteModal
+                        {/* <DeleteModal
                           dialog={dialog}
                           description={description}
-                        />
+                        /> */}
                       </TableCell>
                     </TableRow>
                   ))}

@@ -24,6 +24,7 @@ import {
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import { editSaving } from "../redux/actions/settings";
+import { PlusCircle } from "react-feather";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -55,6 +56,7 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
     max: max,
     duration: duration,
   });
+  const [newDuretion, setNewDuretion] = useState(false);
 
   console.log(" state Edit Locked ", state);
 
@@ -81,7 +83,7 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>
             <Typography variant="h4" color="inherit" component="div">
-              Add Saving
+              Locked Savings Settings
             </Typography>
           </DialogTitle>
           <DialogContent>
@@ -147,24 +149,43 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                       />
                     </Grid>
                     {/* Duretion */}
-                    <Grid display="flex" alignItems="center" item md={4}>
-                      <Typography
-                        variant="subtitle1"
-                        color="inherit"
-                        component="div"
-                      >
-                        Duretion
-                      </Typography>
-                    </Grid>
-                    <Grid item md={8}>
+                    {/* <Grid display="flex" alignItems="center" item md={4}>
+                      <Box display="flex" flexDirection="column">
+                        <Typography
+                          variant="subtitle1"
+                          color="inherit"
+                          component="div"
+                        >
+                          Duretion
+                        </Typography>
+                      </Box>
+                    </Grid> */}
+                    <Grid item md={12}>
+                      <Box display="flex" justifyContent="center">
+                        <Typography
+                          variant="subtitle1"
+                          color="inherit"
+                          component="div"
+                        >
+                          Duration
+                        </Typography>
+                        <Spacer mx={3} />
+                        <Button
+                          size="small"
+                          variant="contained"
+                          onClick={() => setNewDuretion(true)}
+                        >
+                          Add
+                        </Button>
+                      </Box>
                       {duration.map((item) => (
-                        <Box display="flex" justifyContent="space-between">
+                        <Box display="flex" justifyContent="">
                           <Grid item md={5}>
                             <TextField
                               margin="dense"
                               id="days"
                               name="days"
-                              label="Days"
+                              label="Number of Days"
                               type="number"
                               fullWidth
                               error={Boolean(touched.days && errors.days)}
@@ -175,12 +196,13 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                               tabIndex={2}
                             />
                           </Grid>
+                          <Grid item md={2}></Grid>
                           <Grid item md={5}>
                             <TextField
                               margin="dense"
                               id="percent"
                               name="percent"
-                              label="Percent"
+                              label="%"
                               type="number"
                               fullWidth
                               error={Boolean(touched.percent && errors.percent)}
@@ -193,8 +215,50 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                           </Grid>
                         </Box>
                       ))}
+                      {/*  */}
+
+                      {newDuretion && (
+                        <Box display="flex" justifyContent="space-between">
+                          <Grid item md={5}>
+                            <TextField
+                              margin="dense"
+                              id="days"
+                              name="days"
+                              label="Number of Days"
+                              type="number"
+                              fullWidth
+                              error={Boolean(touched.days && errors.days)}
+                              helperText={touched.days && errors.days}
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              defaultValue={duration.days}
+                              tabIndex={2}
+                            />
+                          </Grid>
+                          <Grid item md={2}></Grid>
+                          <Grid item md={5}>
+                            <TextField
+                              margin="dense"
+                              id="percent"
+                              name="percent"
+                              label="%"
+                              type="number"
+                              fullWidth
+                              error={Boolean(touched.percent && errors.percent)}
+                              helperText={touched.percent && errors.percent}
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              defaultValue={duration.percent}
+                              tabIndex={2}
+                            />
+                          </Grid>
+                        </Box>
+                      )}
+
+                      {/* Add New Duretion */}
                     </Grid>
                   </Grid>
+
                   <Spacer my={5} />
                   <Divider my={2} />
                   <Box

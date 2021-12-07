@@ -11,7 +11,7 @@ import {
   TableRow,
   TableHead,
   Paper,
-  IconButton,
+  Breadcrumbs,
   Toolbar as MuiToolbar,
   Typography,
   Box,
@@ -219,6 +219,8 @@ const TransactionsSettings = ({ coins }) => {
     return <Loader />;
   }
 
+  console.log(" coin ", coins);
+
   return (
     <Fragment>
       <Paper>
@@ -247,7 +249,21 @@ const TransactionsSettings = ({ coins }) => {
                 {/* <TableCell align="center">Price</TableCell>
                 <TableCell align="center">Price Change</TableCell>
                 <TableCell align="center">Price Change Percent </TableCell> */}
-                <TableCell align="center">Suspend Transaction</TableCell>
+
+                <TableCell align="center">
+                  Suspend Transaction
+                  <Breadcrumbs
+                    aria-label="breadcrumb"
+                    display="flex"
+                    justifyContent="space-around"
+                    align="center"
+                  >
+                    <Typography color="text.primary">
+                      Suspend Receive
+                    </Typography>
+                    <Typography color="text.primary">Suspend Send</Typography>
+                  </Breadcrumbs>
+                </TableCell>
                 <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -283,6 +299,7 @@ const TransactionsSettings = ({ coins }) => {
                           <Chip label="Passive" color="error" />
                         )}
                       </TableCell> */}
+
                       <TableCell align="center">{row.minSendAmount}</TableCell>
 
                       {/* <TableCell align="center">{row.price}</TableCell>
@@ -292,11 +309,27 @@ const TransactionsSettings = ({ coins }) => {
                       </TableCell>
                       */}
                       <TableCell align="center">
-                        {row.suspendSendTransaction === true ? (
-                          <Chip label="Enable" color="success" />
-                        ) : (
-                          <Chip label="Disable" color="error" />
-                        )}
+                        <Breadcrumbs
+                          aria-label="breadcrumb"
+                          display="flex"
+                          justifyContent="space-around"
+                          align="center"
+                        >
+                          <Typography color="text.primary">
+                            {row.suspendReceiveTransaction === true ? (
+                              <Chip label=" Enable" color="success" />
+                            ) : (
+                              <Chip label="Disable" color="error" />
+                            )}
+                          </Typography>
+                          <Typography color="text.primary">
+                            {row.suspendSendTransaction === true ? (
+                              <Chip label="Enable" color="success" />
+                            ) : (
+                              <Chip label="Disable" color="error" />
+                            )}
+                          </Typography>
+                        </Breadcrumbs>
                       </TableCell>
 
                       <TableCell padding="none" align="right">
