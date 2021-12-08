@@ -13,18 +13,12 @@ import {
   Divider,
   Typography,
   Grid,
-  FormControlLabel,
   IconButton as MuiIconButton,
-  Checkbox,
   Box,
-  Select,
-  FormControl,
-  MenuItem,
-  InputLabel,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import { editSaving } from "../redux/actions/settings";
-import { PlusCircle } from "react-feather";
+import { min } from "date-fns";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -40,7 +34,7 @@ const IconButton = styled(MuiIconButton)`
 // Yup Validation.
 const AddSavingSchema = Yup.object().shape({
   coin: Yup.string().required("Field is required"),
-  min: Yup.string().required("Field is required"),
+  min: Yup.string().required("Field is required").min(0, "Field is required"),
   max: Yup.string().required("Field is required"),
   toPercent: Yup.string().required("Field is required"),
   fromPercent: Yup.string().required("Field is required"),
@@ -49,16 +43,18 @@ const AddSavingSchema = Yup.object().shape({
 const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const label = { inputProps: { "aria-label": "Checkbox" } };
   const [state, setState] = useState({
     savingId: savingId,
     min: min,
     max: max,
     duration: duration,
   });
-  const [newDuretion, setNewDuretion] = useState(false);
+  const [newDuretion, setNewDuretion] = useState([]);
+  const [errorMes, setErrorMes] = useState([]);
 
-  console.log(" state Edit Locked ", state);
+  const addDuretion = () => {
+    setNewDuretion((oldDuretion) => [...oldDuretion, oldDuretion.length]);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -69,9 +65,18 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
   };
 
   const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(editSaving(values)).then();
-    setOpen(false);
+    debugger;
+    console.log("values send", values);
+    // dispatch(editSaving(values))
+    //   .then((data) => {
+    //     if (data.success) {
+    //       setOpen(false);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     console.log(" error messages ", error?.response?.data);
+    //     setErrorMes(error?.response?.data?.message);
+    //   });
   };
 
   return (
@@ -149,17 +154,6 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                       />
                     </Grid>
                     {/* Duretion */}
-                    {/* <Grid display="flex" alignItems="center" item md={4}>
-                      <Box display="flex" flexDirection="column">
-                        <Typography
-                          variant="subtitle1"
-                          color="inherit"
-                          component="div"
-                        >
-                          Duretion
-                        </Typography>
-                      </Box>
-                    </Grid> */}
                     <Grid item md={12}>
                       <Box display="flex" justifyContent="center">
                         <Typography
@@ -173,12 +167,12 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                         <Button
                           size="small"
                           variant="contained"
-                          onClick={() => setNewDuretion(true)}
+                          onClick={addDuretion}
                         >
                           Add
                         </Button>
                       </Box>
-                      {duration.map((item) => (
+                      {duration?.map((item) => (
                         <Box display="flex" justifyContent="">
                           <Grid item md={5}>
                             <TextField
@@ -215,10 +209,13 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                           </Grid>
                         </Box>
                       ))}
-                      {/*  */}
-
-                      {newDuretion && (
-                        <Box display="flex" justifyContent="space-between">
+                      {/* New Duretion */}
+                      {newDuretion?.map((item) => (
+                        <Box
+                          display="flex"
+                          justifyContent="space-between"
+                          key={item}
+                        >
                           <Grid item md={5}>
                             <TextField
                               margin="dense"
@@ -253,14 +250,11 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                             />
                           </Grid>
                         </Box>
-                      )}
-
-                      {/* Add New Duretion */}
+                      ))}
                     </Grid>
                   </Grid>
-
                   <Spacer my={5} />
-                  <Divider my={2} />
+                  <Divider my={5} />
                   <Box
                     sx={{
                       display: "flex",
@@ -276,8 +270,8 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                       Cancel
                     </Button>
                     <Button
-                      variant="contained"
                       sx={{ width: "120px" }}
+                      variant="contained"
                       type="submit"
                     >
                       Create Saving

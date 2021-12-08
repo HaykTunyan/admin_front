@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useContext,
+  Fragment,
+} from "react";
 import styled from "styled-components/macro";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -16,6 +22,7 @@ import {
   Box,
 } from "@material-ui/core";
 import { addSwap } from "../redux/actions/settings";
+import { addSaving } from "../redux/actions/settings";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -32,19 +39,21 @@ const AddSavingSchema = Yup.object().shape({
 const AddLockedSavingModal = () => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const label = { inputProps: { "aria-label": "Checkbox" } };
   const [state, setState] = useState({
     coin: "",
     min: "",
     max: "",
-    duration: [
-      {
-        days: "",
-        percent: "",
-      },
-    ], //for locked
+    duration: {
+      days: "",
+      percent: "",
+    }, //for locked
   });
-  const [newDuretion, setNewDuretion] = useState(false);
+  const [createDuretion, setCreateDuretion] = useState([]);
+  const [errorMes, setErrorMes] = useState([]);
+
+  const addDuretion = () => {
+    setCreateDuretion((oldDuretion) => [...oldDuretion, oldDuretion.length]);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -54,12 +63,23 @@ const AddLockedSavingModal = () => {
     setOpen(false);
   };
 
+  // Form Req.
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(addSwap(values)).then();
-    setOpen(false);
+    setState(...state);
+    dispatch(addSaving(values))
+      .then((data) => {
+        if (data.success) {
+          setOpen(false);
+        }
+      })
+      .catch((error) => {
+        console.log(" error messages ", error?.response?.data);
+        setErrorMes(error?.response?.data?.message);
+      });
   };
 
+  // New Duretion.
   return (
     <>
       <div>
@@ -84,7 +104,6 @@ const AddLockedSavingModal = () => {
               {({ errors, touched, handleChange, handleBlur }) => (
                 <Form>
                   <Grid container pt={6} spacing={6}>
-                    {/* Coin */}
                     <Grid display="flex" item md={4} alignItems="center">
                       <Typography
                         variant="subtitle1"
@@ -109,7 +128,6 @@ const AddLockedSavingModal = () => {
                         defaultValue={state.coin}
                       />
                     </Grid>
-                    {/* Min */}
                     <Grid display="flex" item md={4} alignItems="center">
                       <Typography
                         variant="subtitle1"
@@ -134,7 +152,6 @@ const AddLockedSavingModal = () => {
                         defaultValue={state.max}
                       />
                     </Grid>
-                    {/* Max */}
                     <Grid display="flex" item md={4} alignItems="center">
                       <Typography
                         variant="subtitle1"
@@ -159,9 +176,6 @@ const AddLockedSavingModal = () => {
                         defaultValue={state.max}
                       />
                     </Grid>
-
-                    {/* Duretion */}
-
                     <Grid item md={12}>
                       <Box display="flex" justifyContent="center">
                         <Typography
@@ -175,12 +189,11 @@ const AddLockedSavingModal = () => {
                         <Button
                           size="small"
                           variant="contained"
-                          onClick={() => setNewDuretion(true)}
+                          onClick={addDuretion}
                         >
                           Add
                         </Button>
                       </Box>
-
                       <Box display="flex" justifyContent="">
                         <Grid item md={5}>
                           <TextField
@@ -216,50 +229,53 @@ const AddLockedSavingModal = () => {
                           />
                         </Grid>
                       </Box>
-
-                      {/*  */}
-
-                      {/* Add New Duretion */}
-                      {newDuretion && (
-                        <Box display="flex" justifyContent="space-between">
-                          <Grid item md={5}>
-                            <TextField
-                              margin="dense"
-                              id="days"
-                              name="days"
-                              label="Number of Days"
-                              type="number"
-                              fullWidth
-                              error={Boolean(touched.days && errors.days)}
-                              helperText={touched.days && errors.days}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              defaultValue={state.duration}
-                              tabIndex={2}
-                            />
-                          </Grid>
-                          <Grid item md={2}></Grid>
-                          <Grid item md={5}>
-                            <TextField
-                              margin="dense"
-                              id="percent"
-                              name="percent"
-                              label="%"
-                              type="number"
-                              fullWidth
-                              error={Boolean(touched.percent && errors.percent)}
-                              helperText={touched.percent && errors.percent}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              defaultValue={state.duration}
-                              tabIndex={2}
-                            />
-                          </Grid>
-                        </Box>
-                      )}
+                      {/* New Duretion */}
+                      <Box>
+                        {createDuretion?.map((item) => (
+                          <Box
+                            display="flex"
+                            justifyContent="space-between"
+                            key={item}
+                          >
+                            <Grid item md={5}>
+                              <TextField
+                                margin="dense"
+                                id="days"
+                                name="days"
+                                label="Number of Days"
+                                type="number"
+                                fullWidth
+                                error={Boolean(touched.days && errors.days)}
+                                helperText={touched.days && errors.days}
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                defaultValue={state.duration}
+                                tabIndex={2}
+                              />
+                            </Grid>
+                            <Grid item md={2}></Grid>
+                            <Grid item md={5}>
+                              <TextField
+                                margin="dense"
+                                id="percent"
+                                name="percent"
+                                label="%"
+                                type="number"
+                                fullWidth
+                                error={Boolean(
+                                  touched.percent && errors.percent
+                                )}
+                                helperText={touched.percent && errors.percent}
+                                onBlur={handleBlur}
+                                onChange={handleChange}
+                                defaultValue={state.duration}
+                                tabIndex={2}
+                              />
+                            </Grid>
+                          </Box>
+                        ))}
+                      </Box>
                     </Grid>
-
-                    {/*  */}
                   </Grid>
                   <Spacer my={5} />
                   <Divider my={2} />

@@ -33,7 +33,6 @@ const Notifications = () => {
   return (
     <Fragment>
       <Helmet title="Notification" />
-
       <Grid justifyContent="space-between" container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
@@ -41,9 +40,7 @@ const Notifications = () => {
           </Typography>
         </Grid>
       </Grid>
-
       <Divider my={6} />
-
       <Grid container spasing={6}>
         <Grid item xs={12}>
           <Card xs={12}>
@@ -59,7 +56,6 @@ const Notifications = () => {
                 </Grid>
               </Grid>
               <Divider my={5} />
-
               <Grid spacing={6}>
                 <Grid item md={6}>
                   <TextField
@@ -94,7 +90,6 @@ const Notifications = () => {
                     </Select>
                   </FormControl>
                   {/*  */}
-
                   <FormControl fullWidth my={3} variant="outlined">
                     <TextField
                       label="Notification Info"
@@ -108,7 +103,6 @@ const Notifications = () => {
                   </FormControl>
                 </Grid>
               </Grid>
-
               <Button variant="contained" color="primary">
                 Save Notification
               </Button>

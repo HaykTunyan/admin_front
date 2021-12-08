@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-
 import {
   CardContent,
   Grid,
@@ -15,9 +14,7 @@ import {
 import { spacing } from "@material-ui/system";
 
 const Card = styled(MuiCard)(spacing);
-
 const Divider = styled(MuiDivider)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 function EmptyCard() {
