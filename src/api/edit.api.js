@@ -6,7 +6,7 @@ export const create_req = async (data) => {
   const role = data.role;
   const password = data.password;
   const permissions = data.permissions;
-  console.log("data", data);
+
   const response = await axiosInstance.post("/admin", {
     email,
     name,
@@ -24,7 +24,7 @@ export const edit_req = async (data) => {
   const role = data.role;
   const password = data.password;
   const permissions = data.permissions;
-  console.log("data edit req", data);
+
   const response = await axiosInstance.post("/admin/post", {
     adminId,
     email,
@@ -35,15 +35,3 @@ export const edit_req = async (data) => {
   });
   return response;
 };
-
-// In Components.
-//   const submitReq = async (id) => {
-//     try {
-//       const editReq = await edit_req(...state, id);
-
-//       console.log("createReq", editReq);
-//       if (editReq) {
-//         setOpen(false);
-//       }
-//     } catch (e) {}
-//   };

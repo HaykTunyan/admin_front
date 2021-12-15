@@ -19,6 +19,9 @@ import moment from "moment";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
 import Loader from "../../components/Loader";
+import PandingInformationModal from "../../modal/PandingInformationModal";
+import PandingDocumentModal from "../../modal/PandingDocumentModal";
+import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -71,7 +74,7 @@ const VerifiedTable = () => {
   useEffect(() => getKyc(), []);
 
   // Loader.
-  if (!rows) {
+  if (!rows?.length) {
     return <Loader />;
   }
 
@@ -86,11 +89,11 @@ const VerifiedTable = () => {
               <TableRow>
                 <TableCell align="left">ID</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Information</TableCell>
-                <TableCell>Uploaded Documents</TableCell>
                 <TableCell>Registration Date</TableCell>
                 <TableCell>Verification Date</TableCell>
-                <TableCell align="right">Verify again now</TableCell>
+                <TableCell>Information</TableCell>
+                <TableCell>Uploaded Documents</TableCell>
+                <TableCell>Send for verification</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -102,10 +105,8 @@ const VerifiedTable = () => {
                       key={row.user_id}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
-                      <TableCell align="left">{row.user_id}</TableCell>
+                      <TableCell>{row.user_id}</TableCell>
                       <TableCell>{row.email}</TableCell>
-                      <TableCell>{row.information}</TableCell>
-                      <TableCell>{row.document}</TableCell>
                       <TableCell>
                         {moment(row.registration_date).format(
                           "DD/MM/YYYY HH:mm "
@@ -116,8 +117,32 @@ const VerifiedTable = () => {
                           "DD/MM/YYYY HH:mm "
                         )}
                       </TableCell>
-                      <TableCell align="right">
-                        <Button variant="contained">Request Verified </Button>
+                      <TableCell>
+                        <PandingInformationModal
+                          pandingId={row.user_id}
+                          name={row.name}
+                          surname={row.surname}
+                          dateBirthday={row.date_of_birth}
+                          contact={row.address}
+                          country={row.country}
+                          documentType={row.document_type}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <PandingDocumentModal
+                          pandingId={row.user_id}
+                          documentType={row.document_type}
+                          documentBack={row.document_back}
+                          documentFront={row.document_front}
+                          selfie={row.selfie}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <PandingVerififeyModal
+                          subTitle="Verifiy Again"
+                          kycId={row.user_id}
+                          statusKyc={4}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}

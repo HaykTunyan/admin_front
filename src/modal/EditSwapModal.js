@@ -15,8 +15,6 @@ import {
   FormControlLabel,
   Checkbox,
   Box,
-  Alert,
-  Stack,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import { spacing } from "@material-ui/system";
@@ -36,10 +34,13 @@ const IconButton = styled(MuiIconButton)`
 
 // Yup Validation.
 const editSwapSchema = Yup.object().shape({
-  decimals: Yup.string().required("Field is required"),
-  fee: Yup.string().required("Field is required"),
-  min: Yup.string().required("Field is required"),
-  limit: Yup.string().required("Field is required"),
+  decimals: Yup.number().required("Field is required"),
+  fee: Yup.number()
+    .required("Field is required")
+    .min(0, " Filed can not be minus value"),
+  min: Yup.number()
+    .required("Field is required")
+    .min(0, " Filed can not be minus value"),
 });
 
 const EditSwapModal = ({
@@ -62,14 +63,9 @@ const EditSwapModal = ({
     fee: feeSwap,
     min: minSwap,
     limitEnabled: limitEnabledSwap,
-    limit: limitSwap,
   });
   const [checkedLimit, SetCheckedLimit] = useState(state.limitEnabled);
   const [check, setCheck] = useState(false);
-
-  console.log("state", state);
-
-  console.log(" checked Limit ", checkedLimit);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -85,8 +81,10 @@ const EditSwapModal = ({
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(editSwap(values)).then();
-    setOpen(false);
+    dispatch(editSwap(values)).then((data) => {
+      console.log("data", data);
+      setOpen(false);
+    });
   };
 
   return (
@@ -106,6 +104,7 @@ const EditSwapModal = ({
           <Formik
             initialValues={{
               ...state,
+              limit: limitSwap,
             }}
             initialForms={state}
             validationSchema={editSwapSchema}
@@ -132,12 +131,16 @@ const EditSwapModal = ({
                       label="Min"
                       type="number"
                       fullWidth
+                      // InputProps={{
+                      //   inputProps: {
+                      //     min: 0,
+                      //   },
+                      // }}
                       error={Boolean(touched.min && errors.min)}
                       helperText={touched.min && errors.min}
                       onBlur={handleBlur}
                       onChange={handleChange}
                       defaultValue={state.min}
-                      tabIndex={2}
                     />
                   </Grid>
                   {/* Fee  */}
@@ -158,12 +161,16 @@ const EditSwapModal = ({
                       label="Fee"
                       type="number"
                       fullWidth
+                      // InputProps={{
+                      //   inputProps: {
+                      //     min: 0,
+                      //   },
+                      // }}
                       error={Boolean(touched.fee && errors.fee)}
                       helperText={touched.fee && errors.fee}
                       onBlur={handleBlur}
                       onChange={handleChange}
                       defaultValue={state.fee}
-                      tabIndex={2}
                     />
                   </Grid>
                   {/* Decimals */}
@@ -189,7 +196,6 @@ const EditSwapModal = ({
                       onBlur={handleBlur}
                       onChange={handleChange}
                       defaultValue={state.decimals}
-                      tabIndex={1}
                     />
                   </Grid>
                   {/* Limit Enabled */}
@@ -218,10 +224,8 @@ const EditSwapModal = ({
                   </Grid>
 
                   {/* Limit  */}
-                  {console.log(" limitEnabled ", state.limitEnabled)}
                   {
                     // state.limitEnabled
-
                     check ? (
                       <>
                         <Grid display="flex" alignItems="center" item md={4}>
@@ -245,8 +249,6 @@ const EditSwapModal = ({
                             helperText={touched.limit && errors.limit}
                             onBlur={handleBlur}
                             onChange={handleChange}
-                            // defaultValue={state.limit}
-                            tabIndex={2}
                           />
                         </Grid>
                       </>

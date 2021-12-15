@@ -60,8 +60,11 @@ const EditAdminModal = ({ email, name, id }) => {
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(editAdmin(values)).then();
-    setOpen(false);
+    dispatch(editAdmin(values)).then((data) => {
+      if (data.success) {
+        setOpen(false);
+      }
+    });
   };
 
   return (

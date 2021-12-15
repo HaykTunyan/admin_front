@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -15,7 +15,7 @@ import {
   Grid,
   Box,
 } from "@material-ui/core";
-import { addSwap } from "../redux/actions/settings";
+import { addSaving } from "../redux/actions/settings";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -32,7 +32,6 @@ const AddSavingSchema = Yup.object().shape({
 const AddFlexibleSavingModal = () => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const label = { inputProps: { "aria-label": "Checkbox" } };
   const [state, setState] = useState({
     coin: "",
     type: "flexible", // for flexible
@@ -52,7 +51,7 @@ const AddFlexibleSavingModal = () => {
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(addSwap(values)).then((data) => {
+    dispatch(addSaving(values)).then((data) => {
       console.log("data", data);
       setOpen(false);
     });

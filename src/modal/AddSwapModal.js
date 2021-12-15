@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { Formik, Form } from "formik";
+import { Formik, Form, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import { spacing } from "@material-ui/system";
 import { useDispatch } from "react-redux";
@@ -20,45 +20,44 @@ import {
   FormControl,
   MenuItem,
   InputLabel,
+  Alert as MuiAlert,
 } from "@material-ui/core";
 import { addSwap } from "../redux/actions/settings";
 import instance from "../services/api";
 
 // Spacing.
 const Spacer = styled.div(spacing);
+const Alert = styled(MuiAlert)(spacing);
 
 // Yup Validation.
 const AddSwapSchema = Yup.object().shape({
-  fromCoin: Yup.string().required("Field is required"),
-  toCoin: Yup.string().required("Field is required"),
-  decimals: Yup.string().required("Field is required"),
-  fee: Yup.string().required("Field is required"),
-  min: Yup.string().required("Field is required"),
-  limit: Yup.string().required("Field is required"),
+  decimals: Yup.number()
+    .required("Field is required")
+    .min(0, " Filed can not be minus value"),
+  fee: Yup.number()
+    .required("Field is required")
+    .min(0, " Filed can not be minus value"),
+  min: Yup.number()
+    .required("Field is required")
+    .min(0, " Filed can not be minus value"),
 });
 
 const AddSwapModal = () => {
   // hooks.
-  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const label = { inputProps: { "aria-label": "Checkbox" } };
+  const [open, setOpen] = useState(false);
+  const [check, setCheck] = useState(false);
   const [coinSettings, getCoinSettings] = useState([]);
+  const [errorMes, setErrorMes] = useState([]);
   const [state, setState] = useState({
-    fromCoin: coinSettings.name,
-    toCoin: coinSettings.name,
+    fromCoin: Number,
+    toCoin: Number,
     decimals: "",
     fee: "",
     min: "",
-    limit: "",
-    limitEnabled: true,
+    limitEnabled: check,
   });
-  const [check, setCheck] = useState(false);
-
-  const [age, setAge] = useState("");
-
-  const handleChangeA = (event) => {
-    setAge(event.target.value);
-  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -67,6 +66,23 @@ const AddSwapModal = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  // Form Submit.
+  const handleSubmit = (values) => {
+    console.log("values", values);
+    dispatch(addSwap(values))
+      .then((data) => {
+        console.log("data", data);
+        setOpen(false);
+      })
+      .catch((error) => {
+        console.log("error messages", error?.response?.data);
+        setErrorMes(error?.response?.data?.message);
+      });
+  };
+
+  // Error Messages.
+  const invalid = errorMes?.message;
 
   // get getSettingCoin.
   const getSettingCoin = () => {
@@ -86,23 +102,15 @@ const AddSwapModal = () => {
     getSettingCoin();
   }, []);
 
-  console.log("coinSettings", coinSettings);
-
-  const handleSubmit = (values) => {
-    console.log("values", values);
-    // dispatch(addSwap(values)).then();
-    // setOpen(false);
-  };
-
   return (
-    <div>
+    <>
       <Button variant="contained" onClick={handleClickOpen}>
         Add Swap
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
           <Typography variant="h4" color="inherit" component="div">
-            {/* {fromCoin.toUpperCase()} - <strong>{toCoin.toUpperCase()}</strong>{" "} */}
+            Create Swap
           </Typography>
         </DialogTitle>
         <DialogContent>
@@ -110,13 +118,38 @@ const AddSwapModal = () => {
             initialValues={{
               ...state,
             }}
-            initialForms={state}
+            // initialForms={state}
             validationSchema={AddSwapSchema}
             onSubmit={handleSubmit}
           >
-            {({ errors, touched, handleChange, handleBlur }) => (
+            {({ values, errors, touched, handleChange, handleBlur }) => (
               <Form>
                 <Grid container pt={6} spacing={6}>
+                  {invalid && (
+                    <>
+                      {invalid[0]?.messages && (
+                        <Alert my={2} severity="error">
+                          {invalid[0]?.messages}
+                        </Alert>
+                      )}
+
+                      {invalid[1]?.messages && (
+                        <Alert my={2} severity="error">
+                          {invalid[1]?.messages}
+                        </Alert>
+                      )}
+                      {invalid[2]?.messages && (
+                        <Alert my={2} severity="error">
+                          {invalid[2]?.messages}
+                        </Alert>
+                      )}
+                      {invalid[3]?.messages && (
+                        <Alert my={2} severity="error">
+                          {invalid[3]?.messages}
+                        </Alert>
+                      )}
+                    </>
+                  )}
                   {/* From Coin */}
                   <Grid display="flex" item md={4} alignItems="center">
                     <Typography
@@ -129,35 +162,24 @@ const AddSwapModal = () => {
                   </Grid>
                   <Grid item md={8}>
                     <FormControl fullWidth>
-                      <InputLabel id="select-from-coin">Coin Name</InputLabel>
+                      <InputLabel id="select-from-coin">
+                        From Coin Name
+                      </InputLabel>
                       <Select
                         labelId="select-from-coin"
                         id="select-from-coin"
                         label="From Coin Name"
+                        name="fromCoin"
                         fullWidth
                         onBlur={handleBlur}
                         onChange={handleChange}
-                        defaultValue={state.fromCoin}
+                        value={values.fromCoin}
                       >
                         {coinSettings.map((item) => (
                           <MenuItem value={item.id}>{item.name}</MenuItem>
                         ))}
                       </Select>
                     </FormControl>
-                    {/* <TextField
-                      margin="dense"
-                      id="fromCoin"
-                      name="fromCoin"
-                      label="fromCoin"
-                      type="number"
-                      error={Boolean(touched.fromCoin && errors.fromCoin)}
-                      fullWidth
-                      helperText={touched.fromCoin && errors.fromCoin}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      defaultValue={state.fromCoin}
-                      tabIndex={1}
-                    /> */}
                   </Grid>
                   {/* To Coin */}
                   <Grid display="flex" item md={4} alignItems="center">
@@ -176,30 +198,17 @@ const AddSwapModal = () => {
                         labelId="select-to-coin"
                         id="select-to-coin"
                         label="To Coin Name"
+                        name="toCoin"
                         fullWidth
                         onBlur={handleBlur}
                         onChange={handleChange}
-                        defaultValue={state.toCoin}
+                        value={values.toCoin}
                       >
                         {coinSettings.map((item) => (
                           <MenuItem value={item.id}>{item.name}</MenuItem>
                         ))}
                       </Select>
                     </FormControl>
-                    {/* <TextField
-                      margin="dense"
-                      id="toCoin"
-                      name="toCoin"
-                      label="toCoin"
-                      type="number"
-                      error={Boolean(touched.toCoin && errors.toCoin)}
-                      fullWidth
-                      helperText={touched.toCoin && errors.toCoin}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      defaultValue={state.toCoin}
-                      tabIndex={1}
-                    /> */}
                   </Grid>
                   {/* Decimals */}
                   <Grid display="flex" item md={4} alignItems="center">
@@ -218,13 +227,17 @@ const AddSwapModal = () => {
                       name="decimals"
                       label="Decimals"
                       type="number"
-                      error={Boolean(touched.decimals && errors.decimals)}
                       fullWidth
+                      InputProps={{
+                        inputProps: {
+                          min: 0,
+                        },
+                      }}
+                      error={Boolean(touched.decimals && errors.decimals)}
                       helperText={touched.decimals && errors.decimals}
                       onBlur={handleBlur}
                       onChange={handleChange}
-                      defaultValue={state.decimals}
-                      tabIndex={1}
+                      defaultValue={values.decimals}
                     />
                   </Grid>
                   {/* Fee  */}
@@ -242,15 +255,19 @@ const AddSwapModal = () => {
                       margin="dense"
                       id="fee"
                       name="fee"
-                      label="Fee"
+                      label="Fee %"
                       type="number"
                       fullWidth
+                      InputProps={{
+                        inputProps: {
+                          min: 0,
+                        },
+                      }}
                       error={Boolean(touched.fee && errors.fee)}
                       helperText={touched.fee && errors.fee}
                       onBlur={handleBlur}
                       onChange={handleChange}
-                      defaultValue={state.fee}
-                      tabIndex={2}
+                      defaultValue={values.fee}
                     />
                   </Grid>
                   {/* Min */}
@@ -271,12 +288,16 @@ const AddSwapModal = () => {
                       label="Min"
                       type="number"
                       fullWidth
+                      InputProps={{
+                        inputProps: {
+                          min: 0,
+                        },
+                      }}
                       error={Boolean(touched.min && errors.min)}
                       helperText={touched.min && errors.min}
                       onBlur={handleBlur}
                       onChange={handleChange}
-                      defaultValue={state.min}
-                      tabIndex={2}
+                      defaultValue={values.min}
                     />
                   </Grid>
                   {/* Limit Enabled */}
@@ -296,8 +317,8 @@ const AddSwapModal = () => {
                       control={
                         <Checkbox
                           {...label}
-                          // defaultChecked={state.limitEnabled}
-                          // onChange={handleChange}
+                          name="limitEnabled"
+                          defaultValue={values.limitEnabled}
                           onChange={() => setCheck(!check)}
                         />
                       }
@@ -323,12 +344,16 @@ const AddSwapModal = () => {
                           label="Limit"
                           type="number"
                           fullWidth
+                          InputProps={{
+                            inputProps: {
+                              min: 0,
+                            },
+                          }}
                           error={Boolean(touched.limit && errors.limit)}
                           helperText={touched.limit && errors.limit}
                           onBlur={handleBlur}
                           onChange={handleChange}
-                          defaultValue={state.limit}
-                          tabIndex={2}
+                          defaultValue={values.limit}
                         />
                       </Grid>
                     </>
@@ -363,7 +388,7 @@ const AddSwapModal = () => {
           </Formik>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 };
 

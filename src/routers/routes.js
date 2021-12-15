@@ -12,9 +12,7 @@ import Page404 from "../auth/Page404";
 import Page500 from "../auth/Page500";
 
 // Page components
-import InvoiceList from "../pages/PlayOff";
 import Settings from "../pages/settings-pages";
-import Projects from "../pages/Projects";
 import Notifications from "../pages/notifications";
 import DashboardList from "../pages/DashboardList";
 import ProtectedPage from "../pages/protected/ProtectedPage";
@@ -22,7 +20,6 @@ import NewsComponent from "../pages/news";
 import UsersList from "../pages/user-managment/users-pages/UsersList";
 import UserView from "../pages/user-managment/users-pages/UserView";
 import AffiliateUsers from "../pages/user-managment/users-pages/AffiliateUsers";
-import Calendar from "../pages/Calendar";
 import Transaction from "../pages/transactions";
 import KYC from "../pages/kyc";
 import Referral from "../pages/referral";
@@ -30,11 +27,10 @@ import Administrators from "../pages/user-managment/administrator/Administrators
 import AffiliateView from "../pages/user-managment/users-pages/AffiliateView";
 
 // Documentation
-import Redux from "../docs/Redux";
 import DashboardPage from "../pages/dashboard";
 import DeviceManagement from "../pages/device-managment";
-import ProfileMat from "../components/charts/MetaLineChart";
 
+// Routes.
 const routes = [
   {
     path: "/",
@@ -95,14 +91,6 @@ const routes = [
         element: <Transaction />,
       },
       {
-        path: "invoices",
-        element: <InvoiceList />,
-      },
-      {
-        path: "projects",
-        element: <Projects />,
-      },
-      {
         path: "settings",
         element: <Settings />,
       },
@@ -139,26 +127,6 @@ const routes = [
       {
         path: "500",
         element: <Page500 />,
-      },
-    ],
-  },
-  {
-    path: "forms",
-    element: <DashboardLayout />,
-    children: [
-      {
-        path: "redux",
-        element: <Redux />,
-      },
-    ],
-  },
-  {
-    path: "",
-    element: <DashboardLayout />,
-    children: [
-      {
-        path: "test",
-        element: <ProfileMat />,
       },
     ],
   },

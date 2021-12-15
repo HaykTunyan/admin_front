@@ -6,7 +6,6 @@ import { Provider } from "react-redux";
 import "react-app-polyfill/stable";
 import reportWebVitals from "./utils/reportWebVitals";
 import App from "./app/App";
-
 import "./mocks";
 
 import { ThemeProvider } from "./contexts/ThemeContext";

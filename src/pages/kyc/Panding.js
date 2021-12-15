@@ -19,6 +19,9 @@ import moment from "moment";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
 import Loader from "../../components/Loader";
+import PandingInformationModal from "../../modal/PandingInformationModal";
+import PandingDocumentModal from "../../modal/PandingDocumentModal";
+import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -73,7 +76,7 @@ const PandingTable = () => {
   }, []);
 
   // Loader.
-  if (!rows) {
+  if (!rows?.length) {
     return <Loader />;
   }
 
@@ -88,9 +91,11 @@ const PandingTable = () => {
               <TableRow>
                 <TableCell align="left">ID</TableCell>
                 <TableCell>Email</TableCell>
+                <TableCell>Registration Date</TableCell>
                 <TableCell>Verification Date</TableCell>
+                <TableCell>Information</TableCell>
                 <TableCell>Uploaded Documents</TableCell>
-                <TableCell>Verify button</TableCell>
+                <TableCell>Verification</TableCell>
                 <TableCell>Send for verification</TableCell>
               </TableRow>
             </TableHead>
@@ -106,15 +111,44 @@ const PandingTable = () => {
                       <TableCell>{row.user_id}</TableCell>
                       <TableCell>{row.email}</TableCell>
                       <TableCell>
-                        {moment(row.date).format("DD/MM/YYYY HH:mm ")}
-                      </TableCell>
-
-                      <TableCell>{row.document}</TableCell>
-                      <TableCell>
-                        <Button variant="contained">New Verified</Button>
+                        {moment(row.registration_date).format(
+                          "DD/MM/YYYY HH:mm "
+                        )}
                       </TableCell>
                       <TableCell>
-                        <Button variant="contained">Send Verified</Button>
+                        {moment(row.verification_date).format(
+                          "DD/MM/YYYY HH:mm "
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <PandingInformationModal
+                          pandingId={row.user_id}
+                          name={row.name}
+                          surname={row.surname}
+                          dateBirthday={row.date_of_birth}
+                          contact={row.address}
+                          country={row.country}
+                          documentType={row.document_type}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <PandingDocumentModal
+                          pandingId={row.user_id}
+                          documentType={row.document_type}
+                          documentBack={row.document_back}
+                          documentFront={row.document_front}
+                          selfie={row.selfie}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="contained">Verifiy</Button>
+                      </TableCell>
+                      <TableCell>
+                        <PandingVerififeyModal
+                          subTitle="Send For Verification"
+                          kycId={row.user_id}
+                          statusKyc={2}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}

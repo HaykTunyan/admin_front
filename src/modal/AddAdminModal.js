@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { UserPlus } from "react-feather";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { spacing } from "@material-ui/system";
-import useAuth from "../hooks/useAuth";
 import { useDispatch } from "react-redux";
 import {
   Button,
@@ -23,7 +22,6 @@ import { createAdmin } from "../redux/actions/user-managment";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
-const Spacer = styled.div(spacing);
 const Alert = styled(MuiAlert)(spacing);
 
 // Validation Schema.
@@ -43,8 +41,7 @@ const addAdminValidation = Yup.object().shape({
 const AddAdminModal = () => {
   //   //  hooks.
   const [open, setOpen] = useState(false);
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  const { addAdmin } = useAuth();
+  const label = { inputProps: { "aria-label": "Checkbox" } };
   const dispatch = useDispatch();
   const [messageError, setMessageError] = useState([]);
 
@@ -78,11 +75,7 @@ const AddAdminModal = () => {
         setMessageError(error?.response?.data);
       });
   };
-
-  console.log("messageError", messageError);
   const invalid = messageError?.message;
-
-  // console.log("invalid", invalid[0]);
 
   return (
     <div>
@@ -127,7 +120,6 @@ const AddAdminModal = () => {
                     )}
                   </>
                 )}
-
                 <TextField
                   margin="dense"
                   id="name"
@@ -142,7 +134,6 @@ const AddAdminModal = () => {
                   fullWidth
                   my={8}
                 />
-
                 <TextField
                   margin="dense"
                   id="email"

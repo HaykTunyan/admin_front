@@ -69,13 +69,9 @@ const SignIn = () => {
 
   const onSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
     try {
-      await signIn(values.email, values.password);
-      console.log("value sign in", values);
+      // await signIn(values.email, values.password);
       dispatch(signIn_req(values)).then(navigate("/dashboard"));
       const accessToken = localStorage.getItem("accessToken");
-      if (accessToken) {
-        navigate("/dashboard");
-      }
     } catch (error) {
       const message = error.message || "Something went wrong";
       setStatus({ success: false });

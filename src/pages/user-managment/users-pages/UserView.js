@@ -45,9 +45,9 @@ const UserView = (state) => {
   const [profile, getProfile] = useState([]);
   const location = useLocation();
   const totlalDashboard = useSelector((state) => state.dashboard);
-  const rowExchange = totlalDashboard.rowExchange;
-  const profileId = location.state;
-  const userId = profileId.id;
+  const rowExchange = totlalDashboard?.rowExchange;
+  const profileId = location?.state;
+  const userId = profileId?.id;
 
   const handleChangeTab = (event, newTab) => {
     setTab(newTab);

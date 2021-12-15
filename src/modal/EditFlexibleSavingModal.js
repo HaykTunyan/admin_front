@@ -13,14 +13,8 @@ import {
   Divider,
   Typography,
   Grid,
-  FormControlLabel,
   IconButton as MuiIconButton,
-  Checkbox,
   Box,
-  Select,
-  FormControl,
-  MenuItem,
-  InputLabel,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import { editSaving } from "../redux/actions/settings";
@@ -54,7 +48,6 @@ const EditFlexibleSavingModal = ({
 }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const label = { inputProps: { "aria-label": "Checkbox" } };
   const [state, setState] = useState({
     savingId: savingId,
     type: "flexible", // for flexible
@@ -76,8 +69,11 @@ const EditFlexibleSavingModal = ({
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(editSaving(values)).then();
-    setOpen(false);
+    dispatch(editSaving(values)).then((data) => {
+      if (data.success) {
+        setOpen(false);
+      }
+    });
   };
 
   return (
@@ -196,34 +192,6 @@ const EditFlexibleSavingModal = ({
                         defaultValue={state.toPercent}
                       />
                     </Grid>
-
-                    {/* From Percent */}
-                    {/* <Grid display="flex" alignItems="center" item md={4}>
-                      <Typography
-                        variant="subtitle1"
-                        color="inherit"
-                        component="div"
-                      >
-                        From Percent
-                      </Typography>
-                    </Grid>
-                    <Grid item md={8}>
-                      <TextField
-                        margin="dense"
-                        id="fromPercent"
-                        name="fromPercent"
-                        label="From Percent"
-                        type="number"
-                        fullWidth
-                        error={Boolean(
-                          touched.fromPercent && errors.fromPercent
-                        )}
-                        helperText={touched.fromPercent && errors.fromPercent}
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        defaultValue={state.fromPercent}
-                      />
-                    </Grid> */}
                   </Grid>
                   <Spacer my={5} />
                   <Divider my={2} />

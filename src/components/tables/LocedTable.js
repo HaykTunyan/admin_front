@@ -20,7 +20,6 @@ import {
   Grid,
   Chip,
 } from "@material-ui/core";
-import DeleteModal from "../../modal/DeleteModal";
 import AddLockedSavingModal from "../../modal/AddLockedSavingModal";
 import EditLockedSavingModal from "../../modal/EditLocledSavingModal";
 
@@ -80,19 +79,15 @@ const TableWrapper = styled.div`
 `;
 
 const LocedTable = ({ title, rowList, rowBody }) => {
+  // hooks.
   const { t } = useTranslation();
-
-  const dialog = "Locked Item";
-  const description = "Delete Item in this list";
-
   const [alignment, setAlignment] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleAlignment = (event, newAlignment) => {
     setAlignment(newAlignment);
   };
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -170,11 +165,6 @@ const LocedTable = ({ title, rowList, rowBody }) => {
                           max={item.max}
                           duration={item.duration}
                         />
-
-                        {/* <DeleteModal
-                          dialog={dialog}
-                          description={description}
-                        /> */}
                       </TableCell>
                     </TableRow>
                   ))}

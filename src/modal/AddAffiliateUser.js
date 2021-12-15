@@ -10,13 +10,12 @@ import {
   IconButton,
   Alert as MuiAlert,
 } from "@material-ui/core";
-import { useFormik, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import { UserPlus } from "react-feather";
 import * as Yup from "yup";
 import { spacing } from "@material-ui/system";
 import { useDispatch } from "react-redux";
 import { createAffiliate } from "../redux/actions/user-managment";
-import instance, { setInstance } from "../services/api";
 import userSingleton from "../singletons/user.singleton";
 
 // Spacing.
@@ -65,7 +64,6 @@ const AddAffiliateUser = () => {
 
   const handleSubmit = (values) => {
     console.log("values", values);
-
     dispatch(createAffiliate(values))
       .then((data) => {
         if (data.success) {
@@ -79,11 +77,7 @@ const AddAffiliateUser = () => {
         console.log(" error messages ", error?.response?.data);
         setErrorMes(error?.response?.data?.message);
       });
-
-    // setOpen(false);
   };
-
-  console.log("errorMes", errorMes);
 
   return (
     <div>

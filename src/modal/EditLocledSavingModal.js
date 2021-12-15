@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { Formik, Form } from "formik";
+import { Formik, Form, FieldArray } from "formik";
 import * as Yup from "yup";
 import { spacing } from "@material-ui/system";
 import { useDispatch } from "react-redux";
@@ -18,7 +18,7 @@ import {
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import { editSaving } from "../redux/actions/settings";
-import { min } from "date-fns";
+import { XCircle } from "react-feather";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -33,24 +33,26 @@ const IconButton = styled(MuiIconButton)`
 
 // Yup Validation.
 const AddSavingSchema = Yup.object().shape({
-  coin: Yup.string().required("Field is required"),
-  min: Yup.string().required("Field is required").min(0, "Field is required"),
-  max: Yup.string().required("Field is required"),
-  toPercent: Yup.string().required("Field is required"),
-  fromPercent: Yup.string().required("Field is required"),
+  min: Yup.number()
+    .required("Field is required")
+    .min(0, " Filed can not be minus value"),
+  max: Yup.number()
+    .required("Field is required")
+    .min(0, " Filed can not be minus value"),
 });
 
 const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
-  const [open, setOpen] = useState(false);
+  // hooks.
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [newDuretion, setNewDuretion] = useState([]);
+  const [errorMes, setErrorMes] = useState([]);
   const [state, setState] = useState({
     savingId: savingId,
     min: min,
     max: max,
     duration: duration,
   });
-  const [newDuretion, setNewDuretion] = useState([]);
-  const [errorMes, setErrorMes] = useState([]);
 
   const addDuretion = () => {
     setNewDuretion((oldDuretion) => [...oldDuretion, oldDuretion.length]);
@@ -65,18 +67,17 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
   };
 
   const handleSubmit = (values) => {
-    debugger;
-    console.log("values send", values);
-    // dispatch(editSaving(values))
-    //   .then((data) => {
-    //     if (data.success) {
-    //       setOpen(false);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     console.log(" error messages ", error?.response?.data);
-    //     setErrorMes(error?.response?.data?.message);
-    //   });
+    console.log("values", values);
+    dispatch(editSaving(values))
+      .then((data) => {
+        if (data.success) {
+          setOpen(false);
+        }
+      })
+      .catch((error) => {
+        console.log(" error messages ", error?.response?.data);
+        setErrorMes(error?.response?.data?.message);
+      });
   };
 
   return (
@@ -100,7 +101,7 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
               validationSchema={AddSavingSchema}
               onSubmit={handleSubmit}
             >
-              {({ errors, touched, handleChange, handleBlur }) => (
+              {({ values, errors, touched, handleChange, handleBlur }) => (
                 <Form>
                   <Grid container pt={6} spacing={6}>
                     {/* Min */}
@@ -155,102 +156,84 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                     </Grid>
                     {/* Duretion */}
                     <Grid item md={12}>
-                      <Box display="flex" justifyContent="center">
-                        <Typography
-                          variant="subtitle1"
-                          color="inherit"
-                          component="div"
-                        >
-                          Duration
-                        </Typography>
-                        <Spacer mx={3} />
-                        <Button
-                          size="small"
-                          variant="contained"
-                          onClick={addDuretion}
-                        >
-                          Add
-                        </Button>
-                      </Box>
-                      {duration?.map((item) => (
-                        <Box display="flex" justifyContent="">
-                          <Grid item md={5}>
-                            <TextField
-                              margin="dense"
-                              id="days"
-                              name="days"
-                              label="Number of Days"
-                              type="number"
-                              fullWidth
-                              error={Boolean(touched.days && errors.days)}
-                              helperText={touched.days && errors.days}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              defaultValue={item.days}
-                              tabIndex={2}
-                            />
-                          </Grid>
-                          <Grid item md={2}></Grid>
-                          <Grid item md={5}>
-                            <TextField
-                              margin="dense"
-                              id="percent"
-                              name="percent"
-                              label="%"
-                              type="number"
-                              fullWidth
-                              error={Boolean(touched.percent && errors.percent)}
-                              helperText={touched.percent && errors.percent}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              defaultValue={item.percent}
-                              tabIndex={2}
-                            />
-                          </Grid>
-                        </Box>
-                      ))}
-                      {/* New Duretion */}
-                      {newDuretion?.map((item) => (
-                        <Box
-                          display="flex"
-                          justifyContent="space-between"
-                          key={item}
-                        >
-                          <Grid item md={5}>
-                            <TextField
-                              margin="dense"
-                              id="days"
-                              name="days"
-                              label="Number of Days"
-                              type="number"
-                              fullWidth
-                              error={Boolean(touched.days && errors.days)}
-                              helperText={touched.days && errors.days}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              defaultValue={duration.days}
-                              tabIndex={2}
-                            />
-                          </Grid>
-                          <Grid item md={2}></Grid>
-                          <Grid item md={5}>
-                            <TextField
-                              margin="dense"
-                              id="percent"
-                              name="percent"
-                              label="%"
-                              type="number"
-                              fullWidth
-                              error={Boolean(touched.percent && errors.percent)}
-                              helperText={touched.percent && errors.percent}
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              defaultValue={duration.percent}
-                              tabIndex={2}
-                            />
-                          </Grid>
-                        </Box>
-                      ))}
+                      <FieldArray name="duration">
+                        {({ insert, remove, push }) => (
+                          <>
+                            <>
+                              <Box display="flex" justifyContent="center">
+                                <Typography
+                                  variant="subtitle1"
+                                  color="inherit"
+                                  component="div"
+                                >
+                                  Duration
+                                </Typography>
+                                <Spacer mx={3} />
+                                <Button
+                                  size="small"
+                                  variant="contained"
+                                  onClick={() =>
+                                    push({ days: "", percent: "" })
+                                  }
+                                >
+                                  Add
+                                </Button>
+                              </Box>
+                              <Spacer my={4} />
+                            </>
+                            {duration.length > 0 &&
+                              duration.map((item, index) => (
+                                <>
+                                  <Box
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    key={index}
+                                  >
+                                    <Grid item md={5}>
+                                      <TextField
+                                        margin="dense"
+                                        id="days"
+                                        name={`duration.${index}.days`}
+                                        defaultValue={item.days}
+                                        label="Number of Days"
+                                        type="number"
+                                        fullWidth
+                                        onChange={handleChange}
+                                      />
+                                    </Grid>
+                                    <Grid item md={2}>
+                                      <Box
+                                        display="flex"
+                                        justifyContent="center"
+                                        alignItems="center"
+                                      >
+                                        <IconButton
+                                          aria-label="close"
+                                          color="primary"
+                                          onClick={() => remove(index)}
+                                        >
+                                          <XCircle />
+                                        </IconButton>
+                                      </Box>
+                                    </Grid>
+                                    <Grid item md={5}>
+                                      <TextField
+                                        margin="dense"
+                                        id="percent"
+                                        name={`duration.${index}.percent`}
+                                        defaultValue={item.percent}
+                                        label="%"
+                                        type="number"
+                                        fullWidth
+                                        onChange={handleChange}
+                                      />
+                                    </Grid>
+                                  </Box>
+                                </>
+                              ))}
+                          </>
+                        )}
+                      </FieldArray>
                     </Grid>
                   </Grid>
                   <Spacer my={5} />

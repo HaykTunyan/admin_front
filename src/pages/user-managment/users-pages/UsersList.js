@@ -14,7 +14,6 @@ import {
   InputBase,
 } from "@material-ui/core";
 import UsersListTable from "./UserListTable";
-import AddUserModal from "../../../modal/AddUserModal";
 import DatePickerFilter from "../../../components/date-picker/DatePickerFilter";
 import Loader from "../../../components/Loader";
 

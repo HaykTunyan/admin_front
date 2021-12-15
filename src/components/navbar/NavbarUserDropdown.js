@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
-import { UserCheck } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import {
   Tooltip,
@@ -22,6 +21,7 @@ const IconButton = styled(MuiIconButton)`
 const Avatar = styled(MuiAvatar)``;
 
 const NavbarUserDropdown = () => {
+  // hooks.
   const [anchorMenu, setAnchorMenu] = useState(null);
   const navigate = useNavigate();
   const { signOut } = useAuth();

@@ -78,8 +78,12 @@ const EditTransactionModal = ({
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(editCoin(values)).then();
-    setOpen(false);
+    dispatch(editCoin(values)).then((data) => {
+      if (data.success) {
+        console.log("success", data.success);
+        setOpen(false);
+      }
+    });
   };
   return (
     <div>

@@ -40,7 +40,7 @@ const Page404 = () => {
         color="secondary"
         mt={2}
       >
-        Return to website
+        Go To Login Page
       </Button>
     </Wrapper>
   );

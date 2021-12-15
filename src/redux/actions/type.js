@@ -64,8 +64,6 @@ export const EDIT_AFFILIATE = "EDIT_AFFILIATE";
 
 // Settings.
 
-// Transactions
-
 export const TRANSACTION_WOTCH = "TRANSACTION_WOTCH";
 export const TRANSACTION_EDIT = "TRANSACTION_WOTCH";
 
@@ -84,8 +82,6 @@ export const SAVING_ADD = "SAVING_ADD";
 
 // KYC
 
-// Pending.
-
 export const KYC_WOTCH = "KYC_WOTCH";
 export const KYC_LOADING = "KYC_LOADING";
 export const KYC_LIST = "KYC_LIST";
@@ -96,3 +92,10 @@ export const KYC_UNVERIFYED = "KYC_UNVERFIYED";
 // Verified
 
 // Not Verifyed.
+
+// News.
+
+export const NEWS_WOTCH = "NEWS_WOTCH";
+export const NEWS_ADD = " NEWS_ADD";
+export const NEWS_DELETE = " NEWS_DELETE";
+export const NEWS_EDIT = "NEWS_EDIT";

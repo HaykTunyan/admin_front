@@ -12,6 +12,7 @@ import { referralSlice } from "./slices/referralSlice";
 import { messageSlice } from "./slices/messageSlice";
 import { deviceManagmentSlice } from "./slices/deviceManagmentSlice";
 import userCard from "./slices/usersCardSlice";
+import productsReducer, { getProducts } from "./slices/productsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -28,5 +29,6 @@ export const store = configureStore({
     referral: referralSlice.reducer,
     listUser: userListSlice,
     userCard: userCard,
+    products: productsReducer,
   },
 });

@@ -19,6 +19,7 @@ import moment from "moment";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
 import Loader from "../../components/Loader";
+import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -72,7 +73,7 @@ const NotVerifiedTable = () => {
   }, []);
 
   // Loader.
-  if (!rows) {
+  if (!rows?.length) {
     return <Loader />;
   }
 
@@ -88,8 +89,9 @@ const NotVerifiedTable = () => {
                 <TableCell align="left">ID</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Registration Date</TableCell>
-                <TableCell>Verification Date</TableCell>
-                <TableCell align="right">Verify again now</TableCell>
+                {/* <TableCell>Verification Date</TableCell> */}
+                <TableCell>Verification</TableCell>
+                <TableCell align="right">Send For Verification</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -108,13 +110,20 @@ const NotVerifiedTable = () => {
                           "DD/MM/YYYY HH:mm "
                         )}
                       </TableCell>
-                      <TableCell>
+                      {/* <TableCell>
                         {moment(row.verification_date).format(
                           "DD/MM/YYYY HH:mm "
                         )}
+                      </TableCell> */}
+                      <TableCell>
+                        <Button variant="contained">Verifiy</Button>
                       </TableCell>
                       <TableCell align="right">
-                        <Button variant="contained">Verified</Button>
+                        <PandingVerififeyModal
+                          subTitle="Verified"
+                          kycId={row.user_id}
+                          statusKyc={2}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}

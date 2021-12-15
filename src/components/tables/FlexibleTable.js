@@ -17,7 +17,6 @@ import {
   Toolbar,
   Grid,
 } from "@material-ui/core";
-import DeleteModal from "../../modal/DeleteModal";
 import AddFlexibleSavingModal from "../../modal/AddFlexibleSavingModal";
 import EditFlexibleSavingModal from "../../modal/EditFlexibleSavingModal";
 
@@ -29,7 +28,6 @@ const Paper = styled(MuiPaper)(spacing);
 const Input = styled(InputBase)`
   color: inherit;
   width: 100%;
-
   > input {
     color: ${(props) => props.theme.header.search.color};
     padding-top: ${(props) => props.theme.spacing(2.5)};
@@ -46,11 +44,9 @@ const Search = styled.div`
   display: none;
   position: relative;
   width: 100%;
-
   &:hover {
     background-color: ${(props) => darken(0.05, props.theme.header.background)};
   }
-
   ${(props) => props.theme.breakpoints.up("md")} {
     display: block;
   }
@@ -77,10 +73,8 @@ const TableWrapper = styled.div`
 `;
 
 const FlexibleTable = ({ title, rowList, rowBody }) => {
+  // hooks.
   const { t } = useTranslation();
-  const dialog = "Flexible Item";
-  const description = "Delete Item in this list";
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -141,10 +135,6 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
                           fromPercent={item.fromPercent}
                           toPercent={item.toPercent}
                         />
-                        {/* <DeleteModal
-                          dialog={dialog}
-                          description={description}
-                        /> */}
                       </TableCell>
                     </TableRow>
                   ))}

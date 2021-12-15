@@ -62,8 +62,11 @@ const EditAffiliateModal = ({ email, phone, password, userId }) => {
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(editAffiliate(values)).then();
-    setOpen(false);
+    dispatch(editAffiliate(values)).then((data) => {
+      if (data.success) {
+        setOpen(false);
+      }
+    });
   };
 
   return (

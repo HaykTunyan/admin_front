@@ -7,6 +7,8 @@ const instance = axios.create({
   baseURL: "https://api.beincrypto.org/api",
 });
 
+// access_token
+
 export const setInstance = (access_token) => {
   localStorage.setItem("accessToken", access_token);
   instance.defaults.headers.Authorization = `Bearer ${access_token}`;
