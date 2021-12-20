@@ -6,7 +6,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Grid,
-  Breadcrumbs as MuiBreadcrumbs,
   Card as MuiCard,
   Divider as MuiDivider,
   Typography,
@@ -17,7 +16,6 @@ import { spacing } from "@material-ui/system";
 // Spacing.
 const Card = styled(MuiCard)(spacing);
 const Divider = styled(MuiDivider)(spacing);
-const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 const Accordions = () => {
   const [expanded, setExpanded] = useState(false);
@@ -100,7 +98,7 @@ const Accordions = () => {
                     </Typography>
                   </AccordionDetails>
                 </Accordion>
-              </div>{" "}
+              </div>
             </CardContent>
           </Card>
         </Grid>

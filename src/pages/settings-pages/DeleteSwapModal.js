@@ -12,7 +12,7 @@ import {
   Divider,
 } from "@material-ui/core";
 import { Trash } from "react-feather";
-import instance from "../../services/api";
+import { instance } from "../../services/api";
 
 const IconButton = styled(MuiIconButton)`
   svg {

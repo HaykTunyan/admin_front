@@ -5,7 +5,7 @@ import { Search as SearchIcon } from "react-feather";
 import { darken } from "polished";
 import { useTranslation } from "react-i18next";
 import { spacing } from "@material-ui/system";
-import instance from "../../../services/api";
+import { instance } from "../../../services/api";
 import {
   Box,
   Grid,

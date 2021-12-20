@@ -109,10 +109,11 @@ const DashboardPage = () => {
                             labelId="users-all-label"
                             id="users-all"
                             value={users}
+                            defaultValue="all"
                             label="All Users"
                             onChange={ChangeUsersStatus}
                           >
-                            <MenuItem value="all">All</MenuItem>
+                            <MenuItem value="all"></MenuItem>
                             <MenuItem value="verified">verified </MenuItem>
                             <MenuItem value="unverifyed">unverified </MenuItem>
                           </Select>

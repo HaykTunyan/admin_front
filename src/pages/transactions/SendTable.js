@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
-import instance from "../../services/api";
+import { instance } from "../../services/api";
 import {
   Box,
   Paper as MuiPaper,

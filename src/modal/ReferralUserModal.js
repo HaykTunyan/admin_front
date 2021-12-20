@@ -19,7 +19,9 @@ const style = {
 };
 
 const ReferralUserModal = () => {
+  //  hooks.
   const [open, setOpen] = useState(false);
+
   const handleClickOpen = () => {
     setOpen(true);
   };

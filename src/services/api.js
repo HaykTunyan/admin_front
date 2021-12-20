@@ -1,29 +1,34 @@
 // Global API file.
-
 import axios from "axios";
-import { store } from "../redux/store";
 
-const instance = axios.create({
-  baseURL: "https://api.beincrypto.org/api",
+const baseURL = "https://api.beincrypto.org/api";
+
+export const instance = axios.create({
+  baseURL: baseURL,
+  timeout: 60000,
 });
 
-// access_token
-
-export const setInstance = (access_token) => {
-  localStorage.setItem("accessToken", access_token);
-  instance.defaults.headers.Authorization = `Bearer ${access_token}`;
+const successResponse = (response) => {
+  return response;
+};
+const errorResponse = (error) => {
+  return Promise.reject(error);
 };
 
-export const removeInstance = () => {
-  localStorage.removeItem("accessToken");
-  instance.defaults.headers.Authorization = "";
+const setHeaders = async (reqConfig) => {
+  //reqConfig.headers.Accept = "multipart/form-data";
+  const accessToken = localStorage.getItem("accessToken");
+
+  if (accessToken) {
+    reqConfig.headers.Authorization = "Bearer " + accessToken;
+    //console.log("AccessToken", accessToken);
+  }
+
+  return reqConfig;
 };
-const storedToken = localStorage.getItem("accessToken");
 
-if (storedToken) {
-  setInstance(storedToken);
-}
-
+//instance.interceptors.response.use(successResponse, errorResponse);
+instance.interceptors.request.use(setHeaders);
 instance.interceptors.response.use(
   (response) => {
     if (response.data.message) {
@@ -49,5 +54,3 @@ instance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-export default instance;

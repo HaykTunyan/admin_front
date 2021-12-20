@@ -32,7 +32,6 @@ const IconButton = styled(MuiIconButton)`
 
 // Yup Validation.
 const AddSavingSchema = Yup.object().shape({
-  coin: Yup.string().required("Field is required"),
   min: Yup.string().required("Field is required"),
   max: Yup.string().required("Field is required"),
   toPercent: Yup.string().required("Field is required"),
@@ -56,8 +55,6 @@ const EditFlexibleSavingModal = ({
     toPercent: toPercent, //for flexible
     fromPercent: fromPercent, //for flexible
   });
-
-  console.log(" state Edit FLexible ", state);
 
   const handleClickOpen = () => {
     setOpen(true);

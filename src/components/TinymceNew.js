@@ -2,13 +2,7 @@ import React, { useRef, Fragment } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Button, Box } from "@material-ui/core";
 
-const TinymceNew = ({ textBody }) => {
-  const editorRef = useRef(null);
-  const log = () => {
-    if (editorRef.current) {
-      console.log(editorRef.current.getContent());
-    }
-  };
+const TinymceNew = ({ textBody, editorRef, onSave, content, contentError }) => {
   return (
     <Fragment>
       <Box my={2}>
@@ -32,8 +26,13 @@ const TinymceNew = ({ textBody }) => {
               "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
           }}
         />
+        {contentError && !content && (
+          <div>
+            <span style={{ color: "red" }}>{"Field is required"}</span>
+          </div>
+        )}
         <Box display="flex" justifyContent="flex-end" mt={5}>
-          <Button variant="contained" onClick={log} type="button">
+          <Button variant="contained" onClick={onSave} type="button">
             Save Text
           </Button>
         </Box>

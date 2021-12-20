@@ -24,12 +24,24 @@ const CardMedia = styled(MuiCardMedia)`
   height: 220px;
 `;
 
-const NewsCard = ({ image, title, description, chip }) => {
+const NewsCard = ({
+  news,
+  image,
+  title,
+  description,
+  chip,
+  status,
+  onClickDelete,
+  onClickPublish,
+}) => {
   return (
     <Fragment>
       <Card>
         {image ? (
-          <CardMedia image={image} title="Contemplative Reptile" />
+          <CardMedia
+            image={`data:image/png;base64,${image}`}
+            title="Contemplative Reptile"
+          />
         ) : null}
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
@@ -41,10 +53,15 @@ const NewsCard = ({ image, title, description, chip }) => {
           </Typography>
         </CardContent>
         <CardActions>
-          <EditNewsModal />
-          <Button size="small" color="primary">
-            View More
+          <EditNewsModal news={news} />
+          <Button size="small" color="primary" onClick={onClickDelete}>
+            Delete
           </Button>
+          {status && (
+            <Button size="small" color="primary" onClick={onClickPublish}>
+              Publish
+            </Button>
+          )}
         </CardActions>
       </Card>
     </Fragment>

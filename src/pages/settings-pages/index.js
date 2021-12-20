@@ -9,7 +9,7 @@ import {
   Tab,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-import instance, { setInstance } from "../../services/api";
+import { instance, setInstance } from "../../services/api";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";

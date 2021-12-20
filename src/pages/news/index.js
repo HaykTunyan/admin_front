@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
 import { darken } from "polished";
@@ -17,6 +17,13 @@ import { Search as SearchIcon } from "react-feather";
 import NewsImage from "../../assets/images/news_one.jpg";
 import AddNewsModal from "../../modal/AddNewsModal";
 import NewsCard from "./NewCard";
+import {
+  deleteNews_req,
+  editNews_req,
+  getNews_req,
+  publishNews_req,
+} from "../../api/newsAPI";
+import moment from "moment";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -89,90 +96,57 @@ const NewsList = [
       "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
     chip: <Chip label={"15/09/2021"} color="success" />,
   },
-  {
-    key: 1,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
-  {
-    key: 2,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
-  {
-    key: 3,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
-  {
-    key: 4,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
-  {
-    key: 5,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
-  {
-    key: 6,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
-  {
-    key: 7,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
-  {
-    key: 8,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
-  {
-    key: 9,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
-  {
-    key: 10,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
 ];
 
 const NewsComponent = () => {
   const { t } = useTranslation();
+
+  const [newsList, setNewsList] = useState([]);
+
+  async function getNews() {
+    try {
+      const response = await getNews_req();
+      if (response) {
+        //console.log("GETTING NEWS RESPONSE ==>", response);
+        setNewsList(response.news);
+      }
+    } catch (e) {
+      console.log("GETTING NEWS ERROR ==>", e);
+    }
+  }
+
+  async function deleteNews(id) {
+    try {
+      const response = await deleteNews_req(id);
+      if (response) {
+        console.log("NEWS DELETED RESPONSE ==>", response);
+      }
+    } catch (e) {
+      console.log("NEWS DELETED ERROR ==>", e.response);
+    }
+  }
+
+  async function publishNews(id) {
+    const formData = new FormData();
+    const status = true;
+
+    formData.append("_id", id);
+    formData.append("status", JSON.stringify(status));
+
+    try {
+      const response = await publishNews_req(formData);
+      if (response) {
+        console.log("NEWS PUBLISHED RESPONSE ==>", response);
+      }
+    } catch (e) {
+      console.log("NEWS PUBLISHED ERROR ==>", e.response);
+    }
+  }
+
+  useEffect(() => {
+    getNews();
+  }, []);
+
   return (
     <Fragment>
       <Helmet title="News" />
@@ -212,13 +186,22 @@ const NewsComponent = () => {
           </Card>
         </Grid>
 
-        {NewsList.map((item) => (
+        {newsList.map((item) => (
           <Grid item xs={12} lg={6} xl={3} key={item.key}>
             <NewsCard
+              news={item}
               image={item.image}
               title={item.title}
               description={item.description}
-              chip={item.chip}
+              chip={
+                <Chip
+                  label={moment(item.date).format("DD/MM/YYYY")}
+                  color="success"
+                />
+              }
+              status={item.status}
+              onClickDelete={() => deleteNews(item._id)}
+              onClickPublish={() => publishNews(item._id)}
             />
           </Grid>
         ))}

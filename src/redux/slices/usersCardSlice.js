@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import instance from "../../services/api";
+import { instance } from "../../services/api";
 
 const initialState = {
   data: [],

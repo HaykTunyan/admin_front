@@ -50,37 +50,37 @@ export const NOTIFICATION_LIST = "NOTIFICATION_LIST";
 
 export const NEWS_INFO = "NEWS_INFO";
 
-// Administration
+// Administration Actions.
 
 export const ADMIN_WOTCH = "ADMIN_WOTCH";
 export const CREATE_ADMIN = "CREATE_ADMIN";
 export const EDIT_ADMIN = "EDIT_ADMIN";
 
-// Affiliate User.
+// Affiliate User Actions.
 
 export const AFFIILATE_WOTCH = "AFFIILATE_WOTCH";
 export const CREATE_AFFILIATE = "CREATE_AFFILIATE";
 export const EDIT_AFFILIATE = "EDIT_AFFILIATE";
 
-// Settings.
+// Settings Actions.
 
 export const TRANSACTION_WOTCH = "TRANSACTION_WOTCH";
 export const TRANSACTION_EDIT = "TRANSACTION_WOTCH";
 
-// Swap.
+// Swap Actions.
 
 export const SWAP_WOTCH = "SWAP_WOTCH";
 export const SWAP_EDIT = "SWAP_EDIT";
 export const SWAP_DELETE = "SWAP_DELETE";
 export const SWAP_ADD = "SWAP_ADD";
 
-// Saving Settings.
+// Saving Settings Actions.
 
 export const SAVING_WOTCH = "SAVING_WOTCH";
 export const SAVING_EDIT = "SAVING_EDIT";
 export const SAVING_ADD = "SAVING_ADD";
 
-// KYC
+// KYC Actions.
 
 export const KYC_WOTCH = "KYC_WOTCH";
 export const KYC_LOADING = "KYC_LOADING";
@@ -89,11 +89,7 @@ export const KYC_PANDING = "KYC_PANDING";
 export const KYC_VERIFYED = "KYC_VERIFYED";
 export const KYC_UNVERIFYED = "KYC_UNVERFIYED";
 
-// Verified
-
-// Not Verifyed.
-
-// News.
+// News Actions.
 
 export const NEWS_WOTCH = "NEWS_WOTCH";
 export const NEWS_ADD = " NEWS_ADD";

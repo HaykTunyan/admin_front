@@ -23,6 +23,7 @@ import {
 } from "@material-ui/core";
 import { XCircle } from "react-feather";
 import { editKYC } from "../redux/actions/kyc";
+import SuccessModal from "./SuccessModal";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -71,6 +72,7 @@ const PandingVerififeyModal = ({ subTitle, kycId, statusKyc }) => {
         setOpen(false);
       }
     });
+    return <SuccessModal />;
   };
 
   return (

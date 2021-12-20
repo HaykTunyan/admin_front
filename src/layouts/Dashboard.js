@@ -14,6 +14,11 @@ import SettingsCom from "../components/SettingsCom";
 
 const drawerWidth = 258;
 
+// Spacing.
+const Paper = styled(MuiPaper)(spacing);
+
+// Custom Style.
+
 const Root = styled.div`
   display: flex;
   min-height: 100vh;
@@ -33,8 +38,6 @@ const AppContent = styled.div`
   max-width: 100%;
 `;
 
-const Paper = styled(MuiPaper)(spacing);
-
 const MainContent = styled(Paper)`
   flex: 1;
   background: ${(props) => props.theme.palette.background.default};
@@ -50,11 +53,9 @@ const MainContent = styled(Paper)`
 
 const Dashboard = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
   const theme = useTheme();
   const isLgUp = useMediaQuery(theme.breakpoints.up("lg"));
 

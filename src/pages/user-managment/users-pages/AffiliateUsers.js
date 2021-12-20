@@ -6,7 +6,7 @@ import { darken } from "polished";
 import { useTranslation } from "react-i18next";
 import { useHistory, useNavigate } from "react-router-dom";
 import moment from "moment";
-import instance from "../../../services/api";
+import { instance } from "../../../services/api";
 import {
   Box,
   Divider as MuiDivider,
@@ -96,14 +96,12 @@ const Chip = styled(MuiChip)`
 `;
 
 const AffiliateUsers = () => {
+  //  hooks.
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  // const history = useHistory()
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rowAffiliate, setRowAffiliate] = useState(null);
-  // const rowList = userSingleton._affiliateList;
   const affiliateList = rowAffiliate?.users;
 
   const handleChangePage = (event, newPage) => {
@@ -133,18 +131,9 @@ const AffiliateUsers = () => {
       .finally(() => {});
   };
 
-  useEffect(
-    () => {
-      // console.log(" rowlist ", rowList);
-      // if (rowList) {
-      //   getAffiliate();
-      // }
-      getAffiliate();
-    },
-    [
-      // rowList
-    ]
-  );
+  useEffect(() => {
+    getAffiliate();
+  }, []);
 
   if (!affiliateList) {
     return <Loader />;

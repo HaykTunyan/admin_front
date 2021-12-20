@@ -7,7 +7,7 @@ import {
   useLocation,
   useSearchParams,
 } from "react-router-dom";
-import instance from "../../../services/api";
+import { instance } from "../../../services/api";
 import moment from "moment";
 import {
   Divider as MuiDivider,
@@ -54,7 +54,7 @@ const AffiliateView = (state) => {
 
   const profileId = locetion.state;
 
-  const userId = profileId.id;
+  const userId = profileId?.id;
 
   const handleChangeTab = (event, newTab) => {
     setTab(newTab);

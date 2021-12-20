@@ -24,7 +24,7 @@ import EditAdminModal from "../../../modal/EditAdminModal";
 import { Search as SearchIcon } from "react-feather";
 import CSVButton from "../../../components/CSVButton";
 import { darken } from "polished";
-import instance from "../../../services/api";
+import { instance } from "../../../services/api";
 import Loader from "../../../components/Loader";
 
 // Spacing.

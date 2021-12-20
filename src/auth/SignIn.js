@@ -71,7 +71,6 @@ const SignIn = () => {
     try {
       // await signIn(values.email, values.password);
       dispatch(signIn_req(values)).then(navigate("/dashboard"));
-      const accessToken = localStorage.getItem("accessToken");
     } catch (error) {
       const message = error.message || "Something went wrong";
       setStatus({ success: false });

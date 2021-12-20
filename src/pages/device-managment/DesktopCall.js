@@ -19,10 +19,10 @@ import TopDeviceModal from "../../modal/TopDeviceModal";
 const Toolbar = styled(MuiToolbar)(spacing);
 
 const DesktopCall = ({ desktopData }) => {
+  // hooks.
+  const title = " Desktop Info";
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const title = " Desktop Info";
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

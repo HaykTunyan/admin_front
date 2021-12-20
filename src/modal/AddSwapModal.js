@@ -23,7 +23,7 @@ import {
   Alert as MuiAlert,
 } from "@material-ui/core";
 import { addSwap } from "../redux/actions/settings";
-import instance from "../services/api";
+import { instance } from "../services/api";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -33,13 +33,13 @@ const Alert = styled(MuiAlert)(spacing);
 const AddSwapSchema = Yup.object().shape({
   decimals: Yup.number()
     .required("Field is required")
-    .min(0, " Filed can not be minus value"),
+    .min(0, "Filed can not be minus value"),
   fee: Yup.number()
     .required("Field is required")
-    .min(0, " Filed can not be minus value"),
+    .min(0, "Filed can not be minus value"),
   min: Yup.number()
     .required("Field is required")
-    .min(0, " Filed can not be minus value"),
+    .min(0, "Filed can not be minus value"),
 });
 
 const AddSwapModal = () => {
@@ -77,12 +77,14 @@ const AddSwapModal = () => {
       })
       .catch((error) => {
         console.log("error messages", error?.response?.data);
-        setErrorMes(error?.response?.data?.message);
+        setErrorMes(error?.response?.data);
       });
   };
 
   // Error Messages.
   const invalid = errorMes?.message;
+
+  console.log(" error ", errorMes);
 
   // get getSettingCoin.
   const getSettingCoin = () => {
@@ -124,32 +126,37 @@ const AddSwapModal = () => {
           >
             {({ values, errors, touched, handleChange, handleBlur }) => (
               <Form>
-                <Grid container pt={6} spacing={6}>
-                  {invalid && (
-                    <>
-                      {invalid[0]?.messages && (
-                        <Alert my={2} severity="error">
-                          {invalid[0]?.messages}
-                        </Alert>
-                      )}
+                {invalid && (
+                  <>
+                    {invalid[0]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[0]?.messages}
+                      </Alert>
+                    )}
 
-                      {invalid[1]?.messages && (
-                        <Alert my={2} severity="error">
-                          {invalid[1]?.messages}
-                        </Alert>
-                      )}
-                      {invalid[2]?.messages && (
-                        <Alert my={2} severity="error">
-                          {invalid[2]?.messages}
-                        </Alert>
-                      )}
-                      {invalid[3]?.messages && (
-                        <Alert my={2} severity="error">
-                          {invalid[3]?.messages}
-                        </Alert>
-                      )}
-                    </>
-                  )}
+                    {invalid[1]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[1]?.messages}
+                      </Alert>
+                    )}
+                    {invalid[2]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[2]?.messages}
+                      </Alert>
+                    )}
+                    {invalid[3]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[3]?.messages}
+                      </Alert>
+                    )}
+                    {invalid && (
+                      <Alert my={2} severity="error">
+                        {invalid}
+                      </Alert>
+                    )}
+                  </>
+                )}
+                <Grid container pt={6} spacing={6}>
                   {/* From Coin */}
                   <Grid display="flex" item md={4} alignItems="center">
                     <Typography

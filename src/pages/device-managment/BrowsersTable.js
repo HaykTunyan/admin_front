@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import {
@@ -10,6 +10,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TablePagination,
 } from "@material-ui/core";
 import TopDeviceModal from "../../modal/TopDeviceModal";
 
@@ -68,7 +69,20 @@ export const rowColumns = [
 ];
 
 const BrowsersTable = () => {
+  //  hooks.
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const title = " Browsers Version";
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <>
       <Card mb={6}>
@@ -86,18 +100,30 @@ const BrowsersTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rowColumns.map((item) => (
-                  <TableRow key={item.key}>
-                    <TableCell scope="row">
-                      {item.name}
-                      <TopDeviceModal title={title} />
-                    </TableCell>
-                    <TableCell align="">{item.count} </TableCell>
-                    <TableCell align="">{item.percent} %</TableCell>
-                  </TableRow>
-                ))}
+                {rowColumns
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((item) => (
+                    <TableRow key={item.key}>
+                      <TableCell scope="row">
+                        {item.name}
+                        <TopDeviceModal title={title} />
+                      </TableCell>
+                      <TableCell align="">{item.count} </TableCell>
+                      <TableCell align="">{item.percent} %</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
+            {/* Pagination */}
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 20]}
+              component="div"
+              count={rowColumns.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </TableWrapper>
         </Paper>
       </Card>

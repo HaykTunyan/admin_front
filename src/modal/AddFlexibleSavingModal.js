@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -12,28 +12,41 @@ import {
   DialogTitle,
   Divider,
   Typography,
+  FormControl,
+  InputLabel,
   Grid,
   Box,
+  Alert,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { addSaving } from "../redux/actions/settings";
+import { instance } from "../services/api";
 
 // Spacing.
 const Spacer = styled.div(spacing);
 
 // Yup Validation.
 const AddSavingSchema = Yup.object().shape({
-  coin: Yup.string().required("Field is required"),
-  min: Yup.string().required("Field is required"),
-  max: Yup.string().required("Field is required"),
-  toPercent: Yup.string().required("Field is required"),
-  fromPercent: Yup.string().required("Field is required"),
+  coin: Yup.number().required("Field is required"),
+  min: Yup.number()
+    .required("Field is required")
+    .min(0, " Filed can not be minus value"),
+  max: Yup.number()
+    .required("Field is required")
+    .min(0, " Filed can not be minus value"),
+  toPercent: Yup.number().required("Field is required"),
+  fromPercent: Yup.number().required("Field is required"),
 });
 
 const AddFlexibleSavingModal = () => {
-  const [open, setOpen] = useState(false);
+  // hooks.
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [errorMes, setErrorMes] = useState([]);
+  const [coinSettings, getCoinSettings] = useState([]);
   const [state, setState] = useState({
-    coin: "",
+    coin: Number,
     type: "flexible", // for flexible
     min: "",
     max: "",
@@ -49,13 +62,37 @@ const AddFlexibleSavingModal = () => {
     setOpen(false);
   };
 
+  // Form Req.
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(addSaving(values)).then((data) => {
-      console.log("data", data);
-      setOpen(false);
-    });
+    dispatch(addSaving(values))
+      .then((data) => {
+        console.log("data", data);
+        setOpen(false);
+      })
+      .catch((error) => {
+        console.log(" error messages ", error?.response?.data);
+        setErrorMes(error?.response?.data);
+      });
   };
+
+  // get getSettingCoin.
+  const getSettingCoin = () => {
+    return instance
+      .get("/admin/settings/coins")
+      .then((data) => {
+        getCoinSettings(data.data);
+        return data;
+      })
+      .catch((error) => {
+        return Promise.reject(error);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    getSettingCoin();
+  }, []);
 
   return (
     <>
@@ -78,8 +115,38 @@ const AddFlexibleSavingModal = () => {
               validationSchema={AddSavingSchema}
               onSubmit={handleSubmit}
             >
-              {({ errors, touched, handleChange, handleBlur }) => (
+              {({ values, errors, touched, handleChange, handleBlur }) => (
                 <Form>
+                  {errorMes && (
+                    <>
+                      {errorMes[0]?.messages && (
+                        <Alert my={2} severity="error">
+                          {errorMes[0]?.messages}
+                        </Alert>
+                      )}
+
+                      {errorMes[1]?.messages && (
+                        <Alert my={2} severity="error">
+                          {errorMes[1]?.messages}
+                        </Alert>
+                      )}
+                      {errorMes[2]?.messages && (
+                        <Alert my={2} severity="error">
+                          {errorMes[2]?.messages}
+                        </Alert>
+                      )}
+                      {errorMes[3]?.messages && (
+                        <Alert my={2} severity="error">
+                          {errorMes[3]?.messages}
+                        </Alert>
+                      )}
+                      {errorMes.message && (
+                        <Alert my={2} severity="error">
+                          {errorMes.message}
+                        </Alert>
+                      )}
+                    </>
+                  )}
                   <Grid container pt={6} spacing={6}>
                     {/* Coin */}
                     <Grid display="flex" item md={4} alignItems="center">
@@ -92,19 +159,25 @@ const AddFlexibleSavingModal = () => {
                       </Typography>
                     </Grid>
                     <Grid item md={8}>
-                      <TextField
-                        margin="dense"
-                        id="coin"
-                        name="coin"
-                        label="Coin"
-                        type="number"
-                        error={Boolean(touched.coin && errors.coin)}
-                        fullWidth
-                        helperText={touched.coin && errors.coin}
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        defaultValue={state.coin}
-                      />
+                      <FormControl fullWidth>
+                        <InputLabel id="select-from-coin">
+                          From Coin Name
+                        </InputLabel>
+                        <Select
+                          labelId="select-from-coin"
+                          id="select-from-coin"
+                          label="From Coin Name"
+                          name="coin"
+                          value={values.coin}
+                          fullWidth
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                        >
+                          {coinSettings.map((item) => (
+                            <MenuItem value={item.id}>{item.name}</MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     </Grid>
                     {/* Min */}
                     <Grid display="flex" item md={4} alignItems="center">
@@ -198,33 +271,6 @@ const AddFlexibleSavingModal = () => {
                         defaultValue={state.toPercent}
                       />
                     </Grid>
-                    {/* From Percent */}
-                    {/* <Grid display="flex" alignItems="center" item md={4}>
-                      <Typography
-                        variant="subtitle1"
-                        color="inherit"
-                        component="div"
-                      >
-                        From Percent
-                      </Typography>
-                    </Grid>
-                    <Grid item md={8}>
-                      <TextField
-                        margin="dense"
-                        id="fromPercent"
-                        name="fromPercent"
-                        label="From Percent"
-                        type="number"
-                        fullWidth
-                        error={Boolean(
-                          touched.fromPercent && errors.fromPercent
-                        )}
-                        helperText={touched.fromPercent && errors.fromPercent}
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        defaultValue={state.fromPercent}
-                      />
-                    </Grid> */}
                   </Grid>
                   <Spacer my={5} />
                   <Divider my={2} />

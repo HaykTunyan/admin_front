@@ -19,9 +19,10 @@ import {
   Select,
   MenuItem,
   IconButton as MuiIconButton,
+  Alert,
 } from "@material-ui/core";
 import { addSaving } from "../redux/actions/settings";
-import instance from "../services/api";
+import { instance } from "../services/api";
 import { XCircle } from "react-feather";
 
 // Spacing.
@@ -77,7 +78,7 @@ const AddLockedSavingModal = () => {
       })
       .catch((error) => {
         console.log(" error messages ", error?.response?.data);
-        setErrorMes(error?.response?.data?.message);
+        setErrorMes(error?.response?.data);
       });
   };
 
@@ -127,6 +128,36 @@ const AddLockedSavingModal = () => {
           >
             {({ values, errors, touched, handleChange, handleBlur }) => (
               <Form>
+                {errorMes && (
+                  <>
+                    {errorMes[0]?.messages && (
+                      <Alert my={2} severity="error">
+                        {errorMes[0]?.messages}
+                      </Alert>
+                    )}
+
+                    {errorMes[1]?.messages && (
+                      <Alert my={2} severity="error">
+                        {errorMes[1]?.messages}
+                      </Alert>
+                    )}
+                    {errorMes[2]?.messages && (
+                      <Alert my={2} severity="error">
+                        {errorMes[2]?.messages}
+                      </Alert>
+                    )}
+                    {errorMes[3]?.messages && (
+                      <Alert my={2} severity="error">
+                        {errorMes[3]?.messages}
+                      </Alert>
+                    )}
+                    {errorMes?.message && (
+                      <Alert my={2} severity="error">
+                        {errorMes.message}
+                      </Alert>
+                    )}
+                  </>
+                )}
                 <Grid container pt={6} spacing={6}>
                   {/* Saving Coin  */}
                   <Grid display="flex" item md={4} alignItems="center">

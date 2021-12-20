@@ -33,7 +33,7 @@ const ChartWrapper = styled.div`
 
 const DeviceManagement = () => {
   // hooks.
-  const [tabOne, setOpenOne] = useState(true);
+  const [tabOne, setOpenOne] = useState(false);
   const [tabThree, setOpenThree] = useState(false);
   const [tabTwo, setOpenTwo] = useState(false);
 
@@ -134,10 +134,12 @@ const DeviceManagement = () => {
         {tabOne && (
           <>
             <Grid item xs={12} md={12}>
-              <MobileCall mobileDate={mobileDate} />
+              <Card my={6}>
+                <MobileCall mobileDate={mobileDate} />
+              </Card>
             </Grid>
             {/* Unique User */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
               <Card my={6}>
                 <UniqueTable />
               </Card>
@@ -154,23 +156,6 @@ const DeviceManagement = () => {
             <Grid item xs={12} md={6}>
               <Card my={6}>
                 <BrowsersTable uniqueData={uniqueData} />
-              </Card>
-            </Grid>
-
-            {/* Chart Data */}
-            <Grid item xs={12} md={6}>
-              <Card my={6}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Device Users
-                  </Typography>
-
-                  <Spacer my={6} />
-
-                  <ChartWrapper>
-                    <Chart type="pie" data={data} options={options} />
-                  </ChartWrapper>
-                </CardContent>
               </Card>
             </Grid>
           </>
@@ -182,7 +167,7 @@ const DeviceManagement = () => {
               <TabletCell tabletData={tabletData} />
             </Grid>
             {/* Unique User */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
               <Card my={6}>
                 <UniqueTable />
               </Card>
@@ -199,23 +184,6 @@ const DeviceManagement = () => {
             <Grid item xs={12} md={6}>
               <Card my={6}>
                 <BrowsersTable uniqueData={uniqueData} />
-              </Card>
-            </Grid>
-
-            {/* Chart Data */}
-            <Grid item xs={12} md={6}>
-              <Card my={6}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Device Users
-                  </Typography>
-
-                  <Spacer my={6} />
-
-                  <ChartWrapper>
-                    <Chart type="pie" data={data} options={options} />
-                  </ChartWrapper>
-                </CardContent>
               </Card>
             </Grid>
           </>
@@ -227,7 +195,7 @@ const DeviceManagement = () => {
               <DesktopCall desktopData={desktopData} />
             </Grid>
             {/* Unique User */}
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
               <Card my={6}>
                 <UniqueTable />
               </Card>
@@ -246,26 +214,27 @@ const DeviceManagement = () => {
                 <BrowsersTable uniqueData={uniqueData} />
               </Card>
             </Grid>
-
-            {/* Chart Data */}
-            <Grid item xs={12} md={6}>
-              <Card my={6}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Device Users
-                  </Typography>
-
-                  <Spacer my={6} />
-
-                  <ChartWrapper>
-                    <Chart type="pie" data={data} options={options} />
-                  </ChartWrapper>
-                </CardContent>
-              </Card>
-            </Grid>
           </>
         )}
       </Grid>
+      {!tabOne && !tabTwo && !tabThree && (
+        <Grid container spacing={6}>
+          {/* Chart Data */}
+          <Grid item xs={12} md={6}>
+            <Card my={6}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Device Users
+                </Typography>
+                <Spacer my={6} />
+                <ChartWrapper>
+                  <Chart type="pie" data={data} options={options} />
+                </ChartWrapper>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      )}
     </>
   );
 };

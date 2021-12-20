@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
-import instance from "../../services/api";
+import { instance } from "../../services/api";
 import {
   Box,
   Paper as MuiPaper,
@@ -13,7 +13,6 @@ import {
   Typography,
   TableHead,
   TablePagination,
-  Button,
 } from "@material-ui/core";
 import moment from "moment";
 import { spacing } from "@material-ui/system";
@@ -141,7 +140,7 @@ const VerifiedTable = () => {
                         <PandingVerififeyModal
                           subTitle="Verifiy Again"
                           kycId={row.user_id}
-                          statusKyc={4}
+                          statusKyc={2}
                         />
                       </TableCell>
                     </TableRow>

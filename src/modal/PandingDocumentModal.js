@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
-import { spacing } from "@material-ui/system";
 import {
   Button,
   Dialog,
@@ -38,29 +37,6 @@ const PandingDocumentModal = ({
     setOpen(false);
   };
 
-  function dataURLtoFile(dataurl, filename) {
-    let arr = dataurl.split(","),
-      mime = arr[0].match(/:(.*?);/)[1],
-      bstr = atob(arr[1]),
-      n = bstr.length,
-      u8arr = new Uint8Array(n);
-
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
-    }
-
-    return new File([u8arr], filename, {
-      type: mime,
-    });
-  }
-
-  //Usage example:
-  let file = dataURLtoFile(
-    "data:text/plain;base64,aGVsbG8gd29ybGQ=",
-    "hello.txt"
-  );
-  console.log(file);
-
   return (
     <>
       <div>
@@ -84,7 +60,6 @@ const PandingDocumentModal = ({
           </DialogTitle>
           <DialogContent>
             <Grid container pt={6} spacing={6} key={pandingId}>
-              {/* Dicument Type */}
               <Grid display="flex" item md={4} alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Document Type
@@ -103,7 +78,6 @@ const PandingDocumentModal = ({
                   {documentType === 4 && <>Residence</>}
                 </Typography>
               </Grid>
-              {/* Document Back */}
               <Grid display="flex" item md={4} alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Document Back
@@ -183,7 +157,6 @@ const PandingDocumentModal = ({
                   </>
                 )}
               </Grid>
-              {/* Selfies */}
               <Grid display="flex" item md={4} alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Selfies

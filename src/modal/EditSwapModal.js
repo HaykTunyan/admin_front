@@ -15,6 +15,7 @@ import {
   FormControlLabel,
   Checkbox,
   Box,
+  Alert as MuiAlert,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import { spacing } from "@material-ui/system";
@@ -23,6 +24,7 @@ import { editSwap } from "../redux/actions/settings";
 
 // Spacing.
 const Spacer = styled.div(spacing);
+const Alert = styled(MuiAlert)(spacing);
 
 // Custom Style.
 const IconButton = styled(MuiIconButton)`
@@ -54,9 +56,11 @@ const EditSwapModal = ({
   toCoin,
 }) => {
   // hooks.
-  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [check, setCheck] = useState(false);
   const label = { inputProps: { "aria-label": "Checkbox" } };
+  const [errorMes, setErrorMes] = useState([]);
   const [state, setState] = useState({
     swapId: idSwap, //is required
     decimals: decimalsSwap,
@@ -65,7 +69,6 @@ const EditSwapModal = ({
     limitEnabled: limitEnabledSwap,
   });
   const [checkedLimit, SetCheckedLimit] = useState(state.limitEnabled);
-  const [check, setCheck] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -81,11 +84,19 @@ const EditSwapModal = ({
 
   const handleSubmit = (values) => {
     console.log("values", values);
-    dispatch(editSwap(values)).then((data) => {
-      console.log("data", data);
-      setOpen(false);
-    });
+    dispatch(editSwap(values))
+      .then((data) => {
+        console.log("data", data);
+        setOpen(false);
+      })
+      .catch((error) => {
+        console.log("error messages", error?.response?.data);
+        setErrorMes(error?.response?.data);
+      });
   };
+
+  const invalid = errorMes?.message;
+  console.log(" errorMes ", errorMes);
 
   return (
     <Fragment>
@@ -112,6 +123,36 @@ const EditSwapModal = ({
           >
             {({ errors, touched, handleChange, handleBlur }) => (
               <Form>
+                {invalid && (
+                  <>
+                    {invalid[0]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[0]?.messages}
+                      </Alert>
+                    )}
+
+                    {invalid[1]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[1]?.messages}
+                      </Alert>
+                    )}
+                    {invalid[2]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[2]?.messages}
+                      </Alert>
+                    )}
+                    {invalid[3]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[3]?.messages}
+                      </Alert>
+                    )}
+                    {invalid && (
+                      <Alert my={2} severity="error">
+                        {invalid}
+                      </Alert>
+                    )}
+                  </>
+                )}
                 <Grid container pt={6} spacing={6}>
                   {/* Min */}
                   <Grid display="flex" alignItems="center" item md={4}>
@@ -215,8 +256,7 @@ const EditSwapModal = ({
                       control={
                         <Checkbox
                           {...label}
-                          // defaultChecked={state.limitEnabled}
-                          // onChange={handleChangeCheckbox}
+                          name="limitEnabled"
                           onChange={() => setCheck(!check)}
                         />
                       }
@@ -224,36 +264,33 @@ const EditSwapModal = ({
                   </Grid>
 
                   {/* Limit  */}
-                  {
-                    // state.limitEnabled
-                    check ? (
-                      <>
-                        <Grid display="flex" alignItems="center" item md={4}>
-                          <Typography
-                            variant="subtitle1"
-                            color="inherit"
-                            component="div"
-                          >
-                            Limit Swap
-                          </Typography>
-                        </Grid>
-                        <Grid item md={8}>
-                          <TextField
-                            margin="dense"
-                            id="limit"
-                            name="limit"
-                            label="Limit"
-                            type="number"
-                            fullWidth
-                            error={Boolean(touched.limit && errors.limit)}
-                            helperText={touched.limit && errors.limit}
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                          />
-                        </Grid>
-                      </>
-                    ) : null
-                  }
+                  {check ? (
+                    <>
+                      <Grid display="flex" alignItems="center" item md={4}>
+                        <Typography
+                          variant="subtitle1"
+                          color="inherit"
+                          component="div"
+                        >
+                          Limit Swap
+                        </Typography>
+                      </Grid>
+                      <Grid item md={8}>
+                        <TextField
+                          margin="dense"
+                          id="limit"
+                          name="limit"
+                          label="Limit"
+                          type="number"
+                          fullWidth
+                          error={Boolean(touched.limit && errors.limit)}
+                          helperText={touched.limit && errors.limit}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                        />
+                      </Grid>
+                    </>
+                  ) : null}
                 </Grid>
                 <Spacer my={5} />
                 <Divider my={2} />

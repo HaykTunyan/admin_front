@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Button,
   TextField,
@@ -14,142 +14,250 @@ import { CloudUpload } from "@material-ui/icons";
 import ImageUploading from "react-images-uploading";
 import NewsImage from "../assets/images/news_one.jpg";
 import TinymceNew from "../components/TinymceNew";
+import { Formik } from "formik";
+import * as yup from "yup";
+import { editNews_req } from "../api/newsAPI";
 
-const EditNewsModal = () => {
+const EditNewsModal = ({ news }) => {
+  console.log("NEWS ==>", news);
+  const editorRef = useRef(null);
+
   const [open, setOpen] = useState(false);
-  const [images, setImages] = useState([]);
+  const [initialState, setInitialState] = useState({
+    title: news.title,
+    description: news.description,
+  });
+  const [content, setContent] = useState(news.content);
+  const [images, setImages] = useState([
+    { data_url: `data:image/png;base64,${news.image}` },
+  ]);
 
-  const maxNumber = 69;
+  const [initialValues, setInitialValues] = useState({
+    title: "",
+    description: "",
+    content: "",
+    images: [],
+  });
 
-  const [textBody, setTextBody] = useState(
-    "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM."
-  );
+  const editNewsSchema = yup.object().shape({
+    title: yup.string(),
+    description: yup.string(),
+  });
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const onChange = (imageList, addUpdateIndex) => {
     // data for submit
     console.log(imageList, addUpdateIndex);
-    setImages(imageList);
+    setInitialValues({
+      ...initialValues,
+      images: imageList,
+    });
   };
+
+  function saveContent() {
+    if (editorRef.current) {
+      console.log(editorRef.current.getContent());
+      setInitialValues({
+        ...initialValues,
+        content: editorRef.current.getContent(),
+      });
+    }
+  }
+
+  async function editNews(values) {
+    console.log("Initial Values ==>", initialValues, ".....", values);
+    const formData = new FormData();
+
+    formData.append("_id", news._id);
+
+    if (values && values.title) {
+      formData.append("title", values.title);
+    }
+
+    if (values && values.description) {
+      formData.append("description", values.description);
+    }
+
+    if (initialValues.content) {
+      formData.append("content", initialValues.content);
+    }
+
+    if (initialValues.images.length) {
+      formData.append("image", initialValues.images[0].file);
+    }
+
+    for (var [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    try {
+      const response = await editNews_req(formData);
+      if (response) {
+        console.log("EDITING NEWS RESPONSE ==>", response);
+        setOpen(false);
+      }
+    } catch (e) {
+      console.log("EDITING NEWS ERROR ==>", e.response);
+      setOpen(false);
+    }
+  }
 
   return (
     <div>
       <Button size="small" color="primary" onClick={handleClickOpen}>
         Edit
       </Button>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Edit Information for News</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="title-one"
-            label="Title H1"
-            type="text"
-            fullWidth
-            variant="standard"
-            defaultValue="IBM Donates Code Improvements to Open Source Hyperledger"
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="description"
-            label="Description One"
-            type="text"
-            fullWidth
-            variant="standard"
-            defaultValue={textBody}
-          />
-          <Box my={5}>
-            <Typography
-              variant="subtitle1"
-              children="Editor Text for Description"
-            />
-            <TinymceNew textBody={textBody} />
-          </Box>
-          <Divider my={5} />
-          <div>
-            <ImageUploading
-              multiple
-              value={images}
-              onChange={onChange}
-              maxNumber={maxNumber}
-              dataURLKey="data_url"
-            >
-              {({
-                imageList,
-                onImageUpload,
-                onImageRemoveAll,
-                onImageUpdate,
-                onImageRemove,
-                isDragging,
-                dragProps,
-              }) => (
-                <div className="upload__image-wrapper">
-                  <div className="image-item">
-                    <img src={NewsImage} width="100" />
-                  </div>
-                  <Box py={5}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      component="span"
-                      onClick={onImageUpload}
-                      style={isDragging ? { color: "red" } : undefined}
-                      {...dragProps}
-                    >
-                      <CloudUpload mr={2} /> Upload
-                    </Button>
-                    &nbsp; &nbsp;
-                    <Button variant="contained" onClick={onImageRemoveAll}>
-                      Remove All
-                    </Button>
+      <Formik
+        validateOnChange={true}
+        initialValues={{ ...initialValues }}
+        validationSchema={editNewsSchema}
+        onSubmit={(values) => editNews(values)}
+      >
+        {({ errors, touched, handleSubmit, handleChange }) => {
+          return (
+            <>
+              <Dialog
+                open={open}
+                onClose={() => {
+                  setOpen(false);
+                }}
+              >
+                <DialogTitle>Edit Information for News</DialogTitle>
+                <DialogContent>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="title-one"
+                    label="Title H1"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    defaultValue={initialState.title}
+                    onChange={handleChange("title")}
+                  />
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="description"
+                    label="Description One"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                    defaultValue={initialState.description}
+                    onChange={handleChange("description")}
+                  />
+                  <Box my={5}>
+                    <Typography
+                      variant="subtitle1"
+                      children="Editor Text for Description"
+                    />
+                    <TinymceNew
+                      textBody={content}
+                      editorRef={editorRef}
+                      onSave={saveContent}
+                      content={initialValues.content}
+                    />
                   </Box>
                   <Divider my={5} />
+                  <div>
+                    <ImageUploading
+                      //multiple
+                      //maxNumber={maxNumber}
+                      value={initialValues.images}
+                      onChange={onChange}
+                      dataURLKey="data_url"
+                    >
+                      {({
+                        imageList,
+                        onImageUpload,
+                        onImageRemoveAll,
+                        onImageUpdate,
+                        onImageRemove,
+                        isDragging,
+                        dragProps,
+                      }) => (
+                        <div className="upload__image-wrapper">
+                          {/* <div className="image-item">
+                            <img src={NewsImage} width="100" />
+                          </div> */}
+                          <Box py={5}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              component="span"
+                              onClick={onImageUpload}
+                              style={isDragging ? { color: "red" } : undefined}
+                              {...dragProps}
+                            >
+                              <CloudUpload mr={2} /> Upload
+                            </Button>
+                            &nbsp; &nbsp;
+                            <Button
+                              variant="contained"
+                              onClick={onImageRemoveAll}
+                            >
+                              Remove All
+                            </Button>
+                          </Box>
+                          <Divider my={5} />
 
-                  {imageList.map((image, index) => (
-                    <div key={index} className="image-item">
-                      <img src={image["data_url"]} alt="" width="100" />
-                      <div className="image-item__btn-wrapper">
-                        <Button
-                          onClick={() => onImageUpdate(index)}
-                          variant="outlined"
-                          mr={1}
-                        >
-                          Update
-                        </Button>
-                        &nbsp; &nbsp;
-                        <Button
-                          onClick={() => onImageRemove(index)}
-                          variant="outlined"
-                          ml={1}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </ImageUploading>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} sx={{ width: "120px" }}>
-            Cancel
-          </Button>
-          <Button onClick={handleClose} sx={{ width: "120px" }}>
-            Save News
-          </Button>
-        </DialogActions>
-      </Dialog>
+                          {(imageList.length ? imageList : images).map(
+                            (image, index) => (
+                              <div key={index} className="image-item">
+                                <img
+                                  src={image["data_url"]}
+                                  alt=""
+                                  width="100"
+                                />
+                                <div className="image-item__btn-wrapper">
+                                  <Button
+                                    onClick={() => onImageUpdate(index)}
+                                    variant="outlined"
+                                    mr={1}
+                                  >
+                                    Update
+                                  </Button>
+                                  &nbsp; &nbsp;
+                                  <Button
+                                    onClick={() => onImageRemove(index)}
+                                    variant="outlined"
+                                    ml={1}
+                                  >
+                                    Remove
+                                  </Button>
+                                </div>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      )}
+                    </ImageUploading>
+                  </div>
+                </DialogContent>
+                <DialogActions>
+                  <Button
+                    onClick={() => setOpen(false)}
+                    sx={{ width: "120px" }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      handleSubmit();
+                    }}
+                    sx={{ width: "120px" }}
+                  >
+                    Save News
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </>
+          );
+        }}
+      </Formik>
     </div>
   );
 };

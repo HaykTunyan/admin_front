@@ -86,6 +86,7 @@ const KYC = () => {
             KYC
           </Typography>
         </Grid>
+        <Grid></Grid>
       </Grid>
 
       <Divider my={6} />

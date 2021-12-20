@@ -18,9 +18,9 @@ import TopDeviceModal from "../../modal/TopDeviceModal";
 const Toolbar = styled(MuiToolbar)(spacing);
 
 const TabletCell = ({ tabletData }) => {
+  //  hooks.
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const title = " Tablet Info ";
 
   const handleChangePage = (event, newPage) => {

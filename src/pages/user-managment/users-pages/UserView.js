@@ -2,7 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
 import { useNavigate, useLocation } from "react-router-dom";
-import instance from "../../../services/api";
+import { instance } from "../../../services/api";
 import moment from "moment";
 import {
   Divider as MuiDivider,

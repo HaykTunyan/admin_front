@@ -1,9 +1,7 @@
 // Users Acions.
 
 import { USER_LOADING, USER_LOADED, USER_LOGOUT, USER_LIST } from "./type";
-import instance, { setInstance, removeInstance } from "../../services/api";
-
-const access_token = localStorage.getItem("accessToken");
+import { instance, setInstance, removeInstance } from "../../services/api";
 
 export const signIn_req = (values) => (dispatch) => {
   dispatch({
@@ -15,7 +13,7 @@ export const signIn_req = (values) => (dispatch) => {
     .then(({ data }) => {
       console.log("Data", data);
 
-      setInstance(data.access_token);
+      localStorage.setItem("accessToken", data.access_token);
       dispatch({
         type: USER_LOADED,
         payload: {
@@ -39,7 +37,7 @@ export const logout_req = () => (dispatch) => {
   dispatch({
     type: USER_LOGOUT,
   });
-  removeInstance();
+  localStorage.removeItem("accessToken");
 };
 
 export const getUserList_req = () => (dispatch) => {

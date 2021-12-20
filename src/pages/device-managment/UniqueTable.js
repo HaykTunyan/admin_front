@@ -19,9 +19,9 @@ import { useSelector } from "react-redux";
 const Toolbar = styled(MuiToolbar)(spacing);
 
 const UniqueTable = () => {
+  //  hooks.
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const uniqueList = useSelector((state) => state.deviceManagment);
   const uniqueData = uniqueList.uniqueCall;
 

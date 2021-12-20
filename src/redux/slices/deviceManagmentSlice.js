@@ -27,6 +27,13 @@ export const deviceManagmentSlice = createSlice({
       },
       {
         id: "04",
+        name: "Unix",
+        count: "200 000",
+        percent: "10",
+        percent: "10",
+      },
+      {
+        id: "05",
         name: "Others",
         count: "1 400 000",
         percent: "5",

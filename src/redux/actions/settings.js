@@ -5,7 +5,7 @@ import {
   SAVING_ADD,
   SAVING_EDIT,
 } from "./type";
-import instance, { setInstance } from "../../services/api";
+import { instance, setInstance } from "../../services/api";
 
 // Edit Coin.
 export const editCoin = (values) => (dispatch) => {
@@ -17,7 +17,6 @@ export const editCoin = (values) => (dispatch) => {
     .put("/admin/coin-settings", values)
     .then(({ data }) => {
       console.log("TRANSACTION_EDIT", data);
-      setInstance(data.access_token);
       dispatch({
         type: TRANSACTION_EDIT,
         payload: {
@@ -46,7 +45,6 @@ export const editSwap = (values) => (dispatch) => {
   return instance
     .put("/admin/swap-settings", values)
     .then(({ data }) => {
-      setInstance(data.access_token);
       dispatch({
         type: SWAP_EDIT,
         payload: {
@@ -76,7 +74,6 @@ export const addSwap = (values) => (dispatch) => {
   return instance
     .post("/admin/swap-settings", values)
     .then(({ data }) => {
-      setInstance(data.access_token);
       dispatch({
         type: SWAP_ADD,
         payload: {
@@ -106,7 +103,6 @@ export const editSaving = (values) => (dispatch) => {
   return instance
     .put("/admin/saving-settings", values)
     .then(({ data }) => {
-      setInstance(data.access_token);
       dispatch({
         type: SAVING_EDIT,
         payload: {
@@ -136,7 +132,6 @@ export const addSaving = (values) => (dispatch) => {
   return instance
     .post("/admin/saving-settings", values)
     .then(({ data }) => {
-      setInstance(data.access_token);
       dispatch({
         type: SAVING_ADD,
         payload: {

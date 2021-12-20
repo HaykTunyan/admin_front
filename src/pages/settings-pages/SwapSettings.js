@@ -22,7 +22,7 @@ import { Search as SearchIcon } from "react-feather";
 import AddSwapModal from "../../modal/AddSwapModal";
 import CSVButton from "../../components/CSVButton";
 import EditSwapModal from "../../modal/EditSwapModal";
-import instance from "../../services/api";
+import { instance } from "../../services/api";
 import DeleteSwapModal from "./DeleteSwapModal";
 
 // Spacing.

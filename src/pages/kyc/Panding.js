@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
-import instance from "../../services/api";
+import { instance } from "../../services/api";
 import {
   Box,
   Paper as MuiPaper,
@@ -22,6 +22,9 @@ import Loader from "../../components/Loader";
 import PandingInformationModal from "../../modal/PandingInformationModal";
 import PandingDocumentModal from "../../modal/PandingDocumentModal";
 import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
+import { useDispatch } from "react-redux";
+import { verifyKyc } from "../../redux/actions/kyc";
+import SuccessModal from "../../modal/SuccessModal";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -36,10 +39,12 @@ const useStyles = makeStyles({
 const PandingTable = () => {
   // hooks.
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [panding, setPanding] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const rows = panding?.kyc;
+  const [errorMes, setErrorMes] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -80,7 +85,23 @@ const PandingTable = () => {
     return <Loader />;
   }
 
-  console.log(" panding", panding);
+  const handleVerifed = (user_id) => {
+    console.log(" values ", user_id);
+    const status_kyc = 4;
+    console.log(" status_kyc ", status_kyc);
+    dispatch(verifyKyc(user_id, status_kyc))
+      .then((data) => {
+        if (data.success) {
+          return <SuccessModal />;
+        }
+      })
+      .catch((error) => {
+        console.log(" error messages ", error?.response?.data);
+        setErrorMes(error?.response?.data?.message);
+        console.log("errorMes", errorMes);
+      });
+    return <SuccessModal />;
+  };
 
   return (
     <Fragment>
@@ -141,7 +162,12 @@ const PandingTable = () => {
                         />
                       </TableCell>
                       <TableCell>
-                        <Button variant="contained">Verifiy</Button>
+                        <Button
+                          variant="contained"
+                          onClick={() => handleVerifed(row.user_id)}
+                        >
+                          Verifiy
+                        </Button>
                       </TableCell>
                       <TableCell>
                         <PandingVerififeyModal

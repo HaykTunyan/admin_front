@@ -32,6 +32,7 @@ const Typography = styled(MuiTypography)(spacing);
 const useStyles = makeStyles({
   rootTable: {
     margin: "10px",
+    overflowX: "auto",
   },
 });
 
@@ -81,7 +82,7 @@ const UsersListTable = ({ rowUserList }) => {
       <Paper>
         <TableContainer component={Paper} className={classes.rootTable}>
           <Table
-            aria-label="simple table"
+            aria-label="sticky table"
             sortModel={sortModel}
             onSortModelChange={(model) => setSortModel(model)}
           >

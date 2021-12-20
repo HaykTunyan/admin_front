@@ -7,7 +7,7 @@ import {
   EDIT_ADMIN,
   EDIT_AFFILIATE,
 } from "./type";
-import instance, { setInstance, removeInstance } from "../../services/api";
+import { instance, setInstance, removeInstance } from "../../services/api";
 
 export const createAdmin = (values) => (dispatch) => {
   dispatch({
@@ -18,7 +18,6 @@ export const createAdmin = (values) => (dispatch) => {
     .post("/admin", values)
     .then(({ data }) => {
       console.log("Data Admin Create", data);
-      setInstance(data.access_token);
       dispatch({
         type: CREATE_ADMIN,
         payload: {
@@ -48,7 +47,6 @@ export const editAdmin = (values) => (dispatch) => {
   return instance
     .put("/admin", values)
     .then(({ data }) => {
-      setInstance(data.access_token);
       dispatch({
         type: EDIT_ADMIN,
         payload: {
@@ -77,7 +75,6 @@ export const createAffiliate = (values) => (dispatch) => {
     .post("/admin/user", values)
     .then(({ data }) => {
       console.log("Data Admin Create", data);
-      setInstance(data.access_token);
       dispatch({
         type: CREATE_AFFILIATE,
         payload: {
@@ -107,7 +104,6 @@ export const editAffiliate = (values) => (dispatch) => {
     .post("/admin/user", values)
     .then(({ data }) => {
       console.log("Data Edit Affiliate", data);
-      setInstance(data.access_token);
       dispatch({
         type: EDIT_AFFILIATE,
         payload: {

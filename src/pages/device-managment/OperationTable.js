@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import {
@@ -11,6 +11,7 @@ import {
   TableHead,
   TableRow,
   LinearProgress as MuiLinearProgress,
+  TablePagination,
 } from "@material-ui/core";
 import { useSelector } from "react-redux";
 import TopDeviceModal from "../../modal/TopDeviceModal";
@@ -32,9 +33,21 @@ const LinearProgress = styled(MuiLinearProgress)`
 `;
 
 const OperationTable = () => {
+  // hooks.
   const rowOperation = useSelector((state) => state.deviceManagment);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const operationList = rowOperation.opetionCall;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   const title = "Operation Sistem";
   return (
@@ -54,18 +67,30 @@ const OperationTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {operationList.map((item) => (
-                  <TableRow key={item.key}>
-                    <TableCell scope="row">
-                      {item.name}
-                      <TopDeviceModal title={title} />
-                    </TableCell>
-                    <TableCell align="center">{item.count} </TableCell>
-                    <TableCell align="">{item.percent} %</TableCell>
-                  </TableRow>
-                ))}
+                {operationList
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((item) => (
+                    <TableRow key={item.key}>
+                      <TableCell scope="row">
+                        {item.name}
+                        <TopDeviceModal title={title} />
+                      </TableCell>
+                      <TableCell align="center">{item.count} </TableCell>
+                      <TableCell align="">{item.percent} %</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
+            {/* Pagination */}
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 20]}
+              component="div"
+              count={operationList.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </TableWrapper>
         </Paper>
       </Card>

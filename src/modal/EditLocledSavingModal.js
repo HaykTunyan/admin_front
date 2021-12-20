@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form, FieldArray } from "formik";
 import * as Yup from "yup";
@@ -35,10 +35,10 @@ const IconButton = styled(MuiIconButton)`
 const AddSavingSchema = Yup.object().shape({
   min: Yup.number()
     .required("Field is required")
-    .min(0, " Filed can not be minus value"),
+    .min(0, "Filed can not be minus value"),
   max: Yup.number()
     .required("Field is required")
-    .min(0, " Filed can not be minus value"),
+    .min(0, "Filed can not be minus value"),
 });
 
 const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
@@ -51,7 +51,6 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
     savingId: savingId,
     min: min,
     max: max,
-    duration: duration,
   });
 
   const addDuretion = () => {
@@ -96,6 +95,7 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
             <Formik
               initialValues={{
                 ...state,
+                duration: duration,
               }}
               initialForms={state}
               validationSchema={AddSavingSchema}
@@ -103,6 +103,9 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
             >
               {({ values, errors, touched, handleChange, handleBlur }) => (
                 <Form>
+                  {/*  */}
+
+                  {/*  */}
                   <Grid container pt={6} spacing={6}>
                     {/* Min */}
                     <Grid display="flex" item md={4} alignItems="center">
@@ -173,7 +176,10 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                                   size="small"
                                   variant="contained"
                                   onClick={() =>
-                                    push({ days: "", percent: "" })
+                                    push({
+                                      days: "",
+                                      percent: "",
+                                    })
                                   }
                                 >
                                   Add
@@ -181,55 +187,53 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                               </Box>
                               <Spacer my={4} />
                             </>
-                            {duration.length > 0 &&
-                              duration.map((item, index) => (
-                                <>
-                                  <Box
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    key={index}
-                                  >
-                                    <Grid item md={5}>
-                                      <TextField
-                                        margin="dense"
-                                        id="days"
-                                        name={`duration.${index}.days`}
-                                        defaultValue={item.days}
-                                        label="Number of Days"
-                                        type="number"
-                                        fullWidth
-                                        onChange={handleChange}
-                                      />
-                                    </Grid>
-                                    <Grid item md={2}>
-                                      <Box
-                                        display="flex"
-                                        justifyContent="center"
-                                        alignItems="center"
+                            {values.duration.length > 0 &&
+                              values.duration.map((item, index) => (
+                                <Box
+                                  display="flex"
+                                  justifyContent="space-between"
+                                  key={index}
+                                >
+                                  <Grid item md={5}>
+                                    <TextField
+                                      margin="dense"
+                                      id="days"
+                                      name={`duration.${index}.days`}
+                                      defaultValue={item.days}
+                                      label="Number of Days"
+                                      type="number"
+                                      fullWidth
+                                      onChange={handleChange}
+                                    />
+                                  </Grid>
+                                  <Grid item md={2}>
+                                    <Box
+                                      display="flex"
+                                      justifyContent="center"
+                                      alignItems="center"
+                                    >
+                                      <IconButton
+                                        aria-label="close"
+                                        color="primary"
+                                        onClick={() => remove(item)}
                                       >
-                                        <IconButton
-                                          aria-label="close"
-                                          color="primary"
-                                          onClick={() => remove(index)}
-                                        >
-                                          <XCircle />
-                                        </IconButton>
-                                      </Box>
-                                    </Grid>
-                                    <Grid item md={5}>
-                                      <TextField
-                                        margin="dense"
-                                        id="percent"
-                                        name={`duration.${index}.percent`}
-                                        defaultValue={item.percent}
-                                        label="%"
-                                        type="number"
-                                        fullWidth
-                                        onChange={handleChange}
-                                      />
-                                    </Grid>
-                                  </Box>
-                                </>
+                                        <XCircle />
+                                      </IconButton>
+                                    </Box>
+                                  </Grid>
+                                  <Grid item md={5}>
+                                    <TextField
+                                      margin="dense"
+                                      id="percent"
+                                      name={`duration.${index}.percent`}
+                                      defaultValue={item.percent}
+                                      label="%"
+                                      type="number"
+                                      fullWidth
+                                      onChange={handleChange}
+                                    />
+                                  </Grid>
+                                </Box>
                               ))}
                           </>
                         )}

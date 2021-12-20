@@ -3,7 +3,7 @@ import FlexibleTable from "../../../components/tables/FlexibleTable";
 import CSVButton from "../../../components/CSVButton";
 import { Typography, Box } from "@material-ui/core";
 import { useSelector } from "react-redux";
-import instance, { setInstance } from "../../../services/api";
+import { instance, setInstance } from "../../../services/api";
 
 // Moke Data.
 export const rowList = [

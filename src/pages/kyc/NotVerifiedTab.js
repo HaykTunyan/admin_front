@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
-import instance from "../../services/api";
+import { instance } from "../../services/api";
 import {
   Box,
   Paper as MuiPaper,
@@ -20,6 +20,7 @@ import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
 import Loader from "../../components/Loader";
 import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
+import SuccessModal from "../../modal/SuccessModal";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -89,7 +90,6 @@ const NotVerifiedTable = () => {
                 <TableCell align="left">ID</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Registration Date</TableCell>
-                {/* <TableCell>Verification Date</TableCell> */}
                 <TableCell>Verification</TableCell>
                 <TableCell align="right">Send For Verification</TableCell>
               </TableRow>
@@ -110,11 +110,6 @@ const NotVerifiedTable = () => {
                           "DD/MM/YYYY HH:mm "
                         )}
                       </TableCell>
-                      {/* <TableCell>
-                        {moment(row.verification_date).format(
-                          "DD/MM/YYYY HH:mm "
-                        )}
-                      </TableCell> */}
                       <TableCell>
                         <Button variant="contained">Verifiy</Button>
                       </TableCell>
@@ -122,7 +117,7 @@ const NotVerifiedTable = () => {
                         <PandingVerififeyModal
                           subTitle="Verified"
                           kycId={row.user_id}
-                          statusKyc={2}
+                          statusKyc={4}
                         />
                       </TableCell>
                     </TableRow>
