@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import FlexibleTable from "../../../components/tables/FlexibleTable";
 import CSVButton from "../../../components/CSVButton";
 import { Typography, Box } from "@material-ui/core";
-import { useSelector } from "react-redux";
-import { instance, setInstance } from "../../../services/api";
+import { instance } from "../../../services/api";
 
 // Moke Data.
 export const rowList = [
@@ -44,10 +43,6 @@ const Flexible = () => {
   const title = "Flexible Info";
   const [flexible, setFlexible] = useState([]);
 
-  const callRow = useSelector((state) => state.settings);
-
-  const rowBody = callRow.flexibleSettingsRow;
-
   const getFelexible = () => {
     return instance
       .get("/admin/saving-settings", { params: { type: "flexible" } })
@@ -72,7 +67,7 @@ const Flexible = () => {
         <Typography variant="subtitle1" color="inherit" component="div">
           Export Data
         </Typography>
-        <CSVButton data={rowBody} />
+        <CSVButton data={flexible} />
       </Box>
     </>
   );

@@ -24,7 +24,7 @@ const TotalUsers = ({ rowUsers }) => {
             <TableRow>
               <TableCell align="left">
                 <Typography variant="h6" gutterBottom>
-                  Users (Title)
+                  Users
                 </Typography>
               </TableCell>
               <TableCell align="center">

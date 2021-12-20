@@ -191,7 +191,7 @@ const AffiliateUsers = () => {
                           align="center"
                         >
                           <Typography color="text.primary">active</Typography>
-                          <Typography color="text.primary">finish</Typography>
+                          <Typography color="text.primary">finished</Typography>
                         </Breadcrumbs>
                       </TableCell>
                       <TableCell align="center">
@@ -203,7 +203,7 @@ const AffiliateUsers = () => {
                           align="center"
                         >
                           <Typography color="text.primary">active</Typography>
-                          <Typography color="text.primary">finish</Typography>
+                          <Typography color="text.primary">finished</Typography>
                         </Breadcrumbs>
                       </TableCell>
                       <TableCell align="center">Receive</TableCell>

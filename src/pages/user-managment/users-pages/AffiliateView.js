@@ -1,14 +1,14 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
+import { instance } from "../../../services/api";
+import moment from "moment";
 import {
   useNavigate,
   useParams,
   useLocation,
   useSearchParams,
 } from "react-router-dom";
-import { instance } from "../../../services/api";
-import moment from "moment";
 import {
   Divider as MuiDivider,
   Typography as MuiTypography,
@@ -51,12 +51,8 @@ const AffiliateView = (state) => {
   const [profile, getProfile] = useState([]);
   const totlalDashboard = useSelector((state) => state.dashboard);
   const rowExchange = totlalDashboard.rowExchange;
-
   const profileId = locetion.state;
-
   const userId = profileId?.id;
-
-  console.log("locetion", locetion);
 
   const handleChangeTab = (event, newTab) => {
     setTab(newTab);

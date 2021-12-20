@@ -115,7 +115,7 @@ const ExchnageTab = ({ rowExchange }) => {
           </Grid>
           <Grid item md={1}>
             <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
-              <InputLabel id="select-from-label">From Coin</InputLabel>
+              <InputLabel id="select-from-label">Exchanged Coin</InputLabel>
               <Select
                 labelId="select-from-label"
                 id="select-from-label"
@@ -135,7 +135,7 @@ const ExchnageTab = ({ rowExchange }) => {
           <Spacer mx={5} />
           <Grid item md={1}>
             <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
-              <InputLabel id="select-to-label">To Coin</InputLabel>
+              <InputLabel id="select-to-label">Received Coin</InputLabel>
               <Select
                 labelId="select-to-label"
                 id="select-to-label"
@@ -157,11 +157,11 @@ const ExchnageTab = ({ rowExchange }) => {
           <TableHead>
             <TableRow>
               <TableCell>Exchange Coin</TableCell>
-              <TableCell align="center">Exchange Bit</TableCell>
+              <TableCell align="center">Exchange</TableCell>
               <TableCell align="center">
-                Amount in <span> &#36;</span>
+                Amount <span> &#36;</span>
               </TableCell>
-              <TableCell align="right">Popularity if Exchange</TableCell>
+              <TableCell align="right">Popularity of Exchange</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -184,7 +184,7 @@ const ExchnageTab = ({ rowExchange }) => {
                     <span> &#x20BF;</span>
                   </TableCell>
                   <TableCell align="center">
-                    {row.receive_coin} <span>&#8364;</span>
+                    {row.receive_coin} <span> &#36;</span>
                   </TableCell>
                   <TableCell align="right">
                     {row.receive_bit} <span>%</span>

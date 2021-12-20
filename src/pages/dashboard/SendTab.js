@@ -100,10 +100,20 @@ const SendTab = ({ rowSend }) => {
         <Table aria-label="simple table" mt={6}>
           <TableHead>
             <TableRow>
-              <TableCell>Coin</TableCell>
-              <TableCell align="center">Send Coin</TableCell>
+              <TableCell>
+                <Typography variant="h6" gutterBottom>
+                  Coin
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography variant="h6" gutterBottom>
+                  Send Coin <span> &#x20BF;</span>
+                </Typography>
+              </TableCell>
               <TableCell align="right">
-                Send in <span> &#36;</span>
+                <Typography variant="h6" gutterBottom>
+                  Send Coin <span> &#36;</span>
+                </Typography>
               </TableCell>
             </TableRow>
           </TableHead>

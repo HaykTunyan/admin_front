@@ -317,6 +317,27 @@ const initialState = {
       coin: "40",
       status: "completed",
     },
+    {
+      id: 7,
+      coin_name: "BIT",
+      min_amount: "4 month",
+      coin: "20",
+      status: "completed",
+    },
+    {
+      id: 8,
+      coin_name: "BIT",
+      min_amount: "4 month",
+      coin: "20",
+      status: "completed",
+    },
+    {
+      id: 9,
+      coin_name: "BIT",
+      min_amount: "4 month",
+      coin: "10",
+      status: "completed",
+    },
   ],
 };
 

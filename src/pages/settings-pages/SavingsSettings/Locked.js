@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Typography, Box } from "@material-ui/core";
 import LocedTable from "../../../components/tables/LocedTable";
 import CSVButton from "../../../components/CSVButton";
-import { useSelector } from "react-redux";
-import { instance, setInstance } from "../../../services/api";
+import { instance } from "../../../services/api";
 
 // Moke Data
 export const rowList = [
@@ -38,8 +37,6 @@ const Locked = () => {
   // hooks.
   const title = "Locked Info";
   const [locked, setLocked] = useState([]);
-  const callRow = useSelector((state) => state.settings);
-  const rowBody = callRow.lockedSettingsRow;
 
   // get Locked.
   const getLocked = () => {
@@ -60,8 +57,6 @@ const Locked = () => {
     getLocked();
   }, []);
 
-  console.log("locked", locked);
-
   return (
     <>
       <LocedTable title={title} rowList={rowList} rowBody={locked} />
@@ -69,7 +64,7 @@ const Locked = () => {
         <Typography variant="subtitle1" color="inherit" component="div">
           Export Data
         </Typography>
-        <CSVButton data={rowBody} />
+        <CSVButton data={locked} />
       </Box>
     </>
   );

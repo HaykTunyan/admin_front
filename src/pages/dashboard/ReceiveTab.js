@@ -102,7 +102,7 @@ const ReceiveTab = ({ rowReceive }) => {
             <TableRow>
               <TableCell>
                 <Typography variant="h6" gutterBottom>
-                  Coin Name
+                  Coin
                 </Typography>
               </TableCell>
               <TableCell align="center">
@@ -113,7 +113,7 @@ const ReceiveTab = ({ rowReceive }) => {
               </TableCell>
               <TableCell align="right">
                 <Typography variant="h6" gutterBottom>
-                  Receive in
+                  Received Coin
                   <span> &#36;</span>
                 </Typography>
               </TableCell>
