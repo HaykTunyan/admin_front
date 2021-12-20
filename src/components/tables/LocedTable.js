@@ -22,6 +22,7 @@ import {
 } from "@material-ui/core";
 import AddLockedSavingModal from "../../modal/AddLockedSavingModal";
 import EditLockedSavingModal from "../../modal/EditLocledSavingModal";
+import NoData from "../NoData";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -97,6 +98,10 @@ const LocedTable = ({ title, rowList, rowBody }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  if (!rowBody) {
+    return <NoData />;
+  }
 
   return (
     <Fragment>

@@ -14,6 +14,10 @@ import {
   InputBase,
   Toolbar,
   Grid,
+  Select,
+  FormControl,
+  MenuItem,
+  InputLabel,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
@@ -24,6 +28,7 @@ import MetaLineChart from "../../components/charts/MetaLineChart";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
+const Spacer = styled.div(spacing);
 
 // Custom Style.
 const Input = styled(InputBase)`
@@ -72,9 +77,20 @@ const SearchIconWrapper = styled.div`
 `;
 
 const ExchnageTab = ({ rowExchange }) => {
+  // hooks
+  const { t } = useTranslation();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { t } = useTranslation();
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+
+  const handleChangeFrom = (event) => {
+    setFrom(event.target.value);
+  };
+
+  const handleChangeTo = (event) => {
+    setTo(event.target.value);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -89,23 +105,63 @@ const ExchnageTab = ({ rowExchange }) => {
     <Fragment>
       <TableContainer component={Paper}>
         <Toolbar>
-          <Grid item md={3}>
-            <Search>
+          <Grid item md={3} px={5}>
+            <Search sx={{ paddingX: 5 }}>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
               <Input placeholder={t("Search")} />
             </Search>
           </Grid>
+          <Grid item md={1}>
+            <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
+              <InputLabel id="select-from-label">From Coin</InputLabel>
+              <Select
+                labelId="select-from-label"
+                id="select-from-label"
+                value={from}
+                onChange={handleChangeFrom}
+                label="From"
+              >
+                <MenuItem value="all">
+                  <em>From All</em>
+                </MenuItem>
+                <MenuItem value={10}>Coin - 10 000 </MenuItem>
+                <MenuItem value={20}> Coin - 50 000 </MenuItem>
+                <MenuItem value={30}> Coin - 1 000 000 </MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Spacer mx={5} />
+          <Grid item md={1}>
+            <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
+              <InputLabel id="select-to-label">To Coin</InputLabel>
+              <Select
+                labelId="select-to-label"
+                id="select-to-label"
+                value={to}
+                onChange={handleChangeTo}
+                label="To"
+              >
+                <MenuItem value="all">
+                  <em>To All</em>
+                </MenuItem>
+                <MenuItem value={10}>Coin - 10 000 </MenuItem>
+                <MenuItem value={20}> Coin - 50 000 </MenuItem>
+                <MenuItem value={30}> Coin - 1 000 000 </MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
         </Toolbar>
         <Table aria-label="simple table" mt={6}>
           <TableHead>
             <TableRow>
-              <TableCell>&#35;</TableCell>
-              <TableCell align="center">Users Name</TableCell>
+              <TableCell>Exchange Coin</TableCell>
               <TableCell align="center">Exchange Bit</TableCell>
-              <TableCell align="center">EXchange Coin</TableCell>
-              <TableCell align="center">EXchange Chart</TableCell>
+              <TableCell align="center">
+                Amount in <span> &#36;</span>
+              </TableCell>
+              <TableCell align="right">Popularity if Exchange</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -121,18 +177,17 @@ const ExchnageTab = ({ rowExchange }) => {
                   }}
                 >
                   <TableCell component="th" scope="row">
-                    {row.id}
+                    {row.name}
                   </TableCell>
-                  <TableCell align="center">{row.name}</TableCell>
                   <TableCell align="center">
-                    {row.receive_bit}
+                    {row.receive_coin}
                     <span> &#x20BF;</span>
                   </TableCell>
                   <TableCell align="center">
-                    {row.receive_coin} <span>&#8364;</span>{" "}
+                    {row.receive_coin} <span>&#8364;</span>
                   </TableCell>
-                  <TableCell align="center">
-                    <MetaLineChart />
+                  <TableCell align="right">
+                    {row.receive_bit} <span>%</span>
                   </TableCell>
                 </TableRow>
               ))}

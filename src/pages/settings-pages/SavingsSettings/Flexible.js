@@ -65,8 +65,6 @@ const Flexible = () => {
     getFelexible();
   }, []);
 
-  console.log("flexible", flexible);
-
   return (
     <>
       <FlexibleTable title={title} rowList={rowList} rowBody={flexible} />

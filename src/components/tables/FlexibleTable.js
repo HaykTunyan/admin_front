@@ -19,6 +19,7 @@ import {
 } from "@material-ui/core";
 import AddFlexibleSavingModal from "../../modal/AddFlexibleSavingModal";
 import EditFlexibleSavingModal from "../../modal/EditFlexibleSavingModal";
+import NoData from "../NoData";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -86,6 +87,10 @@ const FlexibleTable = ({ title, rowList, rowBody }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  if (!rowBody) {
+    return <NoData />;
+  }
 
   return (
     <Fragment>

@@ -21,6 +21,7 @@ import Loader from "../../components/Loader";
 import PandingInformationModal from "../../modal/PandingInformationModal";
 import PandingDocumentModal from "../../modal/PandingDocumentModal";
 import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
+import NoData from "../../components/NoData";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -74,7 +75,7 @@ const VerifiedTable = () => {
 
   // Loader.
   if (!rows?.length) {
-    return <Loader />;
+    return <NoData />;
   }
 
   console.log("rowVerified", rowVerified);

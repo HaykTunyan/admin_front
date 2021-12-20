@@ -18,9 +18,8 @@ import {
 import moment from "moment";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
-import Loader from "../../components/Loader";
 import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
-import SuccessModal from "../../modal/SuccessModal";
+import NoData from "../../components/NoData";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -75,7 +74,7 @@ const NotVerifiedTable = () => {
 
   // Loader.
   if (!rows?.length) {
-    return <Loader />;
+    return <NoData />;
   }
 
   console.log("rowVerified", rowVerified);

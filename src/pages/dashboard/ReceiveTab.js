@@ -100,28 +100,21 @@ const ReceiveTab = ({ rowReceive }) => {
         <Table aria-label="simple table" mt={6}>
           <TableHead>
             <TableRow>
-              <TableCell>&#35;</TableCell>
-              <TableCell align="center">
+              <TableCell>
                 <Typography variant="h6" gutterBottom>
-                  Users Name
+                  Coin Name
                 </Typography>
               </TableCell>
               <TableCell align="center">
                 <Typography variant="h6" gutterBottom>
-                  Receive
+                  Received Coin
                   <span> &#x20BF;</span>
-                </Typography>
-              </TableCell>
-              <TableCell align="center">
-                <Typography variant="h6" gutterBottom>
-                  Receive
-                  <span> &#8364;</span>
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography variant="h6" gutterBottom>
-                  Receive
-                  <span>&#36;</span>
+                  Receive in
+                  <span> &#36;</span>
                 </Typography>
               </TableCell>
             </TableRow>
@@ -138,16 +131,10 @@ const ReceiveTab = ({ rowReceive }) => {
                     },
                   }}
                 >
-                  <TableCell component="th" scope="row">
-                    {row.id}
-                  </TableCell>
-                  <TableCell align="center">{row.name}</TableCell>
+                  <TableCell>{row.name}</TableCell>
                   <TableCell align="center">
                     {row.receive_bit}
                     <span> &#x20BF;</span>
-                  </TableCell>
-                  <TableCell align="center">
-                    {row.receive_coin} <span>&#8364;</span>
                   </TableCell>
                   <TableCell align="right">
                     {row.receive_send} <span>&#36;</span>

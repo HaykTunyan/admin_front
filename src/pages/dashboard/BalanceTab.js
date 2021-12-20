@@ -100,8 +100,7 @@ const BalanceTab = ({ rowBalance }) => {
         <Table aria-label="simple table" mt={6}>
           <TableHead>
             <TableRow>
-              <TableCell>&#35;</TableCell>
-              <TableCell align="center">
+              <TableCell>
                 <Typography variant="h6" gutterBottom>
                   Coin
                 </Typography>
@@ -132,9 +131,6 @@ const BalanceTab = ({ rowBalance }) => {
                   }}
                 >
                   <TableCell component="th" scope="row">
-                    {row.id}
-                  </TableCell>
-                  <TableCell align="center">
                     <Typography gutterBottom>{row.name}</Typography>
                   </TableCell>
 

@@ -139,7 +139,9 @@ const UsersListTable = ({ rowUserList }) => {
                         {row.id}
                       </TableCell>
                       <TableCell align="center">
-                        <Button onClick={openUser}>{row.email}</Button>
+                        <Button onClick={() => openUser(row.id)}>
+                          {row.email}
+                        </Button>
                       </TableCell>
                       <TableCell align="center">{row.phone}</TableCell>
                       <TableCell align="center">{row.balance}</TableCell>

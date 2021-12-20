@@ -36,6 +36,7 @@ const DeviceManagement = () => {
   const [tabOne, setOpenOne] = useState(false);
   const [tabThree, setOpenThree] = useState(false);
   const [tabTwo, setOpenTwo] = useState(false);
+  const [allTab, setAllTab] = useState(true);
 
   const totalDevice = useSelector((state) => state.deviceManagment);
 
@@ -68,18 +69,28 @@ const DeviceManagement = () => {
     setOpenOne(true);
     setOpenTwo(false);
     setOpenThree(false);
+    setAllTab(false);
   };
 
   const openTablet = () => {
     setOpenTwo(true);
     setOpenOne(false);
     setOpenThree(false);
+    setAllTab(false);
   };
 
   const openDescktop = () => {
     setOpenThree(true);
     setOpenTwo(false);
     setOpenOne(false);
+    setAllTab(false);
+  };
+
+  const openDevice = () => {
+    setOpenThree(false);
+    setOpenTwo(false);
+    setOpenOne(false);
+    setAllTab(true);
   };
 
   return (
@@ -95,7 +106,18 @@ const DeviceManagement = () => {
 
       <Divider my={6} />
       <Grid container spacing={6}>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={3}>
+          <Stats
+            title="All Devices"
+            amount="100%"
+            chip="100%"
+            percentagetext="+100%"
+            percentagecolor={green[500]}
+            ViewMore={openDevice}
+            className={allTab && { background: "#376fd0" }}
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
           <Stats
             title="Mobile Users"
             amount="40%"
@@ -106,23 +128,23 @@ const DeviceManagement = () => {
             className={tabOne && { background: "#376fd0" }}
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={3}>
           <Stats
             title="Tablet Users"
-            amount="25 %"
-            chip="25%"
-            percentagetext="+25%"
+            amount="20 %"
+            chip="20%"
+            percentagetext="+20%"
             percentagecolor={green[500]}
             ViewMore={openTablet}
             className={tabTwo && { background: "#376fd0" }}
           />
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={3}>
           <Stats
             title="Desktop Users"
-            amount="25 %"
-            chip="25%"
-            percentagetext="+25%"
+            amount="40 %"
+            chip="40%"
+            percentagetext="+40%"
             percentagecolor={green[500]}
             ViewMore={openDescktop}
             className={tabThree && { background: "#376fd0" }}
@@ -217,7 +239,7 @@ const DeviceManagement = () => {
           </>
         )}
       </Grid>
-      {!tabOne && !tabTwo && !tabThree && (
+      {allTab && (
         <Grid container spacing={6}>
           {/* Chart Data */}
           <Grid item xs={12} md={6}>
@@ -231,6 +253,12 @@ const DeviceManagement = () => {
                   <Chart type="pie" data={data} options={options} />
                 </ChartWrapper>
               </CardContent>
+            </Card>
+          </Grid>
+          {/* Browsers */}
+          <Grid item xs={12} md={6}>
+            <Card my={6}>
+              <BrowsersTable uniqueData={uniqueData} />
             </Card>
           </Grid>
         </Grid>

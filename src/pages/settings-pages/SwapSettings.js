@@ -24,6 +24,7 @@ import CSVButton from "../../components/CSVButton";
 import EditSwapModal from "../../modal/EditSwapModal";
 import { instance } from "../../services/api";
 import DeleteSwapModal from "./DeleteSwapModal";
+import NoData from "../../components/NoData";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -115,7 +116,9 @@ const SwapSettings = () => {
     getSwap();
   }, []);
 
-  console.log("swap", swap);
+  if (!swap) {
+    return <NoData />;
+  }
 
   return (
     <Fragment>

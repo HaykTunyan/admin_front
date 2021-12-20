@@ -18,6 +18,10 @@ import {
   Toolbar,
   Grid,
   Chip as MuiChip,
+  Select,
+  FormControl,
+  MenuItem,
+  InputLabel,
 } from "@material-ui/core";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
@@ -30,6 +34,7 @@ import { darken } from "polished";
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
 const Card = styled(MuiCard)(spacing);
+const Spacer = styled.div(spacing);
 
 // Custom Style.
 const Input = styled(InputBase)`
@@ -87,8 +92,19 @@ const Chip = styled(MuiChip)`
 `;
 
 const SavingTab = ({ rowLocked, rowFlexible }) => {
-  const [panel, setPanel] = useState("1");
+  // hooks.
   const { t } = useTranslation();
+  const [panel, setPanel] = useState("1");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+
+  const handleChangeFrom = (event) => {
+    setFrom(event.target.value);
+  };
+
+  const handleChangeTo = (event) => {
+    setTo(event.target.value);
+  };
 
   const handleChangePanel = (event, newPanel) => {
     setPanel(newPanel);
@@ -111,7 +127,7 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
               </Box>
               <TabPanel value="1">
                 <TableContainer component={Paper}>
-                  <Toolbar>
+                  <Toolbar alignItems="center">
                     <Grid item md={3}>
                       <Search>
                         <SearchIconWrapper>
@@ -119,6 +135,56 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
                         </SearchIconWrapper>
                         <Input placeholder={t("Search")} />
                       </Search>
+                    </Grid>
+                    <Spacer mx={5} />
+                    <Grid item md={1}>
+                      <FormControl
+                        fullWidth
+                        variant="standard"
+                        sx={{ minWidth: 120 }}
+                      >
+                        <InputLabel id="select-from-label">
+                          From Coin
+                        </InputLabel>
+                        <Select
+                          labelId="select-from-label"
+                          id="select-from-label"
+                          value={from}
+                          onChange={handleChangeFrom}
+                          label="From"
+                        >
+                          <MenuItem value="all">
+                            <em>From All</em>
+                          </MenuItem>
+                          <MenuItem value={10}>Coin - 10 000 </MenuItem>
+                          <MenuItem value={20}> Coin - 50 000 </MenuItem>
+                          <MenuItem value={30}> Coin - 1 000 000 </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Spacer mx={5} />
+                    <Grid item md={1}>
+                      <FormControl
+                        fullWidth
+                        variant="standard"
+                        sx={{ minWidth: 120 }}
+                      >
+                        <InputLabel id="select-to-label">To Coin</InputLabel>
+                        <Select
+                          labelId="select-to-label"
+                          id="select-to-label"
+                          value={to}
+                          onChange={handleChangeTo}
+                          label="To"
+                        >
+                          <MenuItem value="all">
+                            <em>To All</em>
+                          </MenuItem>
+                          <MenuItem value={10}>Coin - 10 000 </MenuItem>
+                          <MenuItem value={20}> Coin - 50 000 </MenuItem>
+                          <MenuItem value={30}> Coin - 1 000 000 </MenuItem>
+                        </Select>
+                      </FormControl>
                     </Grid>
                   </Toolbar>
                   <Table aria-label="simple table" mt={6}>
@@ -196,6 +262,56 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
                         </SearchIconWrapper>
                         <Input placeholder={t("Search")} />
                       </Search>
+                    </Grid>
+                    <Spacer mx={5} />
+                    <Grid item md={1}>
+                      <FormControl
+                        fullWidth
+                        variant="standard"
+                        sx={{ minWidth: 120 }}
+                      >
+                        <InputLabel id="select-from-label">
+                          From Coin
+                        </InputLabel>
+                        <Select
+                          labelId="select-from-label"
+                          id="select-from-label"
+                          value={from}
+                          onChange={handleChangeFrom}
+                          label="From"
+                        >
+                          <MenuItem value="all">
+                            <em>From All</em>
+                          </MenuItem>
+                          <MenuItem value={10}>Coin - 10 000 </MenuItem>
+                          <MenuItem value={20}> Coin - 50 000 </MenuItem>
+                          <MenuItem value={30}> Coin - 1 000 000 </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Spacer mx={5} />
+                    <Grid item md={1}>
+                      <FormControl
+                        fullWidth
+                        variant="standard"
+                        sx={{ minWidth: 120 }}
+                      >
+                        <InputLabel id="select-to-label">To Coin</InputLabel>
+                        <Select
+                          labelId="select-to-label"
+                          id="select-to-label"
+                          value={to}
+                          onChange={handleChangeTo}
+                          label="To"
+                        >
+                          <MenuItem value="all">
+                            <em>To All</em>
+                          </MenuItem>
+                          <MenuItem value={10}>Coin - 10 000 </MenuItem>
+                          <MenuItem value={20}> Coin - 50 000 </MenuItem>
+                          <MenuItem value={30}> Coin - 1 000 000 </MenuItem>
+                        </Select>
+                      </FormControl>
                     </Grid>
                   </Toolbar>
                   <Table aria-label="simple table" mt={6}>

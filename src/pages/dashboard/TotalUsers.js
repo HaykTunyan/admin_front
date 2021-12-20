@@ -22,21 +22,74 @@ const TotalUsers = ({ rowUsers }) => {
         <Table aria-label="simple table" mt={6}>
           <TableHead>
             <TableRow>
-              <TableCell>&#35;</TableCell>
-              <TableCell align="center">
+              <TableCell align="left">
                 <Typography variant="h6" gutterBottom>
-                  Status Users
+                  Users (Title)
                 </Typography>
               </TableCell>
-              <TableCell align="right">
-                <Typography variant="subtitle1" gutterBottom>
-                  Value Type
+              <TableCell align="center">
+                <Typography variant="h6" gutterBottom>
+                  Count
                 </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rowUsers.map((row) => (
+            <TableRow
+              sx={{
+                "&:last-child td, &:last-child th": {
+                  border: 0,
+                },
+              }}
+            >
+              <TableCell align="left">
+                <Typography variant="inherit" gutterBottom>
+                  All
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography variant="inherit" gutterBottom>
+                  10 000 000
+                </Typography>
+              </TableCell>
+            </TableRow>
+            <TableRow
+              sx={{
+                "&:last-child td, &:last-child th": {
+                  border: 0,
+                },
+              }}
+            >
+              <TableCell align="left">
+                <Typography variant="inherit" gutterBottom>
+                  Verified
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography variant="inherit" gutterBottom>
+                  8 000 000
+                </Typography>
+              </TableCell>
+            </TableRow>
+            <TableRow
+              sx={{
+                "&:last-child td, &:last-child th": {
+                  border: 0,
+                },
+              }}
+            >
+              <TableCell align="left">
+                <Typography variant="inherit" gutterBottom>
+                  Unverified
+                </Typography>
+              </TableCell>
+              <TableCell align="center">
+                <Typography variant="inherit" gutterBottom>
+                  2 000 000
+                </Typography>
+              </TableCell>
+            </TableRow>
+            {/* {rowUsers.map((row) => (
               <TableRow
                 key={row.id}
                 sx={{
@@ -59,7 +112,7 @@ const TotalUsers = ({ rowUsers }) => {
                   </Typography>
                 </TableCell>
               </TableRow>
-            ))}
+            ))} */}
           </TableBody>
         </Table>
       </TableContainer>

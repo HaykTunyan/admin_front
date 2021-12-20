@@ -234,7 +234,7 @@ const AffiliateUsers = () => {
                               {row.id}
                             </TableCell>
                             <TableCell align="center">
-                              <Button onClick={openProfile}>
+                              <Button onClick={() => openProfile(row.id)}>
                                 {" "}
                                 {row.email}
                               </Button>

@@ -8,9 +8,11 @@ import TabPanel from "@material-ui/lab/TabPanel";
 import Locked from "./Locked";
 import Flexible from "./Flexible";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
 
 const SavingsSetting = () => {
+  // hooks.
   const [panel, setPanel] = useState("1");
 
   const handleChangePanel = (event, newPanel) => {

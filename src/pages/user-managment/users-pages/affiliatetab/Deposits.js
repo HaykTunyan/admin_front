@@ -170,16 +170,16 @@ export const rowListFlexible = [
 ];
 
 const Deposits = () => {
+  // hooks.
   const titleLocked = "Locked Info";
   const titleFlexible = "Flexible Info";
+  const { t } = useTranslation();
   const [tab, setTab] = useState("1");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const callRow = useSelector((state) => state.userCard);
   const rowBodyLocked = callRow.lockedData;
   const rowBodyFlexible = callRow.flexibleData;
-
-  const { t } = useTranslation();
   const [alignment, setAlignment] = useState("");
 
   const handleAlignment = (event, newAlignment) => {

@@ -25,6 +25,7 @@ import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
 import { useDispatch } from "react-redux";
 import { verifyKyc } from "../../redux/actions/kyc";
 import SuccessModal from "../../modal/SuccessModal";
+import NoData from "../../components/NoData";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -82,7 +83,7 @@ const PandingTable = () => {
 
   // Loader.
   if (!rows?.length) {
-    return <Loader />;
+    return <NoData />;
   }
 
   const handleVerifed = (user_id) => {

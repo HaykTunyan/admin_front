@@ -53,6 +53,8 @@ const UserView = (state) => {
     setTab(newTab);
   };
 
+  console.log("userId", location);
+
   // Get Req.
   const getProfile_req = () => {
     return instance

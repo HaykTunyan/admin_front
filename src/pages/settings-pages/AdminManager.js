@@ -18,7 +18,7 @@ const Button = styled(MuiButton)(spacing);
 const TextField = styled(MuiTextField)(spacing);
 
 const AdminManager = () => {
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
+  const label = { inputProps: { "aria-label": "Checkbox" } };
 
   return (
     <Fragment>

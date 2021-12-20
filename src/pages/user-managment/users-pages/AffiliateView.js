@@ -56,6 +56,8 @@ const AffiliateView = (state) => {
 
   const userId = profileId?.id;
 
+  console.log("locetion", locetion);
+
   const handleChangeTab = (event, newTab) => {
     setTab(newTab);
   };

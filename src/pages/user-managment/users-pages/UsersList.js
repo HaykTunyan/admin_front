@@ -12,6 +12,7 @@ import {
   Divider as MuiDivider,
   Typography as MuiTypography,
   InputBase,
+  Toolbar,
 } from "@material-ui/core";
 import UsersListTable from "./UserListTable";
 import DatePickerFilter from "../../../components/date-picker/DatePickerFilter";
@@ -20,6 +21,7 @@ import Loader from "../../../components/Loader";
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
 const Typography = styled(MuiTypography)(spacing);
+const Spacer = styled.div(spacing);
 
 // Custom Style.
 const Search = styled.div`
@@ -113,16 +115,14 @@ const UsersList = () => {
             <Input placeholder={t("searchList")} />
           </Search>
         </Grid>
-
+        <Spacer mx={5} />
         <Grid item md={3}>
           <DatePickerFilter />
         </Grid>
       </Grid>
 
       <Divider my={6} />
-
       <Grid container spacing={6}>
-        {console.log("rorrrr", rowUserList)}
         <Grid item xs={12}>
           {rowUserList ? (
             <UsersListTable rowUserList={rowUserList} />

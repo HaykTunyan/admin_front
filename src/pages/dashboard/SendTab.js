@@ -100,9 +100,11 @@ const SendTab = ({ rowSend }) => {
         <Table aria-label="simple table" mt={6}>
           <TableHead>
             <TableRow>
-              <TableCell>&#35;</TableCell>
-              <TableCell align="center">Users Name</TableCell>
-              <TableCell align="right">Balance Send Coin</TableCell>
+              <TableCell>Coin</TableCell>
+              <TableCell align="center">Send Coin</TableCell>
+              <TableCell align="right">
+                Send in <span> &#36;</span>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -117,9 +119,7 @@ const SendTab = ({ rowSend }) => {
                     },
                   }}
                 >
-                  <TableCell component="th" scope="row">
-                    {row.id}
-                  </TableCell>
+                  <TableCell>{row.name}</TableCell>
                   <TableCell align="center">{row.name}</TableCell>
                   <TableCell align="right">
                     {row.balance_coin}
