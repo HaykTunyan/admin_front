@@ -13,7 +13,7 @@ export const signIn_req = (values) => (dispatch) => {
     .then(({ data }) => {
       console.log("Data", data);
 
-      localStorage.setItem("accessToken", data.access_token);
+      localStorage.setItem("accessToken", data.accessToken);
       dispatch({
         type: USER_LOADED,
         payload: {

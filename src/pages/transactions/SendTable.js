@@ -2,6 +2,10 @@ import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
 import { instance } from "../../services/api";
+import moment from "moment";
+import { spacing } from "@material-ui/system";
+import { darken } from "polished";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Paper as MuiPaper,
@@ -13,16 +17,70 @@ import {
   TableHead,
   Typography,
   TablePagination,
+  Grid,
+  InputBase,
+  Card as MuiCard,
+  Select,
+  FormControl,
+  MenuItem,
+  InputLabel,
 } from "@material-ui/core";
-import moment from "moment";
-import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
-import Loader from "../../components/Loader";
+import { Search as SearchIcon } from "react-feather";
+import DatePickerFilter from "../../components/date-picker/DatePickerFilter";
+import NoData from "../../components/NoData";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
+const Card = styled(MuiCard)(spacing);
+const Spacer = styled.div(spacing);
 
 // Custom Style.
+const Search = styled.div`
+  border-radius: 2px;
+  background-color: ${(props) => props.theme.header.background};
+  display: none;
+  position: relative;
+  width: 100%;
+
+  &:hover {
+    background-color: ${(props) => darken(0.05, props.theme.header.background)};
+  }
+
+  ${(props) => props.theme.breakpoints.up("md")} {
+    display: block;
+  }
+`;
+
+const SearchIconWrapper = styled.div`
+  width: 50px;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+`;
+
+const Input = styled(InputBase)`
+  color: inherit;
+  width: 100%;
+
+  > input {
+    color: ${(props) => props.theme.header.search.color};
+    padding-top: ${(props) => props.theme.spacing(2.5)};
+    padding-right: ${(props) => props.theme.spacing(2.5)};
+    padding-bottom: ${(props) => props.theme.spacing(2.5)};
+    padding-left: ${(props) => props.theme.spacing(12)};
+    width: 100%;
+  }
+`;
+
 const useStyles = makeStyles({
   rootTable: {
     margin: "10px",
@@ -31,11 +89,32 @@ const useStyles = makeStyles({
 
 const SendTable = () => {
   //  hooks.
+  const { t } = useTranslation();
   const classes = useStyles();
   const [send, setSend] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [operationType, setOperationType] = useState("");
+  const [coinAll, setCoinAll] = useState("");
+  const [transactionType, setTransactionType] = useState("");
+  const [statusValue, setStatusValue] = useState("");
   const rows = send.transactions;
+
+  const handleOperationType = (event) => {
+    setOperationType(event.target.value);
+  };
+
+  const handleCoinAll = (event) => {
+    setCoinAll(event.target.value);
+  };
+
+  const handleTransactionType = (event) => {
+    setTransactionType(event.target.value);
+  };
+
+  const handleStatusValue = (event) => {
+    setStatusValue(event.target.value);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -71,13 +150,106 @@ const SendTable = () => {
     getSend();
   }, []);
 
-  // Loader.
+  // No Data.
   if (send.transactionsCount === 0) {
-    return <Loader />;
+    return <NoData />;
   }
 
   return (
     <Fragment>
+      <Card p={4} sx={{ display: "flex" }}>
+        <Grid item md={2}>
+          <Box component="div">
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <Input placeholder={t("searchList")} />
+            </Search>
+          </Box>
+        </Grid>
+        <Spacer mx={2} />
+        <Grid item md={2}>
+          <DatePickerFilter />
+        </Grid>
+        <Spacer mx={2} />
+        <Grid item md={2}>
+          <FormControl fullWidth>
+            <InputLabel id="select-operation-type">Operation Type</InputLabel>
+            <Select
+              labelId="select-operation-type"
+              id="select-operation-type"
+              value={operationType}
+              onChange={handleOperationType}
+              label="Operation Type"
+            >
+              <MenuItem value="all">
+                <em>All</em>
+              </MenuItem>
+              <MenuItem value="receive">Receive</MenuItem>
+              <MenuItem value="send"> Send </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Spacer mx={2} />
+        <Grid item md={2}>
+          <FormControl fullWidth>
+            <InputLabel id="select-coin">Coin</InputLabel>
+            <Select
+              labelId="select-coin"
+              id="select-coin"
+              value={coinAll}
+              onChange={handleCoinAll}
+              label="Coin"
+            >
+              <MenuItem value="all">
+                <em>All</em>
+              </MenuItem>
+              <MenuItem value="btc">btc</MenuItem>
+              <MenuItem value="cxc"> cxc </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Spacer mx={2} />
+        <Grid item md={2}>
+          <FormControl fullWidth>
+            <InputLabel id="select-transaction">Transaction Type</InputLabel>
+            <Select
+              labelId="select-transaction"
+              id="select-transaction"
+              value={transactionType}
+              onChange={handleTransactionType}
+              label="Transaction Type"
+            >
+              <MenuItem value="all">
+                <em>All</em>
+              </MenuItem>
+              <MenuItem value="internal">Internal</MenuItem>
+              <MenuItem value="real"> Real </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Spacer mx={2} />
+        <Grid item md={2}>
+          <FormControl fullWidth>
+            <InputLabel id="select-status">Status</InputLabel>
+            <Select
+              labelId="select-status"
+              id="select-status"
+              value={statusValue}
+              onChange={handleStatusValue}
+              label="Status"
+            >
+              <MenuItem value="all">
+                <em>All</em>
+              </MenuItem>
+              <MenuItem value="panding">Pending</MenuItem>
+              <MenuItem value="rejected"> Rejected </MenuItem>
+              <MenuItem value="approved"> Approved </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+      </Card>
       <Paper>
         <TableContainer component={Paper} className={classes.rootTable}>
           <Table aria-label="simple table">
