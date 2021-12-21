@@ -10,7 +10,7 @@ const DatePickerFilter = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
-        label="Filter"
+        label="Calendar"
         value={result}
         onChange={(newResult) => {
           setResult(newResult);

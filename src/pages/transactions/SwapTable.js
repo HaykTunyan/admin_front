@@ -96,6 +96,7 @@ const SwapTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [statusValue, setStatusValue] = useState("");
   const rows = swap?.transactions;
 
   const handleChangeFrom = (event) => {
@@ -108,6 +109,10 @@ const SwapTable = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+
+  const handleStatusValue = (event) => {
+    setStatusValue(event.target.value);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -165,13 +170,13 @@ const SwapTable = () => {
         <Spacer mx={2} />
         <Grid item md={2}>
           <FormControl fullWidth>
-            <InputLabel id="select-from-label">Send Coin</InputLabel>
+            <InputLabel id="select-from-label">From Coin</InputLabel>
             <Select
               labelId="select-from-label"
               id="select-from-label"
               value={from}
               onChange={handleChangeFrom}
-              label="Send Coin"
+              label="From Coin"
             >
               <MenuItem value="all">
                 <em>All</em>
@@ -185,13 +190,13 @@ const SwapTable = () => {
         <Spacer mx={2} />
         <Grid item md={2}>
           <FormControl fullWidth>
-            <InputLabel id="select-to-label">Receive Coin</InputLabel>
+            <InputLabel id="select-to-label">To Coin</InputLabel>
             <Select
               labelId="select-to-label"
               id="select-to-label"
               value={to}
               onChange={handleChangeTo}
-              label=" Receive Coin"
+              label="To Coin"
             >
               <MenuItem value="all">
                 <em>All</em>
@@ -199,6 +204,26 @@ const SwapTable = () => {
               <MenuItem value={10}>Pending</MenuItem>
               <MenuItem value={20}> Rejected </MenuItem>
               <MenuItem value={30}> Approved </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Spacer mx={2} />
+        <Grid item md={2}>
+          <FormControl fullWidth>
+            <InputLabel id="select-status">Status</InputLabel>
+            <Select
+              labelId="select-status"
+              id="select-status"
+              value={statusValue}
+              onChange={handleStatusValue}
+              label="Status"
+            >
+              <MenuItem value="all">
+                <em>All</em>
+              </MenuItem>
+              <MenuItem value="panding">Pending</MenuItem>
+              <MenuItem value="rejected"> Rejected </MenuItem>
+              <MenuItem value="approved"> Approved </MenuItem>
             </Select>
           </FormControl>
         </Grid>

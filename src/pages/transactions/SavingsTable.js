@@ -217,8 +217,8 @@ const SavingsTable = () => {
               <MenuItem value="all">
                 <em>All</em>
               </MenuItem>
-              <MenuItem value="internal">Internal</MenuItem>
-              <MenuItem value="real"> Real </MenuItem>
+              <MenuItem value="Deposit">Deposit</MenuItem>
+              <MenuItem value="Refunds"> Refunds </MenuItem>
             </Select>
           </FormControl>
         </Grid>

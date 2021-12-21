@@ -14,7 +14,6 @@ import Page500 from "../auth/Page500";
 // Page components
 import Settings from "../pages/settings-pages";
 import Notifications from "../pages/notifications";
-import DashboardList from "../pages/DashboardList";
 import ProtectedPage from "../pages/protected/ProtectedPage";
 import NewsComponent from "../pages/news";
 import UsersList from "../pages/user-managment/users-pages/UsersList";
@@ -49,10 +48,6 @@ const routes = [
       {
         path: "kyc",
         element: <KYC />,
-      },
-      {
-        path: "dashboard-list",
-        element: <DashboardList />,
       },
       {
         path: "dashboard",

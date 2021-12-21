@@ -111,7 +111,6 @@ const AddNewsModal = () => {
                     label="Title H1"
                     type="text"
                     fullWidth
-                    variant="standard"
                     onChange={handleChange("title")}
                     error={Boolean(touched.title && errors.title)}
                     helperText={touched.title && errors.title}
@@ -122,7 +121,6 @@ const AddNewsModal = () => {
                     label="Description"
                     type="text"
                     fullWidth
-                    variant="standard"
                     onChange={handleChange("description")}
                     error={Boolean(touched.description && errors.description)}
                     helperText={touched.description && errors.description}
