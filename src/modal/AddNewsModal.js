@@ -27,7 +27,7 @@ const AddNewsModal = () => {
     title: "",
     description: "",
   });
-  const [content, setContent] = useState();
+  const [content, setContent] = useState(null);
   const [contentError, setContentError] = useState(false);
   const maxNumber = 69;
 
@@ -36,31 +36,27 @@ const AddNewsModal = () => {
   };
 
   const onChange = (imageList, addUpdateIndex) => {
-    // data for submit
+    // saving image
     console.log(imageList);
     setImages(imageList);
   };
 
-  function saveContent() {
-    if (editorRef.current) {
-      console.log(editorRef.current.getContent());
-      setContent(editorRef.current.getContent());
-    }
-  }
-
   async function addNews(values) {
     const formData = new FormData();
     const status = false;
+    let content = "";
+
+    if (editorRef.current) {
+      console.log(editorRef.current.getContent());
+      content = editorRef.current.getContent();
+      setContent(editorRef.current.getContent());
+    }
 
     formData.append("title", values.title);
     formData.append("description", values.description);
     formData.append("content", content);
     formData.append("image", images[0].file);
-    formData.append("status", JSON.stringify(status));
-
-    // for (var [key, value] of formData.entries()) {
-    //   console.log(key, value);
-    // }
+    formData.append("published", status);
 
     try {
       const response = await addNews_req(formData);
@@ -112,7 +108,7 @@ const AddNewsModal = () => {
                     type="text"
                     fullWidth
                     onChange={handleChange("title")}
-                    error={Boolean(touched.title && errors.title)}
+                    error={touched.title && errors.title}
                     helperText={touched.title && errors.title}
                   />
                   <TextField
@@ -122,7 +118,7 @@ const AddNewsModal = () => {
                     type="text"
                     fullWidth
                     onChange={handleChange("description")}
-                    error={Boolean(touched.description && errors.description)}
+                    error={touched.description && errors.description}
                     helperText={touched.description && errors.description}
                   />
                   <Box my={5}>
@@ -133,7 +129,6 @@ const AddNewsModal = () => {
                     />
                     <TinymceNew
                       editorRef={editorRef}
-                      onSave={saveContent}
                       content={content}
                       contentError={contentError}
                     />

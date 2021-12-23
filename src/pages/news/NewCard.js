@@ -57,7 +57,7 @@ const NewsCard = ({
           <Button size="small" color="primary" onClick={onClickDelete}>
             Delete
           </Button>
-          {status && (
+          {status === false && (
             <Button size="small" color="primary" onClick={onClickPublish}>
               Publish
             </Button>

@@ -131,7 +131,7 @@ const NewsComponent = () => {
     const status = true;
 
     formData.append("_id", id);
-    formData.append("status", JSON.stringify(status));
+    formData.append("published", status);
 
     try {
       const response = await publishNews_req(formData);

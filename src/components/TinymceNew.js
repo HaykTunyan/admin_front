@@ -31,11 +31,6 @@ const TinymceNew = ({ textBody, editorRef, onSave, content, contentError }) => {
             <span style={{ color: "red" }}>{"Field is required"}</span>
           </div>
         )}
-        <Box display="flex" justifyContent="flex-end" mt={5}>
-          <Button variant="contained" onClick={onSave} type="button">
-            Save Text
-          </Button>
-        </Box>
       </Box>
     </Fragment>
   );
