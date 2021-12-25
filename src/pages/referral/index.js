@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import ReferralTable from "./referralTable";
+import ReferralUsers from "./referralUsers";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -83,6 +84,11 @@ const Referral = () => {
       <Divider my={6} />
 
       <Grid item xs={12}>
+        <ReferralUsers />
+      </Grid>
+      <Divider my={6} />
+      {/* Referral Table */}
+      {/* <Grid item xs={12}>
         <Card xs={12}>
           <CardContent>
             <Grid
@@ -102,7 +108,8 @@ const Referral = () => {
             </Grid>
           </CardContent>
         </Card>
-      </Grid>
+      </Grid> */}
+
       <Grid item xs={12}>
         <ReferralTable />
       </Grid>

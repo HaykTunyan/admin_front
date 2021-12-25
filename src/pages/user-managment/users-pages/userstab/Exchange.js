@@ -1,5 +1,6 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
+import { useLocation } from "react-router-dom";
 import {
   Typography as MuiTypography,
   Box,
@@ -20,6 +21,7 @@ import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { darken } from "polished";
 import MetaLineChart from "../../../../components/charts/MetaLineChart";
+import { getUserExchanges_req } from "../../../../api/userExchangesAPI";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -70,10 +72,18 @@ const SearchIconWrapper = styled.div`
   }
 `;
 
+const Spacer = styled.div(spacing);
+
 const Exchange = ({ rowExchange }) => {
+  const location = useLocation();
+  const profileId = location?.state;
+  const userId = profileId?.id;
+
+  const { t } = useTranslation();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { t } = useTranslation();
+  const [exchange, setExchange] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -83,6 +93,22 @@ const Exchange = ({ rowExchange }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  async function getUserExchanges() {
+    try {
+      const response = await getUserExchanges_req(userId);
+      if (response) {
+        console.log("GET USER EXCHANGES RESPONSE ==>", response);
+        setExchange(response);
+      }
+    } catch (e) {
+      console.log("GET USER EXCHANGES ERROR==>", e);
+    }
+  }
+
+  useEffect(() => {
+    getUserExchanges();
+  }, []);
 
   return (
     <>
@@ -102,40 +128,32 @@ const Exchange = ({ rowExchange }) => {
             <TableHead>
               <TableRow>
                 <TableCell>&#35;</TableCell>
-                <TableCell align="center">Users Name</TableCell>
-                <TableCell align="center">Exchange Bit</TableCell>
-                <TableCell align="center">EXchange Coin</TableCell>
-                <TableCell align="center">EXchange Chart</TableCell>
+                <TableCell align="center">Send Coin</TableCell>
+                <TableCell align="center">Receive Coin</TableCell>
+                <TableCell align="center">Amount</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rowExchange
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => (
-                  <TableRow
-                    key={row.id}
-                    sx={{
-                      "&:last-child td, &:last-child th": {
-                        border: 0,
-                      },
-                    }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {row.id}
-                    </TableCell>
-                    <TableCell align="center">{row.name}</TableCell>
-                    <TableCell align="center">
-                      {row.receive_bit}
-                      <span> &#x20BF;</span>
-                    </TableCell>
-                    <TableCell align="center">
-                      {row.receive_coin} <span>&#8364;</span>{" "}
-                    </TableCell>
-                    <TableCell align="center">
-                      <MetaLineChart />
-                    </TableCell>
-                  </TableRow>
-                ))}
+              {(exchange.exchanges || []).map((row) => (
+                //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                <TableRow
+                  key={row.exchange_id}
+                  // sx={{
+                  //   "&:last-child td, &:last-child th": {
+                  //     border: 0,
+                  //   },
+                  // }}
+                >
+                  <TableCell>{row.exchange_id}</TableCell>
+                  <TableCell align="center">{row.coin_from}</TableCell>
+                  <TableCell align="center">{row.coin_to}</TableCell>
+                  <TableCell align="center">
+                    {`${row.amount_sent}${row.coin_from} --> ${row.amount_received}${row.coin_to}`}
+                    <Spacer my={3} />
+                    {`${row.amount_usd_sent}$ --> ${row.amount_usd_received}$`}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
           <TablePagination

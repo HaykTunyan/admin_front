@@ -95,7 +95,7 @@ const DeviceManagement = () => {
 
   return (
     <>
-      <Helmet title="Device Management" />
+      <Helmet title="Device management" />
       <Grid justifyContent="space-between" container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom>

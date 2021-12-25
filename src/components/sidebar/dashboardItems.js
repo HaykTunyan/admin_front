@@ -25,7 +25,7 @@ const pagesSection = [
   {
     href: "/device-management",
     icon: Smartphone,
-    title: "Device Managment",
+    title: "Device management",
   },
   // Users.
   {

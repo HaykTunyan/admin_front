@@ -1,12 +1,11 @@
-import React, { Fragment, useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { MoreVertical } from "react-feather";
+import { useLocation } from "react-router-dom";
 import {
   Button,
   Card as MuiCard,
   CardHeader,
   Chip as MuiChip,
-  IconButton,
   Paper,
   Table,
   TableBody,
@@ -16,6 +15,11 @@ import {
   Box,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
+import WalletsModal from "../../../../modal/WalletsModal";
+import {
+  getUserWallets_req,
+  blockUserWallet_req,
+} from "../../../../api/userWalletsAPI";
 
 const Spacer = styled.div(spacing);
 const Card = styled(MuiCard)(spacing);
@@ -34,45 +38,45 @@ const TableWrapper = styled.div`
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
 
-export const rows = [
-  {
-    key: 1,
-    wallet_name: "Wallet Name",
-    coins: "100",
-    dollars: "200",
-  },
-  {
-    key: 2,
-    wallet_name: "Wallet Name",
-    coins: "100",
-    dollars: "200",
-  },
-  {
-    key: 3,
-    wallet_name: "Wallet Name",
-    coins: "100",
-    dollars: "200",
-  },
-  {
-    key: 4,
-    wallet_name: "Wallet Name",
-    coins: "100",
-    dollars: "200",
-  },
-  {
-    key: 5,
-    wallet_name: "Wallet Name",
-    coins: "100",
-    dollars: "200",
-  },
-];
-
 const Wallets = () => {
+  const location = useLocation();
+  const profileId = location?.state;
+  const userId = profileId?.id;
+
+  const [wallets, setWallets] = useState([]);
+
+  async function getUserWallets() {
+    try {
+      const response = await getUserWallets_req(userId);
+      if (response) {
+        console.log("GET USER WALLETS RESPONSE ==>", response);
+        setWallets(response.result);
+      }
+    } catch (e) {
+      console.log("GET USER WALLETS ERROR ==>", e.response);
+    }
+  }
+
+  async function blockUserWallet(wallet) {
+    try {
+      const response = await blockUserWallet_req(userId, wallet.id);
+      if (response) {
+        console.log("BLOCK USER WALLET RESPONSE ==>", response);
+        getUserWallets();
+      }
+    } catch (e) {
+      console.log("BLOCK USER WALLET ERROR ==>", e);
+    }
+  }
+
+  useEffect(() => {
+    getUserWallets();
+  }, []);
+
   return (
     <>
       <Card mb={6}>
         <CardHeader title="Wallets Tables" />
-
         <Paper>
           <TableWrapper>
             <Table>
@@ -89,27 +93,40 @@ const Wallets = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.key}>
+                {wallets.map((row) => (
+                  <TableRow key={row.id}>
                     <TableCell component="th" scope="row" width="25%">
-                      {row.wallet_name}
+                      {row.coin_name}
                     </TableCell>
                     <TableCell align="center" width="25%">
-                      {row.coins}
+                      {row.total_balance}
                     </TableCell>
                     <TableCell align="center" width="25%">
-                      {row.dollars}
+                      {row.total_balance_usd}
                     </TableCell>
                     <TableCell align="right">
                       <Box display="flex" justifyContent="flex-end">
                         <Box mx={2}>
-                          <Button variant="contained">Пополнить</Button>
+                          <WalletsModal
+                            wallet={row}
+                            id={"topUp"}
+                            userId={userId}
+                          />
                         </Box>
                         <Box mx={2}>
-                          <Button variant="contained"> Отправить </Button>
+                          <WalletsModal
+                            wallet={row}
+                            id={"withdraw"}
+                            userId={userId}
+                          />
                         </Box>
                         <Box mx={2}>
-                          <Button variant="contained"> Заблокировать </Button>
+                          <Button
+                            variant="contained"
+                            onClick={() => blockUserWallet(row)}
+                          >{`${
+                            row.block_status === true ? "Unblock" : "Block"
+                          } withdrawal`}</Button>
                         </Box>
                       </Box>
                     </TableCell>

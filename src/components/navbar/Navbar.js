@@ -102,7 +102,7 @@ const Navbar = ({ onDrawerToggle }) => {
             </Grid>
             <Grid item xs />
             <Grid item>
-              <NavbarLanguagesDropdown />
+              {/* <NavbarLanguagesDropdown /> */}
               <NavbarUserDropdown />
             </Grid>
           </Grid>

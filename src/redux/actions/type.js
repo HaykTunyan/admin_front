@@ -95,3 +95,10 @@ export const NEWS_WOTCH = "NEWS_WOTCH";
 export const NEWS_ADD = " NEWS_ADD";
 export const NEWS_DELETE = " NEWS_DELETE";
 export const NEWS_EDIT = "NEWS_EDIT";
+
+// export const Referral.
+
+export const GENERET_REFERRAL = "GENERET_REFERRAL";
+export const UNASSIGNED_REFERRAL = "UNASSIGNED_REFERRAL";
+export const ALL_REFERRAL = "ALL_REFERRAL";
+export const ASSIGN_REFERRAL = "ASSIGN_REFERRAL";

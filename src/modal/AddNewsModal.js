@@ -18,8 +18,8 @@ import * as yup from "yup";
 import { addNews_req } from "../api/newsAPI";
 
 const AddNewsModal = () => {
+  //  hooks.
   const editorRef = useRef(null);
-
   const [open, setOpen] = useState(false);
   const [images, setImages] = useState([]);
   const [imagesError, setImagesError] = useState(false);
@@ -36,7 +36,6 @@ const AddNewsModal = () => {
   };
 
   const onChange = (imageList, addUpdateIndex) => {
-    // saving image
     console.log(imageList);
     setImages(imageList);
   };

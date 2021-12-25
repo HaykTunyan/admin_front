@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import styled from "styled-components/macro";
 import { Drawer as MuiDrawer, ListItemButton } from "@material-ui/core";
 import SidebarNav from "./SidebarNav";
+import { ReactComponent as Logo } from "../../assets/svg/logo_main.svg";
 
 const Drawer = styled(MuiDrawer)`
   border-right: 0;
@@ -34,11 +35,19 @@ const Brand = styled(ListItemButton)`
   }
 `;
 
+const BrandLogo = styled(Logo)`
+  fill: ${(props) => props.theme.palette.primary.main};
+  width: 60px;
+  height: 60px;
+  margin-top: 20px;
+  margin-right: 20px;
+`;
+
 const Sidebar = ({ items, ...rest }) => {
   return (
     <Drawer variant="permanent" {...rest}>
-      <Brand component={NavLink} to="/">
-        Beincoin
+      <Brand component={NavLink} to="/dashboard">
+        <BrandLogo />
       </Brand>
       <SidebarNav items={items} />
     </Drawer>

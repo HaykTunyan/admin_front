@@ -39,7 +39,7 @@ const addAdminValidation = Yup.object().shape({
 });
 
 const AddAdminModal = () => {
-  //   //  hooks.
+  //  hooks.
   const [open, setOpen] = useState(false);
   const label = { inputProps: { "aria-label": "Checkbox" } };
   const dispatch = useDispatch();

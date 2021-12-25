@@ -77,12 +77,12 @@ const AffiliateView = (state) => {
 
   return (
     <Fragment>
-      <Helmet title="Affiliate Info" />
+      <Helmet title="Affiliate Information" />
 
       <Grid flex justifyContent="space-between" container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
-            Affilate Information
+            Affiliate Information
           </Typography>
         </Grid>
         <Grid item>

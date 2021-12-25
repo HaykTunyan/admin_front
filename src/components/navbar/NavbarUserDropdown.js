@@ -9,6 +9,8 @@ import {
   Avatar as MuiAvatar,
 } from "@material-ui/core";
 import useAuth from "../../hooks/useAuth";
+import { logout_req } from "../../redux/actions/users";
+import { useDispatch } from "react-redux";
 
 // Custom Style.
 const IconButton = styled(MuiIconButton)`
@@ -25,6 +27,7 @@ const NavbarUserDropdown = () => {
   const [anchorMenu, setAnchorMenu] = useState(null);
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const dispatch = useDispatch();
 
   const toggleMenu = (event) => {
     setAnchorMenu(event.currentTarget);
@@ -36,7 +39,9 @@ const NavbarUserDropdown = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    // await signOut();
+    // await logout_req().then(navigate("/auth/sign-in"));
+    dispatch(logout_req());
     navigate("/auth/sign-in");
   };
 
@@ -63,10 +68,10 @@ const NavbarUserDropdown = () => {
         open={Boolean(anchorMenu)}
         onClose={closeMenu}
       >
-        <MenuItem onClick={closeMenu} disabled="true">
+        {/* <MenuItem onClick={closeMenu} disabled="true">
           Profile
         </MenuItem>
-        <MenuItem onClick={openSettings}>Settings</MenuItem>
+        <MenuItem onClick={openSettings}>Settings</MenuItem> */}
         <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
       </Menu>
     </Fragment>

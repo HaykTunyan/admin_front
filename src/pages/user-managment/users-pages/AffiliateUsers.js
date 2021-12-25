@@ -142,11 +142,11 @@ const AffiliateUsers = () => {
   console.log(" affiliateList ", affiliateList);
   return (
     <Fragment>
-      <Helmet title="Affilate Users" />
+      <Helmet title="Affiliate Users" />
       <Grid justifyContent="space-between" container spacing={10}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
-            Affilate Users
+            Affiliate Users
           </Typography>
         </Grid>
       </Grid>
@@ -206,11 +206,11 @@ const AffiliateUsers = () => {
                           <Typography color="text.primary">finished</Typography>
                         </Breadcrumbs>
                       </TableCell>
-                      <TableCell align="center">Receive</TableCell>
+                      <TableCell align="center">Received</TableCell>
                       <TableCell align="center">Status KYC</TableCell>
                       <TableCell align="center">Date Register</TableCell>
                       <TableCell align="center">Geo Position</TableCell>
-                      <TableCell align="center">Send</TableCell>
+                      <TableCell align="center">Sent</TableCell>
                       <TableCell align="center">Referral</TableCell>
                       <TableCell align="center">Currency</TableCell>
                       <TableCell align="right">View</TableCell>

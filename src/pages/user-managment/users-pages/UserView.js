@@ -29,6 +29,7 @@ import Notification from "./userstab/Notification";
 import Activity from "./userstab/Activity";
 import SettingsKYC from "./userstab/SettingsKYC";
 import UserSettings from "./userstab/UserSettings";
+import TransactionHistory from "./userstab/Transaction";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
@@ -44,8 +45,8 @@ const UserView = (state) => {
   const [tab, setTab] = useState("1");
   const [profile, getProfile] = useState([]);
   const location = useLocation();
-  const totlalDashboard = useSelector((state) => state.dashboard);
-  const rowExchange = totlalDashboard?.rowExchange;
+  const totalDashboard = useSelector((state) => state.dashboard);
+  const rowExchange = totalDashboard?.rowExchange;
   const profileId = location?.state;
   const userId = profileId?.id;
 
@@ -53,7 +54,7 @@ const UserView = (state) => {
     setTab(newTab);
   };
 
-  console.log("userId", location);
+  //console.log("userId", location);
 
   // Get Req.
   const getProfile_req = () => {
@@ -221,7 +222,7 @@ const UserView = (state) => {
             <TabPanel value="6">
               <Spacer mt={4} />
               <Grid item>
-                <SendTable />
+                <TransactionHistory />
               </Grid>
             </TabPanel>
             <TabPanel value="7">

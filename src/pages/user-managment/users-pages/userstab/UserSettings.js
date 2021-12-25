@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import {
   Typography as MuiTypography,
@@ -12,9 +12,13 @@ import {
   InputLabel,
   OutlinedInput,
   InputAdornment,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import { Eye, EyeOff } from "react-feather";
+import { useLocation } from "react-router-dom";
+import { editUserData_req, getUserData_req } from "../../../../api/userAPI";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -25,16 +29,35 @@ const TextField = styled(MuiTextField)(spacing);
 const Button = styled(MuiButton)(spacing);
 
 const UserSettings = () => {
+  const [loading, setLoading] = useState(true);
   const [values, setValues] = useState({
-    amount: "",
-    password: "",
-    weight: "",
-    weightRange: "",
+    phone: false,
+    password: false,
+    email: false,
+    full_name: false,
     showPassword: false,
+    reset: 0,
+  });
+  const [editedData, setEditedData] = useState({
+    email: "",
+    full_name: "",
+    phone: "",
+    password: "",
+    is_affiliate: false,
+  });
+  const [errors, setErrors] = useState({
+    email: "",
+    full_name: "",
+    phone: "",
+    password: "",
   });
 
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
+  const location = useLocation();
+  const profileId = location?.state;
+  const userId = profileId?.id;
+
+  const handleReset = (event) => {
+    setValues({ ...values, reset: event.target.value });
   };
 
   const handleClickShowPassword = () => {
@@ -48,12 +71,78 @@ const UserSettings = () => {
     event.preventDefault();
   };
 
+  async function getUserData() {
+    //setLoading(true);
+    try {
+      const response = await getUserData_req(userId);
+      if (response) {
+        console.log("GET USER DATA RESPONSE ==>", response);
+        let data = {
+          email: response.userAccountInfo.email,
+          full_name: response.userAccountInfo.full_name,
+          phone: response.userAccountInfo.phone,
+          password: response.userAccountInfo.password,
+          is_affiliate: response.userAccountInfo.is_affiliate,
+        };
+        setEditedData(data);
+        setLoading(false);
+        //setUserData(response.userAccountInfo);
+      }
+    } catch (e) {
+      console.log("GET USER DATA ==>", e.response);
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  async function editData(e) {
+    console.log("VALUE ==>", values[`${e.target.id}`]);
+    setValues({ ...values, [`${e.target.id}`]: !values[`${e.target.id}`] });
+
+    if (values[`${e.target.id}`]) {
+      try {
+        const response = await editUserData_req(
+          userId,
+          e.target.id,
+          editedData[`${e.target.id}`],
+          editedData.is_affiliate
+        );
+        if (response) {
+          console.log("EDIT USER DATA RESPONSE ==>", response);
+          setErrors({ ...errors, [`${e.target.id}`]: "" });
+        }
+      } catch (error) {
+        console.log("EDIT USER DATA ERROR ==>", error.response.data);
+        if (Array.isArray(error.response.data.message)) {
+          setErrors({
+            ...errors,
+            [`${error.response.data.message[0].property}`]:
+              error.response.data.message[0].messages,
+          });
+        } else {
+          setErrors({
+            ...errors,
+            [`${e.target.id}`]: error.response.data.message,
+          });
+        }
+      }
+    }
+  }
+
+  console.log("Errors ==>", errors);
+  if (loading) {
+    return <></>;
+  }
+
   return (
     <>
       <Card>
         <CardContent p={5}>
           {/* Password */}
-          <Grid container>
+          <Grid container sx={{ alignItems: "center" }}>
             <Grid xs={12} md={3} sx={{ mx: "5px" }}>
               <Typography variant="inherit"> Password </Typography>
             </Grid>
@@ -65,8 +154,11 @@ const UserSettings = () => {
                 <OutlinedInput
                   id="outlined-adornment-password"
                   type={values.showPassword ? "text" : "password"}
-                  value={values.password}
-                  onChange={handleChange("password")}
+                  disabled={values.password === false}
+                  //value={editedData.password}
+                  onChange={(e) =>
+                    setEditedData({ ...editedData, password: e.target.value })
+                  }
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
@@ -82,14 +174,47 @@ const UserSettings = () => {
                   label="Password"
                 />
               </FormControl>
+              {errors.password && (
+                <div style={{ width: "400px" }}>
+                  <span style={{ color: "red" }}>{errors.password}</span>
+                </div>
+              )}
             </Grid>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
-              <Button variant="contained">Edit</Button>
+            <Grid
+              xs={12}
+              md={3}
+              sx={{ mx: "5px", alignItems: "center" }}
+              direction="row"
+            >
+              <Button
+                id={"password"}
+                variant="contained"
+                onClick={(e) => editData(e)}
+              >
+                {values.password === true ? "Save" : "Edit"}
+              </Button>
+              {/* <FormControl
+                fullWidth
+                variant="outlined"
+                sx={{ marginLeft: "70px" }}
+              >
+                <InputLabel id="simple-select">Send to</InputLabel>
+                <Select
+                  labelId="simple-select"
+                  id="simple-select"
+                  //value={values.reset}
+                  placeholder="Reset Link"
+                  onChange={handleReset}
+                >
+                  <MenuItem value={1}>Phone</MenuItem>
+                  <MenuItem value={2}>Email</MenuItem>
+                </Select>
+              </FormControl> */}
             </Grid>
           </Grid>
           <Spacer my={6} />
           {/* Email */}
-          <Grid container>
+          <Grid container sx={{ alignItems: "center" }}>
             <Grid xs={12} md={3} sx={{ mx: "5px" }}>
               <Typography variant="inherit"> Email </Typography>
             </Grid>
@@ -97,19 +222,30 @@ const UserSettings = () => {
               <FormControl sx={{ width: "250px" }}>
                 <TextField
                   id="email"
-                  label="Email"
+                  label={"Email"}
                   type="email"
                   variant="outlined"
+                  defaultValue={editedData.email}
+                  disabled={values.email === false}
+                  onChange={(e) =>
+                    setEditedData({ ...editedData, email: e.target.value })
+                  }
                 />
               </FormControl>
             </Grid>
             <Grid xs={12} md={3} sx={{ mx: "5px" }}>
-              <Button variant="contained">Edit</Button>
+              <Button
+                id={"email"}
+                variant="contained"
+                onClick={(e) => editData(e)}
+              >
+                {values.email === true ? "Save" : "Edit"}
+              </Button>
             </Grid>
           </Grid>
           <Spacer my={6} />
           {/* Phone Number */}
-          <Grid container>
+          <Grid container sx={{ alignItems: "center" }}>
             <Grid xs={12} md={3} sx={{ mx: "5px" }}>
               <Typography variant="inherit"> Phone Number </Typography>
             </Grid>
@@ -120,16 +256,27 @@ const UserSettings = () => {
                   label="Phone"
                   type="tel"
                   variant="outlined"
+                  defaultValue={editedData.phone}
+                  disabled={values.phone === false}
+                  onChange={(e) =>
+                    setEditedData({ ...editedData, phone: e.target.value })
+                  }
                 />
               </FormControl>
             </Grid>
             <Grid xs={12} md={3} sx={{ mx: "5px" }}>
-              <Button variant="contained">Edit</Button>
+              <Button
+                id={"phone"}
+                variant="contained"
+                onClick={(e) => editData(e)}
+              >
+                {values.phone === true ? "Save" : "Edit"}
+              </Button>
             </Grid>
           </Grid>
           <Spacer my={6} />
           {/* User Name */}
-          <Grid container>
+          <Grid container sx={{ alignItems: "center" }}>
             <Grid xs={12} md={3} sx={{ mx: "5px" }}>
               <Typography variant="inherit"> User Name </Typography>
             </Grid>
@@ -140,11 +287,22 @@ const UserSettings = () => {
                   label="Name"
                   type="text"
                   variant="outlined"
+                  defaultValue={editedData.full_name}
+                  disabled={values.userName === false}
+                  onChange={(e) =>
+                    setEditedData({ ...editedData, full_name: e.target.value })
+                  }
                 />
               </FormControl>
             </Grid>
             <Grid xs={12} md={3} sx={{ mx: "5px" }}>
-              <Button variant="contained">Edit</Button>
+              <Button
+                id={"full_name"}
+                variant="contained"
+                onClick={(e) => editData(e)}
+              >
+                {values.userName === true ? "Save" : "Edit"}
+              </Button>
             </Grid>
           </Grid>
         </CardContent>

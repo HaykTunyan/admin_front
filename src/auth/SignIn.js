@@ -13,8 +13,9 @@ import {
   TextField as MuiTextField,
   Paper,
   Typography,
+  Box,
 } from "@material-ui/core";
-import { ReactComponent as Logo } from "../assets/svg/logo.svg";
+import { ReactComponent as Logo } from "../assets/svg/logo_main.svg";
 import useAuth from "../hooks/useAuth";
 import { signIn_req } from "../redux/actions/users";
 import { useDispatch } from "react-redux";
@@ -22,6 +23,7 @@ import { useDispatch } from "react-redux";
 // Spacing.
 const Alert = styled(MuiAlert)(spacing);
 const TextField = styled(MuiTextField)(spacing);
+const Spacer = styled.div(spacing);
 
 const initialForm = {
   name: "admin@elsteam.com",
@@ -139,10 +141,22 @@ const SignIn = () => {
                 onChange={handleChange}
                 my={2}
               />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
+              <Spacer my={4} />
+              <Box display="flex" justifyContent="space-between">
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                />
+
+                <Button
+                  component={Link}
+                  to="/auth/reset-password"
+                  color="primary"
+                >
+                  Forgot password
+                </Button>
+              </Box>
+              <Spacer my={4} />
               <Button
                 type="submit"
                 fullWidth
@@ -151,15 +165,6 @@ const SignIn = () => {
                 disabled={isSubmitting}
               >
                 Sign in
-              </Button>
-              <Button
-                component={Link}
-                to="/auth/reset-password"
-                fullWidth
-                color="primary"
-                mt={4}
-              >
-                Forgot password
               </Button>
             </form>
           )}

@@ -116,11 +116,11 @@ const UsersListTable = ({ rowUserList }) => {
                     <Typography color="text.primary">finished</Typography>
                   </Breadcrumbs>
                 </TableCell>
-                <TableCell align="center">Receive</TableCell>
+                <TableCell align="center">Received</TableCell>
                 <TableCell align="center">Status KYC</TableCell>
                 <TableCell align="center">Date Register</TableCell>
                 <TableCell align="center">Geo Position</TableCell>
-                <TableCell align="center">Send</TableCell>
+                <TableCell align="center">Sent</TableCell>
                 <TableCell align="center">Referral</TableCell>
                 <TableCell align="center">Currency</TableCell>
                 <TableCell align="right">View</TableCell>

@@ -10,17 +10,39 @@ import {
   ListItem,
   ListItemText,
   Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  IconButton,
 } from "@material-ui/core";
 import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
+import { ChevronDown, ChevronUp } from "react-feather";
+import styled from "styled-components/macro";
+import { spacing } from "@material-ui/system";
+
+const Spacer = styled.div(spacing);
 
 const style = {
   width: 360,
   bgcolor: "background.paper",
 };
 
-const ReferralUserModal = () => {
+const ReferralUserModal = ({
+  id,
+  totalReceived,
+  detaild,
+  detailedReceived,
+  walletsFriends,
+  usesTheSistem,
+  usesTheSavings,
+  usesTheSavingsPercent,
+  amountOfSavings,
+  usesTheSystemPercent,
+}) => {
   //  hooks.
   const [open, setOpen] = useState(false);
+  const [viewFriends, SetViewFriends] = useState(false);
+  const [viewWallet, setViewWallet] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -30,6 +52,14 @@ const ReferralUserModal = () => {
     setOpen(false);
   };
 
+  const viewOpen = () => {
+    SetViewFriends(!viewFriends);
+  };
+
+  const openWallet = () => {
+    setViewWallet(!viewWallet);
+  };
+
   return (
     <>
       <Button variant="outlined" onClick={handleClickOpen}>
@@ -37,34 +67,93 @@ const ReferralUserModal = () => {
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle textAlign="center">
-          Information for Referral User
+          Information of Referral User
         </DialogTitle>
         <DialogContent>
+          {/* <Accordion>
+            <AccordionSummary
+              expandIcon={<ChevronDown />}
+              aria-controls="panel-one"
+              id="panel-one"
+            >
+              <Typography>Accordion 1</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
+                eget.
+              </Typography>
+            </AccordionDetails>
+          </Accordion> */}
           <List sx={style} component="nav" aria-label="mailbox folders">
+            {/* Received Friends */}
             <ListItem>
-              <ListItemText children="User Number" />
-              <Typography variant="inherit">75 %</Typography>
+              <ListItemText children="Received Friends" />
+              <Typography variant="inherit">${totalReceived}</Typography>
+              <Spacer mx={2} />
+              <IconButton component="span" onClick={viewOpen}>
+                {viewFriends ? <ChevronUp /> : <ChevronDown />}
+              </IconButton>
+            </ListItem>
+            {viewFriends && (
+              <ListItem
+                sx={{ display: "flex", justifyContent: "space-between" }}
+              >
+                <Typography variant="inherit">
+                  {detailedReceived.bic}%{" "}
+                </Typography>
+                <Spacer mx={2} />
+                <Typography variant="inherit">
+                  {detailedReceived.btc}%
+                </Typography>
+                <Spacer mx={2} />
+                <Typography variant="inherit">
+                  {detailedReceived.xrp}%
+                </Typography>
+              </ListItem>
+            )}
+            <Divider />
+            <ListItem>
+              <ListItemText children="Wallets Friends" />
+              <Typography variant="inherit">${walletsFriends}</Typography>
+              <Spacer mx={2} />
+              <IconButton component="span" onClick={openWallet}>
+                {viewWallet ? <ChevronUp /> : <ChevronDown />}
+              </IconButton>
+            </ListItem>
+            {viewWallet && (
+              <ListItem
+                sx={{ display: "flex", justifyContent: "space-between" }}
+              >
+                <Typography variant="inherit">{detaild.bic}%</Typography>
+                <Spacer mx={2} />
+                <Typography variant="inherit">{detaild.btc}%</Typography>
+                <Spacer mx={2} />
+                <Typography variant="inherit">{detaild.xrp}%</Typography>
+              </ListItem>
+            )}
+            <Divider />
+            <ListItem>
+              <ListItemText children="Uses the system" />
+              <Typography variant="inherit">{usesTheSistem}</Typography>
+              <Spacer mx={2} />
+              <Typography variant="inherit">{usesTheSystemPercent}%</Typography>
             </ListItem>
             <Divider />
-            <ListItem divider>
-              <ListItemText children="Referral Coin" />
-              <Typography variant="inherit">45 000 $</Typography>
+            <ListItem>
+              <ListItemText children="Uses the Savings" />
+              <Typography variant="inherit">{usesTheSavings}</Typography>
+              <Spacer mx={2} />
+              <Typography variant="inherit">
+                {" "}
+                {usesTheSavingsPercent}%{" "}
+              </Typography>
             </ListItem>
-            <ListItem divider>
-              <ListItemText children="Referral Users  Price" />
-              <Typography variant="inherit"> 1 445 000 $</Typography>
-            </ListItem>
-            <ListItem divider>
-              <ListItemText children="Users List Number" />
-              <Typography variant="inherit">300</Typography>
-            </ListItem>
-            <ListItem divider>
-              <ListItemText children="Saving List Number" />
-              <Typography variant="inherit">170</Typography>
-            </ListItem>
-            <ListItem divider>
-              <ListItemText children="User All coin" />
-              <Typography variant="inherit">2 450 500 $</Typography>
+            <Divider />
+            <ListItem>
+              <ListItemText children="Amount of Savings" />
+              <Typography variant="inherit">${amountOfSavings}</Typography>
             </ListItem>
           </List>
         </DialogContent>

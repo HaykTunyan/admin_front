@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@mui/styles";
 import {
   Table,
@@ -16,6 +16,11 @@ import {
 import ReferralUserModal from "../../modal/ReferralUserModal";
 import CSVButton from "../../components/CSVButton";
 import { useSelector } from "react-redux";
+import { instance } from "../../services/api";
+import styled from "styled-components/macro";
+import { spacing } from "@material-ui/system";
+
+const Spacer = styled.div(spacing);
 
 const useStyles = makeStyles({
   rootTable: {
@@ -24,13 +29,13 @@ const useStyles = makeStyles({
 });
 
 const ReferralTable = () => {
+  // hooks.
   const classes = useStyles();
 
-  const callRow = useSelector((state) => state.referral);
+  const [referralRow, setReferralRow] = useState(null);
 
-  const rows = callRow.referralRow;
-
-  const [page, setPage] = useState(0);
+  // Pagination
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event, newPage) => {
@@ -39,8 +44,32 @@ const ReferralTable = () => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(1);
   };
+
+  const getReferrals = () => {
+    return instance
+      .get("/admin/referral/user/all", {
+        params: {
+          limit: null,
+          page: null,
+        },
+      })
+      .then((data) => {
+        setReferralRow(data.data);
+        return data;
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    getReferrals();
+  }, []);
+
+  console.log("referralRow", referralRow);
 
   return (
     <>
@@ -51,48 +80,79 @@ const ReferralTable = () => {
               <Table aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>Users Name</TableCell>
+                    <TableCell>User</TableCell>
                     <TableCell align="center">URL link</TableCell>
-                    <TableCell align="center">Register Users</TableCell>
+                    <TableCell align="center">Registered Users</TableCell>
                     <TableCell align="center">Started using</TableCell>
-                    <TableCell align="center">Big Coin/Price</TableCell>
-                    <TableCell align="center">
-                      All Coint/Price Friends{" "}
-                    </TableCell>
+                    <TableCell align="center">Total Recived </TableCell>
+                    <TableCell align="center">Total Balance</TableCell>
                     <TableCell align="center">Action </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <TableRow
-                        key={row.key}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {row.name}
-                        </TableCell>
-                        <TableCell align="center">{row.link}</TableCell>
-                        <TableCell align="center">{row.reg_user}</TableCell>
-                        <TableCell align="center">{row.imp_user}</TableCell>
-                        <TableCell align="center">{row.big_price}</TableCell>
-                        <TableCell align="center">{row.all_coin}</TableCell>
+                  {referralRow?.referrals &&
+                    referralRow?.referrals
+                      // .slice(
+                      //   page * rowsPerPage,
+                      //   page * rowsPerPage + rowsPerPage
+                      // )
+                      .map((item) => (
+                        <TableRow
+                          key={item.id}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
+                        >
+                          <TableCell component="th" scope="row">
+                            {item.userFullName}
+                            <Spacer mx={2} />
+                            <span> {item.userEmail} </span>
+                          </TableCell>
+                          <TableCell align="center">
+                            <span>https://bein.demka.online/</span>
+                            <Spacer mx={2} />
+                            <span>{item.referralCode}</span>
+                          </TableCell>
+                          <TableCell align="center">
+                            {item.registersCount}
+                          </TableCell>
+                          <TableCell align="center">
+                            {item.usesTheSystemUser}
+                          </TableCell>
+                          <TableCell align="center">
+                            {item.total_received}
+                          </TableCell>
+                          <TableCell align="center">
+                            {item.total_balance}
+                          </TableCell>
 
-                        <TableCell padding="none" align="center">
-                          <ReferralUserModal />
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                          <TableCell padding="none" align="center">
+                            <ReferralUserModal
+                              id={item.id}
+                              totalReceived={item.total_received}
+                              detaild={item.detailed}
+                              detailedReceived={item.detailed_received}
+                              walletsFriends={item.total_balance}
+                              usesTheSistem={item.usesTheSystemUser}
+                              usesTheSystemPercent={
+                                item.usesTheSystemUserPercent
+                              }
+                              usesTheSavings={item.usesTheSavingsUser}
+                              usesTheSavingsPercent={
+                                item.usesTheSavingsUserPercent
+                              }
+                              amountOfSavings={item.total_savings}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
                 </TableBody>
               </Table>
               {/* Pagination */}
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={rows.length}
+                count={referralRow?.allCount}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -109,7 +169,7 @@ const ReferralTable = () => {
             <Typography variant="subtitle1" color="inherit" component="div">
               Export Data
             </Typography>
-            <CSVButton data={rows} />
+            {/* <CSVButton data={referralRow?.referrals} /> */}
           </Box>
         </Grid>
       </Grid>

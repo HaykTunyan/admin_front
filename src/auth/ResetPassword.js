@@ -13,11 +13,12 @@ import {
   Typography,
 } from "@material-ui/core";
 import useAuth from "../hooks/useAuth";
-import { ReactComponent as Logo } from "../assets/svg/logo.svg";
+import { ReactComponent as Logo } from "../assets/svg/logo_main.svg";
 
 // Spacing.
 const Alert = styled(MuiAlert)(spacing);
 const TextField = styled(MuiTextField)(spacing);
+const Spacer = styled.div(spacing);
 
 // Custom Style.
 const Brand = styled(Logo)`
@@ -107,6 +108,7 @@ const ResetPassword = () => {
                 onChange={handleChange}
                 my={3}
               />
+              <Spacer my={4} />
               <Button
                 type="submit"
                 fullWidth

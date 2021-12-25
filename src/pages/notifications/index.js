@@ -69,29 +69,29 @@ const Notifications = () => {
             <AddNotificationModal />
           </Grid>
           <Divider my={5} />
-
-          {notifList.map((item) => (
-            <Box my={3}>
-              <Card
-                variant="outlined"
-                sx={{
-                  width: "400px",
-                  height: "80px",
-                }}
-              >
-                <CardContent my={3}>
-                  <CardActions sx={{ justifyContent: "space-between" }}>
-                    <Typography variant="h5" component="h2">
-                      {item.title}
-                    </Typography>
-                    <Box sx={{ alignSelf: "flex-end" }}>
-                      <SendNotificationModal item={item} />
-                    </Box>
-                  </CardActions>
-                </CardContent>
-              </Card>
-            </Box>
-          ))}
+          <Grid container spacing={5}>
+            {notifList.map((item) => (
+              <Grid item md={4} mb={1}>
+                <Card
+                  variant="outlined"
+                  sx={{
+                    height: "80px",
+                  }}
+                >
+                  <CardContent my={3}>
+                    <CardActions sx={{ justifyContent: "space-between" }}>
+                      <Typography variant="h5" component="h2">
+                        {item.title}
+                      </Typography>
+                      <Box sx={{ alignSelf: "flex-end" }}>
+                        <SendNotificationModal item={item} />
+                      </Box>
+                    </CardActions>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
         </Grid>
       </Grid>
     </Fragment>

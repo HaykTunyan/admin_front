@@ -43,6 +43,7 @@ const addAffilateValidation = Yup.object().shape({
 });
 
 const AddAffiliateUser = () => {
+  // hooks.
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const [state, setState] = useState({
