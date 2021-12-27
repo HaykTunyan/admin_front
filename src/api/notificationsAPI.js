@@ -2,7 +2,7 @@ import { instance } from "../services/api";
 
 export const getNotifTemplates_req = async () => {
   const response = await instance.get(
-    `/admin/notification-templates/all?page=1&limit=10`
+    `/admin/notification-templates/all?page=1&limit=50`
   );
   return response.data;
 };

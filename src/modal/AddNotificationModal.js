@@ -16,7 +16,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { createNotifTemplate_req } from "../api/notificationsAPI";
 
-const AddNotificationModal = () => {
+const AddNotificationModal = ({ getTemplates }) => {
   const [open, setOpen] = useState(false);
   const [initialValues, setInitialValues] = useState({
     title: "",
@@ -46,6 +46,7 @@ const AddNotificationModal = () => {
       if (response) {
         console.log("CREATING NOTIF TEMPLATE RESPONSE ==>", response);
         setOpen(false);
+        getTemplates();
       }
     } catch (e) {
       console.log("CREATING NOTIF TEMPLATE ERROR ==>", e.response);

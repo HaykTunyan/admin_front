@@ -120,6 +120,7 @@ const NewsComponent = () => {
       const response = await deleteNews_req(id);
       if (response) {
         console.log("NEWS DELETED RESPONSE ==>", response);
+        getNews();
       }
     } catch (e) {
       console.log("NEWS DELETED ERROR ==>", e.response);
@@ -137,6 +138,7 @@ const NewsComponent = () => {
       const response = await publishNews_req(formData);
       if (response) {
         console.log("NEWS PUBLISHED RESPONSE ==>", response);
+        getNews();
       }
     } catch (e) {
       console.log("NEWS PUBLISHED ERROR ==>", e.response);
@@ -179,7 +181,7 @@ const NewsComponent = () => {
                   </Search>
                 </Grid>
                 <Grid display="flex" alignItems="center">
-                  <AddNewsModal />
+                  <AddNewsModal getNews={getNews} />
                 </Grid>
               </Grid>
             </CardContent>
@@ -202,6 +204,7 @@ const NewsComponent = () => {
               status={item.status}
               onClickDelete={() => deleteNews(item._id)}
               onClickPublish={() => publishNews(item._id)}
+              getNews={getNews}
             />
           </Grid>
         ))}

@@ -127,7 +127,7 @@ const Exchange = ({ rowExchange }) => {
           <Table aria-label="simple table" mt={6}>
             <TableHead>
               <TableRow>
-                <TableCell>&#35;</TableCell>
+                <TableCell>ID</TableCell>
                 <TableCell align="center">Send Coin</TableCell>
                 <TableCell align="center">Receive Coin</TableCell>
                 <TableCell align="center">Amount</TableCell>

@@ -35,7 +35,7 @@ const NotVerifiedTable = () => {
   // hooks.
   const classes = useStyles();
   const [rowVerified, setRowVerified] = useState([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const rows = rowVerified?.kyc;
 
@@ -45,7 +45,7 @@ const NotVerifiedTable = () => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(1);
   };
 
   const getKyc = () => {
@@ -53,7 +53,7 @@ const NotVerifiedTable = () => {
       .get("/admin/kyc/all", {
         params: {
           limit: null,
-          page: page,
+          page: 1,
           type: 1,
         },
       })

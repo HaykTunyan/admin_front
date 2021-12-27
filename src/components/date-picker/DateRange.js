@@ -4,20 +4,14 @@ import { DateRangePicker } from "@material-ui/lab";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 
-const DateRange = () => {
-  const [value, setValue] = useState([null, null]);
-
-  const onChangeTime = (newValue) => {
-    setValue(newValue);
-  };
-
+const DateRange = ({ value, onChange }) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DateRangePicker
         startText="Min Date"
         endText="Max Date"
         value={value}
-        onChange={onChangeTime}
+        onChange={onChange}
         renderInput={(startProps, endProps) => (
           <Fragment>
             <TextField {...startProps} />

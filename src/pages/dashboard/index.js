@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
 import {
@@ -23,6 +23,8 @@ import SendTab from "./SendTab";
 import ExchnageTab from "./ExchnageTab";
 import SavingTab from "./SavingTab";
 import { DollarSign, User } from "react-feather";
+import { getTotalAmounts_req } from "../../api/dashboardAPI";
+import moment from "moment";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
@@ -32,6 +34,10 @@ const Card = styled(MuiCard)(spacing);
 const DashboardPage = () => {
   // Hooks
   const [panel, setPanel] = useState("1");
+  const [value, setValue] = useState([null, null]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [totalAmounts, setTotalAmounts] = useState({});
 
   const totlalDashboard = useSelector((state) => state.dashboard);
   const rowReceive = totlalDashboard.rowReceive;
@@ -42,9 +48,33 @@ const DashboardPage = () => {
   const rowLocked = totlalDashboard.rowLocked;
   const rowFlexible = totlalDashboard.rowFlexible;
 
+  const onChangeTime = (newValue) => {
+    setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));
+    setEndDate(moment(newValue[1]).format("YYYY-MM-DD"));
+    setValue(newValue);
+  };
+
+  console.log("START DATE ==>", startDate, "END DATE ==>", endDate);
+
   const handleChange = (event, newPanel) => {
     setPanel(newPanel);
   };
+
+  async function getTotalAmounts() {
+    try {
+      const response = await getTotalAmounts_req();
+      if (response) {
+        console.log("GET TOTAL AMOUNTS RESPONSE ==>", response);
+        setTotalAmounts(response);
+      }
+    } catch (e) {
+      console.log("GET TOTAL AMOUNTS ERROR ==>", e.response);
+    }
+  }
+
+  useEffect(() => {
+    getTotalAmounts();
+  }, []);
 
   return (
     <Fragment>
@@ -60,7 +90,7 @@ const DashboardPage = () => {
       <Grid container justifyContent="space-between">
         <Card mb={6}>
           <CardContent flex>
-            <DateRange />
+            <DateRange value={value} onChange={onChangeTime} />
           </CardContent>
         </Card>
       </Grid>
@@ -79,7 +109,9 @@ const DashboardPage = () => {
                     label={
                       <Box flex width="100%">
                         <Box display="flex" justifyContent="space-around">
-                          <Typography fontWeight="bold">32 000 000</Typography>
+                          <Typography fontWeight="bold">
+                            {totalAmounts.totalUsers}
+                          </Typography>
                           <User size={22} />
                         </Box>
                         <Divider my={2} />
@@ -94,7 +126,9 @@ const DashboardPage = () => {
                     label={
                       <Box flex width="100%">
                         <Box display="flex" justifyContent="space-around">
-                          <Typography fontWeight="bold">12 200 000</Typography>
+                          <Typography fontWeight="bold">
+                            {totalAmounts.totalBalance}
+                          </Typography>
                           <DollarSign small={22} />
                         </Box>
                         <Divider my={2} />
@@ -109,7 +143,9 @@ const DashboardPage = () => {
                     label={
                       <Box flex width="100%">
                         <Box display="flex" justifyContent="space-around">
-                          <Typography fontWeight="bold">9 150 000</Typography>
+                          <Typography fontWeight="bold">
+                            {totalAmounts.totalReceive}
+                          </Typography>
                           <DollarSign small={22} />
                         </Box>
 
@@ -125,7 +161,9 @@ const DashboardPage = () => {
                     label={
                       <Box flex width="100%">
                         <Box display="flex" justifyContent="space-around">
-                          <Typography fontWeight="bold">16 200 000</Typography>
+                          <Typography fontWeight="bold">
+                            {totalAmounts.totalSend}
+                          </Typography>
                           <DollarSign small={22} />
                         </Box>
                         <Divider my={2} />
@@ -140,7 +178,9 @@ const DashboardPage = () => {
                     label={
                       <Box flex width="100%">
                         <Box display="flex" justifyContent="space-around">
-                          <Typography fontWeight="bold">40 000</Typography>
+                          <Typography fontWeight="bold">
+                            {totalAmounts.totalSwap}
+                          </Typography>
                           <DollarSign small={22} />
                         </Box>
 
@@ -156,7 +196,9 @@ const DashboardPage = () => {
                     label={
                       <Box flex width="100%">
                         <Box display="flex" justifyContent="space-around">
-                          <Typography fontWeight="bold">250 000</Typography>
+                          <Typography fontWeight="bold">
+                            {totalAmounts.savingBalance}
+                          </Typography>
                           <DollarSign small={22} />
                         </Box>
                         <Divider my={2} />
@@ -171,37 +213,62 @@ const DashboardPage = () => {
               {/* Panel One */}
               <TabPanel value="1">
                 <Grid item xs={12}>
-                  <TotalUsers rowUsers={rowUsers} />
+                  <TotalUsers
+                    rowUsers={rowUsers}
+                    startDate={startDate}
+                    endDate={endDate}
+                  />
                 </Grid>
               </TabPanel>
               {/* Panel Two */}
               <TabPanel value="2">
                 <Grid item xs={12}>
-                  <CurrentTab rowBalance={rowBalance} />
+                  <CurrentTab
+                    rowBalance={rowBalance}
+                    startDate={startDate}
+                    endDate={endDate}
+                  />
                 </Grid>
               </TabPanel>
               {/* Panel Three */}
               <TabPanel value="3">
                 <Grid item xs={12}>
-                  <ReceiveTab rowReceive={rowReceive} />
+                  <ReceiveTab
+                    rowReceive={rowReceive}
+                    startDate={startDate}
+                    endDate={endDate}
+                  />
                 </Grid>
               </TabPanel>
               {/* Panel Four */}
               <TabPanel value="4">
                 <Grid item xs={12}>
-                  <SendTab rowSend={rowSend} />
+                  <SendTab
+                    rowSend={rowSend}
+                    startDate={startDate}
+                    endDate={endDate}
+                  />
                 </Grid>
               </TabPanel>
               {/* Panel Five */}
               <TabPanel value="5">
                 <Grid item xs={12}>
-                  <ExchnageTab rowExchange={rowExchange} />
+                  <ExchnageTab
+                    rowExchange={rowExchange}
+                    startDate={startDate}
+                    endDate={endDate}
+                  />
                 </Grid>
               </TabPanel>
               {/* Panel Six */}
               <TabPanel value="6">
                 <Grid item xs={12}>
-                  <SavingTab rowLocked={rowLocked} rowFlexible={rowFlexible} />
+                  <SavingTab
+                    rowLocked={rowLocked}
+                    rowFlexible={rowFlexible}
+                    startDate={startDate}
+                    endDate={endDate}
+                  />
                 </Grid>
               </TabPanel>
             </TabContext>

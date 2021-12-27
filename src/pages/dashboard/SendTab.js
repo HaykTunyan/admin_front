@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import {
   Typography as MuiTypography,
@@ -20,6 +20,7 @@ import CSVButton from "../../components/CSVButton";
 import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { darken } from "polished";
+import { getDashboardSend_req } from "../../api/dashboardAPI";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -70,10 +71,12 @@ const SearchIconWrapper = styled.div`
   }
 `;
 
-const SendTab = ({ rowSend }) => {
+const SendTab = ({ rowSend, startDate, endDate }) => {
+  const { t } = useTranslation();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { t } = useTranslation();
+  const [send, setSend] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -83,6 +86,22 @@ const SendTab = ({ rowSend }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  async function getSend() {
+    try {
+      const response = await getDashboardSend_req(startDate, endDate);
+      if (response) {
+        console.log("GET SEND RESPONSE ==>", response);
+        setSend(response.result);
+      }
+    } catch (e) {
+      console.log("GET SEND ERROR ==>", e.response);
+    }
+  }
+
+  useEffect(() => {
+    getSend();
+  }, []);
 
   return (
     <Fragment>
@@ -107,33 +126,32 @@ const SendTab = ({ rowSend }) => {
               </TableCell>
               <TableCell align="center">
                 <Typography variant="h6" gutterBottom>
-                  Send Coin <span> &#x20BF;</span>
+                  Sent Balance
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography variant="h6" gutterBottom>
-                  Send Coin <span> &#36;</span>
+                  Sent Amount
                 </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rowSend
+            {send
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row.coin_id}
                   sx={{
                     "&:last-child td, &:last-child th": {
                       border: 0,
                     },
                   }}
                 >
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell align="center">{row.name}</TableCell>
+                  <TableCell>{`${row.name}`}</TableCell>
+                  <TableCell align="center">{`${row.total_balance} ${row.coin}`}</TableCell>
                   <TableCell align="right">
-                    {row.balance_coin}
-                    <span> &#36;</span>
+                    {`$${row.total_balance_usd}`}
                   </TableCell>
                 </TableRow>
               ))}

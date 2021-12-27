@@ -42,7 +42,7 @@ const PandingTable = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [panding, setPanding] = useState([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const rows = panding?.kyc;
   const [errorMes, setErrorMes] = useState([]);
@@ -53,7 +53,7 @@ const PandingTable = () => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(1);
   };
 
   //   get Savings.
@@ -62,7 +62,7 @@ const PandingTable = () => {
       .get("/admin/kyc/all", {
         params: {
           limit: null,
-          page: page,
+          page: 1,
           type: 3,
         },
       })

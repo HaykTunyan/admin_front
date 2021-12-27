@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useLayoutEffect } from "react";
 
 import { AuthContext } from "../contexts/JWTContext";
 // import { AuthContext } from "../contexts/FirebaseAuthContext";

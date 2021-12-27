@@ -93,7 +93,7 @@ const SavingsTable = () => {
   const classes = useStyles();
   const [savings, setSavings] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [coinAll, setCoinAll] = useState("");
   const [depositType, setDepositeType] = useState("");
   const [transactionType, setTransactionType] = useState("");
@@ -112,22 +112,23 @@ const SavingsTable = () => {
   };
 
   const handleChangePage = (event, newPage) => {
+    getSavings(newPage + 1);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(1);
   };
 
   // get Savings.
-  const getSavings = () => {
+  const getSavings = (page, rowsPerPage) => {
     return instance
       .get("/admin/transaction/all", {
         params: {
-          limit: null,
-          page: 1,
-          type: "Savings",
+          limit: rowsPerPage,
+          page: page,
+          type: "savings",
         },
       })
       .then((data) => {
@@ -242,7 +243,7 @@ const SavingsTable = () => {
             <TableBody>
               {rows &&
                 rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <TableRow
                       key={row.key}
@@ -273,10 +274,10 @@ const SavingsTable = () => {
           </Table>
           {/* Pagination */}
           <TablePagination
-            rowsPerPageOptions={[5, 10, 20]}
+            rowsPerPageOptions={[10]}
             component="div"
-            count={rows?.length}
-            rowsPerPage={rowsPerPage}
+            count={savings?.transactionsCount}
+            rowsPerPage={savings?.limit}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}

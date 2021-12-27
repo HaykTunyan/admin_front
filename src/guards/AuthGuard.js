@@ -6,11 +6,33 @@ import useAuth from "../hooks/useAuth";
 function AuthGuard({ children }) {
   const { isAuthenticated } = useAuth();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/auth/sign-in" />;
-  }
+  const accessToken = localStorage.getItem("accessToken");
 
-  return <Fragment>{children}</Fragment>;
+  return <>{!accessToken ? children : <Navigate to="/dashboard" />}</>;
+
+  // if (!accessToken) {
+  //   return <Navigate to="/auth/sign-in" />;
+  // }
+
+  // return <Fragment>{children}</Fragment>;
 }
+
+// export const getIsAuthDefaultValue = () => {
+//   try {
+//     const access = LocalStorageHelper.getItem(ACCESS);
+//     return !!(access && access.expiresIn && access.expiresIn > Date.now());
+//   } catch (error) {
+//     return false;
+//   }
+// };
+
+// const IsNotAuthLayer = observer(({ children }) => {
+//   const { isAuth } = authStore;
+//   return (
+//     <>
+//       {!isAuth ? children : <Redirect to={defaultPath}/>}
+//     </>
+//   );
+// });
 
 export default AuthGuard;

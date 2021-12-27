@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import {
   Typography as MuiTypography,
@@ -20,6 +20,7 @@ import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { darken } from "polished";
 import CSVButton from "../../components/CSVButton";
+import { getDashboardReceive_req } from "../../api/dashboardAPI";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -70,10 +71,12 @@ const SearchIconWrapper = styled.div`
   }
 `;
 
-const ReceiveTab = ({ rowReceive }) => {
+const ReceiveTab = ({ rowReceive, startDate, endDate }) => {
+  const { t } = useTranslation();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { t } = useTranslation();
+  const [receive, setReceive] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -83,6 +86,22 @@ const ReceiveTab = ({ rowReceive }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  async function getReceive() {
+    try {
+      const response = await getDashboardReceive_req(startDate, endDate);
+      if (response) {
+        console.log("GET RECEIVE RESPONSE ==>", response);
+        setReceive(response.result);
+      }
+    } catch (e) {
+      console.log("GET RECEIVE ERROR ==>", e.response);
+    }
+  }
+
+  useEffect(() => {
+    getReceive();
+  }, []);
 
   return (
     <Fragment>
@@ -107,37 +126,34 @@ const ReceiveTab = ({ rowReceive }) => {
               </TableCell>
               <TableCell align="center">
                 <Typography variant="h6" gutterBottom>
-                  Received Coin
-                  <span> &#x20BF;</span>
+                  Received Balance
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography variant="h6" gutterBottom>
-                  Received Coin
-                  <span> &#36;</span>
+                  Received Amount
                 </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rowReceive
+            {receive
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row.coin_id}
                   sx={{
                     "&:last-child td, &:last-child th": {
                       border: 0,
                     },
                   }}
                 >
-                  <TableCell>{row.name}</TableCell>
+                  <TableCell>{`${row.name}`}</TableCell>
                   <TableCell align="center">
-                    {row.receive_bit}
-                    <span> &#x20BF;</span>
+                    {`${row.total_balance} ${row.coin}`}
                   </TableCell>
                   <TableCell align="right">
-                    {row.receive_send} <span>&#36;</span>
+                    {`$${row.total_balance_usd}`}
                   </TableCell>
                 </TableRow>
               ))}

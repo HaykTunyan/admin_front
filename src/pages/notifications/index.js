@@ -66,7 +66,7 @@ const Notifications = () => {
       <Grid container spasing={6}>
         <Grid item xs={12}>
           <Grid display="flex" justifyContent="end" spacing={6}>
-            <AddNotificationModal />
+            <AddNotificationModal getTemplates={getNotifTemplates} />
           </Grid>
           <Divider my={5} />
           <Grid container spacing={5}>

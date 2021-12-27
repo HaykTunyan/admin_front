@@ -20,7 +20,6 @@ import { spacing } from "@material-ui/system";
 import PandingTable from "./Panding";
 import VerifiedTable from "./VerifiedTab";
 import NotVerifiedTable from "./NotVerifiedTab";
-import Loader from "../../components/Loader";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);

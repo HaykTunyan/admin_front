@@ -23,6 +23,7 @@ import {
   MenuItem,
   InputLabel,
   InputBase,
+  Pagination,
 } from "@material-ui/core";
 import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
@@ -92,12 +93,28 @@ const SwapTable = () => {
   const { t } = useTranslation();
   const classes = useStyles();
   const [swap, setSwap] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0); // page.
+  const [rowsPerPage, setRowsPerPage] = useState(10); // limit.
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [statusValue, setStatusValue] = useState("");
   const rows = swap?.transactions;
+
+  const getRequestParams = (page, pageSize) => {
+    let params = {};
+
+    if (page) {
+      params["page"] = page - 1;
+    }
+
+    if (pageSize) {
+      params["limit"] = pageSize;
+    }
+
+    return params;
+  };
+
+  // Filter Search.
 
   const handleChangeFrom = (event) => {
     setFrom(event.target.value);
@@ -107,27 +124,32 @@ const SwapTable = () => {
     setTo(event.target.value);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
   const handleStatusValue = (event) => {
     setStatusValue(event.target.value);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+  // Table Pagination.
+
+  const handleChangePage = (event, newPage) => {
+    getSwap(newPage + 1);
+    setPage(newPage);
   };
 
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(1);
+  };
+
+  // End FIlter .
+
   // get Swap.
-  const getSwap = () => {
+  const getSwap = (page, rowsPerPage) => {
     return instance
       .get("/admin/transaction/all", {
         params: {
-          limit: null,
-          page: 1,
-          type: "Swap",
+          limit: rowsPerPage,
+          page: page,
+          type: "swap",
         },
       })
       .then((data) => {
@@ -247,7 +269,7 @@ const SwapTable = () => {
             <TableBody>
               {rows &&
                 rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <TableRow
                       key={row.key}
@@ -276,14 +298,26 @@ const SwapTable = () => {
           </Table>
           {/* Pagination */}
           <TablePagination
-            rowsPerPageOptions={[5, 10, 20]}
+            rowsPerPageOptions={[10]}
             component="div"
-            count={rows?.length}
-            rowsPerPage={rowsPerPage}
+            count={swap?.transactionsCount}
+            rowsPerPage={swap?.limit}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
+          <Box my={5} display="flex" justifyContent="flex-end">
+            {/* <Pagination
+              className="my-3"
+              count={count}
+              page={page}
+              siblingCount={1}
+              boundaryCount={1}
+              variant="outlined"
+              shape="rounded"
+              // onChange={handlePageChange}
+            /> */}
+          </Box>
         </TableContainer>
       </Paper>
       {rows && (

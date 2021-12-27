@@ -33,6 +33,7 @@ const NewsCard = ({
   status,
   onClickDelete,
   onClickPublish,
+  getNews,
 }) => {
   return (
     <Fragment>
@@ -53,7 +54,7 @@ const NewsCard = ({
           </Typography>
         </CardContent>
         <CardActions>
-          <EditNewsModal news={news} />
+          <EditNewsModal news={news} getNews={getNews} />
           <Button size="small" color="primary" onClick={onClickDelete}>
             Delete
           </Button>

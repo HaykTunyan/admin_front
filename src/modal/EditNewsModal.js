@@ -18,7 +18,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { editNews_req } from "../api/newsAPI";
 
-const EditNewsModal = ({ news }) => {
+const EditNewsModal = ({ news, getNews }) => {
   console.log("NEWS ==>", news);
   const editorRef = useRef(null);
 
@@ -98,6 +98,7 @@ const EditNewsModal = ({ news }) => {
       if (response) {
         console.log("EDITING NEWS RESPONSE ==>", response);
         setOpen(false);
+        getNews();
       }
     } catch (e) {
       console.log("EDITING NEWS ERROR ==>", e.response);

@@ -92,8 +92,8 @@ const SendTable = () => {
   const { t } = useTranslation();
   const classes = useStyles();
   const [send, setSend] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0); // page.
+  const [rowsPerPage, setRowsPerPage] = useState(5); // limit.
   const [operationType, setOperationType] = useState("");
   const [coinAll, setCoinAll] = useState("");
   const [transactionType, setTransactionType] = useState("");
@@ -117,22 +117,23 @@ const SendTable = () => {
   };
 
   const handleChangePage = (event, newPage) => {
+    getSend(newPage + 1);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(1);
   };
 
   //  get Send/Receive
-  const getSend = () => {
+  const getSend = (page, rowsPerPage) => {
     return instance
       .get("/admin/transaction/all", {
         params: {
-          limit: null,
-          page: 1,
-          type: "Send/Receive",
+          limit: rowsPerPage,
+          page: page,
+          type: "send_receive",
         },
       })
       .then((data) => {
@@ -300,10 +301,10 @@ const SendTable = () => {
           </Table>
           {/* Pagination */}
           <TablePagination
-            rowsPerPageOptions={[5, 10, 20]}
+            rowsPerPageOptions={[10]}
             component="div"
-            count={rows?.length}
-            rowsPerPage={rowsPerPage}
+            count={send?.transactionsCount}
+            rowsPerPage={send?.limit}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}

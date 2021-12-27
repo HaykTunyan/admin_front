@@ -52,6 +52,7 @@ const MainContent = styled(Paper)`
 `;
 
 const Dashboard = ({ children }) => {
+  console.log(" children ", children);
   const [mobileOpen, setMobileOpen] = useState(false);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);

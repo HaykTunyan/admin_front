@@ -1,5 +1,4 @@
 import { createContext, useEffect, useReducer } from "react";
-
 import axios from "../utils/axios";
 import { isValidToken, setSession } from "../utils/jwt";
 
@@ -42,6 +41,19 @@ const AuthContext = createContext(null);
 
 function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(JWTReducer, initialState);
+
+  const accessToken = localStorage.getItem("accessToken");
+
+  // useLayoutEffect(() => {
+  //   try {
+  //     const accessToken  = localStorage.getItem('accessToken');
+  //     setAuth(!!accessToken)
+  //     //token
+  //   } catch (err) {
+  //     setAuth(false)
+  //     //false
+  //   }
+  // }, [])
 
   useEffect(() => {
     const initialize = async () => {
@@ -107,7 +119,6 @@ function AuthProvider({ children }) {
   };
 
   const resetPassword = (email) => console.log(email);
-
   return (
     <AuthContext.Provider
       value={{

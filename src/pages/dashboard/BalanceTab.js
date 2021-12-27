@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import {
   Typography as MuiTypography,
@@ -20,6 +20,7 @@ import CSVButton from "../../components/CSVButton";
 import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { darken } from "polished";
+import { getDashboardCoins_req } from "../../api/dashboardAPI";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -70,10 +71,12 @@ const SearchIconWrapper = styled.div`
   }
 `;
 
-const BalanceTab = ({ rowBalance }) => {
+const BalanceTab = ({ rowBalance, startDate, endDate }) => {
+  const { t } = useTranslation();
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const { t } = useTranslation();
+  const [balance, setBalance] = useState([]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -83,6 +86,22 @@ const BalanceTab = ({ rowBalance }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  async function getBalance() {
+    try {
+      const response = await getDashboardCoins_req(startDate, endDate);
+      if (response) {
+        console.log("GET BALANCE RESPONSE ==>", response);
+        setBalance(response.result);
+      }
+    } catch (e) {
+      console.log("GET BALANCE ERROR ==>", e.response);
+    }
+  }
+
+  useEffect(() => {
+    getBalance();
+  }, []);
 
   return (
     <Fragment>
@@ -108,22 +127,21 @@ const BalanceTab = ({ rowBalance }) => {
               <TableCell align="center">
                 <Typography variant="h6" gutterBottom>
                   Balance
-                  <span> &#x20BF;</span>
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography variant="h6" gutterBottom>
-                  Balance <span> &#36;</span>
+                  Amount
                 </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rowBalance
+            {balance
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row.coin_id}
                   sx={{
                     "&:last-child td, &:last-child th": {
                       border: 0,
@@ -131,17 +149,16 @@ const BalanceTab = ({ rowBalance }) => {
                   }}
                 >
                   <TableCell component="th" scope="row">
-                    <Typography gutterBottom>{row.name}</Typography>
+                    <Typography gutterBottom>{`${row.name}`}</Typography>
                   </TableCell>
 
                   <TableCell align="center">
                     <Typography gutterBottom>
-                      {row.balance_bit}
-                      <span> &#x20BF;</span>
+                      {`${row.total_balance} ${row.coin}`}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    {row.balance_coin} <span>&#36;</span>{" "}
+                    {`$${row.total_balance_usd}`}
                   </TableCell>
                 </TableRow>
               ))}

@@ -24,6 +24,7 @@ import {
 import CSVButton from "../../../components/CSVButton";
 import moment from "moment";
 import Loader from "../../../components/Loader";
+import EditAffiliateModal from "../../../modal/EditAffiliateUser";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -45,7 +46,7 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
-const UsersListTable = ({ rowUserList }) => {
+const UsersListTable = ({ rowUserList, affiliate }) => {
   // hooks
   const classes = useStyles();
   const navigate = useNavigate();
@@ -197,6 +198,14 @@ const UsersListTable = ({ rowUserList }) => {
                       <TableCell align="center">{row.currency}</TableCell>
                       <TableCell padding="none" align="right">
                         <Box mr={2}>
+                          {affiliate === true && (
+                            <EditAffiliateModal
+                              email={row.email}
+                              phone={row.phone}
+                              password={row.password}
+                              userId={row.id}
+                            />
+                          )}
                           <IconButton
                             aria-label="details"
                             size="large"

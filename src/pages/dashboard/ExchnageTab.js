@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import {
   Typography as MuiTypography,
@@ -25,6 +25,7 @@ import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { darken } from "polished";
 import MetaLineChart from "../../components/charts/MetaLineChart";
+import { getDashboardExchanges_req } from "../../api/dashboardAPI";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -76,13 +77,15 @@ const SearchIconWrapper = styled.div`
   }
 `;
 
-const ExchnageTab = ({ rowExchange }) => {
+const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
   // hooks
   const { t } = useTranslation();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+
+  const [exchanges, setExchanges] = useState([]);
 
   const handleChangeFrom = (event) => {
     setFrom(event.target.value);
@@ -100,6 +103,22 @@ const ExchnageTab = ({ rowExchange }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  async function getExchanges() {
+    try {
+      const response = await getDashboardExchanges_req(startDate, endDate);
+      if (response) {
+        console.log("GET EXCHANGE RESPONSE ==>", response);
+        setExchanges(response.result);
+      }
+    } catch (e) {
+      console.log("GET EXCHANGE ERROR ==>", e.response);
+    }
+  }
+
+  useEffect(() => {
+    getExchanges();
+  }, []);
 
   return (
     <Fragment>
@@ -156,20 +175,19 @@ const ExchnageTab = ({ rowExchange }) => {
         <Table aria-label="simple table" mt={6}>
           <TableHead>
             <TableRow>
-              <TableCell>Exchange Coin</TableCell>
+              <TableCell>Exchanged Coin</TableCell>
+              <TableCell>Received Coin</TableCell>
               <TableCell align="center">Exchange</TableCell>
-              <TableCell align="center">
-                Amount <span> &#36;</span>
-              </TableCell>
-              <TableCell align="right">Popularity of Exchange</TableCell>
+              <TableCell align="center">Amount</TableCell>
+              <TableCell align="center">Popularity of Exchange</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rowExchange
+            {exchanges
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
+              .map((row, key) => (
                 <TableRow
-                  key={row.id}
+                  key={key}
                   sx={{
                     "&:last-child td, &:last-child th": {
                       border: 0,
@@ -177,18 +195,18 @@ const ExchnageTab = ({ rowExchange }) => {
                   }}
                 >
                   <TableCell component="th" scope="row">
-                    {row.name}
+                    {`${row.coin_from_name}`}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {`${row.coin_to_name}`}
                   </TableCell>
                   <TableCell align="center">
-                    {row.receive_coin}
-                    <span> &#x20BF;</span>
+                    {`${row.exchange_amount} ${row.coin_from} - ${row.received_amount} ${row.coin_to}`}
                   </TableCell>
                   <TableCell align="center">
-                    {row.receive_coin} <span> &#36;</span>
+                    {`$${row.exchange_usd_amount} - $${row.received_usd_amount}`}
                   </TableCell>
-                  <TableCell align="right">
-                    {row.receive_bit} <span>%</span>
-                  </TableCell>
+                  <TableCell align="center">{`${row.popularity}%`}</TableCell>
                 </TableRow>
               ))}
           </TableBody>

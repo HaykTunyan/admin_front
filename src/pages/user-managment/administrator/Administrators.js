@@ -89,21 +89,26 @@ const Administrators = () => {
   const { t } = useTranslation();
   const [rowAdmin, getRowAdmin] = useState(null);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event, newPage) => {
+    getAdminUsers(newPage + 1);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(1);
   };
 
   // Get Admins.
-  const getAdminUsers = () => {
+  const getAdminUsers = (page, rowsPerPage) => {
     return instance
-      .get("/admin/all", { mode: "no-cors" })
+      .get("/admin/all", {
+        mode: "no-cors",
+        limit: rowsPerPage,
+        page: page,
+      })
       .then((data) => {
         getRowAdmin(data.data);
         return data;
@@ -168,10 +173,10 @@ const Administrators = () => {
                       <TableBody>
                         {rowAdmin?.admins &&
                           rowAdmin?.admins
-                            .slice(
-                              page * rowsPerPage,
-                              page * rowsPerPage + rowsPerPage
-                            )
+                            // .slice(
+                            //   page * rowsPerPage,
+                            //   page * rowsPerPage + rowsPerPage
+                            // )
                             .map((row) => (
                               <TableRow key={row.id}>
                                 <TableCell component="th" scope="row">
@@ -202,8 +207,8 @@ const Administrators = () => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={rowAdmin?.admins.length}
-                rowsPerPage={rowsPerPage}
+                count={rowAdmin?.allCount}
+                rowsPerPage={rowAdmin?.limit}
                 page={page}
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}

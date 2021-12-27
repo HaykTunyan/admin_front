@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import {
@@ -31,6 +31,7 @@ import CSVButton from "../../components/CSVButton";
 import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { darken } from "polished";
+import { getDashboardSavings_req } from "../../api/dashboardAPI";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -92,10 +93,10 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
-const SavingTab = ({ rowLocked, rowFlexible }) => {
+const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
   // hooks.
   const { t } = useTranslation();
-  const [panel, setPanel] = useState("1");
+  const [panel, setPanel] = useState(1);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   // Locked Pages.
@@ -104,6 +105,8 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
   // Flexible.
   const [pageFlexible, setFlexiblePage] = useState(0);
   const [rowsFlexiblePage, setRowsFlexiblePage] = useState(5);
+
+  const [savings, setSavings] = useState([]);
 
   const handleChangeFrom = (event) => {
     setFrom(event.target.value);
@@ -114,7 +117,9 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
   };
 
   const handleChangePanel = (event, newPanel) => {
+    console.log("NEW PANEL ==>", newPanel);
     setPanel(newPanel);
+    getSavings(newPanel === 1 ? "locked" : "flexible");
   };
 
   // Locked Pagination.
@@ -137,6 +142,23 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
     setFlexiblePage(0);
   };
 
+  async function getSavings(type) {
+    console.log("TYPE ==>", type);
+    try {
+      const response = await getDashboardSavings_req(type, startDate, endDate);
+      if (response) {
+        console.log("GET SAVINGS RESPONSE ==>", response);
+        setSavings(response.result);
+      }
+    } catch (e) {
+      console.log("GET SAVINGS ERROR ==>", e.response);
+    }
+  }
+
+  useEffect(() => {
+    getSavings("locked");
+  }, []);
+
   return (
     <Fragment>
       <Card mb={6}>
@@ -148,11 +170,11 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
                   onChange={handleChangePanel}
                   aria-label="lab API tabs example"
                 >
-                  <Tab label="Locked" value="1" />
-                  <Tab label="Flexible" value="2" />
+                  <Tab label="Locked" value={1} />
+                  <Tab label="Flexible" value={2} />
                 </TabList>
               </Box>
-              <TabPanel value="1">
+              <TabPanel value={panel}>
                 <TableContainer component={Paper}>
                   <Toolbar alignItems="center">
                     <Grid item md={3}>
@@ -179,8 +201,10 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
                           label="From"
                         >
                           <MenuItem value="all">All</MenuItem>
-                          <MenuItem value={10}>Active </MenuItem>
-                          <MenuItem value={20}>In Active</MenuItem>
+                          <MenuItem value={10}>Active</MenuItem>
+                          <MenuItem value={20}>
+                            {panel === 1 ? "Closed" : "Redeemed"}
+                          </MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
@@ -195,20 +219,20 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
                         </TableCell>
                         <TableCell align="center">
                           <Typography variant="h6" gutterBottom>
+                            Balance
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Typography variant="h6" gutterBottom>
                             Amount
                           </Typography>
                         </TableCell>
                         <TableCell align="center">
                           <Typography variant="h6" gutterBottom>
-                            Coin
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="right">
-                          <Typography variant="h6" gutterBottom>
                             Status
                           </Typography>
                         </TableCell>
-                        <TableCell align="right">
+                        <TableCell align="center">
                           <Typography variant="h6" gutterBottom>
                             Popularity
                           </Typography>
@@ -216,14 +240,14 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rowLocked
+                      {savings
                         .slice(
                           pageLocked * rowsLockedPage,
                           pageLocked * rowsLockedPage + rowsLockedPage
                         )
                         .map((row) => (
                           <TableRow
-                            key={row.id}
+                            key={row.coin_id}
                             sx={{
                               "&:last-child td, &:last-child th": {
                                 border: 0,
@@ -231,27 +255,23 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
                             }}
                           >
                             <TableCell component="th" scope="row">
-                              {row.coin_name}
-                              <span> &#x20BF;</span>
+                              {row.name}
                             </TableCell>
                             <TableCell align="center">
-                              {row.coin}
-                              <span> &#x20BF;</span>
+                              {`${row.total_balance} ${row.coin}`}
                             </TableCell>
                             <TableCell align="center">
-                              {row.bonus}
-                              <span>&#8364;</span>
+                              {`$${row.total_balance_usd}`}
                             </TableCell>
-                            <TableCell align="right">
+                            <TableCell align="center">
                               {row.status === "active" ? (
                                 <Chip label="Active" color="success" />
                               ) : (
                                 <Chip label="Completed" color="primary" />
                               )}
                             </TableCell>
-                            <TableCell align="right">
-                              {row.coin}
-                              <span>%</span>
+                            <TableCell align="center">
+                              {`${row.popularity}%`}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -281,138 +301,6 @@ const SavingTab = ({ rowLocked, rowFlexible }) => {
                     Export Data
                   </Typography>
                   <CSVButton data={rowLocked} />
-                </Box>
-              </TabPanel>
-              <TabPanel value="2">
-                <TableContainer component={Paper}>
-                  <Toolbar>
-                    <Grid item md={3}>
-                      <Search>
-                        <SearchIconWrapper>
-                          <SearchIcon />
-                        </SearchIconWrapper>
-                        <Input placeholder={t("Search")} />
-                      </Search>
-                    </Grid>
-                    <Spacer mx={5} />
-                    <Grid item md={1}>
-                      <FormControl
-                        fullWidth
-                        variant="standard"
-                        sx={{ minWidth: 120 }}
-                      >
-                        <InputLabel id="select-from-label">Status</InputLabel>
-                        <Select
-                          labelId="select-from-label"
-                          id="select-from-label"
-                          value={from}
-                          onChange={handleChangeFrom}
-                          label="From"
-                        >
-                          <MenuItem value="all">
-                            <em> All</em>
-                          </MenuItem>
-                          <MenuItem value={10}>Active</MenuItem>
-                          <MenuItem value={20}>In Active</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                  </Toolbar>
-                  <Table aria-label="simple table" mt={6}>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell align="">
-                          <Typography variant="h6" gutterBottom>
-                            Coin Name
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Typography variant="h6" gutterBottom>
-                            Amount
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Typography variant="h6" gutterBottom>
-                            Coin
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Typography variant="h6" gutterBottom>
-                            Status
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="right">
-                          <Typography variant="h6" gutterBottom>
-                            Popularity
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rowFlexible
-                        .slice(
-                          pageFlexible * rowsFlexiblePage,
-                          pageFlexible * rowsFlexiblePage + rowsFlexiblePage
-                        )
-                        .map((row) => (
-                          <TableRow
-                            key={row.id}
-                            sx={{
-                              "&:last-child td, &:last-child th": {
-                                border: 0,
-                              },
-                            }}
-                          >
-                            <TableCell component="th" scope="row">
-                              {row.coin_name}
-                              <span> &#x20BF;</span>
-                            </TableCell>
-                            <TableCell align="center">
-                              {row.min_amount}
-                            </TableCell>
-                            <TableCell align="center">
-                              {row.coin}
-                              <span> &#x20BF;</span>
-                            </TableCell>
-                            <TableCell align="center">
-                              {row.status === "active" ? (
-                                <Chip label="Active" color="success" />
-                              ) : (
-                                <Chip label="Completed" color="primary" />
-                              )}
-                            </TableCell>
-                            <TableCell align="right">
-                              {row.coin}
-                              <span> %</span>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                  <TablePagination
-                    rowsPerPageOptions={[5, 10, 20]}
-                    component="div"
-                    count={rowFlexible.length}
-                    rowsPerPage={rowsFlexiblePage}
-                    page={pageFlexible}
-                    onPageChange={handleFlexiblePage}
-                    onRowsPerPageChange={handleRowsFlexiblePage}
-                  />
-                </TableContainer>
-                <Box
-                  mt={8}
-                  display="flex"
-                  justifyContent="flex-end"
-                  alignItems="center"
-                >
-                  <Typography
-                    variant="subtitle1"
-                    color="inherit"
-                    component="div"
-                  >
-                    Export Data
-                  </Typography>
-                  <CSVButton data={rowFlexible} />
                 </Box>
               </TabPanel>
             </TabContext>

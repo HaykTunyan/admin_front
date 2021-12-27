@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components/macro";
 import {
   Typography as MuiTypography,
@@ -11,11 +11,29 @@ import {
   Table,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
+import { getDashboardUsers_req } from "../../api/dashboardAPI";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
 
-const TotalUsers = ({ rowUsers }) => {
+const TotalUsers = ({ startDate, endDate }) => {
+  const [totalUsers, setTotalUsers] = useState({});
+
+  async function getTotalUsers() {
+    try {
+      const response = await getDashboardUsers_req(startDate, endDate);
+      if (response) {
+        console.log("GET TOTAL USERS RESPONSE ==>", response);
+        setTotalUsers(response);
+      }
+    } catch (e) {
+      console.log("GET TOTAL USERS ERROR ==>", e.response);
+    }
+  }
+
+  useEffect(() => {
+    getTotalUsers();
+  }, []);
   return (
     <Fragment>
       <TableContainer component={Paper}>
@@ -49,7 +67,7 @@ const TotalUsers = ({ rowUsers }) => {
               </TableCell>
               <TableCell align="center">
                 <Typography variant="inherit" gutterBottom>
-                  10 000 000
+                  {totalUsers.totalUsersCount}
                 </Typography>
               </TableCell>
             </TableRow>
@@ -67,7 +85,7 @@ const TotalUsers = ({ rowUsers }) => {
               </TableCell>
               <TableCell align="center">
                 <Typography variant="inherit" gutterBottom>
-                  8 000 000
+                  {totalUsers.verifiedUsersCount}
                 </Typography>
               </TableCell>
             </TableRow>
@@ -85,34 +103,10 @@ const TotalUsers = ({ rowUsers }) => {
               </TableCell>
               <TableCell align="center">
                 <Typography variant="inherit" gutterBottom>
-                  2 000 000
+                  {totalUsers.unVerifiedUsersCount}
                 </Typography>
               </TableCell>
             </TableRow>
-            {/* {rowUsers.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{
-                  "&:last-child td, &:last-child th": {
-                    border: 0,
-                  },
-                }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.id}
-                </TableCell>
-                <TableCell align="center">
-                  <Typography variant="inherit" gutterBottom>
-                    {row.name}
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="inherit" gutterBottom>
-                    {row.value}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            ))} */}
           </TableBody>
         </Table>
       </TableContainer>

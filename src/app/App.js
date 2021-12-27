@@ -1,5 +1,5 @@
-import React from "react";
-import { useRoutes } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, useRoutes } from "react-router-dom";
 import { Provider } from "react-redux";
 import { HelmetProvider } from "react-helmet-async";
 import { create } from "jss";
@@ -25,6 +25,16 @@ const jss = create({
 function App() {
   const content = useRoutes(routes);
   const { theme } = useTheme();
+  const navigate = useNavigate();
+  const [token, getToken] = useState();
+  const userSuccess = localStorage.getItem("accessToken");
+  console.log("userSuccess", userSuccess);
+
+  // if (userSuccess) {
+  //   navigate("/dashboard");
+  // }
+
+  console.log(" content ", content);
 
   return (
     <HelmetProvider>

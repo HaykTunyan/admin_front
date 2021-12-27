@@ -69,15 +69,20 @@ const Input = styled(InputBase)`
   }
 `;
 
-const UsersList = () => {
+const UsersList = ({ affiliate }) => {
+  console.log("Affiliate==>", affiliate);
   // hooks
   const { t } = useTranslation();
   const [rowUserList, setRowUserList] = useState([]);
 
   const getUserList_req = () => {
     return instance
-      .get("/admin/user/all", { mode: "no-cors" })
+      .get("/admin/user/all", {
+        mode: "no-cors",
+        params: { isAffiliate: affiliate },
+      })
       .then((data) => {
+        console.log("DATA of USERS ==>", data);
         setRowUserList(data.data);
         return data;
       })
@@ -86,9 +91,10 @@ const UsersList = () => {
       })
       .finally(() => {});
   };
+
   useEffect(() => {
     getUserList_req();
-  }, []);
+  }, [affiliate]);
 
   if (!rowUserList?.users) {
     return <Loader />;
@@ -125,7 +131,7 @@ const UsersList = () => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           {rowUserList ? (
-            <UsersListTable rowUserList={rowUserList} />
+            <UsersListTable rowUserList={rowUserList} affiliate={affiliate} />
           ) : (
             <Loader />
           )}

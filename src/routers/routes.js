@@ -18,16 +18,16 @@ import ProtectedPage from "../pages/protected/ProtectedPage";
 import NewsComponent from "../pages/news";
 import UsersList from "../pages/user-managment/users-pages/UsersList";
 import UserView from "../pages/user-managment/users-pages/UserView";
-import AffiliateUsers from "../pages/user-managment/users-pages/AffiliateUsers";
 import Transaction from "../pages/transactions";
 import KYC from "../pages/kyc";
 import Referral from "../pages/referral";
 import Administrators from "../pages/user-managment/administrator/Administrators";
-import AffiliateView from "../pages/user-managment/users-pages/AffiliateView";
 
 // Documentation
 import DashboardPage from "../pages/dashboard";
 import DeviceManagement from "../pages/device-managment";
+
+const userSuccess = localStorage.getItem("accessToken");
 
 // Routes.
 const routes = [
@@ -43,6 +43,7 @@ const routes = [
   },
   {
     path: "",
+
     element: <DashboardLayout />,
     children: [
       {
@@ -59,19 +60,15 @@ const routes = [
       },
       {
         path: "users",
-        element: <UsersList />,
+        element: <UsersList affiliate={false} />,
       },
       {
         path: "affiliate-users",
-        element: <AffiliateUsers />,
+        element: <UsersList affiliate={true} />,
       },
       {
         path: "view-user",
         element: <UserView />,
-      },
-      {
-        path: "view-affiliate",
-        element: <AffiliateView />,
       },
       {
         path: "news",

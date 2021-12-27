@@ -17,7 +17,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { addNews_req } from "../api/newsAPI";
 
-const AddNewsModal = () => {
+const AddNewsModal = ({ getNews }) => {
   //  hooks.
   const editorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -64,6 +64,7 @@ const AddNewsModal = () => {
         setOpen(false);
         setImagesError(false);
         setContentError(false);
+        getNews();
       }
     } catch (e) {
       console.log("ADDING NEWS ERROR ==>", e.response);
