@@ -20,8 +20,8 @@ import { spacing } from "@material-ui/system";
 import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { darken } from "polished";
-import MetaLineChart from "../../../../components/charts/MetaLineChart";
 import { getUserExchanges_req } from "../../../../api/userExchangesAPI";
+import NoData from "../../../../components/NoData";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -75,17 +75,17 @@ const SearchIconWrapper = styled.div`
 const Spacer = styled.div(spacing);
 
 const Exchange = ({ rowExchange }) => {
+  // hooks.
+  const { t } = useTranslation();
   const location = useLocation();
   const profileId = location?.state;
   const userId = profileId?.id;
-
-  const { t } = useTranslation();
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [exchange, setExchange] = useState([]);
 
   const handleChangePage = (event, newPage) => {
+    getUserExchanges(newPage + 1);
     setPage(newPage);
   };
 
@@ -94,9 +94,9 @@ const Exchange = ({ rowExchange }) => {
     setPage(0);
   };
 
-  async function getUserExchanges() {
+  async function getUserExchanges(page, rowsPerPage) {
     try {
-      const response = await getUserExchanges_req(userId);
+      const response = await getUserExchanges_req(userId, page, rowsPerPage);
       if (response) {
         console.log("GET USER EXCHANGES RESPONSE ==>", response);
         setExchange(response);
@@ -109,6 +109,10 @@ const Exchange = ({ rowExchange }) => {
   useEffect(() => {
     getUserExchanges();
   }, []);
+
+  if (!exchange.exchanges) {
+    return <NoData />;
+  }
 
   return (
     <>
@@ -135,14 +139,13 @@ const Exchange = ({ rowExchange }) => {
             </TableHead>
             <TableBody>
               {(exchange.exchanges || []).map((row) => (
-                //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 <TableRow
                   key={row.exchange_id}
-                  // sx={{
-                  //   "&:last-child td, &:last-child th": {
-                  //     border: 0,
-                  //   },
-                  // }}
+                  sx={{
+                    "&:last-child td, &:last-child th": {
+                      border: 0,
+                    },
+                  }}
                 >
                   <TableCell>{row.exchange_id}</TableCell>
                   <TableCell align="center">{row.coin_from}</TableCell>
@@ -157,10 +160,10 @@ const Exchange = ({ rowExchange }) => {
             </TableBody>
           </Table>
           <TablePagination
-            rowsPerPageOptions={[5, 10, 20]}
+            rowsPerPageOptions={[10]}
             component="div"
-            count={rowExchange.length}
-            rowsPerPage={rowsPerPage}
+            count={exchange?.allCount}
+            rowsPerPage={exchange?.limit}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}

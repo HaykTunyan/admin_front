@@ -24,7 +24,6 @@ import TabPanel from "@material-ui/lab/TabPanel";
 import Wallets from "./userstab/Wallets";
 import Deposits from "./userstab/Deposits";
 import Exchange from "./userstab/Exchange";
-import SendTable from "../../transactions/SendTable";
 import Notification from "./userstab/Notification";
 import Activity from "./userstab/Activity";
 import SettingsKYC from "./userstab/SettingsKYC";
@@ -54,8 +53,6 @@ const UserView = (state) => {
     setTab(newTab);
   };
 
-  //console.log("userId", location);
-
   // Get Req.
   const getProfile_req = () => {
     return instance
@@ -78,7 +75,6 @@ const UserView = (state) => {
   return (
     <Fragment>
       <Helmet title="User Info" />
-
       <Grid flex justifyContent="space-between" container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
@@ -100,7 +96,6 @@ const UserView = (state) => {
                 User
               </Typography>
               <Spacer mb={4} />
-
               <Grid container direction="row" alignItems="center" mb={2}>
                 <Grid item item sx={6} md={2}>
                   <Avatar sx={{ width: 22, height: 22 }}>A</Avatar>
@@ -113,7 +108,6 @@ const UserView = (state) => {
                   </Typography>
                 </Grid>
               </Grid>
-
               <Grid container direction="row" alignItems="center" mb={2}>
                 <Grid item item sx={6} md={2}>
                   <Typography variant="inherit" fontWeight="bold">
@@ -137,7 +131,9 @@ const UserView = (state) => {
                 </Grid>
                 <Spacer mx={4} />
                 <Grid item item sx={6} md={2}>
-                  <Typography variant="subtitle1"> 1000 </Typography>
+                  <Typography variant="subtitle1">
+                    {profile.userAccountInfo?.userReferral?.referral_code}
+                  </Typography>
                 </Grid>
               </Grid>
               <Grid container direction="row" alignItems="center" mb={2}>
@@ -169,7 +165,6 @@ const UserView = (state) => {
         </Grid>
         <Grid xs={12} item></Grid>
       </Grid>
-
       <Grid container>
         <Box sx={{ width: "100%", typography: "body1" }}>
           <TabContext value={tab}>

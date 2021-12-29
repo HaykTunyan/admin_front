@@ -27,7 +27,12 @@ const DocumentsModal = ({ document }) => {
 
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={handleClickOpen}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleClickOpen}
+        sx={{ width: "100%" }}
+      >
         Downloaded files
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth>

@@ -1,6 +1,6 @@
 // KYC API
 
-import { instance, setInstance } from "../../services/api";
+import { instance } from "../../services/api";
 import { KYC_PANDING, KYC_VERIFYED } from "./type";
 
 export const editKYC = (values) => (dispatch) => {
@@ -38,7 +38,6 @@ export const verifyKyc = (user_id, status_kyc) => (dispatch) => {
   return instance
     .put("/admin/kyc", { user_id, status_kyc })
     .then(({ data }) => {
-      // setInstance(data.accessToken);
       dispatch({
         type: KYC_VERIFYED,
         payload: {

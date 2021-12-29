@@ -1,11 +1,5 @@
-import {
-  NEWS_DELETE,
-  NEWS_INFO,
-  NEWS_WOTCH,
-  NEWS_ADD,
-  NEWS_EDIT,
-} from "./type";
-import { instance, setInstance } from "../../services/api";
+import { NEWS_DELETE, NEWS_ADD, NEWS_EDIT } from "./type";
+import { instance } from "../../services/api";
 
 export const addNews = (values) => (dispatch) => {
   dispatch({
@@ -15,7 +9,6 @@ export const addNews = (values) => (dispatch) => {
   return instance
     .post("/admin/news", values)
     .then(({ data }) => {
-      //setInstance(data.accessToken);
       dispatch({
         type: NEWS_ADD,
         payload: {
@@ -43,7 +36,6 @@ export const editNews = (values) => (dispatch) => {
   return instance
     .put("/admin/news", values)
     .then(({ data }) => {
-      //setInstance(data.accessToken);
       dispatch({
         type: NEWS_EDIT,
         payload: {

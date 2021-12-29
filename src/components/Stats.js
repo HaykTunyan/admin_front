@@ -13,6 +13,7 @@ import { spacing } from "@material-ui/system";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
+const Spacer = styled.div(spacing);
 
 // Custom Style.
 const Card = styled(MuiCard)`
@@ -87,36 +88,12 @@ const IllustrationImage = styled.img`
   }
 `;
 
-const Stats = ({
-  title,
-  amount,
-  chip,
-  percentagetext,
-  percentagecolor,
-  illustration,
-  view,
-  ViewMore,
-  className,
-}) => {
+const Stats = ({ title, amount, view, ViewMore, className }) => {
   return (
-    <Card illustration={illustration} sx={className}>
+    <Card sx={className}>
       <CardContent>
-        <Typography variant="h6" mb={4}>
-          {title}
-        </Typography>
-        <Typography variant="h3" mb={3}>
-          <Box fontWeight="fontWeightRegular">{amount}</Box>
-        </Typography>
-
         <Box display="flex" justifyContent="space-between">
-          <Percentage
-            variant="subtitle2"
-            color="textSecondary"
-            percentagecolor={percentagecolor}
-            illustration={illustration}
-          >
-            <span>{percentagetext}</span> Since last month
-          </Percentage>
+          <Typography variant="h6">{title}</Typography>
           {!view && (
             <Button
               size="small"
@@ -127,12 +104,14 @@ const Stats = ({
           )}
         </Box>
 
-        {!illustration && <Chip label={chip} />}
+        <Typography variant="h3" mb={3}>
+          {amount ? (
+            <Box fontWeight="fontWeightRegular">{amount}</Box>
+          ) : (
+            <Box py={4} />
+          )}
+        </Typography>
       </CardContent>
-
-      {!!illustration && (
-        <IllustrationImage src={illustration} alt="Illustration" />
-      )}
     </Card>
   );
 };

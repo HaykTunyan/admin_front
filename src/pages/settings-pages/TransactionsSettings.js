@@ -23,12 +23,13 @@ import NoData from "../../components/NoData";
 // Spacing.
 const Toolbar = styled(MuiToolbar)(spacing);
 
+// Custom Style.
+
 const TableWrapper = styled.div`
   overflow-y: auto;
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
 
-// Custom Style.
 const Chip = styled(MuiChip)`
   height: 20px;
   padding: 4px 0;
@@ -75,7 +76,6 @@ const TransactionsSettings = ({ coins }) => {
                 <TableCell align="">Coin Name</TableCell>
                 <TableCell align="center">Fee</TableCell>
                 <TableCell align="center">Min Send Amount</TableCell>
-
                 <TableCell align="center">
                   Suspend Transaction
                   <Breadcrumbs
@@ -130,7 +130,6 @@ const TransactionsSettings = ({ coins }) => {
                           </Typography>
                         </Breadcrumbs>
                       </TableCell>
-
                       <TableCell padding="none" align="right">
                         <EditTransactionModal
                           coinId={row.id}
@@ -154,7 +153,7 @@ const TransactionsSettings = ({ coins }) => {
           </Table>
           {/* Pagination */}
           <TablePagination
-            rowsPerPageOptions={[5, 10, 20]}
+            rowsPerPageOptions={[5, 10]}
             component="div"
             count={coins.length}
             rowsPerPage={rowsPerPage}

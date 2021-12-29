@@ -138,7 +138,6 @@ const SwapSettings = () => {
             </Grid>
           </Grid>
         </Toolbar>
-
         <TableWrapper>
           <Table>
             <TableHead>
@@ -148,7 +147,6 @@ const SwapSettings = () => {
                     Pair
                   </Typography>
                 </TableCell>
-
                 <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
@@ -174,7 +172,6 @@ const SwapSettings = () => {
                         </Typography>
                       </Breadcrumbs>
                     </TableCell>
-
                     <TableCell align="right">
                       <Box flex justifyContent="space-between">
                         <EditSwapModal
@@ -196,7 +193,7 @@ const SwapSettings = () => {
           </Table>
           {/* Pagination */}
           <TablePagination
-            rowsPerPageOptions={[5, 10, 20]}
+            rowsPerPageOptions={[5, 10]}
             component="div"
             count={swap.length}
             rowsPerPage={rowsPerPage}
@@ -206,7 +203,6 @@ const SwapSettings = () => {
           />
         </TableWrapper>
       </Paper>
-
       <Box m={4} display="flex" justifyContent="flex-end" alignItems="center">
         <Typography variant="subtitle1" color="inherit" component="div">
           Export Data

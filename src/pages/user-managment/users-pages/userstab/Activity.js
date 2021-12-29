@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
+import { useLocation } from "react-router-dom";
 import {
   Card as MuiCard,
   CardHeader,
@@ -10,12 +11,15 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Box,
   Chip as MuiChip,
 } from "@material-ui/core";
+import { getUserActivity_req } from "../../../../api/userActivityAPI";
+import moment from "moment";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
 
+// Custom Style.
 const Chip = styled(MuiChip)`
   height: 20px;
   padding: 4px 0;
@@ -30,45 +34,29 @@ const TableWrapper = styled.div`
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
 
-export const rows = [
-  {
-    key: 1,
-    acount: "Account User",
-    device: "Mobile",
-    start_time: "11/09/21, 20:30",
-    active_status: false,
-  },
-  {
-    key: 2,
-    acount: "Account User",
-    device: "Mobile",
-    start_time: "11/09/21, 20:30",
-    active_status: true,
-  },
-  {
-    key: 3,
-    acount: "Account User",
-    device: "Mobile",
-    start_time: "11/09/21, 20:30",
-    active_status: true,
-  },
-  {
-    key: 4,
-    acount: "Account User",
-    device: "Mobile",
-    start_time: "11/09/21, 20:30",
-    active_status: false,
-  },
-  {
-    key: 5,
-    acount: "Account User",
-    device: "Mobile",
-    start_time: "11/09/21, 20:30",
-    active_status: true,
-  },
-];
-
 const Activity = () => {
+  // hooks.
+  const location = useLocation();
+  const profileId = location?.state;
+  const userId = profileId?.id;
+  const [activity, setActivity] = useState([]);
+
+  async function getAccountActivity() {
+    try {
+      const response = await getUserActivity_req(userId);
+      if (response) {
+        console.log("GET ACCOUNT ACTIVITY RESPONSE ==>", response);
+        setActivity(response.activity);
+      }
+    } catch (e) {
+      console.log("GET ACCOUNT ACTIVITY ERROR ==>", e);
+    }
+  }
+
+  useEffect(() => {
+    getAccountActivity();
+  }, []);
+
   return (
     <>
       <Card mb={6}>
@@ -78,35 +66,30 @@ const Activity = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell width="25%">Account</TableCell>
-                  <TableCell align="center" width="25%">
-                    Device
-                  </TableCell>
-                  <TableCell align="center" width="25%">
-                    Start Time
-                  </TableCell>
-                  <TableCell align="right">Active Status</TableCell>
+                  <TableCell>Date</TableCell>
+                  <TableCell align="center">Device</TableCell>
+                  <TableCell align="center">Activity</TableCell>
+                  <TableCell align="center">Status</TableCell>
+                  <TableCell align="center">IP address</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
+                {activity.map((row) => (
                   <TableRow key={row.key}>
-                    <TableCell component="th" scope="row" width="25%">
-                      {row.acount}
+                    <TableCell>
+                      {moment(row.creationDate).format("DD/MM/YYYY")}
                     </TableCell>
-                    <TableCell align="center" width="25%">
-                      {row.device}
+                    <TableCell align="center">{row.source}</TableCell>
+                    <TableCell align="center">{row.message}</TableCell>
+                    <TableCell align="center">
+                      {
+                        <Chip
+                          label={row.status}
+                          color={row.status === "failed" ? "error" : "success"}
+                        />
+                      }
                     </TableCell>
-                    <TableCell align="center" width="25%">
-                      {row.start_time}
-                    </TableCell>
-                    <TableCell align="right">
-                      {!row.active_status ? (
-                        <Chip label="Passive" color="error" />
-                      ) : (
-                        <Chip label="Active" color="primary" />
-                      )}
-                    </TableCell>
+                    <TableCell align="center">{row.ip}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

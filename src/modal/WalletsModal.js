@@ -78,7 +78,12 @@ const WalletsModal = ({ id, wallet, userId }) => {
 
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={handleClickOpen}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleClickOpen}
+        sx={{ width: "max-content" }}
+      >
         {id === "topUp" ? "Top up balance" : "Withdraw"}
       </Button>
       <Formik

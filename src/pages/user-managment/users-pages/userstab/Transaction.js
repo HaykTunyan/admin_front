@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
-import { instance } from "../../../../services/api";
 import moment from "moment";
 import { spacing } from "@material-ui/system";
 import { darken } from "polished";
@@ -30,10 +29,8 @@ import {
 } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import CSVButton from "../../../../components/CSVButton";
 import { Search as SearchIcon } from "react-feather";
 import DatePickerFilter from "../../../../components/date-picker/DatePickerFilter";
-import NoData from "../../../../components/NoData";
 import { getUserTransactions_req } from "../../../../api/userTransactionsAPI";
 
 // Spacing.
@@ -102,12 +99,11 @@ const TransactionHistory = () => {
   const classes = useStyles();
   const [transactions, setTransactions] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [operationType, setOperationType] = useState("");
   const [coinAll, setCoinAll] = useState("");
   const [transactionType, setTransactionType] = useState("");
   const [statusValue, setStatusValue] = useState("");
-  const [open, setOpen] = useState(false);
   const [openFor, setOpenFor] = useState({});
 
   const handleOperationType = (event) => {
@@ -132,7 +128,7 @@ const TransactionHistory = () => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(1);
   };
 
   const handleExpand = (e) => {
@@ -142,9 +138,9 @@ const TransactionHistory = () => {
     });
   };
 
-  async function getTransactions() {
+  async function getTransactions(page, rowsPerPage) {
     try {
-      const response = await getUserTransactions_req(userId);
+      const response = await getUserTransactions_req(userId, page, rowsPerPage);
       if (response) {
         console.log("GET USER TRANSACTIONS RESPONSE ==>", response);
         setTransactions(response);
@@ -163,7 +159,7 @@ const TransactionHistory = () => {
   return (
     <Fragment>
       <Card p={4} sx={{ display: "flex" }}>
-        <Grid item md={2}>
+        <Grid item md={4} lg={2}>
           <Box component="div">
             <Search>
               <SearchIconWrapper>
@@ -174,11 +170,11 @@ const TransactionHistory = () => {
           </Box>
         </Grid>
         <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item md={4} lg={2}>
           <DatePickerFilter />
         </Grid>
         <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item md={4} lg={2}>
           <FormControl fullWidth>
             <InputLabel id="select-operation-type">Operation Type</InputLabel>
             <Select
@@ -197,7 +193,7 @@ const TransactionHistory = () => {
           </FormControl>
         </Grid>
         <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item md={4} lg={2}>
           <FormControl fullWidth>
             <InputLabel id="select-coin">Coin</InputLabel>
             <Select
@@ -216,7 +212,7 @@ const TransactionHistory = () => {
           </FormControl>
         </Grid>
         <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item md={4} lg={2}>
           <FormControl fullWidth>
             <InputLabel id="select-transaction">Transaction Type</InputLabel>
             <Select
@@ -235,7 +231,7 @@ const TransactionHistory = () => {
           </FormControl>
         </Grid>
         <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item md={4} lg={2}>
           <FormControl fullWidth>
             <InputLabel id="select-status">Status</InputLabel>
             <Select
@@ -255,18 +251,27 @@ const TransactionHistory = () => {
           </FormControl>
         </Grid>
       </Card>
-      <Card p={4} sx={{ display: "flex", justifyContent: "center" }}>
+      <Card p={4} sx={{ display: "flex" }}>
         <Grid item md={2}>
-          <Box component="div">
-            <Typography variant="h6" gutterBottom component="div">
-              {`Received: 00000000`}
+          <Box display="flex">
+            <Typography variant="subtitle1" gutterBottom>
+              {`Received`}:
+            </Typography>
+            <Spacer mx={2} />
+            <Typography variant="subtitle1" gutterBottom>
+              {`000000`}
             </Typography>
           </Box>
         </Grid>
+        <Spacer mx={4} />
         <Grid item md={2}>
-          <Box component="div">
-            <Typography variant="h6" gutterBottom component="div">
-              {`Send: 00000000`}
+          <Box display="flex">
+            <Typography variant="subtitle1" gutterBottom>
+              {`Send`}:
+            </Typography>
+            <Spacer mx={2} />
+            <Typography variant="subtitle1" gutterBottom>
+              {`0000`}
             </Typography>
           </Box>
         </Grid>
@@ -281,6 +286,7 @@ const TransactionHistory = () => {
                 <TableCell>Coin</TableCell>
                 <TableCell>Amount</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell align="right">Action</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -306,7 +312,7 @@ const TransactionHistory = () => {
                       )}
                     </TableCell>
                     <TableCell>{row.status}</TableCell>
-                    <TableCell>
+                    <TableCell align="right">
                       <IconButton
                         id={`${row.transaction_id}`}
                         aria-label="expand row"
@@ -377,29 +383,16 @@ const TransactionHistory = () => {
           </Table>
           {/* Pagination */}
           <TablePagination
-            rowsPerPageOptions={[5, 10, 20]}
+            rowsPerPageOptions={[10]}
             component="div"
-            //count={rows?.length}
-            rowsPerPage={rowsPerPage}
+            count={transactions?.allCount}
+            rowsPerPage={transactions?.limit}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </TableContainer>
       </Paper>
-      {/* {rows && (
-        <Box
-          mt={8}
-          display="flex"
-          justifyContent="flex-end"
-          alignItems="center"
-        >
-          <Typography variant="subtitle1" color="inherit" component="div">
-            Export Data
-          </Typography>
-          <CSVButton data={rows} />
-        </Box>
-      )} */}
     </Fragment>
   );
 };

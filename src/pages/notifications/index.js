@@ -15,6 +15,7 @@ import {
   Box,
   Select,
   MenuItem,
+  TablePagination,
 } from "@material-ui/core";
 import AddNotificationModal from "../../modal/AddNotificationModal";
 import SendNotificationModal from "../../modal/SendNotificationModal";
@@ -31,17 +32,29 @@ const Button = styled(MuiButton)(spacing);
 const Notifications = () => {
   const [selectNoficate, setSelectNotificate] = useState("1");
   const [notifList, setNotifList] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChange = (event) => {
     setSelectNotificate(event.target.value);
   };
 
-  async function getNotifTemplates() {
+  const handleChangePage = (event, newPage) => {
+    getNotifTemplates(newPage + 1);
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(1);
+  };
+
+  async function getNotifTemplates(page, rowsPerPage) {
     try {
-      const response = await getNotifTemplates_req();
+      const response = await getNotifTemplates_req(page, rowsPerPage);
       if (response) {
         console.log("GETTING NOTIF TEMPLATES RESPONSE ==>", response);
-        setNotifList(response.templates);
+        setNotifList(response);
       }
     } catch (e) {
       console.log("GETTING NOTIF TEMPLATES ERROR ==>", e.response);
@@ -70,27 +83,47 @@ const Notifications = () => {
           </Grid>
           <Divider my={5} />
           <Grid container spacing={5}>
-            {notifList.map((item) => (
-              <Grid item md={4} mb={1}>
-                <Card
-                  variant="outlined"
-                  sx={{
-                    height: "80px",
-                  }}
-                >
-                  <CardContent my={3}>
-                    <CardActions sx={{ justifyContent: "space-between" }}>
-                      <Typography variant="h5" component="h2">
-                        {item.title}
-                      </Typography>
-                      <Box sx={{ alignSelf: "flex-end" }}>
-                        <SendNotificationModal item={item} />
-                      </Box>
-                    </CardActions>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+            {notifList?.templates &&
+              notifList?.templates.map((item) => (
+                <Grid item md={4} mb={1}>
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      height: "80px",
+                    }}
+                  >
+                    <CardContent my={3}>
+                      <CardActions sx={{ justifyContent: "space-between" }}>
+                        <Typography variant="h5" component="h2">
+                          {item.title}
+                        </Typography>
+                        <Box sx={{ alignSelf: "flex-end" }}>
+                          <SendNotificationModal item={item} />
+                        </Box>
+                      </CardActions>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+          </Grid>
+          <Grid spacing={5}>
+            <Box
+              mt={4}
+              display="flex"
+              justifyContent="flex-end"
+              alignItems="center"
+            >
+              {/* Pagination */}
+              <TablePagination
+                rowsPerPageOptions={[10]}
+                component="div"
+                count={notifList?.allCount}
+                rowsPerPage={notifList?.limit}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </Box>
           </Grid>
         </Grid>
       </Grid>

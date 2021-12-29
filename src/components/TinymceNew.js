@@ -1,6 +1,6 @@
-import React, { useRef, Fragment } from "react";
+import React, { Fragment } from "react";
 import { Editor } from "@tinymce/tinymce-react";
-import { Button, Box } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 
 const TinymceNew = ({ textBody, editorRef, onSave, content, contentError }) => {
   return (

@@ -1,30 +1,26 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
-import { useFormik, Formik, Form } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import {
   Button,
-  Paper,
   TextField as MuiTextField,
   Dialog,
   DialogContent,
   DialogTitle,
   Box,
   IconButton,
-  Typography,
   FormControlLabel,
   Checkbox,
   Divider as MuiDivider,
-  Grid,
 } from "@material-ui/core";
 import { Edit2 } from "react-feather";
 import { editCoin } from "../redux/actions/settings";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
-const Spacer = styled.div(spacing);
 const Divider = styled(MuiDivider)(spacing);
 
 // validation Schema.

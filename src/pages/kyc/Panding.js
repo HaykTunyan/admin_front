@@ -18,7 +18,6 @@ import {
 import moment from "moment";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
-import Loader from "../../components/Loader";
 import PandingInformationModal from "../../modal/PandingInformationModal";
 import PandingDocumentModal from "../../modal/PandingDocumentModal";
 import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
@@ -42,12 +41,13 @@ const PandingTable = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [panding, setPanding] = useState([]);
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const rows = panding?.kyc;
   const [errorMes, setErrorMes] = useState([]);
 
   const handleChangePage = (event, newPage) => {
+    getKyc(newPage + 1);
     setPage(newPage);
   };
 
@@ -57,12 +57,12 @@ const PandingTable = () => {
   };
 
   //   get Savings.
-  const getKyc = () => {
+  const getKyc = (page, rowsPerPage) => {
     return instance
       .get("/admin/kyc/all", {
         params: {
-          limit: null,
-          page: 1,
+          limit: rowsPerPage,
+          page: page,
           type: 3,
         },
       })
@@ -97,7 +97,7 @@ const PandingTable = () => {
         }
       })
       .catch((error) => {
-        console.log(" error messages ", error?.response?.data);
+        console.log("error messages", error?.response?.data);
         setErrorMes(error?.response?.data?.message);
         console.log("errorMes", errorMes);
       });
@@ -123,70 +123,68 @@ const PandingTable = () => {
             </TableHead>
             <TableBody>
               {rows &&
-                rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <TableRow
-                      key={row.user_id}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell>{row.user_id}</TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>
-                        {moment(row.registration_date).format(
-                          "DD/MM/YYYY HH:mm "
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {moment(row.verification_date).format(
-                          "DD/MM/YYYY HH:mm "
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <PandingInformationModal
-                          pandingId={row.user_id}
-                          name={row.name}
-                          surname={row.surname}
-                          dateBirthday={row.date_of_birth}
-                          contact={row.address}
-                          country={row.country}
-                          documentType={row.document_type}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <PandingDocumentModal
-                          pandingId={row.user_id}
-                          documentType={row.document_type}
-                          documentBack={row.document_back}
-                          documentFront={row.document_front}
-                          selfie={row.selfie}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="contained"
-                          onClick={() => handleVerifed(row.user_id)}
-                        >
-                          Verifiy
-                        </Button>
-                      </TableCell>
-                      <TableCell>
-                        <PandingVerififeyModal
-                          subTitle="Send For Verification"
-                          kycId={row.user_id}
-                          statusKyc={2}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                rows.map((row) => (
+                  <TableRow
+                    key={row.user_id}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell>{row.user_id}</TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>
+                      {moment(row.registration_date).format(
+                        "DD/MM/YYYY HH:mm "
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {moment(row.verification_date).format(
+                        "DD/MM/YYYY HH:mm "
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <PandingInformationModal
+                        pandingId={row.user_id}
+                        name={row.name}
+                        surname={row.surname}
+                        dateBirthday={row.date_of_birth}
+                        contact={row.address}
+                        country={row.country}
+                        documentType={row.document_type}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <PandingDocumentModal
+                        pandingId={row.user_id}
+                        documentType={row.document_type}
+                        documentBack={row.document_back}
+                        documentFront={row.document_front}
+                        selfie={row.selfie}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        onClick={() => handleVerifed(row.user_id)}
+                      >
+                        Verifiy
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      <PandingVerififeyModal
+                        subTitle="Send For Verification"
+                        kycId={row.user_id}
+                        statusKyc={2}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
           {/* Pagination */}
           <TablePagination
-            rowsPerPageOptions={[5, 10, 20]}
+            rowsPerPageOptions={[10]}
             component="div"
-            count={rows?.length}
-            rowsPerPage={rowsPerPage}
+            count={panding?.allCount}
+            rowsPerPage={panding?.limit}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}

@@ -1,9 +1,4 @@
-import {
-  GENERET_REFERRAL,
-  UNASSIGNED_REFERRAL,
-  ALL_REFERRAL,
-  ASSIGN_REFERRAL,
-} from "./type";
+import { GENERET_REFERRAL, ASSIGN_REFERRAL } from "./type";
 import { instance } from "../../services/api";
 
 export const generateReferral = () => (dispatch) => {

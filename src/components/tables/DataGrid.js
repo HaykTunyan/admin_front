@@ -48,7 +48,7 @@ const DataGridTable = ({ columns, rowColums }) => {
         <Paper>
           <div style={{ height: 400, width: "100%" }}>
             <DataGrid
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[5, 10]}
               rows={rowColums}
               columns={columns}
               pageSize={5}

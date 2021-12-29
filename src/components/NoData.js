@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Box, Card, Typography } from "@material-ui/core";
+import { Card, Typography } from "@material-ui/core";
 
 const NoData = () => {
   return (

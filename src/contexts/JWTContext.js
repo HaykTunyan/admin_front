@@ -1,4 +1,4 @@
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useEffect, useLayoutEffect, useReducer } from "react";
 import axios from "../utils/axios";
 import { isValidToken, setSession } from "../utils/jwt";
 
@@ -42,60 +42,60 @@ const AuthContext = createContext(null);
 function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(JWTReducer, initialState);
 
-  const accessToken = localStorage.getItem("accessToken");
-
-  // useLayoutEffect(() => {
-  //   try {
-  //     const accessToken  = localStorage.getItem('accessToken');
-  //     setAuth(!!accessToken)
-  //     //token
-  //   } catch (err) {
-  //     setAuth(false)
-  //     //false
-  //   }
-  // }, [])
-
-  useEffect(() => {
-    const initialize = async () => {
-      try {
-        const accessToken = localStorage.getItem("accessToken");
-
-        if (accessToken && isValidToken(accessToken)) {
-          setSession(accessToken);
-
-          const response = await axios.get("/api/auth/my-account");
-          const { user } = response.data;
-
-          dispatch({
-            type: INITIALIZE,
-            payload: {
-              isAuthenticated: true,
-              user,
-            },
-          });
-        } else {
-          dispatch({
-            type: INITIALIZE,
-            payload: {
-              isAuthenticated: false,
-              user: null,
-            },
-          });
-        }
-      } catch (err) {
-        console.error(err);
-        dispatch({
-          type: INITIALIZE,
-          payload: {
-            isAuthenticated: false,
-            user: null,
-          },
-        });
-      }
-    };
-
-    initialize();
+  useLayoutEffect(() => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      dispatch({
+        type: "INITIALIZE",
+        payload: { isAuthenticated: accessToken },
+      });
+      //token
+    } catch (err) {
+      dispatch({ type: "INITIALIZE", payload: { isAuthenticated: false } });
+    }
   }, []);
+
+  // useEffect(() => {
+  //   const initialize = async () => {
+  //     try {
+  //       const accessToken = localStorage.getItem('accessToken');
+  //
+  //       if (accessToken && isValidToken(accessToken)) {
+  //         setSession(accessToken);
+  //
+  //         const response = await axios.get('/api/auth/my-account');
+  //         const { user } = response.data;
+  //
+  //         dispatch({
+  //           type: INITIALIZE,
+  //           payload: {
+  //             isAuthenticated: true,
+  //             user,
+  //           },
+  //         });
+  //       } else {
+  //         dispatch({
+  //           type: INITIALIZE,
+  //           payload: {
+  //             isAuthenticated: false,
+  //             user: null,
+  //           },
+  //         });
+  //       }
+  //     } catch (err) {
+  //       console.error(err);
+  //       dispatch({
+  //         type: INITIALIZE,
+  //         payload: {
+  //           isAuthenticated: false,
+  //           user: null,
+  //         },
+  //       });
+  //     }
+  //   };
+  //
+  //   initialize();
+  // }, []);
 
   const signIn = async (email, password) => {
     const response = await axios.post("/api/auth/sign-in", {

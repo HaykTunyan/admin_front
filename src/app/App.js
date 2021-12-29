@@ -44,6 +44,17 @@ function App() {
             <StyledEngineProvider injectFirst>
               <MuiThemeProvider theme={createTheme(theme)}>
                 <ThemeProvider theme={createTheme(theme)}>
+                  {/* 
+                <Switch>
+                    <Route
+                      render={(props) => defineGuards([IsNotAuthLayer], LoginPage, props)}
+                      exact
+                      path="/login"
+                    />
+                    <Route path="/*" render={(props) => defineGuards([IsAuthLayer], App, props)}/>
+                    <Route path="*" render={() => <div>{translate(TranslationKeys.NO_PAGE)}</div>}/>
+                  </Switch> */}
+
                   <AuthProvider>{content}</AuthProvider>
                 </ThemeProvider>
               </MuiThemeProvider>

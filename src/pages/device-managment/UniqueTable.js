@@ -69,7 +69,7 @@ const UniqueTable = () => {
         </Table>
         {/* Pagination */}
         <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
+          rowsPerPageOptions={[5, 10]}
           component="div"
           count={uniqueData.length}
           rowsPerPage={rowsPerPage}

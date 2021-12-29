@@ -8,18 +8,18 @@ import {
   Chip as MuiChip,
   Divider as MuiDivider,
   Grid,
+  Box,
   Typography as MuiTypography,
   Card as MuiCard,
   CardContent,
   InputBase,
+  TablePagination,
 } from "@material-ui/core";
 import { Search as SearchIcon } from "react-feather";
-import NewsImage from "../../assets/images/news_one.jpg";
 import AddNewsModal from "../../modal/AddNewsModal";
 import NewsCard from "./NewCard";
 import {
   deleteNews_req,
-  editNews_req,
   getNews_req,
   publishNews_req,
 } from "../../api/newsAPI";
@@ -86,29 +86,28 @@ const SearchIconWrapper = styled.div`
   }
 `;
 
-// Moke Data.
-const NewsList = [
-  {
-    key: 0,
-    image: NewsImage,
-    title: "IBM Donates Code Improvements to Open Source Hyperledger",
-    description:
-      "“The intent is to improve the usability of Hyperledger for all users,” said Christopher Ferris, CTO at IBM.",
-    chip: <Chip label={"15/09/2021"} color="success" />,
-  },
-];
-
 const NewsComponent = () => {
   const { t } = useTranslation();
-
   const [newsList, setNewsList] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  async function getNews() {
+  const handleChangePage = (event, newPage) => {
+    getNews(newPage + 1);
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(1);
+  };
+
+  async function getNews(page, rowsPerPage) {
     try {
-      const response = await getNews_req();
+      const response = await getNews_req(page, rowsPerPage);
       if (response) {
         //console.log("GETTING NEWS RESPONSE ==>", response);
-        setNewsList(response.news);
+        setNewsList(response);
       }
     } catch (e) {
       console.log("GETTING NEWS ERROR ==>", e);
@@ -187,27 +186,46 @@ const NewsComponent = () => {
             </CardContent>
           </Card>
         </Grid>
-
-        {newsList.map((item) => (
-          <Grid item xs={12} lg={6} xl={3} key={item.key}>
-            <NewsCard
-              news={item}
-              image={item.image}
-              title={item.title}
-              description={item.description}
-              chip={
-                <Chip
-                  label={moment(item.date).format("DD/MM/YYYY")}
-                  color="success"
-                />
-              }
-              status={item.status}
-              onClickDelete={() => deleteNews(item._id)}
-              onClickPublish={() => publishNews(item._id)}
-              getNews={getNews}
+        {newsList.news &&
+          newsList.news.map((item) => (
+            <Grid item xs={12} lg={6} xl={3} key={item.key}>
+              <NewsCard
+                news={item}
+                image={item.image}
+                title={item.title}
+                description={item.description}
+                chip={
+                  <Chip
+                    label={moment(item.date).format("DD/MM/YYYY")}
+                    color="success"
+                  />
+                }
+                status={item.status}
+                onClickDelete={() => deleteNews(item._id)}
+                onClickPublish={() => publishNews(item._id)}
+                getNews={getNews}
+              />
+            </Grid>
+          ))}
+        <Grid item xs={12}>
+          <Box
+            mt={4}
+            display="flex"
+            justifyContent="flex-end"
+            alignItems="center"
+          >
+            {/* Pagination */}
+            <TablePagination
+              rowsPerPageOptions={[10]}
+              component="div"
+              count={newsList?.allCount}
+              rowsPerPage={newsList?.limit}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
             />
-          </Grid>
-        ))}
+          </Box>
+        </Grid>
       </Grid>
     </Fragment>
   );

@@ -17,7 +17,6 @@ import {
 import moment from "moment";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
-import Loader from "../../components/Loader";
 import PandingInformationModal from "../../modal/PandingInformationModal";
 import PandingDocumentModal from "../../modal/PandingDocumentModal";
 import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
@@ -37,11 +36,12 @@ const VerifiedTable = () => {
   // hooks.
   const classes = useStyles();
   const [rowVerified, setRowVerified] = useState([]);
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const rows = rowVerified?.kyc;
 
   const handleChangePage = (event, newPage) => {
+    getKyc(newPage + 1);
     setPage(newPage);
   };
 
@@ -51,12 +51,12 @@ const VerifiedTable = () => {
   };
 
   // get Savings.
-  const getKyc = () => {
+  const getKyc = (page, rowsPerPage) => {
     return instance
       .get("/admin/kyc/all", {
         params: {
-          limit: null,
-          page: 1,
+          limit: rowsPerPage,
+          page: page,
           type: 4,
         },
       })
@@ -78,8 +78,6 @@ const VerifiedTable = () => {
     return <NoData />;
   }
 
-  console.log("rowVerified", rowVerified);
-
   return (
     <Fragment>
       <Paper>
@@ -98,62 +96,60 @@ const VerifiedTable = () => {
             </TableHead>
             <TableBody>
               {rows &&
-                rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <TableRow
-                      key={row.user_id}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell>{row.user_id}</TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>
-                        {moment(row.registration_date).format(
-                          "DD/MM/YYYY HH:mm "
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {moment(row.verification_date).format(
-                          "DD/MM/YYYY HH:mm "
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <PandingInformationModal
-                          pandingId={row.user_id}
-                          name={row.name}
-                          surname={row.surname}
-                          dateBirthday={row.date_of_birth}
-                          contact={row.address}
-                          country={row.country}
-                          documentType={row.document_type}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <PandingDocumentModal
-                          pandingId={row.user_id}
-                          documentType={row.document_type}
-                          documentBack={row.document_back}
-                          documentFront={row.document_front}
-                          selfie={row.selfie}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <PandingVerififeyModal
-                          subTitle="Verifiy Again"
-                          kycId={row.user_id}
-                          statusKyc={2}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                rows.map((row) => (
+                  <TableRow
+                    key={row.user_id}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell>{row.user_id}</TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>
+                      {moment(row.registration_date).format(
+                        "DD/MM/YYYY HH:mm "
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {moment(row.verification_date).format(
+                        "DD/MM/YYYY HH:mm "
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <PandingInformationModal
+                        pandingId={row.user_id}
+                        name={row.name}
+                        surname={row.surname}
+                        dateBirthday={row.date_of_birth}
+                        contact={row.address}
+                        country={row.country}
+                        documentType={row.document_type}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <PandingDocumentModal
+                        pandingId={row.user_id}
+                        documentType={row.document_type}
+                        documentBack={row.document_back}
+                        documentFront={row.document_front}
+                        selfie={row.selfie}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <PandingVerififeyModal
+                        subTitle="Verifiy Again"
+                        kycId={row.user_id}
+                        statusKyc={2}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
           {/* Pagination */}
           <TablePagination
-            rowsPerPageOptions={[5, 10, 20]}
+            rowsPerPageOptions={[10]}
             component="div"
-            count={rows?.length}
-            rowsPerPage={rowsPerPage}
+            count={rowVerified?.allCount}
+            rowsPerPage={rowVerified?.limit}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}

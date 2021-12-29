@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import {
   Table,
@@ -9,17 +9,15 @@ import {
   TableHead,
   Paper,
   Grid,
-  Typography,
   Box,
   TablePagination,
-  Pagination,
-  Stack,
 } from "@material-ui/core";
 import ReferralUserModal from "../../modal/ReferralUserModal";
 import { instance } from "../../services/api";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 
+// Spacing.
 const Spacer = styled.div(spacing);
 
 const useStyles = makeStyles({
@@ -32,11 +30,11 @@ const ReferralTable = () => {
   // hooks.
   const classes = useStyles();
   const [referralRow, setReferralRow] = useState(null);
-  // Pagination
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event, newPage) => {
+    getReferrals(newPage + 1);
     setPage(newPage);
   };
 
@@ -45,30 +43,12 @@ const ReferralTable = () => {
     setPage(1);
   };
 
-  const getReferrals = (_, page, rowsPerPage) => {
+  const getReferrals = (page, rowsPerPage) => {
     return instance
       .get("/admin/referral/user/all", {
         params: {
           limit: rowsPerPage,
           page: page,
-        },
-      })
-      .then((data) => {
-        setReferralRow(data.data);
-        return data;
-      })
-      .catch((err) => {
-        return Promise.reject(err);
-      })
-      .finally(() => {});
-  };
-
-  const onChangePage = (_, newPage) => {
-    return instance
-      .get("/admin/referral/user/all", {
-        params: {
-          limit: (newPage + 1) * referralRow?.limit,
-          page: newPage,
         },
       })
       .then((data) => {
@@ -156,15 +136,14 @@ const ReferralTable = () => {
               </Table>
               {/* Pagination */}
               <Box py={5} display="flex" justifyContent="flex-end">
-                {/* Pagination */}
-                <Pagination
-                  variant="outlined"
-                  shape="rounded"
-                  showFirstButton
-                  showLastButton
-                  limit={referralRow?.limit}
+                <TablePagination
+                  rowsPerPageOptions={[10]}
+                  component="div"
+                  count={referralRow?.allCount}
+                  rowsPerPage={referralRow?.limit}
                   page={page}
-                  onChange={onChangePage}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
                 />
               </Box>
             </TableContainer>

@@ -24,8 +24,8 @@ import CSVButton from "../../components/CSVButton";
 import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { darken } from "polished";
-import MetaLineChart from "../../components/charts/MetaLineChart";
 import { getDashboardExchanges_req } from "../../api/dashboardAPI";
+import { getCoins_req } from "../../api/userWalletsAPI";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -84,8 +84,9 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-
+  const [popularity, setPopularity] = useState(0);
   const [exchanges, setExchanges] = useState([]);
+  const [coins, setCoins] = useState([]);
 
   const handleChangeFrom = (event) => {
     setFrom(event.target.value);
@@ -93,6 +94,10 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
 
   const handleChangeTo = (event) => {
     setTo(event.target.value);
+  };
+
+  const handlePopularityChange = (event) => {
+    setPopularity(event.target.value);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -116,24 +121,38 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
     }
   }
 
+  async function getCoins() {
+    try {
+      const response = await getCoins_req();
+      if (response) {
+        console.log("GET COINS RESPONSE ==>", response);
+        setCoins(response);
+      }
+    } catch (e) {
+      console.log("GET COINS ERROR ==>", e.response);
+    }
+  }
+
   useEffect(() => {
     getExchanges();
+    getCoins();
   }, []);
 
   return (
     <Fragment>
       <TableContainer component={Paper}>
         <Toolbar>
-          <Grid item md={3} px={5}>
-            <Search sx={{ paddingX: 5 }}>
+          <Grid item md={2}>
+            <Search>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
               <Input placeholder={t("Search")} />
             </Search>
           </Grid>
-          <Grid item md={1}>
-            <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
+          <Spacer mx={5} />
+          <Grid item md={2}>
+            <FormControl fullWidth variant="standard">
               <InputLabel id="select-from-label">Exchanged Coin</InputLabel>
               <Select
                 labelId="select-from-label"
@@ -145,15 +164,15 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
                 <MenuItem value="all">
                   <em>From All</em>
                 </MenuItem>
-                <MenuItem value={10}>Coin - 10 000 </MenuItem>
-                <MenuItem value={20}> Coin - 50 000 </MenuItem>
-                <MenuItem value={30}> Coin - 1 000 000 </MenuItem>
+                {coins.map((coin) => (
+                  <MenuItem value={coin.id}>{coin.name}</MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid>
           <Spacer mx={5} />
-          <Grid item md={1}>
-            <FormControl fullWidth variant="standard" sx={{ minWidth: 120 }}>
+          <Grid item md={2}>
+            <FormControl fullWidth variant="standard">
               <InputLabel id="select-to-label">Received Coin</InputLabel>
               <Select
                 labelId="select-to-label"
@@ -165,9 +184,31 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
                 <MenuItem value="all">
                   <em>To All</em>
                 </MenuItem>
-                <MenuItem value={10}>Coin - 10 000 </MenuItem>
+                {coins.map((coin) => (
+                  <MenuItem value={coin.id}>{coin.name}</MenuItem>
+                ))}
+                {/* <MenuItem value={10}>Coin - 10 000 </MenuItem>
                 <MenuItem value={20}> Coin - 50 000 </MenuItem>
-                <MenuItem value={30}> Coin - 1 000 000 </MenuItem>
+                <MenuItem value={30}> Coin - 1 000 000 </MenuItem> */}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Spacer mx={5} />
+          <Grid item md={2}>
+            <FormControl fullWidth variant="standard">
+              <InputLabel id="select-from-label">Popularity</InputLabel>
+              <Select
+                labelId="select-from-label"
+                id="select-from-label"
+                value={popularity}
+                onChange={handlePopularityChange}
+                label="From"
+              >
+                <MenuItem value="all">
+                  <em>No Filter</em>
+                </MenuItem>
+                <MenuItem value={10}>Ascending</MenuItem>
+                <MenuItem value={20}>Descending</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -212,9 +253,9 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
           </TableBody>
         </Table>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
+          rowsPerPageOptions={[5, 10]}
           component="div"
-          count={rowExchange.length}
+          count={exchanges.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

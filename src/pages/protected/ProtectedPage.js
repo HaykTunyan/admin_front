@@ -13,10 +13,9 @@ import {
 import { spacing } from "@material-ui/system";
 import { NavLink } from "react-router-dom";
 
+// Spacing.
 const Alert = styled(MuiAlert)(spacing);
-
 const Card = styled(MuiCard)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
 
 export const RowList = [

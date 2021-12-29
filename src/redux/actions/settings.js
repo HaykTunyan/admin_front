@@ -5,7 +5,7 @@ import {
   SAVING_ADD,
   SAVING_EDIT,
 } from "./type";
-import { instance, setInstance } from "../../services/api";
+import { instance } from "../../services/api";
 
 // Edit Coin.
 export const editCoin = (values) => (dispatch) => {

@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 import {
-  Divider as MuiDivider,
   Typography as MuiTypography,
   FormControl as MuiFormControl,
-  IconButton,
   Grid as MuiGrid,
-  Alert as MuiAlert,
   Button as MuiButton,
   Card as MuiCard,
   CardContent,
   TextField as MuiTextField,
-  Avatar as MuiAvatar,
   InputLabel,
   Select,
   MenuItem,
@@ -22,6 +18,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { sendNotification_req } from "../../../../api/notificationsAPI";
 
+// Spacing.
 const Typography = styled(MuiTypography)(spacing);
 const Card = styled(MuiCard)(spacing);
 const Grid = styled(MuiGrid)(spacing);
@@ -98,7 +95,6 @@ const Notification = () => {
                           label="Title"
                           variant="outlined"
                           fullWidth
-                          //my={3}
                           defaultValue={initialValues.title}
                           onChange={handleChange("title")}
                           error={touched.title && errors.title}

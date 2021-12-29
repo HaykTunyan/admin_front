@@ -73,7 +73,6 @@ const SearchIconWrapper = styled.div`
 
 const ReceiveTab = ({ rowReceive, startDate, endDate }) => {
   const { t } = useTranslation();
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [receive, setReceive] = useState([]);
@@ -160,7 +159,7 @@ const ReceiveTab = ({ rowReceive, startDate, endDate }) => {
           </TableBody>
         </Table>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
+          rowsPerPageOptions={[5, 10]}
           component="div"
           count={rowReceive.length}
           rowsPerPage={rowsPerPage}

@@ -12,8 +12,6 @@ import {
   InputLabel,
   OutlinedInput,
   InputAdornment,
-  Select,
-  MenuItem,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import { Eye, EyeOff } from "react-feather";
@@ -132,7 +130,6 @@ const UserSettings = () => {
     }
   }
 
-  console.log("Errors ==>", errors);
   if (loading) {
     return <></>;
   }
@@ -143,11 +140,11 @@ const UserSettings = () => {
         <CardContent p={5}>
           {/* Password */}
           <Grid container sx={{ alignItems: "center" }}>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
+            <Grid xs={12} md={3} xl={2} sx={{ mx: "5px" }}>
               <Typography variant="inherit"> Password </Typography>
             </Grid>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
-              <FormControl variant="outlined" sx={{ width: "250px" }}>
+            <Grid xs={12} md={3} xl={3} sx={{ mx: "5px" }}>
+              <FormControl variant="outlined" sx={{ width: "100%" }}>
                 <InputLabel htmlFor="outlined-adornment-password">
                   Password
                 </InputLabel>
@@ -180,12 +177,7 @@ const UserSettings = () => {
                 </div>
               )}
             </Grid>
-            <Grid
-              xs={12}
-              md={3}
-              sx={{ mx: "5px", alignItems: "center" }}
-              direction="row"
-            >
+            <Grid xs={12} md={3} sx={{ mx: "25px" }}>
               <Button
                 id={"password"}
                 variant="contained"
@@ -193,33 +185,16 @@ const UserSettings = () => {
               >
                 {values.password === true ? "Save" : "Edit"}
               </Button>
-              {/* <FormControl
-                fullWidth
-                variant="outlined"
-                sx={{ marginLeft: "70px" }}
-              >
-                <InputLabel id="simple-select">Send to</InputLabel>
-                <Select
-                  labelId="simple-select"
-                  id="simple-select"
-                  //value={values.reset}
-                  placeholder="Reset Link"
-                  onChange={handleReset}
-                >
-                  <MenuItem value={1}>Phone</MenuItem>
-                  <MenuItem value={2}>Email</MenuItem>
-                </Select>
-              </FormControl> */}
             </Grid>
           </Grid>
           <Spacer my={6} />
           {/* Email */}
           <Grid container sx={{ alignItems: "center" }}>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
+            <Grid xs={12} md={3} xl={2} sx={{ mx: "5px" }}>
               <Typography variant="inherit"> Email </Typography>
             </Grid>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
-              <FormControl sx={{ width: "250px" }}>
+            <Grid xs={12} md={3} xl={3} sx={{ mx: "5px" }}>
+              <FormControl sx={{ width: "100%" }}>
                 <TextField
                   id="email"
                   label={"Email"}
@@ -233,7 +208,7 @@ const UserSettings = () => {
                 />
               </FormControl>
             </Grid>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
+            <Grid xs={12} md={3} sx={{ mx: "25px" }}>
               <Button
                 id={"email"}
                 variant="contained"
@@ -246,11 +221,11 @@ const UserSettings = () => {
           <Spacer my={6} />
           {/* Phone Number */}
           <Grid container sx={{ alignItems: "center" }}>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
+            <Grid xs={12} md={3} xl={2} sx={{ mx: "5px" }}>
               <Typography variant="inherit"> Phone Number </Typography>
             </Grid>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
-              <FormControl sx={{ width: "250px" }}>
+            <Grid xs={12} md={3} xl={3} sx={{ mx: "5px" }}>
+              <FormControl sx={{ width: "100%" }}>
                 <TextField
                   id="phone"
                   label="Phone"
@@ -264,7 +239,7 @@ const UserSettings = () => {
                 />
               </FormControl>
             </Grid>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
+            <Grid xs={12} md={3} sx={{ mx: "25px" }}>
               <Button
                 id={"phone"}
                 variant="contained"
@@ -277,11 +252,11 @@ const UserSettings = () => {
           <Spacer my={6} />
           {/* User Name */}
           <Grid container sx={{ alignItems: "center" }}>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
+            <Grid xs={12} md={3} xl={2} sx={{ mx: "5px" }}>
               <Typography variant="inherit"> User Name </Typography>
             </Grid>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
-              <FormControl sx={{ width: "250px" }}>
+            <Grid xs={12} md={3} xl={3} sx={{ mx: "5px" }}>
+              <FormControl sx={{ width: "100%" }}>
                 <TextField
                   id="name"
                   label="Name"
@@ -295,7 +270,7 @@ const UserSettings = () => {
                 />
               </FormControl>
             </Grid>
-            <Grid xs={12} md={3} sx={{ mx: "5px" }}>
+            <Grid xs={12} md={3} sx={{ mx: "25px" }}>
               <Button
                 id={"full_name"}
                 variant="contained"

@@ -7,7 +7,7 @@ import {
   EDIT_ADMIN,
   EDIT_AFFILIATE,
 } from "./type";
-import { instance, setInstance, removeInstance } from "../../services/api";
+import { instance } from "../../services/api";
 
 export const createAdmin = (values) => (dispatch) => {
   dispatch({

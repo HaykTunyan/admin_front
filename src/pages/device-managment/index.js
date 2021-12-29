@@ -37,13 +37,12 @@ const DeviceManagement = () => {
   const [tabThree, setOpenThree] = useState(false);
   const [tabTwo, setOpenTwo] = useState(false);
   const [allTab, setAllTab] = useState(true);
-
   const totalDevice = useSelector((state) => state.deviceManagment);
-
-  const desktopData = totalDevice.desktopCall;
-  const tabletData = totalDevice.tableCall;
-  const mobileDate = totalDevice.mobileCall;
-  const uniqueData = totalDevice.uniqueCall;
+  // Redux Moke data.
+  const desktopData = totalDevice?.desktopCall;
+  const tabletData = totalDevice?.tableCall;
+  const mobileDate = totalDevice?.mobileCall;
+  const uniqueData = totalDevice?.uniqueCall;
 
   const data = {
     labels: ["Mobile", "Desktop", "Tablet"],
@@ -109,10 +108,8 @@ const DeviceManagement = () => {
         <Grid item xs={12} md={3}>
           <Stats
             title="All Devices"
-            amount="100%"
+            // amount="100%"
             chip="100%"
-            percentagetext="+100%"
-            percentagecolor={green[500]}
             ViewMore={openDevice}
             className={allTab && { background: "#376fd0" }}
           />
@@ -121,9 +118,6 @@ const DeviceManagement = () => {
           <Stats
             title="Mobile Users"
             amount="40%"
-            chip="40%"
-            percentagetext="+40%"
-            percentagecolor={green[500]}
             ViewMore={openMobile}
             className={tabOne && { background: "#376fd0" }}
           />

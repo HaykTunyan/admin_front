@@ -73,7 +73,6 @@ const SearchIconWrapper = styled.div`
 
 const SendTab = ({ rowSend, startDate, endDate }) => {
   const { t } = useTranslation();
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [send, setSend] = useState([]);
@@ -92,7 +91,7 @@ const SendTab = ({ rowSend, startDate, endDate }) => {
       const response = await getDashboardSend_req(startDate, endDate);
       if (response) {
         console.log("GET SEND RESPONSE ==>", response);
-        setSend(response.result);
+        setSend(response);
       }
     } catch (e) {
       console.log("GET SEND ERROR ==>", e.response);
@@ -137,30 +136,31 @@ const SendTab = ({ rowSend, startDate, endDate }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {send
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <TableRow
-                  key={row.coin_id}
-                  sx={{
-                    "&:last-child td, &:last-child th": {
-                      border: 0,
-                    },
-                  }}
-                >
-                  <TableCell>{`${row.name}`}</TableCell>
-                  <TableCell align="center">{`${row.total_balance} ${row.coin}`}</TableCell>
-                  <TableCell align="right">
-                    {`$${row.total_balance_usd}`}
-                  </TableCell>
-                </TableRow>
-              ))}
+            {send.result &&
+              send.result
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => (
+                  <TableRow
+                    key={row.coin_id}
+                    sx={{
+                      "&:last-child td, &:last-child th": {
+                        border: 0,
+                      },
+                    }}
+                  >
+                    <TableCell>{`${row.name}`}</TableCell>
+                    <TableCell align="center">{`${row.total_balance} ${row.coin}`}</TableCell>
+                    <TableCell align="right">
+                      {`$${row.total_balance_usd}`}
+                    </TableCell>
+                  </TableRow>
+                ))}
           </TableBody>
         </Table>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
+          rowsPerPageOptions={[5, 10]}
           component="div"
-          count={rowSend.length}
+          count={send?.result?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

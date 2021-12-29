@@ -34,6 +34,7 @@ const TotalUsers = ({ startDate, endDate }) => {
   useEffect(() => {
     getTotalUsers();
   }, []);
+
   return (
     <Fragment>
       <TableContainer component={Paper}>

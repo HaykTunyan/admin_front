@@ -19,7 +19,6 @@ const Transaction = () => {
   return (
     <Fragment>
       <Helmet title="Transaction" />
-
       <Grid flex justifyContent="space-between" container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom>
@@ -27,9 +26,7 @@ const Transaction = () => {
           </Typography>
         </Grid>
       </Grid>
-
       <Divider my={6} />
-
       <Grid container spacing={6} mt={6}>
         <Grid item sx={{ width: "100%" }}>
           <Box sx={{ width: "100%", typography: "body1" }}>

@@ -4,8 +4,6 @@ import { spacing } from "@material-ui/system";
 import {
   Grid,
   Box,
-  Typography as MuiTypography,
-  Divider as MuiDivider,
   Card as MuiCard,
   CardContent,
   Button,
@@ -16,9 +14,7 @@ import {
   TableRow,
   TableHead,
   Paper,
-  IconButton,
-  Stack,
-  Pagination,
+  TablePagination,
 } from "@material-ui/core";
 import { useDispatch } from "react-redux";
 import { generateReferral } from "../../redux/actions/referral";
@@ -30,10 +26,22 @@ import AssigneReferral from "../../modal/AssigneReferral";
 const Card = styled(MuiCard)(spacing);
 
 const ReferralUsers = () => {
+  // hooks.
   const dispatch = useDispatch();
   const [showList, setShowList] = useState(false);
-  const [statePage, setStatePage] = useState(1);
   const [unassignedList, setUnassignedList] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleChangePage = (event, newPage) => {
+    getUnassigned(newPage + 1);
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(1);
+  };
 
   const handleGenerate = () => {
     try {
@@ -47,12 +55,12 @@ const ReferralUsers = () => {
     }
   };
 
-  const getUnassigned = (stateIndex) => {
+  const getUnassigned = (page, rowsPerPage) => {
     return instance
       .get("/admin/referral/all", {
         params: {
-          limit: 5,
-          page: stateIndex ? stateIndex : statePage,
+          limit: rowsPerPage,
+          page: page,
         },
       })
       .then((data) => {
@@ -66,21 +74,9 @@ const ReferralUsers = () => {
   };
 
   // Use Effect.
-  let arr = [];
   useEffect(() => {
     getUnassigned();
-  }, [statePage]);
-
-  const dataPage = unassignedList?.allCount / unassignedList?.limit;
-
-  const dataPageMath = Math.round(dataPage);
-  console.log("data", dataPageMath);
-  if (!dataPageMath) {
-    return null;
-  }
-  arr.length = dataPageMath;
-  console.log("arr", arr?.length);
-  arr.fill(1);
+  }, []);
 
   return (
     <Fragment>
@@ -137,39 +133,18 @@ const ReferralUsers = () => {
                             ))}
                         </TableBody>
                       </Table>
-
-                      <Stack
-                        direction="row"
-                        display="flex"
-                        alignItems="flex-end"
-                        spacing={2}
-                      >
-                        {arr.map((item, index) => (
-                          <Box
-                            display="flex"
-                            onClick={() => getUnassigned(index + 1)}
-                          >
-                            <IconButton color="primary" component="span">
-                              <span>{index + 1}</span>
-                            </IconButton>
-                          </Box>
-                        ))}
-                      </Stack>
                       {/* Pagination */}
-                      {/* <Box py={5} display="flex" justifyContent="flex-end">
-              
-
-                        <Pagination
-                          variant="outlined"
-                          shape="rounded"
-                          count={dataPage.length}
-                          limit={unassignedList?.limit}
-                          page={unassignedList?.page}
-                          onClick={() =>
-                            getUnassigned(arr.map((index) => index + 1))
-                          }
+                      <Box py={5} display="flex" justifyContent="flex-end">
+                        <TablePagination
+                          rowsPerPageOptions={[10]}
+                          component="div"
+                          count={unassignedList?.allCount}
+                          rowsPerPage={unassignedList?.limit}
+                          page={page}
+                          onPageChange={handleChangePage}
+                          onRowsPerPageChange={handleChangeRowsPerPage}
                         />
-                      </Box> */}
+                      </Box>
                     </TableContainer>
                   </Paper>
                 </Grid>

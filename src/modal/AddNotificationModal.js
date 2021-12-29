@@ -68,7 +68,6 @@ const AddNotificationModal = ({ getTemplates }) => {
         }}
       >
         {({ errors, touched, handleSubmit, handleChange }) => {
-          console.log("Errors ==>", errors, touched);
           return (
             <>
               <Dialog open={open} onClose={handleClose} fullWidth>

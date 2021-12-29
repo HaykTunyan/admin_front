@@ -52,9 +52,10 @@ export const rows = [
 ];
 
 const MobileCall = ({ mobileDate }) => {
+  // hooks.
+  const title = " Mobile Version ";
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const title = " Mobile Version ";
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -101,7 +102,7 @@ const MobileCall = ({ mobileDate }) => {
         </Table>
         {/* Pagination */}
         <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
+          rowsPerPageOptions={[5, 10]}
           component="div"
           count={mobileDate.length}
           rowsPerPage={rowsPerPage}

@@ -70,7 +70,6 @@ const KYC = () => {
   // hooks.
   const [step, setStep] = useState("1");
   const { t } = useTranslation();
-  const rows = [];
 
   const handleChangeTab = (event, newStep) => {
     setStep(newStep);
@@ -85,7 +84,6 @@ const KYC = () => {
             KYC
           </Typography>
         </Grid>
-        <Grid></Grid>
       </Grid>
 
       <Divider my={6} />

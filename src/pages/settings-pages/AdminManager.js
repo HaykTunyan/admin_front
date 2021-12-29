@@ -34,7 +34,6 @@ const AdminManager = () => {
                 fullWidth
                 my={2}
               />
-
               <Box sx={{ display: "flex", flexDirection: "column", m: 5 }}>
                 <FormControlLabel
                   label="FSend"

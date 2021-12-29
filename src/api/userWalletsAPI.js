@@ -36,3 +36,8 @@ export const blockUserWallet_req = async (userId, walletId) => {
   });
   return response.data;
 };
+
+export const getCoins_req = async () => {
+  const response = await instance.get(`/admin/settings/coins`);
+  return response.data;
+};

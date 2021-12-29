@@ -1,7 +1,7 @@
 // Users Acions.
 
 import { USER_LOADING, USER_LOADED, USER_LOGOUT, USER_LIST } from "./type";
-import { instance, setInstance, removeInstance } from "../../services/api";
+import { instance } from "../../services/api";
 
 export const signIn_req = (values) => (dispatch) => {
   dispatch({

@@ -38,15 +38,14 @@ const DashboardPage = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalAmounts, setTotalAmounts] = useState({});
-
-  const totlalDashboard = useSelector((state) => state.dashboard);
-  const rowReceive = totlalDashboard.rowReceive;
-  const rowUsers = totlalDashboard.totalUsers;
-  const rowBalance = totlalDashboard.rowBalance;
-  const rowSend = totlalDashboard.rowSend;
-  const rowExchange = totlalDashboard.rowExchange;
-  const rowLocked = totlalDashboard.rowLocked;
-  const rowFlexible = totlalDashboard.rowFlexible;
+  // Redux Moke data.
+  const rowReceive = [];
+  const rowUsers = [];
+  const rowBalance = [];
+  const rowSend = [];
+  const rowExchange = [];
+  const rowLocked = [];
+  const rowFlexible = [];
 
   const onChangeTime = (newValue) => {
     setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));

@@ -35,11 +35,12 @@ const NotVerifiedTable = () => {
   // hooks.
   const classes = useStyles();
   const [rowVerified, setRowVerified] = useState([]);
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const rows = rowVerified?.kyc;
 
   const handleChangePage = (event, newPage) => {
+    getKyc(newPage + 1);
     setPage(newPage);
   };
 
@@ -48,12 +49,12 @@ const NotVerifiedTable = () => {
     setPage(1);
   };
 
-  const getKyc = () => {
+  const getKyc = (page, rowsPerPage) => {
     return instance
       .get("/admin/kyc/all", {
         params: {
-          limit: null,
-          page: 1,
+          limit: rowsPerPage,
+          page: page,
           type: 1,
         },
       })
@@ -77,8 +78,6 @@ const NotVerifiedTable = () => {
     return <NoData />;
   }
 
-  console.log("rowVerified", rowVerified);
-
   return (
     <Fragment>
       <Paper>
@@ -95,40 +94,38 @@ const NotVerifiedTable = () => {
             </TableHead>
             <TableBody>
               {rows &&
-                rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <TableRow
-                      key={row.user_id}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell align="left">{row.user_id}</TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>
-                        {moment(row.registration_date).format(
-                          "DD/MM/YYYY HH:mm "
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Button variant="contained">Verifiy</Button>
-                      </TableCell>
-                      <TableCell align="right">
-                        <PandingVerififeyModal
-                          subTitle="Verified"
-                          kycId={row.user_id}
-                          statusKyc={4}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                rows.map((row) => (
+                  <TableRow
+                    key={row.user_id}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell align="left">{row.user_id}</TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>
+                      {moment(row.registration_date).format(
+                        "DD/MM/YYYY HH:mm "
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="contained">Verifiy</Button>
+                    </TableCell>
+                    <TableCell align="right">
+                      <PandingVerififeyModal
+                        subTitle="Verified"
+                        kycId={row.user_id}
+                        statusKyc={4}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
           {/* Pagination */}
           <TablePagination
-            rowsPerPageOptions={[5, 10, 20]}
+            rowsPerPageOptions={[10]}
             component="div"
-            count={rows?.length}
-            rowsPerPage={rowsPerPage}
+            count={rowVerified?.allCount}
+            rowsPerPage={rowVerified?.limit}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}

@@ -5,7 +5,6 @@ import {
   Button,
   Card as MuiCard,
   CardHeader,
-  Chip as MuiChip,
   Paper,
   Table,
   TableBody,
@@ -21,17 +20,8 @@ import {
   blockUserWallet_req,
 } from "../../../../api/userWalletsAPI";
 
-const Spacer = styled.div(spacing);
+// Spacing.
 const Card = styled(MuiCard)(spacing);
-
-const Chip = styled(MuiChip)`
-  height: 20px;
-  padding: 4px 0;
-  font-size: 90%;
-  background-color: ${(props) =>
-    props.theme.palette[props.color ? props.color : "primary"].light};
-  color: ${(props) => props.theme.palette.common.white};
-`;
 
 const TableWrapper = styled.div`
   overflow-y: auto;
@@ -39,10 +29,10 @@ const TableWrapper = styled.div`
 `;
 
 const Wallets = () => {
+  // hooks.
   const location = useLocation();
   const profileId = location?.state;
   const userId = profileId?.id;
-
   const [wallets, setWallets] = useState([]);
 
   async function getUserWallets() {
@@ -124,6 +114,7 @@ const Wallets = () => {
                           <Button
                             variant="contained"
                             onClick={() => blockUserWallet(row)}
+                            sx={{ width: "max-content" }}
                           >{`${
                             row.block_status === true ? "Unblock" : "Block"
                           } withdrawal`}</Button>

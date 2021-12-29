@@ -23,7 +23,9 @@ import {
   MenuItem,
   InputLabel,
   InputBase,
-  Pagination,
+  Chip as MuiChip,
+  Tooltip,
+  Button,
 } from "@material-ui/core";
 import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
@@ -74,6 +76,15 @@ const SearchIconWrapper = styled.div`
   }
 `;
 
+const Chip = styled(MuiChip)`
+  height: 20px;
+  padding: 4px 0;
+  font-size: 90%;
+  background-color: ${(props) =>
+    props.theme.palette[props.color ? props.color : "primary"].light};
+  color: ${(props) => props.theme.palette.common.white};
+`;
+
 const Input = styled(InputBase)`
   color: inherit;
   width: 100%;
@@ -99,20 +110,6 @@ const SwapTable = () => {
   const [to, setTo] = useState("");
   const [statusValue, setStatusValue] = useState("");
   const rows = swap?.transactions;
-
-  const getRequestParams = (page, pageSize) => {
-    let params = {};
-
-    if (page) {
-      params["page"] = page - 1;
-    }
-
-    if (pageSize) {
-      params["limit"] = pageSize;
-    }
-
-    return params;
-  };
 
   // Filter Search.
 
@@ -268,32 +265,46 @@ const SwapTable = () => {
             </TableHead>
             <TableBody>
               {rows &&
-                rows
-                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <TableRow
-                      key={row.key}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {moment(row.date).format("DD/MM/YYYY HH:mm ")}{" "}
-                      </TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>{row.phone}</TableCell>
-                      <TableCell>
-                        {row.amount_sent != null ? (
-                          <>{row.amount_sent}</>
-                        ) : (
-                          <>{row.amount_received}</>
-                        )}
-                      </TableCell>
-                      <TableCell>{row.coinFrom}</TableCell>
-                      <TableCell>{row.typeFromat}</TableCell>
-                      <TableCell>{row.type}</TableCell>
-                      <TableCell>{row.isReal}</TableCell>
-                      <TableCell>{row.status}</TableCell>
-                    </TableRow>
-                  ))}
+                rows.map((row) => (
+                  <TableRow
+                    key={row.key}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {moment(row.date).format("DD/MM/YYYY HH:mm ")}{" "}
+                    </TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>{row.phone}</TableCell>
+                    <TableCell>
+                      {row.amount_sent != null ? (
+                        <>{row.amount_sent}</>
+                      ) : (
+                        <>{row.amount_received}</>
+                      )}
+                    </TableCell>
+                    <TableCell>{row.coinFrom}</TableCell>
+                    <TableCell>
+                      <Tooltip title={row.transaction_id} arrow>
+                        <Button>{row.transaction_id.substring(0, 9)}</Button>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      {row.type === "fake" ? (
+                        <Chip label={row.type} color="error" />
+                      ) : (
+                        <Chip label={row.type} color="success" />
+                      )}
+                    </TableCell>
+                    <TableCell>{row.operation_type}</TableCell>
+                    <TableCell>
+                      {row.status === "accepted" ? (
+                        <Chip label={row.status} color="success" />
+                      ) : (
+                        <Chip label={row.status} color="error" />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
           {/* Pagination */}
@@ -306,18 +317,6 @@ const SwapTable = () => {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-          <Box my={5} display="flex" justifyContent="flex-end">
-            {/* <Pagination
-              className="my-3"
-              count={count}
-              page={page}
-              siblingCount={1}
-              boundaryCount={1}
-              variant="outlined"
-              shape="rounded"
-              // onChange={handlePageChange}
-            /> */}
-          </Box>
         </TableContainer>
       </Paper>
       {rows && (

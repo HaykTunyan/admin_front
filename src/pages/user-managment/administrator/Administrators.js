@@ -105,9 +105,11 @@ const Administrators = () => {
   const getAdminUsers = (page, rowsPerPage) => {
     return instance
       .get("/admin/all", {
-        mode: "no-cors",
-        limit: rowsPerPage,
-        page: page,
+        params: {
+          limit: rowsPerPage,
+          page: page,
+          type: "savings",
+        },
       })
       .then((data) => {
         getRowAdmin(data.data);
@@ -140,7 +142,6 @@ const Administrators = () => {
         <Grid item></Grid>
       </Grid>
       <Divider my={6} />
-
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card mb={6}>
@@ -159,7 +160,6 @@ const Administrators = () => {
                     <AddAdminModal />
                   </Grid>
                 </Grid>
-
                 <Paper>
                   <TableWrapper>
                     <Table>
@@ -172,32 +172,25 @@ const Administrators = () => {
                       </TableHead>
                       <TableBody>
                         {rowAdmin?.admins &&
-                          rowAdmin?.admins
-                            // .slice(
-                            //   page * rowsPerPage,
-                            //   page * rowsPerPage + rowsPerPage
-                            // )
-                            .map((row) => (
-                              <TableRow key={row.id}>
-                                <TableCell component="th" scope="row">
-                                  {row.name}
-                                </TableCell>
-                                <TableCell align="center">
-                                  {row.email}
-                                </TableCell>
-                                <TableCell align="center">
-                                  <Box mr={2}>
-                                    <EditAdminModal
-                                      email={row.email}
-                                      name={row.name}
-                                      id={row.id}
-                                      permissions={row.permissions}
-                                      role={row.role}
-                                    />
-                                  </Box>
-                                </TableCell>
-                              </TableRow>
-                            ))}
+                          rowAdmin?.admins.map((row) => (
+                            <TableRow key={row.id}>
+                              <TableCell component="th" scope="row">
+                                {row.name}
+                              </TableCell>
+                              <TableCell align="center">{row.email}</TableCell>
+                              <TableCell align="center">
+                                <Box mr={2}>
+                                  <EditAdminModal
+                                    email={row.email}
+                                    name={row.name}
+                                    id={row.id}
+                                    permissions={row.permissions}
+                                    role={row.role}
+                                  />
+                                </Box>
+                              </TableCell>
+                            </TableRow>
+                          ))}
                       </TableBody>
                     </Table>
                   </TableWrapper>
@@ -205,7 +198,7 @@ const Administrators = () => {
               </Card>
               {/* Pagination */}
               <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
+                rowsPerPageOptions={[10]}
                 component="div"
                 count={rowAdmin?.allCount}
                 rowsPerPage={rowAdmin?.limit}

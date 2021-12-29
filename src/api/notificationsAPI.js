@@ -1,9 +1,12 @@
 import { instance } from "../services/api";
 
-export const getNotifTemplates_req = async () => {
-  const response = await instance.get(
-    `/admin/notification-templates/all?page=1&limit=50`
-  );
+export const getNotifTemplates_req = async (page, rowsPerPage) => {
+  const response = await instance.get(`/admin/notification-templates/all`, {
+    params: {
+      page: page,
+      limit: rowsPerPage,
+    },
+  });
   return response.data;
 };
 

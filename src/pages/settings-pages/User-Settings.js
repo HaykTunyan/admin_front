@@ -14,14 +14,13 @@ import {
   CircularProgress,
 } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "react-feather";
 import * as Yup from "yup";
 import { Formik } from "formik";
 
+// Spacing.
 const Card = styled(MuiCard)(spacing);
 const Button = styled(MuiButton)(spacing);
 const TextField = styled(MuiTextField)(spacing);
-const Divider = styled(MuiDivider)(spacing);
 const Typography = styled(MuiTypography)(spacing);
 const Alert = styled(MuiAlert)(spacing);
 
@@ -56,12 +55,6 @@ const validationSchema = Yup.object().shape({
 
 const UserSettings = () => {
   const [age, setAge] = useState("");
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
-
-  const navigate = useNavigate();
 
   const handleSubmit = async (
     values,
@@ -130,7 +123,6 @@ const UserSettings = () => {
                           variant="outlined"
                           my={2}
                         />
-
                         {/* Email */}
                         <TextField
                           name="email"
@@ -145,7 +137,6 @@ const UserSettings = () => {
                           variant="outlined"
                           my={2}
                         />
-
                         {/* Phone Number */}
                         <TextField
                           name="phone"
@@ -160,7 +151,6 @@ const UserSettings = () => {
                           variant="outlined"
                           my={2}
                         />
-
                         {/* Balance */}
                         <TextField
                           name="number"
@@ -175,7 +165,6 @@ const UserSettings = () => {
                           variant="outlined"
                           my={2}
                         />
-
                         {/* Password */}
                         <TextField
                           name="password"
@@ -190,7 +179,6 @@ const UserSettings = () => {
                           variant="outlined"
                           my={2}
                         />
-
                         {/* Confirm Password */}
                         <TextField
                           name="confirmPassword"
@@ -209,7 +197,6 @@ const UserSettings = () => {
                           variant="outlined"
                           my={2}
                         />
-
                         {/* Submit */}
                         <Button
                           type="submit"

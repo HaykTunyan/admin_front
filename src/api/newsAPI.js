@@ -1,7 +1,12 @@
 import { instance } from "../services/api";
 
-export const getNews_req = async () => {
-  const response = await instance.get(`/admin/news/all`);
+export const getNews_req = async (page, rowsPerPage) => {
+  const response = await instance.get(`/admin/news/all`, {
+    params: {
+      page: page,
+      limit: rowsPerPage,
+    },
+  });
   return response.data;
 };
 

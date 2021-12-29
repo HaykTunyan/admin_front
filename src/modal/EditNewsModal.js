@@ -12,7 +12,6 @@ import {
 } from "@material-ui/core";
 import { CloudUpload } from "@material-ui/icons";
 import ImageUploading from "react-images-uploading";
-import NewsImage from "../assets/images/news_one.jpg";
 import TinymceNew from "../components/TinymceNew";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -135,7 +134,6 @@ const EditNewsModal = ({ news, getNews }) => {
                     label="Title H1"
                     type="text"
                     fullWidth
-                    variant="standard"
                     defaultValue={initialState.title}
                     onChange={handleChange("title")}
                   />
@@ -146,7 +144,6 @@ const EditNewsModal = ({ news, getNews }) => {
                     label="Description One"
                     type="text"
                     fullWidth
-                    variant="standard"
                     defaultValue={initialState.description}
                     onChange={handleChange("description")}
                   />

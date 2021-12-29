@@ -34,8 +34,6 @@ const DeleteSwapModal = ({ swapId }) => {
     setOpen(false);
   };
 
-  console.log("  swapId ", swapId);
-
   const handleClick = () => {
     return instance
       .delete(`/admin/swap-settings/${swapId} `, { mode: "no-cors" })

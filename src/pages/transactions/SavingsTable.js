@@ -20,6 +20,9 @@ import {
   FormControl,
   MenuItem,
   InputLabel,
+  Chip as MuiChip,
+  Tooltip,
+  Button,
 } from "@material-ui/core";
 import moment from "moment";
 import { spacing } from "@material-ui/system";
@@ -79,6 +82,15 @@ const Input = styled(InputBase)`
     padding-left: ${(props) => props.theme.spacing(12)};
     width: 100%;
   }
+`;
+
+const Chip = styled(MuiChip)`
+  height: 20px;
+  padding: 4px 0;
+  font-size: 90%;
+  background-color: ${(props) =>
+    props.theme.palette[props.color ? props.color : "primary"].light};
+  color: ${(props) => props.theme.palette.common.white};
 `;
 
 const useStyles = makeStyles({
@@ -142,7 +154,9 @@ const SavingsTable = () => {
   };
 
   // Use Effect.
-  useEffect(() => getSavings(), []);
+  useEffect(() => {
+    getSavings();
+  }, []);
 
   // Loader.
   if (savings.transactionsCount === 0) {
@@ -242,34 +256,46 @@ const SavingsTable = () => {
             </TableHead>
             <TableBody>
               {rows &&
-                rows
-                  // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <TableRow
-                      key={row.key}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell>
-                        {moment(row.date).format("DD/MM/YYYY HH:mm ")}
-                      </TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>{row.phone}</TableCell>
-                      <TableCell>
-                        {row.amount_sent != null ? (
-                          <>{row.amount_sent}</>
-                        ) : (
-                          <>{row.amount_received}</>
-                        )}
-                      </TableCell>
-
-                      <TableCell>{row.coinFrom}</TableCell>
-
-                      <TableCell>{row.typeFromat}</TableCell>
-                      <TableCell>{row.type}</TableCell>
-                      <TableCell>{row.isReal}</TableCell>
-                      <TableCell>{row.status}</TableCell>
-                    </TableRow>
-                  ))}
+                rows.map((row) => (
+                  <TableRow
+                    key={row.key}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell>
+                      {moment(row.date).format("DD/MM/YYYY HH:mm ")}
+                    </TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>{row.phone}</TableCell>
+                    <TableCell>
+                      {row.amount_sent != null ? (
+                        <>{row.amount_sent}</>
+                      ) : (
+                        <>{row.amount_received}</>
+                      )}
+                    </TableCell>
+                    <TableCell>{row.coinFrom}</TableCell>
+                    <TableCell>
+                      <Tooltip title={row.transaction_id} arrow>
+                        <Button>{row.transaction_id.substring(0, 9)}</Button>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      {row.type === "fake" ? (
+                        <Chip label={row.type} color="error" />
+                      ) : (
+                        <Chip label={row.type} color="success" />
+                      )}
+                    </TableCell>
+                    <TableCell>{row.operation_type}</TableCell>
+                    <TableCell>
+                      {row.status === "accepted" ? (
+                        <Chip label={row.status} color="success" />
+                      ) : (
+                        <Chip label={row.status} color="error" />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
           {/* Pagination */}

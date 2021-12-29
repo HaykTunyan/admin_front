@@ -1,26 +1,16 @@
-import React, { Fragment, useState, useEffect } from "react";
-import { Helmet } from "react-helmet-async";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { useNavigate } from "react-router-dom";
 import { spacing } from "@material-ui/system";
 import { useLocation } from "react-router-dom";
 import {
   Divider as MuiDivider,
   Typography as MuiTypography,
-  IconButton,
   Grid as MuiGrid,
-  Alert as MuiAlert,
   Button as MuiButton,
   Card as MuiCard,
   CardContent,
   TextField as MuiTextField,
   Avatar as MuiAvatar,
-  Tab,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  Box,
   Chip as MuiChip,
 } from "@material-ui/core";
 import moment from "moment";
@@ -33,15 +23,11 @@ import DocumentsModal from "../../../../modal/DocumentsModal";
 import RejectKYCModal from "../../../../modal/RejectKYCModal";
 
 // Spacing.
-const Divider = styled(MuiDivider)(spacing);
 const Typography = styled(MuiTypography)(spacing);
 const Card = styled(MuiCard)(spacing);
 const Grid = styled(MuiGrid)(spacing);
 const Spacer = styled.div(spacing);
-const Avatar = styled(MuiAvatar)``;
-const TextField = styled(MuiTextField)(spacing);
 const Button = styled(MuiButton)(spacing);
-
 const Chip = styled(MuiChip)`
   height: 20px;
   padding: 4px 0;
@@ -52,10 +38,10 @@ const Chip = styled(MuiChip)`
 `;
 
 const SettingsKYC = () => {
+  // hooks.
   const location = useLocation();
   const profileId = location?.state;
   const userId = profileId?.id;
-
   const [userKYC, setUserKYC] = useState({});
 
   async function getUserKYC() {
@@ -305,7 +291,11 @@ const SettingsKYC = () => {
             )}
           {(userKYC.status_kyc === 1 || userKYC.status_kyc === 3) && (
             <Grid container direction="row" alignItems="center" mb={2}>
-              <Button variant="contained" onClick={() => updateUserKYC(2)}>
+              <Button
+                variant="contained"
+                onClick={() => updateUserKYC(2)}
+                sx={{ width: "100%" }}
+              >
                 Approve
               </Button>
               <Spacer mx={2} />

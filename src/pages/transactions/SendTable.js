@@ -24,6 +24,9 @@ import {
   FormControl,
   MenuItem,
   InputLabel,
+  Chip as MuiChip,
+  Tooltip,
+  Button,
 } from "@material-ui/core";
 import CSVButton from "../../components/CSVButton";
 import { Search as SearchIcon } from "react-feather";
@@ -79,6 +82,15 @@ const Input = styled(InputBase)`
     padding-left: ${(props) => props.theme.spacing(12)};
     width: 100%;
   }
+`;
+
+const Chip = styled(MuiChip)`
+  height: 20px;
+  padding: 4px 0;
+  font-size: 90%;
+  background-color: ${(props) =>
+    props.theme.palette[props.color ? props.color : "primary"].light};
+  color: ${(props) => props.theme.palette.common.white};
 `;
 
 const useStyles = makeStyles({
@@ -258,7 +270,7 @@ const SendTable = () => {
               <TableRow>
                 <TableCell>Date</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Phone</TableCell>
+                <TableCell>Phone Number</TableCell>
                 <TableCell>Amount</TableCell>
                 <TableCell>Coin</TableCell>
                 <TableCell>TX Id</TableCell>
@@ -291,10 +303,26 @@ const SendTable = () => {
 
                       <TableCell>{row.coinFrom}</TableCell>
 
-                      <TableCell>{row.typeFromat}</TableCell>
-                      <TableCell>{row.type}</TableCell>
-                      <TableCell>{row.isReal}</TableCell>
-                      <TableCell>{row.status}</TableCell>
+                      <TableCell>
+                        <Tooltip title={row.transaction_id} arrow>
+                          <Button>{row.transaction_id.substring(0, 9)}</Button>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        {row.type === "fake" ? (
+                          <Chip label={row.type} color="error" />
+                        ) : (
+                          <Chip label={row.type} color="success" />
+                        )}
+                      </TableCell>
+                      <TableCell>{row.operation_type}</TableCell>
+                      <TableCell>
+                        {row.status === "accepted" ? (
+                          <Chip label={row.status} color="success" />
+                        ) : (
+                          <Chip label={row.status} color="error" />
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
             </TableBody>

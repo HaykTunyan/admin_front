@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { darken } from "polished";
@@ -7,13 +6,7 @@ import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import {
-  Divider as MuiDivider,
   Typography as MuiTypography,
-  Grid as MuiGrid,
-  Alert as MuiAlert,
-  Button as MuiButton,
-  TextField as MuiTextField,
-  Avatar as MuiAvatar,
   Tab,
   Card as MuiCard,
   Chip as MuiChip,
@@ -30,7 +23,6 @@ import {
   FormControlLabel,
   Switch,
   Box,
-  Typography,
   Slider,
   Select,
   MenuItem,
@@ -39,6 +31,7 @@ import {
   InputLabel,
   Button,
   TextField,
+  CardContent,
 } from "@material-ui/core";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
@@ -52,6 +45,7 @@ import moment from "moment";
 // Spacing.
 const Card = styled(MuiCard)(spacing);
 const Paper = styled(MuiPaper)(spacing);
+const Typography = styled(MuiTypography)(spacing);
 const Spacer = styled.div(spacing);
 
 // Custom Style.
@@ -195,20 +189,16 @@ export const rowListFlexible = [
 ];
 
 const Deposits = () => {
+  // hooks.
   const location = useLocation();
   const profileId = location?.state;
   const userId = profileId?.id;
-
+  const { t } = useTranslation();
   const titleLocked = "Locked Info";
   const titleFlexible = "Flexible Info";
   const [tab, setTab] = useState(1);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const callRow = useSelector((state) => state.userCard);
-  const rowBodyLocked = callRow.lockedData;
-  const rowBodyFlexible = callRow.flexibleData;
-
-  const { t } = useTranslation();
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [alignment, setAlignment] = useState("");
   const [savings, setSavings] = useState([]);
   const [allCount, setAllCount] = useState({});
@@ -229,15 +219,16 @@ const Deposits = () => {
   };
 
   const handleChangePage = (event, newPage) => {
+    getUserSavings(newPage + 1);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(1);
   };
 
-  const handleChange = (event, newTab) => {
+  const handleChangeTab = (event, newTab) => {
     setTab(newTab);
     getUserSavings(newTab === 1 ? "flexible" : "locked");
   };
@@ -285,12 +276,17 @@ const Deposits = () => {
     }
   }
 
-  async function getUserSavings(type) {
+  async function getUserSavings(type, page, rowsPerPage) {
     try {
-      const response = await getUserSavings_req(userId, type);
+      const response = await getUserSavings_req(
+        userId,
+        type,
+        page,
+        rowsPerPage
+      );
       if (response) {
         console.log("GET USER SAVINGS RESPONSE ==>", response);
-        setSavings(response.savings);
+        setSavings(response);
         setAllCount(response.allCount);
       }
     } catch (e) {
@@ -307,110 +303,63 @@ const Deposits = () => {
       <Box sx={{ width: "100%", typography: "body1" }}>
         <TabContext value={tab}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <TabList
+              onChange={handleChangeTab}
+              aria-label="lab API tabs example"
+            >
               <Tab label="Flexible" value={1} />
               <Tab label="Locked" value={2} />
             </TabList>
           </Box>
-          <Grid
-            item
-            container
-            my={8}
-            mx={4}
-            sx={{
-              borderBottom: 1,
-              borderColor: "divider",
-            }}
-            direction="row"
-            alignItems="center"
-          >
-            <Grid
-              item
-              container
-              direction="row"
-              alignItems="center"
-              mb={6}
-              xs={8}
-            >
-              <Grid item sx={6} md={2}>
-                <Typography variant="inherit" fontWeight="bold">
-                  {`Active ${
-                    tab === 1 ? "Flexible" : "Locked"
-                  } deposits Amount:`}
-                </Typography>
+          <Spacer my={6} />
+          <Card p={4}>
+            <CardContent>
+              <Grid container>
+                <Grid sx={12} md={3}>
+                  <Typography variant="inherit" fontWeight="bold">
+                    {`Active ${
+                      tab === 1 ? "Flexible" : "Locked"
+                    } deposits Amount`}
+                  </Typography>
+                  <Spacer mx={6} />
+                  <Typography variant="subtitle1">
+                    {savings?.activeDeposits}
+                  </Typography>
+                </Grid>
+                <Grid sx={12} md={3}>
+                  <Typography variant="inherit" fontWeight="bold">
+                    {`Active ${tab === 1 ? "Flexible" : "Locked"} Profit`}
+                  </Typography>
+                  <Spacer mx={6} />
+                  <Typography variant="subtitle1">
+                    {savings?.activeProfit}
+                  </Typography>
+                </Grid>
+                <Grid sx={12} md={3}>
+                  <Typography variant="inherit" fontWeight="bold">
+                    {`Closed ${
+                      tab === 1 ? "Flexible" : "Locked"
+                    } deposits Amount`}
+                  </Typography>
+                  <Spacer mx={6} />
+                  <Typography variant="subtitle1">
+                    {savings?.closedDeposits}
+                  </Typography>
+                </Grid>
+                <Grid sx={12} md={3}>
+                  <Typography variant="inherit" fontWeight="bold">
+                    {`Closed ${tab === 1 ? "Flexible" : "Locked"} Profit`}
+                  </Typography>
+                  <Spacer mx={6} />
+                  <Typography variant="subtitle1">
+                    {savings?.closedProfit}
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item sx={6} md={2}>
-                <Typography variant="subtitle1">{10000}</Typography>
-              </Grid>
-            </Grid>
-            <Grid
-              item
-              container
-              direction="row"
-              alignItems="center"
-              mb={6}
-              xs={4}
-            >
-              <Grid item sx={6} md={2}>
-                <Typography variant="inherit" fontWeight="bold">
-                  {`Profit:`}
-                </Typography>
-              </Grid>
-              <Grid item item sx={6} md={2}>
-                <Typography variant="subtitle1">{10000}</Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid
-            item
-            container
-            my={8}
-            mx={4}
-            sx={{
-              borderBottom: 1,
-              borderColor: "divider",
-            }}
-            direction="row"
-            alignItems="center"
-          >
-            <Grid
-              item
-              container
-              direction="row"
-              alignItems="center"
-              mb={6}
-              xs={8}
-            >
-              <Grid item sx={6} md={2}>
-                <Typography variant="inherit" fontWeight="bold">
-                  {`Closed ${
-                    tab === 1 ? "Flexible" : "Locked"
-                  } deposits Amount:`}
-                </Typography>
-              </Grid>
-              <Grid item sx={6} md={2}>
-                <Typography variant="subtitle1">{2000}</Typography>
-              </Grid>
-            </Grid>
-            <Grid
-              item
-              container
-              direction="row"
-              alignItems="center"
-              mb={6}
-              xs={4}
-            >
-              <Grid item sx={6} md={2}>
-                <Typography variant="inherit" fontWeight="bold">
-                  {`Profit:`}
-                </Typography>
-              </Grid>
-              <Grid item item sx={6} md={2}>
-                <Typography variant="subtitle1">{2000}</Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-
+            </CardContent>
+          </Card>
+          <Spacer my={6} />
+          {/*Filters  */}
           <Card mb={6} p={2} sx={{ display: "flex" }}>
             <Grid item md={2}>
               <FormControl fullWidth>
@@ -456,6 +405,7 @@ const Deposits = () => {
             </Grid>
           </Card>
 
+          {/* Tab One */}
           <TabPanel value={1}>
             <Card mb={6}>
               <CardHeader
@@ -482,12 +432,8 @@ const Deposits = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {savings
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((item) => (
+                      {savings.savings &&
+                        savings.savings.map((item) => (
                           <TableRow key={item.id}>
                             <TableCell>{item.coinName}</TableCell>
                             <TableCell>
@@ -593,10 +539,10 @@ const Deposits = () => {
                   </Table>
                   {/* Pagination */}
                   <TablePagination
-                    rowsPerPageOptions={[5, 10, 20]}
+                    rowsPerPageOptions={[10]}
                     component="div"
-                    count={rowBodyFlexible.length}
-                    rowsPerPage={rowsPerPage}
+                    count={savings?.allCount}
+                    rowsPerPage={savings?.limit}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
@@ -605,6 +551,7 @@ const Deposits = () => {
               </Paper>
             </Card>
           </TabPanel>
+          {/* Tab Two */}
           <TabPanel value={2}>
             <Card mb={6}>
               <CardHeader
@@ -631,12 +578,8 @@ const Deposits = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {savings
-                        .slice(
-                          page * rowsPerPage,
-                          page * rowsPerPage + rowsPerPage
-                        )
-                        .map((item) => (
+                      {savings.savings &&
+                        savings.savings.map((item) => (
                           <TableRow key={item.saving_id}>
                             <TableCell>{item.coinName}</TableCell>
                             <TableCell>
@@ -772,10 +715,10 @@ const Deposits = () => {
                   </Table>
                   {/* Pagination */}
                   <TablePagination
-                    rowsPerPageOptions={[5, 10, 20]}
+                    rowsPerPageOptions={[10]}
                     component="div"
-                    count={rowBodyLocked.length}
-                    rowsPerPage={rowsPerPage}
+                    count={savings?.allCount}
+                    rowsPerPage={savings?.limit}
                     page={page}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}

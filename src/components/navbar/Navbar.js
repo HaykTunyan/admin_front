@@ -93,12 +93,12 @@ const Navbar = ({ onDrawerToggle }) => {
               </Grid>
             </Hidden>
             <Grid item>
-              <Search>
+              {/* <Search>
                 <SearchIconWrapper>
                   <SearchIcon />
                 </SearchIconWrapper>
                 <Input placeholder={t("Search")} />
-              </Search>
+              </Search> */}
             </Grid>
             <Grid item xs />
             <Grid item>

@@ -87,7 +87,7 @@ const Dashboard = ({ children }) => {
           {children}
           <Outlet />
         </MainContent>
-        <Footer />
+        {/* <Footer /> */}
       </AppContent>
       <SettingsCom />
     </Root>
