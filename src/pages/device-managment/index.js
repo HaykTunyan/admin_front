@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
 import { green, orange, grey, blue } from "@material-ui/core/colors";
@@ -19,6 +19,10 @@ import DesktopCall from "./DesktopCall";
 import BrowsersTable from "./BrowsersTable";
 import UniqueTable from "./UniqueTable";
 import OperationTable from "./OperationTable";
+import { instance } from "../../services/api";
+import MobileTab from "./MobileTab";
+import TabletTab from "./TabletTab";
+import WebTab from "./WebTab";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -38,6 +42,7 @@ const DeviceManagement = () => {
   const [tabTwo, setOpenTwo] = useState(false);
   const [allTab, setAllTab] = useState(true);
   const totalDevice = useSelector((state) => state.deviceManagment);
+  const [allStatic, setAllStatic] = useState(null);
   // Redux Moke data.
   const desktopData = totalDevice?.desktopCall;
   const tabletData = totalDevice?.tableCall;
@@ -45,10 +50,10 @@ const DeviceManagement = () => {
   const uniqueData = totalDevice?.uniqueCall;
 
   const data = {
-    labels: ["Mobile", "Desktop", "Tablet"],
+    labels: ["Mobile", "Web", "Tablet"],
     datasets: [
       {
-        data: [220, 120, 160],
+        data: [38, 316, 6],
         backgroundColor: [blue[600], grey[500], orange[900]],
         borderColor: "transparent",
       },
@@ -92,6 +97,29 @@ const DeviceManagement = () => {
     setAllTab(true);
   };
 
+  // admin/device-statistics
+
+  const getAllStatic = () => {
+    return instance
+      .get("/admin/device-statistics", {})
+      .then((data) => {
+        setAllStatic(data.data);
+        return data;
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      })
+      .finally(() => {});
+  };
+
+  const mobileList = allStatic?.deviceStatistics[0];
+  const webList = allStatic?.deviceStatistics[1];
+  const tabletList = allStatic?.deviceStatistics[2];
+
+  useEffect(() => {
+    getAllStatic();
+  }, []);
+
   return (
     <>
       <Helmet title="Device management" />
@@ -102,12 +130,11 @@ const DeviceManagement = () => {
           </Typography>
         </Grid>
       </Grid>
-
       <Divider my={6} />
       <Grid container spacing={6}>
         <Grid item xs={12} md={3}>
           <Stats
-            title="All Devices"
+            title={"All Devices"}
             // amount="100%"
             chip="100%"
             ViewMore={openDevice}
@@ -116,18 +143,16 @@ const DeviceManagement = () => {
         </Grid>
         <Grid item xs={12} md={3}>
           <Stats
-            title="Mobile Users"
-            amount="40%"
+            title={mobileList?.type?.toUpperCase()}
+            amount={mobileList?.percent}
             ViewMore={openMobile}
             className={tabOne && { background: "#376fd0" }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
           <Stats
-            title="Tablet Users"
-            amount="20 %"
-            chip="20%"
-            percentagetext="+20%"
+            title={tabletList?.type?.toUpperCase()}
+            amount={tabletList?.percent}
             percentagecolor={green[500]}
             ViewMore={openTablet}
             className={tabTwo && { background: "#376fd0" }}
@@ -135,10 +160,8 @@ const DeviceManagement = () => {
         </Grid>
         <Grid item xs={12} md={3}>
           <Stats
-            title="Desktop Users"
-            amount="40 %"
-            chip="40%"
-            percentagetext="+40%"
+            title={webList?.type?.toUpperCase()}
+            amount={webList?.percent}
             percentagecolor={green[500]}
             ViewMore={openDescktop}
             className={tabThree && { background: "#376fd0" }}
@@ -149,87 +172,17 @@ const DeviceManagement = () => {
       <Grid container spacing={6}>
         {tabOne && (
           <>
-            <Grid item xs={12} md={12}>
-              <Card my={6}>
-                <MobileCall mobileDate={mobileDate} />
-              </Card>
-            </Grid>
-            {/* Unique User */}
-            <Grid item xs={12} md={12}>
-              <Card my={6}>
-                <UniqueTable />
-              </Card>
-            </Grid>
-
-            {/* Operation Sistem */}
-            <Grid item xs={12} md={6}>
-              <Card my={6}>
-                <OperationTable />
-              </Card>
-            </Grid>
-
-            {/* Browsers */}
-            <Grid item xs={12} md={6}>
-              <Card my={6}>
-                <BrowsersTable uniqueData={uniqueData} />
-              </Card>
-            </Grid>
+            <MobileTab />
           </>
         )}
-
         {tabTwo && (
           <>
-            <Grid item xs={12} md={12}>
-              <TabletCell tabletData={tabletData} />
-            </Grid>
-            {/* Unique User */}
-            <Grid item xs={12} md={12}>
-              <Card my={6}>
-                <UniqueTable />
-              </Card>
-            </Grid>
-
-            {/* Operation Sistem */}
-            <Grid item xs={12} md={6}>
-              <Card my={6}>
-                <OperationTable />
-              </Card>
-            </Grid>
-
-            {/* Browsers */}
-            <Grid item xs={12} md={6}>
-              <Card my={6}>
-                <BrowsersTable uniqueData={uniqueData} />
-              </Card>
-            </Grid>
+            <TabletTab />
           </>
         )}
-
         {tabThree && (
           <>
-            <Grid item xs={12} md={12}>
-              <DesktopCall desktopData={desktopData} />
-            </Grid>
-            {/* Unique User */}
-            <Grid item xs={12} md={12}>
-              <Card my={6}>
-                <UniqueTable />
-              </Card>
-            </Grid>
-
-            {/* Operation Sistem */}
-            <Grid item xs={12} md={6}>
-              <Card my={6}>
-                <OperationTable />
-              </Card>
-            </Grid>
-
-            {/* Browsers */}
-            <Grid item xs={12} md={6}>
-              <Card my={6}>
-                <BrowsersTable uniqueData={uniqueData} />
-              </Card>
-            </Grid>
+            <WebTab />
           </>
         )}
       </Grid>

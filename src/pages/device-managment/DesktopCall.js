@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { spacing } from "@material-ui/system";
 import styled from "styled-components/macro";
 import {
@@ -14,24 +14,53 @@ import {
   TablePagination,
 } from "@material-ui/core";
 import TopDeviceModal from "../../modal/TopDeviceModal";
+import { instance } from "../../services/api";
 
 // Spacing.
 const Toolbar = styled(MuiToolbar)(spacing);
 
 const DesktopCall = ({ desktopData }) => {
   // hooks.
-  const title = " Desktop Info";
+  const title = "Desktop Info";
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowWeb, setRowWeb] = useState(null);
 
   const handleChangePage = (event, newPage) => {
+    getWebStatisstics(newPage + 1);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(1);
   };
+
+  const getWebStatisstics = (page, rowsPerPage) => {
+    return instance
+      .get("/admin/device-statistics/for", {
+        params: {
+          limit: rowsPerPage,
+          page: page,
+          deviceType: "web",
+          type: "model",
+        },
+      })
+      .then((data) => {
+        setRowWeb(data.data);
+        return data;
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    getWebStatisstics();
+  }, []);
+
+  console.log("rowWeb", rowWeb);
 
   return (
     <Fragment>
@@ -50,29 +79,28 @@ const DesktopCall = ({ desktopData }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {desktopData
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
+            {rowWeb?.deviceStatistics &&
+              rowWeb?.deviceStatistics.map((row) => (
                 <TableRow
                   key={row.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row" width="30%">
-                    {row.brand_name}
-                    <TopDeviceModal title={title} />
+                    {row.device_vendor}
+                    <TopDeviceModal title={title} rowList={row.device_models} />
                   </TableCell>
                   <TableCell>{row.percent}%</TableCell>
-                  <TableCell align="right">{row.quantity}</TableCell>
+                  <TableCell align="right">{row.devices_count}</TableCell>
                 </TableRow>
               ))}
           </TableBody>
         </Table>
         {/* Pagination */}
         <TablePagination
-          rowsPerPageOptions={[5, 10]}
+          rowsPerPageOptions={[10]}
           component="div"
-          count={desktopData.length}
-          rowsPerPage={rowsPerPage}
+          count={rowWeb?.allCount}
+          rowsPerPage={rowWeb?.limit}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}

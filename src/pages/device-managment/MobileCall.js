@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { spacing } from "@material-ui/system";
 import styled from "styled-components/macro";
 import {
@@ -14,6 +14,7 @@ import {
   TablePagination,
 } from "@material-ui/core";
 import TopDeviceModal from "../../modal/TopDeviceModal";
+import { instance } from "../../services/api";
 
 // Spacing.
 const Toolbar = styled(MuiToolbar)(spacing);
@@ -54,17 +55,46 @@ export const rows = [
 const MobileCall = ({ mobileDate }) => {
   // hooks.
   const title = " Mobile Version ";
+  const [rowMobie, setRowMobile] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event, newPage) => {
+    getMobileStatistics(newPage + 1);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
-    setPage(0);
+    setPage(1);
   };
+
+  // Mobile
+  const getMobileStatistics = (page, rowsPerPage) => {
+    return instance
+      .get("/admin/device-statistics/for", {
+        params: {
+          limit: rowsPerPage,
+          page: page,
+          deviceType: "mobile",
+          type: "model",
+        },
+      })
+      .then((data) => {
+        setRowMobile(data.data);
+        return data;
+      })
+      .catch((err) => {
+        return Promise.reject(err);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    getMobileStatistics();
+  }, []);
+
+  console.log("rowMobie", rowMobie);
 
   return (
     <Fragment>
@@ -83,29 +113,33 @@ const MobileCall = ({ mobileDate }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {mobileDate
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
-                <TableRow
-                  key={row.id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row" width="30%">
-                    {row.brand_name}
-                    <TopDeviceModal title={title} />
-                  </TableCell>
-                  <TableCell>{row.percent}%</TableCell>
-                  <TableCell align="right">{row.quantity}</TableCell>
-                </TableRow>
-              ))}
+            {rowMobie?.deviceStatistics &&
+              rowMobie?.deviceStatistics
+                // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => (
+                  <TableRow
+                    key={row.id}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row" width="30%">
+                      {row.device_vendor}
+                      <TopDeviceModal
+                        title={title}
+                        rowList={row.device_models}
+                      />
+                    </TableCell>
+                    <TableCell>{row.percent}%</TableCell>
+                    <TableCell align="right">{row.devices_count}</TableCell>
+                  </TableRow>
+                ))}
           </TableBody>
         </Table>
         {/* Pagination */}
         <TablePagination
-          rowsPerPageOptions={[5, 10]}
+          rowsPerPageOptions={[5]}
           component="div"
-          count={mobileDate.length}
-          rowsPerPage={rowsPerPage}
+          count={rowMobie?.allCount}
+          rowsPerPage={rowMobie?.limit}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}

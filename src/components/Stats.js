@@ -106,7 +106,7 @@ const Stats = ({ title, amount, view, ViewMore, className }) => {
 
         <Typography variant="h3" mb={3}>
           {amount ? (
-            <Box fontWeight="fontWeightRegular">{amount}</Box>
+            <Box fontWeight="fontWeightRegular">{amount}%</Box>
           ) : (
             <Box py={4} />
           )}

@@ -68,7 +68,7 @@ export const rowColumns = [
   },
 ];
 
-const BrowsersTable = () => {
+const BrowsersTable = ({ rowBrowser }) => {
   //  hooks.
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -82,6 +82,7 @@ const BrowsersTable = () => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  console.log("rowBrowser", rowBrowser);
 
   return (
     <>
@@ -100,26 +101,27 @@ const BrowsersTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rowColumns
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((item) => (
-                    <TableRow key={item.key}>
-                      <TableCell scope="row">
-                        {item.name}
-                        <TopDeviceModal title={title} />
-                      </TableCell>
-                      <TableCell align="">{item.count} </TableCell>
-                      <TableCell align="">{item.percent} %</TableCell>
-                    </TableRow>
-                  ))}
+                {rowBrowser?.deviceStatistics &&
+                  rowBrowser?.deviceStatistics
+                    // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((item) => (
+                      <TableRow key={item.key}>
+                        <TableCell scope="row">
+                          {item.browser_name}
+                          <TopDeviceModal title={title} />
+                        </TableCell>
+                        <TableCell align="">{item.devices_count} </TableCell>
+                        <TableCell align="">{item.percent} %</TableCell>
+                      </TableRow>
+                    ))}
               </TableBody>
             </Table>
             {/* Pagination */}
             <TablePagination
-              rowsPerPageOptions={[5, 10]}
+              rowsPerPageOptions={[10]}
               component="div"
-              count={rowColumns.length}
-              rowsPerPage={rowsPerPage}
+              count={rowBrowser?.allCount}
+              rowsPerPage={rowBrowser?.limit}
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
