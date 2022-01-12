@@ -52,13 +52,14 @@ const MainContent = styled(Paper)`
 `;
 
 const Dashboard = ({ children }) => {
+  // hooks.
   console.log(" children ", children);
   const [mobileOpen, setMobileOpen] = useState(false);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
   const theme = useTheme();
-  const isLgUp = useMediaQuery(theme.breakpoints.up("lg"));
+  const isLgUp = useMediaQuery(theme.breakpoints.up("xl"));
 
   return (
     <Root>
@@ -83,7 +84,7 @@ const Dashboard = ({ children }) => {
       </Drawer>
       <AppContent>
         <Navbar onDrawerToggle={handleDrawerToggle} />
-        <MainContent p={isLgUp ? 12 : 5}>
+        <MainContent p={isLgUp ? 12 : 4}>
           {children}
           <Outlet />
         </MainContent>

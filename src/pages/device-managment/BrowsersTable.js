@@ -23,56 +23,11 @@ const TableWrapper = styled.div`
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
 
-export const rowColumns = [
-  {
-    key: 1,
-    name: "Google Chrome",
-    count: "646 700",
-    percent: "64.67",
-  },
-  {
-    key: 2,
-    name: "Safari",
-    count: "190 600",
-    percent: "19.06",
-  },
-  {
-    key: 3,
-    name: "Edge",
-    count: "41 000",
-    percent: "4.10",
-  },
-  {
-    key: 4,
-    name: "Firefox",
-    count: "36 600",
-    percent: "3.66",
-  },
-  {
-    key: 5,
-    name: "Samsung Internet",
-    count: "28 100",
-    percent: "2.81",
-  },
-  {
-    key: 6,
-    name: "Opera",
-    count: "23 600",
-    percent: "2.36",
-  },
-  {
-    key: 7,
-    name: "Others",
-    count: "33 400",
-    percent: "3.34",
-  },
-];
-
 const BrowsersTable = ({ rowBrowser }) => {
   //  hooks.
+  const title = " Browsers Version";
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const title = " Browsers Version";
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -82,7 +37,6 @@ const BrowsersTable = ({ rowBrowser }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  console.log("rowBrowser", rowBrowser);
 
   return (
     <>
@@ -96,24 +50,25 @@ const BrowsersTable = ({ rowBrowser }) => {
                   <TableCell component="th" scope="row">
                     All browsers support
                   </TableCell>
-                  <TableCell align="">Users</TableCell>
-                  <TableCell align=""> Percent %</TableCell>
+                  <TableCell>Users</TableCell>
+                  <TableCell> Percent %</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {rowBrowser?.deviceStatistics &&
-                  rowBrowser?.deviceStatistics
-                    // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((item) => (
-                      <TableRow key={item.key}>
-                        <TableCell scope="row">
-                          {item.browser_name}
-                          <TopDeviceModal title={title} />
-                        </TableCell>
-                        <TableCell align="">{item.devices_count} </TableCell>
-                        <TableCell align="">{item.percent} %</TableCell>
-                      </TableRow>
-                    ))}
+                  rowBrowser?.deviceStatistics.map((item) => (
+                    <TableRow key={item.key}>
+                      <TableCell scope="row">
+                        {item.browser_name}
+                        <TopDeviceModal
+                          title={title}
+                          rowList={item?.device_models}
+                        />
+                      </TableCell>
+                      <TableCell>{item.devices_count} </TableCell>
+                      <TableCell>{item.percent} %</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
             {/* Pagination */}

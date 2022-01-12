@@ -35,7 +35,10 @@ import CSVButton from "../../components/CSVButton";
 import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { darken } from "polished";
-import { getDashboardSavings_req } from "../../api/dashboardAPI";
+import {
+  getDashboardSavingsList_req,
+  getDashboardSavings_req,
+} from "../../api/dashboardAPI";
 import moment from "moment";
 
 // Spacing.
@@ -104,7 +107,7 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
   const [panel, setPanel] = useState(1);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [popularity, setPopularity] = useState(0);
+  const [popularity, setPopularity] = useState("");
   // Locked Pages.
   const [pageLocked, setLockedPage] = useState(0);
   const [rowsLockedPage, setRowsLockedPage] = useState(5);
@@ -113,6 +116,7 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
   const [rowsFlexiblePage, setRowsFlexiblePage] = useState(5);
 
   const [savings, setSavings] = useState([]);
+  const [savingsList, setSavingsList] = useState({});
   const [open, setOpen] = useState({});
 
   const handleChangeFrom = (event) => {
@@ -153,9 +157,13 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
     setFlexiblePage(0);
   };
 
-  const handleExpand = (e) => {
-    console.log("E ==>", e.currentTarget.id);
-    //setOpen(!open);
+  const handleExpand = (e, coinId) => {
+    if (
+      open[`${e.currentTarget.id}`] === undefined ||
+      open[`${e.currentTarget.id}`] === false
+    ) {
+      getSavingsList(panel === 1 ? "locked" : "flexible", coinId);
+    }
     setOpen({
       ...open,
       [`${e.currentTarget.id}`]: !open[`${e.currentTarget.id}`],
@@ -175,7 +183,28 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
     }
   }
 
-  console.log("Savings ==>", savings);
+  async function getSavingsList(type, coinId) {
+    console.log("TYPE ==>", type);
+    console.log("Coin ID ==>", coinId);
+    try {
+      const response = await getDashboardSavingsList_req(
+        type,
+        startDate,
+        endDate,
+        coinId,
+        10,
+        1
+      );
+      if (response) {
+        console.log("GET SAVINGS LIST RESPONSE ==>", response);
+        setSavingsList({ ...savingsList, [`${coinId}`]: response.savings });
+      }
+    } catch (e) {
+      console.log("GET SAVINGS LIST ERROR ==>", e.response);
+    }
+  }
+
+  console.log("Savings ==>", savingsList);
 
   useEffect(() => {
     getSavings("locked");
@@ -276,11 +305,6 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
                         </TableCell>
                         <TableCell align="center">
                           <Typography variant="h6" gutterBottom>
-                            Status
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Typography variant="h6" gutterBottom>
                             Popularity
                           </Typography>
                         </TableCell>
@@ -300,7 +324,7 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
                         savings.map((row, key) => (
                           <>
                             <TableRow
-                              key={row.key}
+                              key={key}
                               sx={{
                                 "&:last-child td, &:last-child th": {
                                   border: 0,
@@ -317,13 +341,6 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
                                 {`$${row.total_balance_usd}`}
                               </TableCell>
                               <TableCell align="center">
-                                {row.status === "active" ? (
-                                  <Chip label="Active" color="success" />
-                                ) : (
-                                  <Chip label="Completed" color="primary" />
-                                )}
-                              </TableCell>
-                              <TableCell align="center">
                                 {`${row.popularity}%`}
                               </TableCell>
                               <TableCell>
@@ -331,7 +348,7 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
                                   id={`${row.coin_id}`}
                                   aria-label="expand row"
                                   size="small"
-                                  onClick={(e) => handleExpand(e)}
+                                  onClick={(e) => handleExpand(e, row.coin_id)}
                                 >
                                   {open[`${row.coin_id}`] ? (
                                     <KeyboardArrowUpIcon />
@@ -382,9 +399,11 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
                                         //   pageLocked * rowsLockedPage,
                                         //   pageLocked * rowsLockedPage + rowsLockedPage
                                         // )
-                                        savings.map((row, key) => (
+                                        (
+                                          savingsList[`${row.coin_id}`] || []
+                                        ).map((row, key) => (
                                           <TableRow
-                                            key={row.key}
+                                            key={String(key + row.coin_id)}
                                             sx={{
                                               "&:last-child td, &:last-child th":
                                                 {
@@ -396,13 +415,13 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
                                               component="th"
                                               scope="row"
                                             >
-                                              {row.name}
+                                              {row.saving_id}
                                             </TableCell>
                                             <TableCell align="center">
-                                              {`${row.total_balance} ${row.coin}`}
+                                              {`${row.amount} ${row.coin}`}
                                             </TableCell>
                                             <TableCell align="center">
-                                              {`$${row.total_balance_usd}`}
+                                              {`$${row.amount_usd}`}
                                             </TableCell>
                                             <TableCell align="center">
                                               {row.status === "active" ? (

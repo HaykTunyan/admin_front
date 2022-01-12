@@ -171,7 +171,7 @@ const SendTable = () => {
   return (
     <Fragment>
       <Card p={4} sx={{ display: "flex" }}>
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <Box component="div">
             <Search>
               <SearchIconWrapper>
@@ -181,12 +181,10 @@ const SendTable = () => {
             </Search>
           </Box>
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <DatePickerFilter />
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <FormControl fullWidth>
             <InputLabel id="select-operation-type">Operation Type</InputLabel>
             <Select
@@ -204,8 +202,7 @@ const SendTable = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <FormControl fullWidth>
             <InputLabel id="select-coin">Coin</InputLabel>
             <Select
@@ -223,8 +220,7 @@ const SendTable = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <FormControl fullWidth>
             <InputLabel id="select-transaction">Transaction Type</InputLabel>
             <Select
@@ -242,8 +238,7 @@ const SendTable = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <FormControl fullWidth>
             <InputLabel id="select-status">Status</InputLabel>
             <Select

@@ -24,6 +24,7 @@ const WalletsModal = ({ id, wallet, userId }) => {
   const [initialValues, setInitialValues] = useState({
     amount: 0,
     address: "",
+    tags: "",
   });
 
   const [transaction, setTransaction] = useState(false);
@@ -34,6 +35,7 @@ const WalletsModal = ({ id, wallet, userId }) => {
       id === "withdraw" && transaction === true
         ? yup.string().required("Field is required")
         : yup.string().notRequired(),
+    tags: yup.string().notRequired(),
   });
 
   const handleClickOpen = () => {
@@ -122,22 +124,40 @@ const WalletsModal = ({ id, wallet, userId }) => {
                     />
                   </FormControl>
                   {id === "withdraw" && (
-                    <FormControl
-                      fullWidth
-                      my={8}
-                      variant="outlined"
-                      sx={{ marginTop: "20px" }}
-                    >
-                      <TextField
-                        label="Address"
-                        id="address"
+                    <>
+                      <FormControl
+                        fullWidth
+                        my={8}
                         variant="outlined"
-                        defaultValue={initialValues.address}
-                        onChange={handleChange("address")}
-                        error={touched.address && errors.address}
-                        helperText={touched.address && errors.address}
-                      />
-                    </FormControl>
+                        sx={{ marginTop: "20px" }}
+                      >
+                        <TextField
+                          label="Address"
+                          id="address"
+                          variant="outlined"
+                          defaultValue={initialValues.address}
+                          onChange={handleChange("address")}
+                          error={touched.address && errors.address}
+                          helperText={touched.address && errors.address}
+                        />
+                      </FormControl>
+                      <FormControl
+                        fullWidth
+                        my={8}
+                        variant="outlined"
+                        sx={{ marginTop: "20px" }}
+                      >
+                        <TextField
+                          label="Tags"
+                          id="tags"
+                          variant="outlined"
+                          defaultValue={initialValues.tags}
+                          onChange={handleChange("tags")}
+                          error={touched.tags && errors.tags}
+                          helperText={touched.tags && errors.tags}
+                        />
+                      </FormControl>
+                    </>
                   )}
                   <FormControlLabel
                     sx={{ marginTop: "20px" }}

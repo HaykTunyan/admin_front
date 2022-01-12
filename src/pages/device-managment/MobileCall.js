@@ -19,40 +19,7 @@ import { instance } from "../../services/api";
 // Spacing.
 const Toolbar = styled(MuiToolbar)(spacing);
 
-export const rows = [
-  {
-    id: "01",
-    brand_name: "Samsung",
-    percent: "40",
-    quantity: "4000",
-  },
-  {
-    id: "02",
-    brand_name: "Oppo",
-    percent: "5",
-    quantity: "500",
-  },
-  {
-    id: "03",
-    brand_name: "Xiaomi",
-    percent: "15",
-    quantity: "1500",
-  },
-  {
-    id: "04",
-    brand_name: "Vivo",
-    percent: "10",
-    quantity: "1000",
-  },
-  {
-    id: "05",
-    brand_name: "Apple",
-    percent: "30",
-    quantity: "3000",
-  },
-];
-
-const MobileCall = ({ mobileDate }) => {
+const MobileCall = () => {
   // hooks.
   const title = " Mobile Version ";
   const [rowMobie, setRowMobile] = useState(null);
@@ -94,8 +61,6 @@ const MobileCall = ({ mobileDate }) => {
     getMobileStatistics();
   }, []);
 
-  console.log("rowMobie", rowMobie);
-
   return (
     <Fragment>
       <TableContainer component={Paper}>
@@ -107,31 +72,26 @@ const MobileCall = ({ mobileDate }) => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell width="30%">Brand Name</TableCell>
+              <TableCell width="30%">Device Name</TableCell>
               <TableCell>Percent %</TableCell>
               <TableCell align="right">Quantity People</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rowMobie?.deviceStatistics &&
-              rowMobie?.deviceStatistics
-                // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => (
-                  <TableRow
-                    key={row.id}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row" width="30%">
-                      {row.device_vendor}
-                      <TopDeviceModal
-                        title={title}
-                        rowList={row.device_models}
-                      />
-                    </TableCell>
-                    <TableCell>{row.percent}%</TableCell>
-                    <TableCell align="right">{row.devices_count}</TableCell>
-                  </TableRow>
-                ))}
+              rowMobie?.deviceStatistics.map((row) => (
+                <TableRow
+                  key={row.id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row" width="30%">
+                    {row.device_vendor}
+                    <TopDeviceModal title={title} rowList={row.device_models} />
+                  </TableCell>
+                  <TableCell>{row.percent}%</TableCell>
+                  <TableCell align="right">{row.devices_count}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
         {/* Pagination */}

@@ -19,7 +19,7 @@ import { instance } from "../../services/api";
 // Spacing.
 const Toolbar = styled(MuiToolbar)(spacing);
 
-const DesktopCall = ({ desktopData }) => {
+const DesktopCall = () => {
   // hooks.
   const title = "Desktop Info";
   const [page, setPage] = useState(0);
@@ -60,8 +60,6 @@ const DesktopCall = ({ desktopData }) => {
     getWebStatisstics();
   }, []);
 
-  console.log("rowWeb", rowWeb);
-
   return (
     <Fragment>
       <TableContainer component={Paper}>
@@ -73,7 +71,7 @@ const DesktopCall = ({ desktopData }) => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell width="30%">Brand Name</TableCell>
+              <TableCell width="30%">Device Name</TableCell>
               <TableCell>Percent %</TableCell>
               <TableCell align="right">Quantity People</TableCell>
             </TableRow>

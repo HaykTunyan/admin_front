@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
 import { green, orange, grey, blue } from "@material-ui/core/colors";
+import { spacing } from "@material-ui/system";
+import { instance } from "../../services/api";
 import {
   Grid,
   Divider as MuiDivider,
@@ -9,17 +11,9 @@ import {
   CardContent,
   Card as MuiCard,
 } from "@material-ui/core";
-import { spacing } from "@material-ui/system";
-import { useSelector } from "react-redux";
 import Chart from "react-chartjs-2";
 import Stats from "../../components/Stats";
-import MobileCall from "./MobileCall";
-import TabletCell from "./TabletCall";
-import DesktopCall from "./DesktopCall";
 import BrowsersTable from "./BrowsersTable";
-import UniqueTable from "./UniqueTable";
-import OperationTable from "./OperationTable";
-import { instance } from "../../services/api";
 import MobileTab from "./MobileTab";
 import TabletTab from "./TabletTab";
 import WebTab from "./WebTab";
@@ -41,19 +35,22 @@ const DeviceManagement = () => {
   const [tabThree, setOpenThree] = useState(false);
   const [tabTwo, setOpenTwo] = useState(false);
   const [allTab, setAllTab] = useState(true);
-  const totalDevice = useSelector((state) => state.deviceManagment);
   const [allStatic, setAllStatic] = useState(null);
-  // Redux Moke data.
-  const desktopData = totalDevice?.desktopCall;
-  const tabletData = totalDevice?.tableCall;
-  const mobileDate = totalDevice?.mobileCall;
-  const uniqueData = totalDevice?.uniqueCall;
+  const [allBrowswers, setAllBrowsers] = useState(null);
+  // Destructure Data.
+  const mobileList = allStatic?.deviceStatistics[0];
+  const webList = allStatic?.deviceStatistics[1];
+  const tabletList = allStatic?.deviceStatistics[2];
+  // Cgarts Data.
+  const mobilePercent = mobileList?.percent * 3.6;
+  const tablePercent = tabletList?.percent * 3.6;
+  const webPercent = webList?.percent * 3.6;
 
   const data = {
-    labels: ["Mobile", "Web", "Tablet"],
+    labels: ["Mobile", "Tablet", "Web"],
     datasets: [
       {
-        data: [38, 316, 6],
+        data: [mobilePercent, tablePercent, webPercent],
         backgroundColor: [blue[600], grey[500], orange[900]],
         borderColor: "transparent",
       },
@@ -97,8 +94,6 @@ const DeviceManagement = () => {
     setAllTab(true);
   };
 
-  // admin/device-statistics
-
   const getAllStatic = () => {
     return instance
       .get("/admin/device-statistics", {})
@@ -112,12 +107,23 @@ const DeviceManagement = () => {
       .finally(() => {});
   };
 
-  const mobileList = allStatic?.deviceStatistics[0];
-  const webList = allStatic?.deviceStatistics[1];
-  const tabletList = allStatic?.deviceStatistics[2];
+  const getAllBrowsers = () => {
+    return instance
+      .get("/admin/device-statistics/browser", {
+        // params: {
+        //   page: 1,
+        //   limit: 10,
+        // },
+      })
+      .then((data) => {
+        setAllBrowsers(data.data);
+        return data;
+      });
+  };
 
   useEffect(() => {
     getAllStatic();
+    getAllBrowsers();
   }, []);
 
   return (
@@ -135,7 +141,6 @@ const DeviceManagement = () => {
         <Grid item xs={12} md={3}>
           <Stats
             title={"All Devices"}
-            // amount="100%"
             chip="100%"
             ViewMore={openDevice}
             className={allTab && { background: "#376fd0" }}
@@ -205,7 +210,7 @@ const DeviceManagement = () => {
           {/* Browsers */}
           <Grid item xs={12} md={6}>
             <Card my={6}>
-              <BrowsersTable uniqueData={uniqueData} />
+              <BrowsersTable rowBrowser={allBrowswers} />
             </Card>
           </Grid>
         </Grid>

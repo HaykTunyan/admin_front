@@ -38,6 +38,7 @@ export const logout_req = () => (dispatch) => {
     type: USER_LOGOUT,
   });
   localStorage.removeItem("accessToken");
+  localStorage.removeItem("theme");
 };
 
 export const getUserList_req = () => (dispatch) => {

@@ -172,12 +172,14 @@ const NewsComponent = () => {
                 spacing={6}
               >
                 <Grid item alignItems="center">
-                  <Search>
-                    <SearchIconWrapper>
-                      <SearchIcon />
-                    </SearchIconWrapper>
-                    <Input placeholder={t("Search")} />
-                  </Search>
+                  <Box component="div">
+                    <Search>
+                      <SearchIconWrapper>
+                        <SearchIcon />
+                      </SearchIconWrapper>
+                      <Input placeholder={t("Search")} />
+                    </Search>
+                  </Box>
                 </Grid>
                 <Grid display="flex" alignItems="center">
                   <AddNewsModal getNews={getNews} />

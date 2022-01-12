@@ -7,6 +7,7 @@ import "react-app-polyfill/stable";
 import reportWebVitals from "./utils/reportWebVitals";
 import App from "./app/App";
 import "./mocks";
+import "./vendor/global.css";
 
 import { ThemeProvider } from "./contexts/ThemeContext";
 

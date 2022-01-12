@@ -16,6 +16,7 @@ import {
 import TopDeviceModal from "../../modal/TopDeviceModal";
 import { instance } from "../../services/api";
 
+// Spacing.
 const Toolbar = styled(MuiToolbar)(spacing);
 
 const TabletCell = ({ tabletData }) => {
@@ -60,8 +61,6 @@ const TabletCell = ({ tabletData }) => {
     getTableStatistics();
   }, []);
 
-  console.log("rowTable", rowTable);
-
   return (
     <Fragment>
       <TableContainer component={Paper}>
@@ -73,7 +72,7 @@ const TabletCell = ({ tabletData }) => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell width="30%">Brand Name</TableCell>
+              <TableCell width="30%">Device Name</TableCell>
               <TableCell>Percent %</TableCell>
               <TableCell align="right">Quantity People</TableCell>
             </TableRow>

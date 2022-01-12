@@ -85,11 +85,11 @@ const Notifications = () => {
           <Grid container spacing={5}>
             {notifList?.templates &&
               notifList?.templates.map((item) => (
-                <Grid item md={4} mb={1}>
+                <Grid item xs={12} sm={6} md={4}>
                   <Card
                     variant="outlined"
                     sx={{
-                      height: "80px",
+                      height: "100%",
                     }}
                   >
                     <CardContent my={3}>

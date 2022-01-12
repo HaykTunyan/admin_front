@@ -72,7 +72,7 @@ const AssigneReferral = ({ id }) => {
   return (
     <>
       <Button color="primary" variant="contained" onClick={handleClickOpen}>
-        Assaign
+        Assign
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle textAlign="center">

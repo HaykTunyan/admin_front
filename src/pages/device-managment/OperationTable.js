@@ -10,10 +10,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  LinearProgress as MuiLinearProgress,
   TablePagination,
 } from "@material-ui/core";
-import { useSelector } from "react-redux";
 import TopDeviceModal from "../../modal/TopDeviceModal";
 
 //  Spacing.
@@ -25,20 +23,11 @@ const TableWrapper = styled.div`
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
 
-const LinearProgress = styled(MuiLinearProgress)`
-  height: 14px;
-  width: 180px;
-  border-radius: 3px;
-  background: ${(props) => props.theme.palette.grey[200]};
-`;
-
 const OperationTable = ({ rowList }) => {
   // hooks.
-  const rowOperation = useSelector((state) => state.deviceManagment);
+  const title = "Operation Sistem";
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const operationList = rowOperation.opetionCall;
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -49,7 +38,6 @@ const OperationTable = ({ rowList }) => {
     setPage(1);
   };
 
-  const title = "Operation Sistem";
   return (
     <>
       <Card mb={6}>
@@ -68,31 +56,27 @@ const OperationTable = ({ rowList }) => {
               </TableHead>
               <TableBody>
                 {rowList?.deviceStatistics &&
-                  rowList?.deviceStatistics
-                    // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((item) => (
-                      <TableRow key={item.key}>
-                        <TableCell scope="row">
-                          {item.device_os}
-                          <TopDeviceModal
-                            title={title}
-                            rowList={rowList?.deviceStatistics?.device_models}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          {item.devices_count}{" "}
-                        </TableCell>
-                        <TableCell align="">{item.percent} %</TableCell>
-                      </TableRow>
-                    ))}
+                  rowList?.deviceStatistics.map((item) => (
+                    <TableRow key={item.key}>
+                      <TableCell scope="row">
+                        {item.device_os}
+                        <TopDeviceModal
+                          title={title}
+                          rowList={item?.device_models}
+                        />
+                      </TableCell>
+                      <TableCell align="center">{item.devices_count}</TableCell>
+                      <TableCell align="">{item.percent} %</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
             {/* Pagination */}
             <TablePagination
               rowsPerPageOptions={[10]}
               component="div"
-              count={operationList.length}
-              rowsPerPage={rowsPerPage}
+              count={rowList?.allCount}
+              rowsPerPage={rowList?.limit}
               page={page}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}

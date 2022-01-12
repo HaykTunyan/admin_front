@@ -10,6 +10,7 @@ import {
   ListItem,
   ListItemText,
   Typography,
+  Box,
 } from "@material-ui/core";
 import { ChevronDown } from "react-feather";
 import { spacing } from "@material-ui/system";
@@ -23,34 +24,6 @@ const style = {
   bgcolor: "background.paper",
 };
 
-// export const TopPhone = [
-//   {
-//     key: 1,
-//     phone: "Device One",
-//     percent: 30,
-//   },
-//   {
-//     key: 2,
-//     phone: "Device Two",
-//     percent: 20,
-//   },
-//   {
-//     key: 3,
-//     phone: "Device Three",
-//     percent: 10,
-//   },
-//   {
-//     key: 4,
-//     phone: "Device Four",
-//     percent: 40,
-//   },
-//   {
-//     key: 5,
-//     phone: "Device Five",
-//     percent: 50,
-//   },
-// ];
-
 const TopDeviceModal = ({ title, rowList }) => {
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
@@ -61,7 +34,7 @@ const TopDeviceModal = ({ title, rowList }) => {
     setOpen(false);
   };
 
-  console.log("row list", rowList);
+  console.log(" rowList in Top Device Modal ", rowList);
 
   return (
     <>
@@ -75,23 +48,66 @@ const TopDeviceModal = ({ title, rowList }) => {
         </DialogTitle>
         <DialogContent>
           <List sx={style} component="nav" aria-label="mailbox folders">
+            <ListItem divider>
+              <ListItemText children={"Version"} sx={{ width: "60%" }} />
+              <Typography variant="inherit" sx={{ width: "20%" }}>
+                Percent %
+              </Typography>
+              <Spacer mx={3} />
+              <Typography variant="inherit">Count</Typography>
+            </ListItem>
             {rowList &&
               rowList?.map((item) => (
                 <ListItem divider key={item.key}>
-                  <ListItemText
-                    children={item.device_model}
-                    children={item.device_os_version}
-                  />
-                  <Typography variant="inherit">
-                    {item.percent} <span> &#8453;</span>
+                  {item.device_model && (
+                    <ListItemText
+                      children={item.device_model}
+                      sx={{ width: "60%" }}
+                    />
+                  )}
+                  {item.device_os_version && (
+                    <ListItemText
+                      children={item.device_os_version}
+                      sx={{ width: "60%" }}
+                    />
+                  )}
+                  {item.browser_version && (
+                    <ListItemText
+                      children={item.browser_version}
+                      sx={{ width: "60%" }}
+                    />
+                  )}
+                  {!item.device_model &&
+                    !item.device_os_version &&
+                    !item.browser_version && <Box sx={{ width: "60%" }} />}
+                  <Typography
+                    variant="inherit"
+                    textAlign="end"
+                    sx={{ width: "20%" }}
+                  >
+                    {item.percent} %
                   </Typography>
                   <Spacer mx={3} />
-                  <Typography variant="inherit">
+                  <Typography
+                    variant="inherit"
+                    textAlign="end"
+                    sx={{ width: "15%" }}
+                  >
                     {item.devices_count}
                   </Typography>
                 </ListItem>
               ))}
           </List>
+          {rowList.length == "0" && (
+            <Typography
+              variant="inherit"
+              fontWeight="bold"
+              align="center"
+              sx={{ mt: "20px" }}
+            >
+              There is no information yet
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} sx={{ width: "120px" }}>

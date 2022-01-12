@@ -90,6 +90,29 @@ export const getDashboardSavings_req = async (type, startDate, endDate) => {
   return response.data;
 };
 
+export const getDashboardSavingsList_req = async (
+  type,
+  startDate,
+  endDate,
+  coinId,
+  limit,
+  page
+) => {
+  let queryString = "";
+
+  if (startDate && endDate) {
+    queryString = `startDate=${startDate}&endDate=${endDate}`;
+  } else if (startDate) {
+    queryString = `startDate=${startDate}`;
+  } else if (endDate) {
+    queryString = `endDate=${endDate}`;
+  }
+  const response = await instance.get(
+    `/admin/dashboard/savings/list?type=${type}&coinId=${coinId}&limit=${limit}&page=${page}&${queryString}`
+  );
+  return response.data;
+};
+
 export const getDashboardExchanges_req = async (startDate, endDate) => {
   let queryString = "";
 

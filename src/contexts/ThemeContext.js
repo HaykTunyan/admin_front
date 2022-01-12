@@ -12,7 +12,7 @@ function ThemeProvider({ children }) {
   const initialState = () => {
     const storedTheme = localStorage.getItem("theme");
 
-    return storedTheme ? JSON.parse(storedTheme) : THEMES.DARK;
+    return storedTheme ? JSON.parse(storedTheme) : THEMES.INDIGO;
   };
 
   const [theme, _setTheme] = useState(initialState());

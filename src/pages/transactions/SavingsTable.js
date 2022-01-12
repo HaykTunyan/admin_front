@@ -166,7 +166,7 @@ const SavingsTable = () => {
   return (
     <Fragment>
       <Card p={4} sx={{ display: "flex" }}>
-        <Grid item md={2}>
+        <Grid item xs={2} md={2} mx={1}>
           <Box component="div">
             <Search>
               <SearchIconWrapper>
@@ -176,12 +176,10 @@ const SavingsTable = () => {
             </Search>
           </Box>
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={2} md={2} mx={1}>
           <DatePickerFilter />
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={2} md={2} mx={1}>
           <FormControl fullWidth>
             <InputLabel id="select-coin">Coin</InputLabel>
             <Select
@@ -199,8 +197,7 @@ const SavingsTable = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={2} md={2} mx={1}>
           <FormControl fullWidth>
             <InputLabel id="select-deposit-type">Deposit Type</InputLabel>
             <Select
@@ -218,8 +215,7 @@ const SavingsTable = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={2} md={2} mx={1}>
           <FormControl fullWidth>
             <InputLabel id="select-transaction">Transaction Type</InputLabel>
             <Select

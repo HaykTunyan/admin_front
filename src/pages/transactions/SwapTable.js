@@ -172,7 +172,7 @@ const SwapTable = () => {
   return (
     <Fragment>
       <Card p={4} sx={{ display: "flex" }}>
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <Box component="div">
             <Search>
               <SearchIconWrapper>
@@ -182,12 +182,10 @@ const SwapTable = () => {
             </Search>
           </Box>
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <DatePickerFilter />
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <FormControl fullWidth>
             <InputLabel id="select-from-label">From Coin</InputLabel>
             <Select
@@ -206,8 +204,7 @@ const SwapTable = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <FormControl fullWidth>
             <InputLabel id="select-to-label">To Coin</InputLabel>
             <Select
@@ -226,8 +223,7 @@ const SwapTable = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Spacer mx={2} />
-        <Grid item md={2}>
+        <Grid item xs={12} sm={6} md={2} mx={1}>
           <FormControl fullWidth>
             <InputLabel id="select-status">Status</InputLabel>
             <Select

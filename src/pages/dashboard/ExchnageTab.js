@@ -84,7 +84,7 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [popularity, setPopularity] = useState(0);
+  const [popularity, setPopularity] = useState("");
   const [exchanges, setExchanges] = useState([]);
   const [coins, setCoins] = useState([]);
 

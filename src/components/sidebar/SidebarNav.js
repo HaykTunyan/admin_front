@@ -27,7 +27,7 @@ const Items = styled.div`
 
 const SidebarNav = ({ items }) => {
   const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.up("md"));
+  const matches = useMediaQuery(theme.breakpoints.up("xl"));
   const ScrollbarComponent = matches ? PerfectScrollbar : Scrollbar;
 
   return (
