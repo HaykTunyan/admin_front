@@ -11,71 +11,31 @@ import {
   TableBody,
   Table,
   TablePagination,
-  InputBase,
   Toolbar,
   Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-import CSVButton from "../../components/CSVButton";
-import { Search as SearchIcon } from "react-feather";
-import { useTranslation } from "react-i18next";
-import { darken } from "polished";
 import { getDashboardSend_req } from "../../api/dashboardAPI";
+import { getCoins_req } from "../../api/userWalletsAPI";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
 
-// Custom Style.
-const Input = styled(InputBase)`
-  color: inherit;
-  width: 100%;
-
-  > input {
-    color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)};
-    padding-right: ${(props) => props.theme.spacing(2.5)};
-    padding-bottom: ${(props) => props.theme.spacing(2.5)};
-    padding-left: ${(props) => props.theme.spacing(12)};
-    width: 160px;
-  }
-`;
-
-const Search = styled.div`
-  border-radius: 2px;
-  background-color: ${(props) => props.theme.header.background};
-  display: none;
-  position: relative;
-  width: 100%;
-
-  &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    display: block;
-  }
-`;
-
-const SearchIconWrapper = styled.div`
-  width: 50px;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
-
-const SendTab = ({ rowSend, startDate, endDate }) => {
-  const { t } = useTranslation();
+const SendTab = ({ startDate, endDate }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [send, setSend] = useState([]);
+  const [coins, setCoins] = useState([]);
+  const [selectedCoin, setSelectedCoin] = useState("");
+
+  const handleCoinChange = (event) => {
+    setSelectedCoin(event.target.value);
+    getSend(Number(event.target.value));
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -86,33 +46,66 @@ const SendTab = ({ rowSend, startDate, endDate }) => {
     setPage(0);
   };
 
-  async function getSend() {
+  async function getSend(coinId) {
+    let data = {
+      start_date: startDate,
+      end_date: endDate,
+      coin_id: coinId,
+    };
     try {
-      const response = await getDashboardSend_req(startDate, endDate);
+      const response = await getDashboardSend_req(data);
       if (response) {
-        console.log("GET SEND RESPONSE ==>", response);
         setSend(response);
       }
-    } catch (e) {
-      console.log("GET SEND ERROR ==>", e.response);
-    }
+    } catch (e) {}
+  }
+
+  async function getCoins() {
+    try {
+      const response = await getCoins_req();
+      if (response) {
+        setCoins(response);
+      }
+    } catch (e) {}
   }
 
   useEffect(() => {
-    getSend();
+    getCoins();
   }, []);
+
+  useEffect(() => {
+    getSend(Number(selectedCoin));
+  }, [startDate, endDate]);
 
   return (
     <Fragment>
       <TableContainer component={Paper}>
-        <Toolbar>
-          <Grid item md={3}>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("Search")} />
-            </Search>
+        <Toolbar
+          sx={{
+            paddingY: "12px",
+            display: { xs: "grid", sm: "flex" },
+          }}
+        >
+          <Grid item xs={6} sm={4} md={3}>
+            <Box component="div">
+              <FormControl fullWidth sx={{ marginTop: "15px" }}>
+                <InputLabel id="coin-label">Coin</InputLabel>
+                <Select
+                  labelId="coin-label"
+                  id="coin-label"
+                  value={selectedCoin}
+                  onChange={handleCoinChange}
+                  label="Coin"
+                >
+                  <MenuItem value="all">
+                    <em>From All</em>
+                  </MenuItem>
+                  {coins.map((coin) => (
+                    <MenuItem value={coin.id}>{coin.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
           </Grid>
         </Toolbar>
         <Table aria-label="simple table" mt={6}>
@@ -167,12 +160,6 @@ const SendTab = ({ rowSend, startDate, endDate }) => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
-      <Box mt={8} display="flex" justifyContent="flex-end" alignItems="center">
-        <Typography variant="subtitle1" color="inherit" component="div">
-          Export Data
-        </Typography>
-        <CSVButton data={rowSend} />
-      </Box>
     </Fragment>
   );
 };

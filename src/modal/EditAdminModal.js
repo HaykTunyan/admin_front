@@ -6,7 +6,6 @@ import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import {
   Button,
-  Paper,
   TextField as MuiTextField,
   Dialog,
   DialogContent,
@@ -16,12 +15,15 @@ import {
   Typography,
   FormControlLabel,
   Checkbox,
+  FormControl,
+  Alert as MuiAlert,
 } from "@material-ui/core";
 import { Edit2 } from "react-feather";
 import { editAdmin } from "../redux/actions/user-managment";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
+const Alert = styled(MuiAlert)(spacing);
 
 // validation Schema.
 const editAdminSchema = Yup.object().shape({
@@ -37,16 +39,18 @@ const editAdminSchema = Yup.object().shape({
     .required(" Passowrd is required "),
 });
 
-const EditAdminModal = ({ email, name, id }) => {
+const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
   const [open, setOpen] = useState(false);
+  const [messageError, setMessageError] = useState([]);
   const [state, setState] = useState({
     name: name,
     email: email,
     password: "12345678",
     role: 4,
-    permissions: [],
+    permissions: permissions,
     adminId: id,
   });
+
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const dispatch = useDispatch();
 
@@ -59,13 +63,19 @@ const EditAdminModal = ({ email, name, id }) => {
   };
 
   const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(editAdmin(values)).then((data) => {
-      if (data.success) {
-        setOpen(false);
-      }
-    });
+    dispatch(editAdmin(values))
+      .then((data) => {
+        if (data.success) {
+          setOpen(false);
+        }
+        getAdminUsers();
+      })
+      .catch((error) => {
+        setMessageError(error?.response?.data);
+      });
   };
+
+  const invalid = messageError?.message;
 
   return (
     <div>
@@ -85,6 +95,31 @@ const EditAdminModal = ({ email, name, id }) => {
           >
             {({ errors, touched, handleChange, handleBlur }) => (
               <Form>
+                {invalid && (
+                  <>
+                    {invalid[0]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[0]?.messages}
+                      </Alert>
+                    )}
+
+                    {invalid[1]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[1]?.messages}
+                      </Alert>
+                    )}
+                    {invalid[2]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[2]?.messages}
+                      </Alert>
+                    )}
+                    {invalid[3]?.messages && (
+                      <Alert my={2} severity="error">
+                        {invalid[3]?.messages}
+                      </Alert>
+                    )}
+                  </>
+                )}
                 <TextField
                   margin="dense"
                   id="name"
@@ -129,30 +164,113 @@ const EditAdminModal = ({ email, name, id }) => {
                 />
                 <Typography variant="subtitle1">Permissions</Typography>
                 <Box sx={{ display: "flex", flexDirection: "column", m: 5 }}>
-                  <FormControlLabel
-                    label="FSend"
-                    control={<Checkbox {...label} onChange={handleChange} />}
-                  />
-                  <FormControlLabel
-                    label="Real Send"
-                    control={<Checkbox {...label} onChange={handleChange} />}
-                  />
-                  <FormControlLabel
-                    label="Permission for changes on deposits"
-                    control={<Checkbox {...label} onChange={handleChange} />}
-                  />
-                  <FormControlLabel
-                    label="Permissions to change KYC status"
-                    control={<Checkbox {...label} onChange={handleChange} />}
-                  />
-                  <FormControlLabel
-                    label="Permission to send notifications"
-                    control={<Checkbox {...label} onChange={handleChange} />}
-                  />
-                  <FormControlLabel
-                    label="Permission to download the user base"
-                    control={<Checkbox {...label} onChange={handleChange} />}
-                  />
+                  <FormControl>
+                    <FormControlLabel
+                      label="Fake Send"
+                      name="permissions"
+                      control={
+                        <Checkbox
+                          {...label}
+                          defaultValue={1}
+                          value={1}
+                          defaultChecked={permissions.find(
+                            (item) => item === 1
+                          )}
+                          onChange={handleChange}
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="Real Send"
+                      name="permissions"
+                      control={
+                        <Checkbox
+                          {...label}
+                          defaultValue={2}
+                          value={2}
+                          defaultChecked={permissions.find(
+                            (item) => item === 2
+                          )}
+                          onChange={handleChange}
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="Permission for changes on deposits"
+                      name="permissions"
+                      control={
+                        <Checkbox
+                          {...label}
+                          defaultValue={3}
+                          value={3}
+                          defaultChecked={permissions.find(
+                            (item) => item === 3
+                          )}
+                          onChange={handleChange}
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="Permissions to change KYC status"
+                      control={
+                        <Checkbox
+                          {...label}
+                          name="permissions"
+                          defaultValue={4}
+                          value={4}
+                          defaultChecked={permissions.find(
+                            (item) => item === 4
+                          )}
+                          onChange={handleChange}
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="Permission to send notifications"
+                      name="permissions"
+                      control={
+                        <Checkbox
+                          {...label}
+                          defaultValue={5}
+                          value={5}
+                          defaultChecked={permissions.find(
+                            (item) => item === 5
+                          )}
+                          onChange={handleChange}
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="Permission to download the user base"
+                      name="permissions"
+                      control={
+                        <Checkbox
+                          {...label}
+                          defaultValue={6}
+                          value={6}
+                          defaultChecked={permissions.find(
+                            (item) => item === 6
+                          )}
+                          onChange={handleChange}
+                        />
+                      }
+                    />
+                    <FormControlLabel
+                      label="Create and Edit the Admin Settings"
+                      name="permissions"
+                      control={
+                        <Checkbox
+                          {...label}
+                          defaultValue={7}
+                          value={7}
+                          defaultChecked={permissions.find(
+                            (item) => item === 6
+                          )}
+                          onChange={handleChange}
+                        />
+                      }
+                    />
+                  </FormControl>
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Button

@@ -32,7 +32,6 @@ const Page404 = () => {
       <Typography component="h2" variant="body1" align="center" gutterBottom>
         The page you are looking for might have been removed.
       </Typography>
-
       <Button
         component={Link}
         to="/"

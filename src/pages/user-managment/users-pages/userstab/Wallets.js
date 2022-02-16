@@ -12,6 +12,7 @@ import {
   TableHead,
   TableRow,
   Box,
+  IconButton,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import WalletsModal from "../../../../modal/WalletsModal";
@@ -19,6 +20,9 @@ import {
   getUserWallets_req,
   blockUserWallet_req,
 } from "../../../../api/userWalletsAPI";
+import { ArrowDown, ArrowUp } from "react-feather";
+import SuccessModal from "../../../../modal/SuccessModal";
+import WithdrawalModal from "../../../../modal/Confirmations/WithdrawalModal";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -34,10 +38,17 @@ const Wallets = () => {
   const profileId = location?.state;
   const userId = profileId?.id;
   const [wallets, setWallets] = useState([]);
+  const [sortBy, setSortBy] = useState("increasing");
+  const [sussess, setSuccess] = useState(false);
 
-  async function getUserWallets() {
+  const handleCellClick = (sortType) => {
+    setSortBy(sortBy === "increasing" ? "decreasing" : "increasing");
+    getUserWallets("total_balance_usd", sortType);
+  };
+
+  async function getUserWallets(sortParam, sortType) {
     try {
-      const response = await getUserWallets_req(userId);
+      const response = await getUserWallets_req(userId, sortParam, sortType);
       if (response) {
         console.log("GET USER WALLETS RESPONSE ==>", response);
         setWallets(response.result);
@@ -52,7 +63,8 @@ const Wallets = () => {
       const response = await blockUserWallet_req(userId, wallet.id);
       if (response) {
         console.log("BLOCK USER WALLET RESPONSE ==>", response);
-        getUserWallets();
+        getUserWallets("total_balance_usd", sortBy);
+        setSuccess(!sussess);
       }
     } catch (e) {
       console.log("BLOCK USER WALLET ERROR ==>", e);
@@ -76,8 +88,29 @@ const Wallets = () => {
                   <TableCell align="center" width="25%">
                     Coin
                   </TableCell>
-                  <TableCell align="center" width="25%">
+                  <TableCell
+                    align="center"
+                    width="25%"
+                    onClick={() =>
+                      handleCellClick(
+                        sortBy === "decreasing" ? "increasing" : "decreasing"
+                      )
+                    }
+                  >
                     Price Dollars
+                    <IconButton
+                      onClick={() =>
+                        handleCellClick(
+                          sortBy === "decreasing" ? "increasing" : "decreasing"
+                        )
+                      }
+                    >
+                      {sortBy === "increasing" ? (
+                        <ArrowUp size={16} />
+                      ) : (
+                        <ArrowDown size={16} />
+                      )}
+                    </IconButton>
                   </TableCell>
                   <TableCell align="right">Actions</TableCell>
                 </TableRow>
@@ -111,13 +144,20 @@ const Wallets = () => {
                           />
                         </Box>
                         <Box mx={2}>
-                          <Button
+                          <WithdrawalModal
+                            row={row}
+                            wallets={wallets}
+                            getUserWallets={getUserWallets}
+                            sortBy={sortBy}
+                            userId={userId}
+                          />
+                          {/* <Button
                             variant="contained"
                             onClick={() => blockUserWallet(row)}
                             sx={{ width: "max-content" }}
                           >{`${
                             row.block_status === true ? "Unblock" : "Block"
-                          } withdrawal`}</Button>
+                          } withdrawal`}</Button> */}
                         </Box>
                       </Box>
                     </TableCell>
@@ -127,6 +167,7 @@ const Wallets = () => {
             </Table>
           </TableWrapper>
         </Paper>
+        {sussess && <SuccessModal />}
       </Card>
     </>
   );

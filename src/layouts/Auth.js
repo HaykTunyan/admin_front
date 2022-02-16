@@ -16,8 +16,6 @@ const Root = styled.div`
 `;
 
 const Auth = ({ children }) => {
-  console.log(" children ", children);
-
   return (
     <Root>
       <CssBaseline />

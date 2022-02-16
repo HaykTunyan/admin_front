@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { Helmet } from "react-helmet-async";
 import {
@@ -9,7 +9,6 @@ import {
   Tab,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-import { instance } from "../../services/api";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
@@ -17,7 +16,6 @@ import KYCSettings from "./KYC";
 import TransactionsSettings from "./TransactionsSettings";
 import SavingsSetting from "./SavingsSettings/SavingsSetting";
 import SwapSettings from "./SwapSettings";
-import Loader from "../../components/Loader";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
@@ -25,35 +23,10 @@ const Divider = styled(MuiDivider)(spacing);
 const Settings = () => {
   // hooks.
   const [value, setValue] = useState("2");
-  const [coins, setCoins] = useState([]);
 
   const handleChange = (e, newValue) => {
     setValue(newValue);
   };
-
-  //  Get Coins
-  const getCoins = () => {
-    return instance
-      .get("/admin/coin-settings")
-      .then((data) => {
-        setCoins(data.data);
-        return data;
-      })
-      .catch((err) => {
-        return Promise.reject(err);
-      })
-      .finally(() => {});
-  };
-
-  // Use Effect.
-  useEffect(() => {
-    getCoins();
-  }, []);
-
-  // Loader.
-  if (!coins) {
-    return <Loader />;
-  }
 
   return (
     <Fragment>
@@ -73,7 +46,7 @@ const Settings = () => {
                 >
                   <Tab label="KYC Settings" value="2" />
                   <Tab label="Transactions Settings" value="3" />
-                  <Tab label="Savings Setting" value="4" />
+                  <Tab label="Savings Settings" value="4" />
                   <Tab label="Swap Settings" value="5" />
                 </TabList>
               </Box>
@@ -81,7 +54,7 @@ const Settings = () => {
                 <KYCSettings />
               </TabPanel>
               <TabPanel value="3" mb={5}>
-                <TransactionsSettings coins={coins} />
+                <TransactionsSettings />
               </TabPanel>
               <TabPanel value="4" mb={5}>
                 <SavingsSetting />

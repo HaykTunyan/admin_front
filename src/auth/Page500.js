@@ -33,7 +33,6 @@ const Page500 = () => {
         The server encountered something unexpected that didn't allow it to
         complete the request.
       </Typography>
-
       <Button
         component={Link}
         to="/"

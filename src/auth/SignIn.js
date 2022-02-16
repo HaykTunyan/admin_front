@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { Helmet } from "react-helmet-async";
@@ -51,6 +51,8 @@ const SignIn = () => {
   const navigate = useNavigate();
   const { signIn } = useAuth();
   const dispatch = useDispatch();
+  const [errorMes, useErrorMes] = useState([]);
+  const [messageError, setMessageError] = useState([]);
 
   const initialValues = {
     email: "",
@@ -72,12 +74,17 @@ const SignIn = () => {
   const onSubmit = async (values, { setErrors, setStatus, setSubmitting }) => {
     try {
       // await signIn(values.email, values.password);
-      dispatch(signIn_req(values)).then(navigate("/dashboard"));
+      dispatch(signIn_req(values)).then((data) => {
+        if (data.accessToken) {
+          navigate("/dashboard");
+        }
+      });
     } catch (error) {
       const message = error.message || "Something went wrong";
       setStatus({ success: false });
       setErrors({ submit: message });
       setSubmitting(false);
+      // useErrorMes(error?.response?.data);
     }
   };
 

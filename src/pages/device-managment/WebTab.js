@@ -4,7 +4,6 @@ import { spacing } from "@material-ui/system";
 import { Grid, Card as MuiCard } from "@material-ui/core";
 import { instance } from "../../services/api";
 import DesktopCall from "./DesktopCall";
-import UniqueTable from "./UniqueTable";
 import OperationTable from "./OperationTable";
 import BrowsersTable from "./BrowsersTable";
 
@@ -12,7 +11,7 @@ import BrowsersTable from "./BrowsersTable";
 const Card = styled(MuiCard)(spacing);
 
 const WebTab = () => {
-  // hooks.
+  // Hooks.
   const [webOs, setWebOs] = useState(null);
   const [webBrowser, setWebBrowser] = useState(null);
 
@@ -58,12 +57,6 @@ const WebTab = () => {
       <Grid item xs={12} md={12}>
         <DesktopCall />
       </Grid>
-      {/* Unique User */}
-      {/* <Grid item xs={12} md={12}>
-        <Card my={6}>
-          <UniqueTable />
-        </Card>
-      </Grid> */}
       {/* Operation Sistem */}
       <Grid item xs={12} md={6}>
         <Card my={6}>

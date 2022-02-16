@@ -25,13 +25,25 @@ const Divider = styled(MuiDivider)(spacing);
 
 // validation Schema.
 const editTransactionSchema = Yup.object().shape({
-  name: Yup.string().required("Name is requrired"),
-  minSendAmount: Yup.string().required("minSendAmount is requrired"),
-  decimals: Yup.string().required("decimals is requrired"),
-  fee: Yup.string().required("fee is requrired"),
-  price: Yup.string().required("price is requrired"),
-  priceChange: Yup.string().required("priceChange is requrired"),
-  priceChangePercent: Yup.string().required("priceChangePercent is requrired"),
+  name: Yup.string().required("Name is required."),
+  minSendAmount: Yup.number()
+    .moreThan(0, "Min send amount must be greater than 0.")
+    .required("Min send amount is required."),
+  decimals: Yup.number()
+    .moreThan(0, "Decimals must be greater than 0.")
+    .required("decimals is required."),
+  fee: Yup.number()
+    .moreThan(0, "Fee must be greater than 0.")
+    .required("fee is required."),
+  price: Yup.number()
+    .moreThan(0, "Price must be greater than 0.")
+    .required("Price is required."),
+  priceChange: Yup.number()
+    .moreThan(0, "Price Change must be greater than 0.")
+    .required("Price Change is required."),
+  priceChangePercent: Yup.number()
+    .moreThan(0, "Price Change Percent must be greater than 0.")
+    .required("Price Change Percent is required."),
 });
 
 const EditTransactionModal = ({
@@ -46,6 +58,7 @@ const EditTransactionModal = ({
   priceChangePercent,
   suspendSendTransaction,
   suspendReceiveTransaction,
+  getCoins,
 }) => {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState({
@@ -57,9 +70,11 @@ const EditTransactionModal = ({
     price: price,
     priceChange: priceChange,
     priceChangePercent: priceChangePercent,
-    suspendSendTransaction: suspendSendTransaction,
-    suspendReceiveTransaction: suspendReceiveTransaction,
   });
+  const [suspendSend, setSuspendSend] = useState(suspendSendTransaction);
+  const [suspendReceive, setSuspendReceive] = useState(
+    suspendReceiveTransaction
+  );
 
   const label = { inputProps: { "aria-label": "Checkbox" } };
   const dispatch = useDispatch();
@@ -72,15 +87,46 @@ const EditTransactionModal = ({
     setOpen(false);
   };
 
+  const handleReceiveChange = () => {
+    setSuspendReceive(!suspendReceive);
+  };
+
+  const handleSendChange = () => {
+    setSuspendSend(!suspendSend);
+  };
+
   const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(editCoin(values)).then((data) => {
+    let data = {
+      coin_id: Number(values.coinId), // is required
+      name: values.name,
+      minSendAmount: Number(values.minSendAmount),
+      decimals: Number(values.decimals),
+      fee: Number(values.fee),
+      price: Number(values.price),
+      priceChange: Number(values.priceChange),
+      priceChangePercent: Number(values.priceChangePercent),
+      suspendSendTransaction: suspendSend,
+      suspendReceiveTransaction: suspendReceive,
+    };
+
+    let result = Object.keys(data).filter(
+      (key) =>
+        (!data[key] || data[key] === "") && typeof data[key] !== "boolean"
+    );
+
+    for (let item of result) {
+      delete data[`${item}`];
+    }
+    console.log("Data =>", data);
+
+    dispatch(editCoin(data)).then((data) => {
       if (data.success) {
-        console.log("success", data.success);
         setOpen(false);
       }
+      getCoins();
     });
   };
+
   return (
     <div>
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
@@ -94,6 +140,7 @@ const EditTransactionModal = ({
               ...state,
             }}
             initialForms={state}
+            validateOnChange={true}
             validationSchema={editTransactionSchema}
             onSubmit={handleSubmit}
           >
@@ -128,12 +175,8 @@ const EditTransactionModal = ({
                       onBlur={handleBlur}
                       onChange={handleChange}
                       defaultValue={state.minSendAmount}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
                       id="minSendAmount"
                       label="Min Send Amount"
-                      type="number"
                       variant="outlined"
                       fullWidth
                       my={8}
@@ -146,9 +189,6 @@ const EditTransactionModal = ({
                       onBlur={handleBlur}
                       onChange={handleChange}
                       defaultValue={state.decimals}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
                       margin="dense"
                       id="decimals"
                       label="Decimals"
@@ -168,14 +208,12 @@ const EditTransactionModal = ({
                       margin="dense"
                       id="fee"
                       label="Fee"
-                      type="number"
                       variant="outlined"
                       fullWidth
                       my={8}
                     />
                   </Box>
                 </Box>
-
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Box sx={{ width: "100%", marginRight: "5px" }}>
                     <TextField
@@ -187,7 +225,6 @@ const EditTransactionModal = ({
                       defaultValue={state.price}
                       id="price"
                       label="Price"
-                      type="number"
                       variant="outlined"
                       fullWidth
                       my={8}
@@ -203,7 +240,6 @@ const EditTransactionModal = ({
                       margin="dense"
                       id="priceChange"
                       label="Price Change"
-                      type="number"
                       variant="outlined"
                       fullWidth
                       my={8}
@@ -223,7 +259,6 @@ const EditTransactionModal = ({
                       margin="dense"
                       id="priceChangePercent"
                       label="Price Change Percent"
-                      type="number"
                       variant="outlined"
                       fullWidth
                       my={8}
@@ -232,24 +267,24 @@ const EditTransactionModal = ({
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-around" }}>
                   <FormControlLabel
-                    label="Suspend Send"
-                    name="suspendSendTransaction"
-                    control={
-                      <Checkbox
-                        {...label}
-                        defaultChecked={state.suspendSendTransaction}
-                        onChange={handleChange}
-                      />
-                    }
-                  />
-                  <FormControlLabel
                     label="Suspend Receive"
                     name="suspendReceiveTransaction"
                     control={
                       <Checkbox
                         {...label}
-                        defaultChecked={state.suspendReceiveTransaction}
-                        onChange={handleChange}
+                        defaultChecked={suspendReceive}
+                        onChange={handleReceiveChange}
+                      />
+                    }
+                  />
+                  <FormControlLabel
+                    label="Suspend Send"
+                    name="suspendSendTransaction"
+                    control={
+                      <Checkbox
+                        {...label}
+                        defaultChecked={suspendSend}
+                        onChange={handleSendChange}
                       />
                     }
                   />

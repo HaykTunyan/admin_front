@@ -49,6 +49,7 @@ const ReferralUsers = () => {
         if (data.success) {
           setShowList(true);
         }
+        getUnassigned();
       });
     } catch (error) {
       console.log("error", error);
@@ -127,24 +128,29 @@ const ReferralUsers = () => {
                                 </TableCell>
 
                                 <TableCell padding="none" align="right">
-                                  <AssigneReferral id={row.id} />
+                                  <AssigneReferral
+                                    id={row.id}
+                                    getUnassigned={getUnassigned}
+                                  />
                                 </TableCell>
                               </TableRow>
                             ))}
                         </TableBody>
                       </Table>
                       {/* Pagination */}
-                      <Box py={5} display="flex" justifyContent="flex-end">
-                        <TablePagination
-                          rowsPerPageOptions={[10]}
-                          component="div"
-                          count={unassignedList?.allCount}
-                          rowsPerPage={unassignedList?.limit}
-                          page={page}
-                          onPageChange={handleChangePage}
-                          onRowsPerPageChange={handleChangeRowsPerPage}
-                        />
-                      </Box>
+                      {unassignedList?.referrals && (
+                        <Box py={5} display="flex" justifyContent="flex-end">
+                          <TablePagination
+                            rowsPerPageOptions={[10]}
+                            component="div"
+                            count={unassignedList?.allCount}
+                            rowsPerPage={unassignedList?.limit}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                          />
+                        </Box>
+                      )}
                     </TableContainer>
                   </Paper>
                 </Grid>

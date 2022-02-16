@@ -9,9 +9,9 @@ import {
   Button as MuiButton,
   Card as MuiCard,
   CardContent,
-  TextField as MuiTextField,
-  Avatar as MuiAvatar,
   Chip as MuiChip,
+  Box,
+  Alert as MuiAlert,
 } from "@material-ui/core";
 import moment from "moment";
 import {
@@ -23,11 +23,13 @@ import DocumentsModal from "../../../../modal/DocumentsModal";
 import RejectKYCModal from "../../../../modal/RejectKYCModal";
 
 // Spacing.
+const Alert = styled(MuiAlert)(spacing);
 const Typography = styled(MuiTypography)(spacing);
 const Card = styled(MuiCard)(spacing);
 const Grid = styled(MuiGrid)(spacing);
 const Spacer = styled.div(spacing);
 const Button = styled(MuiButton)(spacing);
+const Divider = styled(MuiDivider)(spacing);
 const Chip = styled(MuiChip)`
   height: 20px;
   padding: 4px 0;
@@ -37,11 +39,15 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
+let searchTimeout = 0;
+
 const SettingsKYC = () => {
   // hooks.
   const location = useLocation();
   const profileId = location?.state;
   const userId = profileId?.id;
+  const [alert, setAlert] = useState(false);
+  const [alertType, setAlertType] = useState("success");
   const [userKYC, setUserKYC] = useState({});
 
   async function getUserKYC() {
@@ -70,6 +76,7 @@ const SettingsKYC = () => {
       if (response) {
         console.log("UPDATE USER KYC RESPONSE ==>", response);
       }
+      getUserKYC();
     } catch (e) {
       console.log("UPDATE USER KYC ERROR ==>", e.response);
     }
@@ -79,44 +86,84 @@ const SettingsKYC = () => {
     getUserKYC();
   }, []);
 
+  function timeCount() {
+    clearTimeout(searchTimeout);
+
+    searchTimeout = setTimeout(async () => {
+      setAlert(false);
+    }, 10000);
+  }
+
+  useEffect(() => {
+    timeCount();
+
+    return () => {
+      // This is the cleanup function
+      clearTimeout(searchTimeout);
+    };
+  }, [alert]);
+
   return (
     <>
       <Card mb={6}>
         <CardContent>
+          {alert && (
+            <Alert
+              severity={alertType === "success" ? "success" : "error"}
+              my={3}
+            >
+              {alertType === "success"
+                ? `Your data has been submitted successfully!`
+                : `An error occured! Try again.`}
+            </Alert>
+          )}
           <Spacer mb={4} />
           <Grid item container direction="row" alignItems="center">
-            <Grid item sx={6} md={2}>
+            <Grid item xs={8} md={2}>
               <Typography variant="inherit" fontWeight="bold">
                 User Status
               </Typography>
             </Grid>
-            <Spacer mx={4} />
-            <Grid item sx={6} md={2}>
-              <Chip
-                label={
-                  userKYC.status_kyc === 1 || userKYC.status_kyc === 3
-                    ? "Pending"
-                    : userKYC.status_kyc === 2
-                    ? "Verified"
-                    : "Not Verified"
-                }
-                color={userKYC.status_kyc === 2 ? "success" : "error"}
-              />
+            {/* <Spacer mx={4} /> */}
+            <Grid item xs={4} md={2}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: { xs: "flex-end", md: "start" },
+                }}
+              >
+                <Chip
+                  label={
+                    userKYC.status_kyc === 1 || userKYC.status_kyc === 3
+                      ? "Pending"
+                      : userKYC.status_kyc === 4
+                      ? "Verified"
+                      : "Not Verified"
+                  }
+                  color={userKYC.status_kyc === 4 ? "success" : "error"}
+                />
+              </Box>
             </Grid>
-            <Spacer mx={4} />
-            <Grid item sx={6} md={2}>
-              <RequestVerificationModal />
+            <Grid item xs={8} md={4}>
+              <Box sx={{ mt: { xs: "10px", md: "0" } }}>
+                <RequestVerificationModal
+                  id={"kyc"}
+                  setAlert={setAlert}
+                  setAlertType={setAlertType}
+                />
+              </Box>
             </Grid>
           </Grid>
+          <Divider my={3} />
           {userKYC.status_kyc &&
-            Object.keys(userKYC.status_kyc).length !== 0 &&
-            userKYC.status_kyc !== 4 && (
+            Object.keys(userKYC).length !== 0 &&
+            userKYC.status_kyc !== 2 && (
               <>
                 <Grid
                   container
                   direction="row"
                   alignItems="center"
-                  mb={2}
+                  my={2}
                   xs={10}
                 >
                   <Grid item sx={6} md={2}>
@@ -290,16 +337,19 @@ const SettingsKYC = () => {
               </>
             )}
           {(userKYC.status_kyc === 1 || userKYC.status_kyc === 3) && (
-            <Grid container direction="row" alignItems="center" mb={2}>
-              <Button
-                variant="contained"
-                onClick={() => updateUserKYC(2)}
-                sx={{ width: "100%" }}
-              >
-                Approve
-              </Button>
-              <Spacer mx={2} />
-              <RejectKYCModal />
+            <Grid container direction="row" alignItems="center" my={2}>
+              <Grid xs={6} md={2}>
+                <Box>
+                  <Button variant="contained" onClick={() => updateUserKYC(4)}>
+                    Approve
+                  </Button>
+                </Box>
+              </Grid>
+              <Grid xs={6} md={2}>
+                <Box display="flex" justifyContent="flex-end">
+                  <RejectKYCModal getUserKYC={getUserKYC} />
+                </Box>
+              </Grid>
             </Grid>
           )}
         </CardContent>

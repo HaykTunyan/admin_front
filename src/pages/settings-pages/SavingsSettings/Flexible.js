@@ -43,9 +43,23 @@ const Flexible = () => {
   const title = "Flexible Info";
   const [flexible, setFlexible] = useState([]);
 
-  const getFelexible = () => {
+  const getFlexible = (coinIds, coinName) => {
+    let coinIdsString = coinIds ? coinIds.toString() : null;
+
+    let params = {
+      type: "flexible",
+      coin_ids: coinIdsString,
+      coin_name: coinName ? coinName : null,
+    };
+
+    Object.keys(params).map((key) => {
+      if (!params[key]) {
+        delete params[key];
+      }
+    });
+
     return instance
-      .get("/admin/saving-settings", { params: { type: "flexible" } })
+      .get("/admin/saving-settings", { params: params })
       .then((data) => {
         setFlexible(data.data);
         return data;
@@ -57,18 +71,25 @@ const Flexible = () => {
   };
 
   useEffect(() => {
-    getFelexible();
+    getFlexible();
   }, []);
 
   return (
     <>
-      <FlexibleTable title={title} rowList={rowList} rowBody={flexible} />
-      <Box m={4} display="flex" justifyContent="flex-end" alignItems="center">
-        <Typography variant="subtitle1" color="inherit" component="div">
-          Export Data
-        </Typography>
-        <CSVButton data={flexible} />
-      </Box>
+      <FlexibleTable
+        title={title}
+        rowList={rowList}
+        rowBody={flexible}
+        getFlexible={getFlexible}
+      />
+      {flexible && (
+        <Box m={4} display="flex" justifyContent="flex-end" alignItems="center">
+          <Typography variant="subtitle1" color="inherit" component="div">
+            Export Data
+          </Typography>
+          <CSVButton data={flexible} />
+        </Box>
+      )}
     </>
   );
 };

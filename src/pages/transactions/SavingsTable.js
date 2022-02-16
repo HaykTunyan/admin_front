@@ -1,7 +1,9 @@
 import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components/macro";
-import { makeStyles } from "@mui/styles";
 import { instance } from "../../services/api";
+import moment from "moment";
+import { spacing } from "@material-ui/system";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Grid,
@@ -14,7 +16,6 @@ import {
   Typography,
   TableHead,
   TablePagination,
-  InputBase,
   Card as MuiCard,
   Select,
   FormControl,
@@ -23,66 +24,18 @@ import {
   Chip as MuiChip,
   Tooltip,
   Button,
+  IconButton,
 } from "@material-ui/core";
-import moment from "moment";
-import { spacing } from "@material-ui/system";
-import { darken } from "polished";
-import { useTranslation } from "react-i18next";
+import { ArrowDown, ArrowUp } from "react-feather";
 import CSVButton from "../../components/CSVButton";
 import Loader from "../../components/Loader";
-import { Search as SearchIcon } from "react-feather";
-import DatePickerFilter from "../../components/date-picker/DatePickerFilter";
+import DateRange from "../../components/date-picker/DateRange";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
 const Card = styled(MuiCard)(spacing);
-const Spacer = styled.div(spacing);
 
 // Custom Style.
-const Search = styled.div`
-  border-radius: 2px;
-  background-color: ${(props) => props.theme.header.background};
-  display: none;
-  position: relative;
-  width: 100%;
-
-  &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    display: block;
-  }
-`;
-
-const SearchIconWrapper = styled.div`
-  width: 50px;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
-
-const Input = styled(InputBase)`
-  color: inherit;
-  width: 100%;
-
-  > input {
-    color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)};
-    padding-right: ${(props) => props.theme.spacing(2.5)};
-    padding-bottom: ${(props) => props.theme.spacing(2.5)};
-    padding-left: ${(props) => props.theme.spacing(12)};
-    width: 100%;
-  }
-`;
 
 const Chip = styled(MuiChip)`
   height: 20px;
@@ -93,34 +46,97 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
-const useStyles = makeStyles({
-  rootTable: {
-    margin: "10px",
-  },
-});
-
 const SavingsTable = () => {
   // hooks.
   const { t } = useTranslation();
-  const classes = useStyles();
   const [savings, setSavings] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [coinAll, setCoinAll] = useState("");
   const [depositType, setDepositeType] = useState("");
   const [transactionType, setTransactionType] = useState("");
+  const [value, setValue] = useState([null, null]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [coinSettings, getCoinSettings] = useState([]);
+  const [sortPhone, setSortPhone] = useState("");
+  const [country, setCountry] = useState("");
   const rows = savings?.transactions;
+  // Sorting.
+  const [sortDate, setSortDate] = useState(true);
+  const [sortEmail, setSortEmail] = useState(true);
+  const [sortAmount, setSortAmount] = useState(true);
 
-  const handleCoinAll = (event) => {
+  // Sorting Functions.
+  const sortingDate = () => {
+    setSortDate(!sortDate);
+    if (sortDate) {
+      getSorting("decreasing", "date");
+    } else {
+      getSorting("increasing", "date");
+    }
+  };
+
+  // Sorting Email.
+  const sortingEmail = () => {
+    setSortEmail(!sortEmail);
+    if (sortEmail) {
+      getSorting("decreasing", "email");
+    } else {
+      getSorting("increasing", "email");
+    }
+  };
+
+  // Sorting Phone.
+  const sortingPhone = (event, sortPhone) => {
+    setSortPhone(event.target.value);
+    // getPhoneSorting(event.target.value);
+    getPhoneSorting(sortPhone?.props?.value);
+  };
+
+  // Sorting Amount.
+  const sortingAmount = () => {
+    setSortAmount(!sortAmount);
+    if (sortAmount) {
+      getSorting("decreasing", "amount_received");
+    } else {
+      getSorting("increasing", "amount_received");
+    }
+  };
+
+  // on Change Time.
+  const onChangeTime = (newValue) => {
+    setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));
+    setEndDate(moment(newValue[1]).format("YYYY-MM-DD"));
+    setValue(newValue);
+    getDateFilters(
+      moment(newValue[0]).format("YYYY-MM-DD"),
+      moment(newValue[1]).format("YYYY-MM-DD")
+    );
+  };
+
+  // Coin Type.
+  const handleCoinAll = (event, coinAll) => {
     setCoinAll(event.target.value);
+    if (coinAll?.props?.value === "all") {
+      getSavings();
+    } else {
+      getSendCoinFilter(coinAll?.props?.value);
+    }
   };
 
   const handleDepositeType = (event) => {
     setDepositeType(event.target.value);
+    getDepositeSorting(event.target.value);
   };
 
-  const handleTransactionType = (event) => {
+  const handleTransactionType = (event, transactionType) => {
     setTransactionType(event.target.value);
+    if (transactionType?.props?.value === "all") {
+      getSavings();
+    } else {
+      getSendFilter(transactionType?.props?.value);
+    }
   };
 
   const handleChangePage = (event, newPage) => {
@@ -138,9 +154,9 @@ const SavingsTable = () => {
     return instance
       .get("/admin/transaction/all", {
         params: {
+          type: "savings",
           limit: rowsPerPage,
           page: page,
-          type: "savings",
         },
       })
       .then((data) => {
@@ -153,33 +169,145 @@ const SavingsTable = () => {
       .finally(() => {});
   };
 
+  // get getSettingCoin Data.
+  const getSettingCoin = () => {
+    return instance
+      .get("/admin/settings/coins")
+      .then((data) => {
+        getCoinSettings(data.data);
+        return data;
+      })
+      .catch((error) => {
+        return Promise.reject(error);
+      })
+      .finally(() => {});
+  };
+
+  // get Coin Filter Data.
+  const getSendCoinFilter = (coin_id) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "savings",
+          coin_id: coin_id,
+        },
+      })
+      .then((data) => {
+        setSavings(data.data);
+        return data;
+      });
+  };
+
+  // get Send Sorting Data.
+  const getSorting = (sort_type, sort_params) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "savings",
+          sort_type: sort_type,
+          sort_param: sort_params,
+        },
+      })
+      .then((data) => {
+        setSavings(data.data);
+        return data;
+      });
+  };
+
+  // get Date Filters.
+  const getDateFilters = (start_date, end_date) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "savings",
+          start_date: start_date,
+          end_date: end_date,
+        },
+      })
+      .then((data) => {
+        setSavings(data.data);
+        return data;
+      });
+  };
+
+  // get Send Filter Data
+  const getSendFilter = (transaction_type) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "savings",
+          transaction_type: transaction_type,
+        },
+      })
+      .then((data) => {
+        setSavings(data.data);
+        return data;
+      });
+  };
+
+  // get Country Code.
+  const getCountry = () => {
+    return instance.get("/admin/settings/countries").then((data) => {
+      setCountry(data.data);
+      return data;
+    });
+  };
+
+  // Phone Sorting.
+  const getPhoneSorting = (telefon_code) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "savings",
+          telefon_code: telefon_code,
+        },
+      })
+      .then((data) => {
+        setSavings(data.data);
+        return data;
+      });
+  };
+
+  const getDepositeSorting = (deposite, page, rowsPerPage) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: deposite,
+          page: page,
+          limit: rowsPerPage,
+        },
+      })
+      .then((data) => {
+        setSavings(data.data);
+        return data;
+      });
+  };
+
   // Use Effect.
   useEffect(() => {
     getSavings();
+    getSettingCoin();
+    getSendCoinFilter();
+    getSorting();
+    getDateFilters();
+    getCountry();
+    getPhoneSorting();
   }, []);
-
-  // Loader.
-  if (savings.transactionsCount === 0) {
-    return <Loader />;
-  }
 
   return (
     <Fragment>
-      <Card p={4} sx={{ display: "flex" }}>
-        <Grid item xs={2} md={2} mx={1}>
-          <Box component="div">
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("searchList")} />
-            </Search>
-          </Box>
+      <Card
+        p={2}
+        sx={{
+          display: { xs: "grid", sm: "flex" },
+          flexFlow: "row",
+          alignItems: "center",
+        }}
+      >
+        <Grid item xs={12} sm={2} md={2} m={2}>
+          <DateRange value={value} onChange={onChangeTime} />
         </Grid>
-        <Grid item xs={2} md={2} mx={1}>
-          <DatePickerFilter />
-        </Grid>
-        <Grid item xs={2} md={2} mx={1}>
+        <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
             <InputLabel id="select-coin">Coin</InputLabel>
             <Select
@@ -192,12 +320,13 @@ const SavingsTable = () => {
               <MenuItem value="all">
                 <em>All</em>
               </MenuItem>
-              <MenuItem value="btc">btc</MenuItem>
-              <MenuItem value="cxc"> cxc </MenuItem>
+              {coinSettings.map((item) => (
+                <MenuItem value={item.id}>{item.coin}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={2} md={2} mx={1}>
+        <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
             <InputLabel id="select-deposit-type">Deposit Type</InputLabel>
             <Select
@@ -215,7 +344,7 @@ const SavingsTable = () => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={2} md={2} mx={1}>
+        <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
             <InputLabel id="select-transaction">Transaction Type</InputLabel>
             <Select
@@ -228,21 +357,93 @@ const SavingsTable = () => {
               <MenuItem value="all">
                 <em>All</em>
               </MenuItem>
-              <MenuItem value="Deposit">Deposit</MenuItem>
-              <MenuItem value="Refunds"> Refunds </MenuItem>
+              <MenuItem value="fake">Internal</MenuItem>
+              <MenuItem value="real"> Real </MenuItem>
             </Select>
           </FormControl>
         </Grid>
       </Card>
       <Paper>
-        <TableContainer component={Paper} className={classes.rootTable}>
+        <TableContainer component={Paper} mt={5}>
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Amount</TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    Date
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <IconButton onClick={sortingDate}>
+                        {sortDate ? (
+                          <ArrowUp size={16} />
+                        ) : (
+                          <ArrowDown size={16} />
+                        )}
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    Email
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <IconButton onClick={sortingEmail}>
+                        {sortEmail ? (
+                          <ArrowUp size={16} />
+                        ) : (
+                          <ArrowDown size={16} />
+                        )}
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box>Phone</Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        marginLeft: "20px",
+                      }}
+                    >
+                      <FormControl sx={{ minWidth: "100px" }}>
+                        <InputLabel id="select-phone-label">Sort</InputLabel>
+                        <Select
+                          labelId="select-phone-label"
+                          id="select-phone-label"
+                          value={sortPhone}
+                          onChange={sortingPhone}
+                          autoWidth
+                          label="Sort"
+                          fullWidth
+                        >
+                          {country &&
+                            country.map((item) => (
+                              <MenuItem key={item.id} value={item.id}>
+                                <Box sx={{ display: "flex", width: "100%" }}>
+                                  <Box mr={2}>{item.telefon}</Box>
+                                </Box>
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    Amount
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <IconButton onClick={sortingAmount}>
+                        {sortAmount ? (
+                          <ArrowUp size={16} />
+                        ) : (
+                          <ArrowDown size={16} />
+                        )}
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </TableCell>
                 <TableCell>Coin</TableCell>
                 <TableCell>TX ID</TableCell>
                 <TableCell>Type</TableCell>
@@ -250,60 +451,86 @@ const SavingsTable = () => {
                 <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {rows &&
-                rows.map((row) => (
-                  <TableRow
-                    key={row.key}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell>
-                      {moment(row.date).format("DD/MM/YYYY HH:mm ")}
-                    </TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.phone}</TableCell>
-                    <TableCell>
-                      {row.amount_sent != null ? (
-                        <>{row.amount_sent}</>
-                      ) : (
-                        <>{row.amount_received}</>
-                      )}
-                    </TableCell>
-                    <TableCell>{row.coinFrom}</TableCell>
-                    <TableCell>
-                      <Tooltip title={row.transaction_id} arrow>
-                        <Button>{row.transaction_id.substring(0, 9)}</Button>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell>
-                      {row.type === "fake" ? (
-                        <Chip label={row.type} color="error" />
-                      ) : (
-                        <Chip label={row.type} color="success" />
-                      )}
-                    </TableCell>
-                    <TableCell>{row.operation_type}</TableCell>
-                    <TableCell>
-                      {row.status === "accepted" ? (
-                        <Chip label={row.status} color="success" />
-                      ) : (
-                        <Chip label={row.status} color="error" />
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
+            {rows ? (
+              <TableBody>
+                {rows &&
+                  rows.map((row) => (
+                    <TableRow
+                      key={row.key}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell>
+                        {moment(row.date).format("DD/MM/YYYY HH:mm ")}
+                      </TableCell>
+                      <TableCell>{row.email}</TableCell>
+                      <TableCell>{row.phone}</TableCell>
+                      <TableCell>
+                        {row.amount_sent != null ? (
+                          <>{row.amount_sent}</>
+                        ) : (
+                          <>{row.amount_received}</>
+                        )}
+                      </TableCell>
+                      <TableCell>{row.cointo}</TableCell>
+                      <TableCell>
+                        <Tooltip title={row.transaction_id} arrow>
+                          <Button>{row.transaction_id?.substring(0, 9)}</Button>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        {row.type === "fake" ? (
+                          <Chip
+                            label={
+                              row.type[0].toUpperCase() + row.type.slice(1)
+                            }
+                            color="error"
+                          />
+                        ) : (
+                          <Chip
+                            label={
+                              row.type[0].toUpperCase() + row.type.slice(1)
+                            }
+                            color="success"
+                          />
+                        )}
+                      </TableCell>
+                      <TableCell>{row.operation_type}</TableCell>
+                      <TableCell>
+                        {row.status === "accepted" ? (
+                          <Chip
+                            label={
+                              row.status[0].toUpperCase() + row.status.slice(1)
+                            }
+                            color="success"
+                          />
+                        ) : (
+                          <Chip
+                            label={
+                              row.status[0].toUpperCase() + row.status.slice(1)
+                            }
+                            color="error"
+                          />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            ) : (
+              <Loader />
+            )}
           </Table>
           {/* Pagination */}
-          <TablePagination
-            rowsPerPageOptions={[10]}
-            component="div"
-            count={savings?.transactionsCount}
-            rowsPerPage={savings?.limit}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          {rows && (
+            <TablePagination
+              rowsPerPageOptions={[10]}
+              component="div"
+              count={savings?.transactionsCount}
+              rowsPerPage={savings?.limit}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          )}
         </TableContainer>
       </Paper>
       {rows && (

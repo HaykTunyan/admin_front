@@ -17,7 +17,6 @@ export const createAdmin = (values) => (dispatch) => {
   return instance
     .post("/admin", values)
     .then(({ data }) => {
-      console.log("Data Admin Create", data);
       dispatch({
         type: CREATE_ADMIN,
         payload: {
@@ -34,7 +33,6 @@ export const createAdmin = (values) => (dispatch) => {
         authorized: true,
         payload: false,
       });
-      console.log("err", err);
       return Promise.reject(err);
     });
 };
@@ -74,7 +72,6 @@ export const createAffiliate = (values) => (dispatch) => {
   return instance
     .post("/admin/user", values)
     .then(({ data }) => {
-      console.log("Data Admin Create", data);
       dispatch({
         type: CREATE_AFFILIATE,
         payload: {
@@ -90,7 +87,6 @@ export const createAffiliate = (values) => (dispatch) => {
         type: CREATE_AFFILIATE,
         payload: false,
       });
-      console.log(" resposnse ", err);
       return Promise.reject(err);
     });
 };

@@ -32,6 +32,7 @@ export const editCoin = (values) => (dispatch) => {
         type: TRANSACTION_EDIT,
         payload: false,
       });
+      console.log("TRANSACTION EDIT ==>", err.response);
       return Promise.reject(err);
     });
 };

@@ -1,7 +1,27 @@
 import { instance } from "../services/api";
 
-export const getUserWallets_req = async (userId) => {
-  const response = await instance.get(`/admin/user/${userId}/wallet`);
+export const getUserWallets_req = async (userId, sortParam, sortType) => {
+  let queryString = "";
+
+  if (sortParam && sortParam !== "" && sortType && sortType !== "") {
+    queryString = `sort_param=${sortParam}&sort_type=${sortType}`;
+  } else if (sortParam && sortParam !== "") {
+    queryString = `sort_param=${sortParam}`;
+  } else if (sortType && sortType !== "") {
+    queryString = `sort_type=${sortType}`;
+  }
+
+  const response = await instance.get(
+    `/admin/user/${userId}/wallet?${queryString}`
+  );
+  return response.data;
+};
+
+export const editUserWallets_req = async (userId, walletId, limit) => {
+  const response = await instance.put(`/admin/user/${userId}/wallet`, {
+    walletId: walletId,
+    limit: limit,
+  });
   return response.data;
 };
 

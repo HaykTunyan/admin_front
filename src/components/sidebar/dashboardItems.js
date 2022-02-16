@@ -22,6 +22,7 @@ const pagesSection = [
     icon: Sliders,
     title: "Dashboard",
   },
+  // Device Managment.
   {
     href: "/device-management",
     icon: Smartphone,

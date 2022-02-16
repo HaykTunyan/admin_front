@@ -31,15 +31,15 @@ const AddSavingSchema = Yup.object().shape({
   coin: Yup.number().required("Field is required"),
   min: Yup.number()
     .required("Field is required")
-    .min(0, " Filed can not be minus value"),
+    .min(0, " Field can not be negative value"),
   max: Yup.number()
     .required("Field is required")
-    .min(0, " Filed can not be minus value"),
+    .min(0, " Field can not be negative value"),
   toPercent: Yup.number().required("Field is required"),
   fromPercent: Yup.number().required("Field is required"),
 });
 
-const AddFlexibleSavingModal = () => {
+const AddFlexibleSavingModal = ({ getFlexible }) => {
   // hooks.
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
@@ -63,12 +63,23 @@ const AddFlexibleSavingModal = () => {
   };
 
   // Form Req.
-  const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(addSaving(values))
+  const addSavings = (values) => {
+    let data = {
+      coin: Number(values.coin),
+      type: "flexible",
+      min: Number(values.min),
+      max: Number(values.max),
+      toPercent: Number(values.toPercent),
+      fromPercent: Number(values.fromPercent),
+    };
+
+    console.log("DATA ==>", data);
+
+    dispatch(addSaving(data))
       .then((data) => {
         console.log("data", data);
         setOpen(false);
+        getFlexible();
       })
       .catch((error) => {
         console.log(" error messages ", error?.response?.data);
@@ -113,9 +124,16 @@ const AddFlexibleSavingModal = () => {
               }}
               initialForms={state}
               validationSchema={AddSavingSchema}
-              onSubmit={handleSubmit}
+              onSubmit={addSavings}
             >
-              {({ values, errors, touched, handleChange, handleBlur }) => (
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+              }) => (
                 <Form>
                   {errorMes && (
                     <>
@@ -149,7 +167,7 @@ const AddFlexibleSavingModal = () => {
                   )}
                   <Grid container pt={6} spacing={6}>
                     {/* Coin */}
-                    <Grid display="flex" item md={4} alignItems="center">
+                    <Grid item xs={4} md={4} display="flex" alignItems="center">
                       <Typography
                         variant="subtitle1"
                         color="inherit"
@@ -158,7 +176,7 @@ const AddFlexibleSavingModal = () => {
                         Saving Coin
                       </Typography>
                     </Grid>
-                    <Grid item md={8}>
+                    <Grid item xs={8} md={8}>
                       <FormControl fullWidth>
                         <InputLabel id="select-from-coin">
                           From Coin Name
@@ -180,7 +198,7 @@ const AddFlexibleSavingModal = () => {
                       </FormControl>
                     </Grid>
                     {/* Min */}
-                    <Grid display="flex" item md={4} alignItems="center">
+                    <Grid item xs={4} md={4} display="flex" alignItems="center">
                       <Typography
                         variant="subtitle1"
                         color="inherit"
@@ -189,13 +207,12 @@ const AddFlexibleSavingModal = () => {
                         Min
                       </Typography>
                     </Grid>
-                    <Grid item md={8}>
+                    <Grid item xs={8} md={8}>
                       <TextField
                         margin="dense"
                         id="min"
                         name="min"
                         label="Min"
-                        type="number"
                         error={Boolean(touched.min && errors.min)}
                         fullWidth
                         helperText={touched.min && errors.min}
@@ -205,7 +222,7 @@ const AddFlexibleSavingModal = () => {
                       />
                     </Grid>
                     {/* Max */}
-                    <Grid display="flex" item md={4} alignItems="center">
+                    <Grid item xs={4} md={4} display="flex" alignItems="center">
                       <Typography
                         variant="subtitle1"
                         color="inherit"
@@ -214,13 +231,12 @@ const AddFlexibleSavingModal = () => {
                         Max
                       </Typography>
                     </Grid>
-                    <Grid item md={8}>
+                    <Grid item xs={8} md={8}>
                       <TextField
                         margin="dense"
                         id="max"
                         name="max"
                         label="Max"
-                        type="number"
                         error={Boolean(touched.max && errors.max)}
                         fullWidth
                         helperText={touched.max && errors.max}
@@ -230,7 +246,13 @@ const AddFlexibleSavingModal = () => {
                       />
                     </Grid>
                     {/* To Percent  */}
-                    <Grid display="flex" alignItems="center" item md={4}>
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      display="flex"
+                      alignItems="center"
+                    >
                       <Typography
                         variant="subtitle1"
                         color="inherit"
@@ -239,13 +261,12 @@ const AddFlexibleSavingModal = () => {
                         7 Day API
                       </Typography>
                     </Grid>
-                    <Grid item md={4}>
+                    <Grid item xs={12} md={4}>
                       <TextField
                         margin="dense"
                         id="fromPercent"
                         name="fromPercent"
                         label="From"
-                        type="number"
                         fullWidth
                         error={Boolean(
                           touched.fromPercent && errors.fromPercent
@@ -256,13 +277,12 @@ const AddFlexibleSavingModal = () => {
                         defaultValue={state.fromPercent}
                       />
                     </Grid>
-                    <Grid item md={4}>
+                    <Grid item xs={12} md={4}>
                       <TextField
                         margin="dense"
                         id="toPercent"
                         name="toPercent"
                         label="To"
-                        type="number"
                         fullWidth
                         error={Boolean(touched.toPercent && errors.toPercent)}
                         helperText={touched.toPercent && errors.toPercent}
@@ -291,7 +311,7 @@ const AddFlexibleSavingModal = () => {
                     <Button
                       variant="contained"
                       sx={{ width: "120px" }}
-                      type="submit"
+                      onClick={handleSubmit}
                     >
                       Create Saving
                     </Button>

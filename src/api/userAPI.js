@@ -5,11 +5,15 @@ export const getUserData_req = async (userId) => {
   return response.data;
 };
 
-export const editUserData_req = async (userId, field, value, affiliate) => {
+export const editUserData_req = async (userId, field, value) => {
   const response = await instance.put(`/admin/user`, {
     userId: userId,
     [`${field}`]: value,
-    is_affiliate: affiliate,
   });
+  return response.data;
+};
+
+export const createAffiliateUser_req = async (data) => {
+  const response = await instance.post(`/admin/user`, data);
   return response.data;
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 // Layouts
 import AuthLayout from "../layouts/Auth";

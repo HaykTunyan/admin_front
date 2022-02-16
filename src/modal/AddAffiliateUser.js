@@ -7,45 +7,22 @@ import {
   DialogContent,
   DialogTitle,
   Box,
-  IconButton,
   Alert as MuiAlert,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import { Form, Formik } from "formik";
-import { UserPlus } from "react-feather";
 import * as Yup from "yup";
 import { spacing } from "@material-ui/system";
-import { useDispatch } from "react-redux";
-import { createAffiliate } from "../redux/actions/user-managment";
 import userSingleton from "../singletons/user.singleton";
+import { createAffiliateUser_req } from "../api/userAPI";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
 const Alert = styled(MuiAlert)(spacing);
 
-// validation Schema.
-const addAffilateValidation = Yup.object().shape({
-  email: Yup.string()
-    .email("Must be a valid email")
-    .min(8, "Must be at least 8 characters")
-    .max(255)
-    .required("Email is requried"),
-  full_name: Yup.string()
-    .min(2, "Too Short!")
-    .max(200, " Too Short!")
-    .required("Full Name is requrired"),
-  phone: Yup.string().required(" Phone is requrired "),
-  password: Yup.string()
-    .min(6, " Must be a last 6 characters ")
-    .max(255, " Must be a last 355 characters")
-    .uppercase(1, " Must be a one uppercase ")
-    .lowercase(1, " Must be a one lowercase ")
-    .required(" Passowrd is required "),
-});
-
-const AddAffiliateUser = () => {
-  // hooks.
+const AddAffiliateUser = ({ getUserList }) => {
   const [open, setOpen] = useState(false);
-  const dispatch = useDispatch();
   const [state, setState] = useState({
     email: "",
     full_name: "",
@@ -53,6 +30,65 @@ const AddAffiliateUser = () => {
     password: "",
   });
   const [errorMes, setErrorMes] = useState([]);
+
+  const [emailAuth, setEmailAuth] = useState(false);
+  const [phoneAuth, setPhoneAuth] = useState(false);
+  const [check2FA, setCheck2FA] = useState(false);
+
+  // validation Schema.
+  const addAffilateValidation = Yup.object().shape(
+    {
+      email: Yup.string()
+        .email()
+        .when("phone", {
+          is: (phone) => !phone || phone.length === 0 || emailAuth,
+          then: Yup.string()
+            .email("Must be a valid email")
+            .min(8, "Must have at least 8 characters")
+            .max(255)
+            .required("Email is required"),
+          otherwise: Yup.string(),
+        }),
+      full_name: Yup.string()
+        .min(2, "Too Short!")
+        .max(200, " Too Long!")
+        .required("Full Name is requrired"),
+      phone: Yup.string().when("email", {
+        is: (email) => !email || email.length === 0 || phoneAuth,
+        then: Yup.string()
+          .matches(
+            /^\+(?:[0-9] ?){6,14}[0-9]$/,
+            "Phone number is not valid. Must have + and numbers."
+          )
+          .required(" Phone is requrired "),
+        otherwise: Yup.string().matches(
+          /^\+(?:[0-9] ?){6,14}[0-9]$/,
+          "Phone number is not valid. Must have + and numbers."
+        ),
+      }),
+      password: Yup.string()
+        .min(6, " Must have at least 6 characters ")
+        .max(255, " No more than 355 characters")
+        .uppercase(1, " Must have at least one uppercase ")
+        .lowercase(1, " Must have at least one lowercase ")
+        .required(" Passowrd is required "),
+    },
+    [["email", "phone"]]
+  );
+
+  const handleEmailAuth = () => {
+    setEmailAuth(!emailAuth);
+    if (check2FA) {
+      setCheck2FA(false);
+    }
+  };
+
+  const handlePhoneAuth = () => {
+    setPhoneAuth(!phoneAuth);
+    if (check2FA) {
+      setCheck2FA(false);
+    }
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -63,30 +99,46 @@ const AddAffiliateUser = () => {
     setOpen(false);
   };
 
-  const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(createAffiliate(values))
-      .then((data) => {
-        if (data.success) {
-          console.log(" data affiliate", userSingleton._affiliateList);
-          userSingleton._affiliateList = true;
-          console.log(" data affilaate ", userSingleton._affiliateList);
-          setOpen(false);
-        }
-      })
-      .catch((error) => {
-        console.log(" error messages ", error?.response?.data);
-        setErrorMes(error?.response?.data?.message);
-      });
+  const addAffiliateUser = async (values) => {
+    let data = {
+      email: values.email,
+      full_name: values.full_name,
+      phone: values.phone,
+      password: values.password,
+      enable_email_mfa: emailAuth,
+      enable_phone_mfa: phoneAuth,
+    };
+
+    let result = Object.keys(data).filter((key) => data[key] === "");
+
+    for (let item of result) {
+      delete data[`${item}`];
+    }
+
+    console.log("DATA", data);
+
+    try {
+      const response = await createAffiliateUser_req(data);
+      if (response) {
+        console.log("ADD AFFILIATE USER RESPONSE ==>", response);
+        console.log(" data affiliate", userSingleton._affiliateList);
+        userSingleton._affiliateList = true;
+        getUserList();
+        setOpen(false);
+      }
+    } catch (e) {
+      console.log("ADD AFFILIATE USER ERROR ==>", e, e.response);
+      setErrorMes(e?.response?.data?.message);
+    }
   };
 
   return (
     <div>
-      <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
-        <UserPlus />
-      </IconButton>
+      <Button variant="contained" color="primary" onClick={handleClickOpen}>
+        Add Affiliate User
+      </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add New Affiliate User</DialogTitle>
+        <DialogTitle>Add Affiliate User</DialogTitle>
         <DialogContent>
           <Formik
             initialValues={{
@@ -94,9 +146,13 @@ const AddAffiliateUser = () => {
             }}
             initialForms={state}
             validationSchema={addAffilateValidation}
-            onSubmit={handleSubmit}
+            onSubmit={(values) => {
+              if (!check2FA) {
+                addAffiliateUser(values);
+              }
+            }}
           >
-            {({ errors, touched, handleChange, handleBlur }) => (
+            {({ errors, touched, handleChange, handleBlur, handleSubmit }) => (
               <Form>
                 {errorMes && (
                   <>
@@ -132,11 +188,11 @@ const AddAffiliateUser = () => {
                   onChange={handleChange}
                   helperText={touched.email && errors.email}
                   onBlur={handleBlur}
-                  label="Affiliate Email"
+                  label="Email"
                   type="email"
                   variant="outlined"
                   fullWidth
-                  my={8}
+                  my={6}
                 />
                 <TextField
                   margin="dense"
@@ -147,11 +203,11 @@ const AddAffiliateUser = () => {
                   helperText={touched.full_name && errors.full_name}
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  label="Affiliate Full Name"
+                  label="Full Name"
                   type="text"
                   variant="outlined"
                   fullWidth
-                  my={8}
+                  my={6}
                 />
                 <TextField
                   margin="dense"
@@ -162,11 +218,11 @@ const AddAffiliateUser = () => {
                   error={Boolean(touched.phone && errors.phone)}
                   helperText={touched.phone && errors.phone}
                   onBlur={handleBlur}
-                  label="Affiliate Phone"
+                  label="Phone"
                   type="phone"
                   variant="outlined"
                   fullWidth
-                  my={8}
+                  my={6}
                 />
                 <TextField
                   margin="dense"
@@ -177,12 +233,30 @@ const AddAffiliateUser = () => {
                   error={Boolean(touched.password && errors.password)}
                   helperText={touched.password && errors.password}
                   onBlur={handleBlur}
-                  label="Affiliate Password"
+                  label="Password"
                   type="password"
                   variant="outlined"
                   fullWidth
-                  my={8}
+                  my={6}
                 />
+                <FormControlLabel
+                  control={
+                    <Checkbox checked={emailAuth} onChange={handleEmailAuth} />
+                  }
+                  label="2FA by email"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox checked={phoneAuth} onChange={handlePhoneAuth} />
+                  }
+                  label="2FA by phone"
+                />
+                {check2FA && (
+                  <span style={{ color: "red" }}>
+                    {"At lease one of the options should be checked."}
+                  </span>
+                )}
+
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Button
                     onClick={handleClose}
@@ -195,7 +269,13 @@ const AddAffiliateUser = () => {
                   <Button
                     sx={{ width: "150px" }}
                     variant="contained"
-                    type="submit"
+                    onClick={() => {
+                      if (!emailAuth && !phoneAuth) {
+                        setCheck2FA(true);
+                      }
+
+                      handleSubmit();
+                    }}
                   >
                     Create Affiliate
                   </Button>

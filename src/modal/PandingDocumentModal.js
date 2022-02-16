@@ -9,8 +9,12 @@ import {
   Grid,
   IconButton as MuiIconButton,
   Box,
+  Divider as MuiDivider,
 } from "@material-ui/core";
 import { Download, XCircle } from "react-feather";
+import { spacing } from "@material-ui/system";
+
+const Divider = styled(MuiDivider)(spacing);
 
 // Custom Style.
 const IconButton = styled(MuiIconButton)`
@@ -60,12 +64,12 @@ const PandingDocumentModal = ({
           </DialogTitle>
           <DialogContent>
             <Grid container pt={6} spacing={6} key={pandingId}>
-              <Grid display="flex" item md={4} alignItems="center">
+              <Grid item xs={6} md={4} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Document Type
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={8} alignItems="center">
+              <Grid item xs={6} md={8} display="flex" alignItems="center">
                 <Typography
                   variant="subtitle1"
                   color="inherit"
@@ -78,12 +82,12 @@ const PandingDocumentModal = ({
                   {documentType === 4 && <>Residence</>}
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={4} alignItems="center">
+              <Grid item xs={6} md={4} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Document Back
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={4} alignItems="center">
+              <Grid item xs={6} md={4} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   {documentBack ? (
                     <img
@@ -96,7 +100,7 @@ const PandingDocumentModal = ({
                   )}
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={4} alignItems="center">
+              <Grid item xs={12} md={4} display="flex" alignItems="center">
                 {documentBack && (
                   <>
                     <Box display="flex" justifyContent="space-around">
@@ -118,12 +122,12 @@ const PandingDocumentModal = ({
                 )}
               </Grid>
               {/* Document Front */}
-              <Grid display="flex" item md={4} alignItems="center">
+              <Grid item xs={4} md={4} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Document Front
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={4} alignItems="center">
+              <Grid item xs={4} md={4} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   {documentFront ? (
                     <img
@@ -136,7 +140,7 @@ const PandingDocumentModal = ({
                   )}
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={4} alignItems="center">
+              <Grid item xs={4} md={4} display="flex" alignItems="center">
                 {documentFront && (
                   <>
                     <Box display="flex" justifyContent="space-around">
@@ -157,12 +161,12 @@ const PandingDocumentModal = ({
                   </>
                 )}
               </Grid>
-              <Grid display="flex" item md={4} alignItems="center">
+              <Grid item xs={4} md={4} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Selfies
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={4} alignItems="center">
+              <Grid item xs={4} md={4} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   {selfie ? (
                     <img
@@ -175,7 +179,7 @@ const PandingDocumentModal = ({
                   )}
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={4} alignItems="center">
+              <Grid item xs={4} md={4} display="flex" alignItems="center">
                 {selfie && (
                   <>
                     <Box display="flex" justifyContent="space-around">

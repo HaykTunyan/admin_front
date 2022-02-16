@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import {
@@ -6,14 +6,12 @@ import {
   Card as MuiCard,
   CardContent,
   TextField as MuiTextField,
-  Divider as MuiDivider,
   Typography as MuiTypography,
   Grid,
   Alert as MuiAlert,
   Box,
   CircularProgress,
 } from "@material-ui/core";
-import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { Formik } from "formik";
 
@@ -54,10 +52,8 @@ const validationSchema = Yup.object().shape({
 });
 
 const UserSettings = () => {
-  const [age, setAge] = useState("");
 
   const handleSubmit = async (
-    values,
     { resetForm, setErrors, setStatus, setSubmitting }
   ) => {
     try {
@@ -102,7 +98,6 @@ const UserSettings = () => {
                         Your data has been submitted successfully!
                       </Alert>
                     )}
-
                     {isSubmitting ? (
                       <Box display="flex" justifyContent="center" my={6}>
                         <CircularProgress />

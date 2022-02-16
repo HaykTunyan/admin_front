@@ -1,24 +1,45 @@
-import React, { useState, Fragment } from "react";
-import { TextField, Box } from "@material-ui/core";
+import React, { useState } from "react";
+import { TextField } from "@material-ui/core";
 import { DateRangePicker } from "@material-ui/lab";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 
 const DateRange = ({ value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleClose = (newValue) => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DateRangePicker
-        startText="Min Date"
-        endText="Max Date"
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        startText={"Calendar"}
         value={value}
+        onOpen={() => {
+          setIsOpen(true);
+        }}
         onChange={onChange}
-        renderInput={(startProps, endProps) => (
-          <Fragment>
-            <TextField {...startProps} />
-            <Box sx={{ mx: 2 }}> to </Box>
-            <TextField {...endProps} />
-          </Fragment>
-        )}
+        renderInput={({ inputProps, ...startProps }, endProps) => {
+          const startValue = inputProps.value;
+          delete inputProps.value;
+
+          return (
+            <TextField
+              {...startProps}
+              inputProps={inputProps}
+              fullWidth
+              onClose={() => setIsOpen(false)}
+              value={
+                startValue === endProps.inputProps.value
+                  ? `${startValue}`
+                  : `${startValue}-${endProps.inputProps.value}`
+              }
+            />
+          );
+        }}
       />
     </LocalizationProvider>
   );

@@ -34,17 +34,6 @@ const IconButton = styled(MuiIconButton)`
   }
 `;
 
-// Yup Validation.
-const editSwapSchema = Yup.object().shape({
-  decimals: Yup.number().required("Field is required"),
-  fee: Yup.number()
-    .required("Field is required")
-    .min(0, " Filed can not be minus value"),
-  min: Yup.number()
-    .required("Field is required")
-    .min(0, " Filed can not be minus value"),
-});
-
 const EditSwapModal = ({
   idSwap,
   decimalsSwap,
@@ -54,11 +43,12 @@ const EditSwapModal = ({
   limitEnabledSwap,
   fromCoin,
   toCoin,
+  getSwap,
 }) => {
   // hooks.
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
-  const [check, setCheck] = useState(false);
+  const [check, setCheck] = useState(limitEnabledSwap);
   const label = { inputProps: { "aria-label": "Checkbox" } };
   const [errorMes, setErrorMes] = useState([]);
   const [state, setState] = useState({
@@ -66,9 +56,24 @@ const EditSwapModal = ({
     decimals: decimalsSwap,
     fee: feeSwap,
     min: minSwap,
-    limitEnabled: limitEnabledSwap,
+    limit: limitSwap,
   });
-  const [checkedLimit, SetCheckedLimit] = useState(state.limitEnabled);
+
+  // Yup Validation.
+  const editSwapSchema = Yup.object().shape({
+    decimals: Yup.number().required("Field is required"),
+    fee: Yup.number()
+      .required("Field is required")
+      .min(0, " Field can not be negative value"),
+    min: Yup.number()
+      .required("Field is required")
+      .min(0, " Field can not be negative value"),
+    limit: check
+      ? Yup.number()
+          .required("Field is required")
+          .min(0, " Field can not be negative value")
+      : Yup.number(),
+  });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -78,16 +83,30 @@ const EditSwapModal = ({
     setOpen(false);
   };
 
-  const handleChangeCheckbox = (event) => {
-    SetCheckedLimit(event.target.value);
-  };
-
   const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(editSwap(values))
+    let data = {
+      swapId: values.swapId, //is required
+      decimals: values.decimals,
+      fee: Number(values.fee),
+      min: Number(values.min),
+      limit: Number(values.limit),
+      limitEnabled: check,
+    };
+
+    let result = Object.keys(data).filter(
+      (key) =>
+        (!data[key] || data[key] === "") && typeof data[key] !== "boolean"
+    );
+
+    for (let item of result) {
+      delete data[`${item}`];
+    }
+    console.log("Data =>", data);
+
+    dispatch(editSwap(data))
       .then((data) => {
-        console.log("data", data);
         setOpen(false);
+        getSwap();
       })
       .catch((error) => {
         console.log("error messages", error?.response?.data);
@@ -96,7 +115,6 @@ const EditSwapModal = ({
   };
 
   const invalid = errorMes?.message;
-  console.log(" errorMes ", errorMes);
 
   return (
     <Fragment>
@@ -115,7 +133,6 @@ const EditSwapModal = ({
           <Formik
             initialValues={{
               ...state,
-              limit: limitSwap,
             }}
             initialForms={state}
             validationSchema={editSwapSchema}
@@ -155,7 +172,7 @@ const EditSwapModal = ({
                 )}
                 <Grid container pt={6} spacing={6}>
                   {/* Min */}
-                  <Grid display="flex" alignItems="center" item md={4}>
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -164,19 +181,14 @@ const EditSwapModal = ({
                       Min Amount
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <TextField
                       margin="dense"
                       id="min"
                       name="min"
                       label="Min"
-                      type="number"
+                      //type="number"
                       fullWidth
-                      // InputProps={{
-                      //   inputProps: {
-                      //     min: 0,
-                      //   },
-                      // }}
                       error={Boolean(touched.min && errors.min)}
                       helperText={touched.min && errors.min}
                       onBlur={handleBlur}
@@ -185,7 +197,7 @@ const EditSwapModal = ({
                     />
                   </Grid>
                   {/* Fee  */}
-                  <Grid display="flex" alignItems="center" item md={4}>
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -194,13 +206,13 @@ const EditSwapModal = ({
                       Fee %
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <TextField
                       margin="dense"
                       id="fee"
                       name="fee"
                       label="Fee"
-                      type="number"
+                      //type="number"
                       fullWidth
                       // InputProps={{
                       //   inputProps: {
@@ -215,7 +227,7 @@ const EditSwapModal = ({
                     />
                   </Grid>
                   {/* Decimals */}
-                  <Grid display="flex" item md={4} alignItems="center">
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -224,7 +236,7 @@ const EditSwapModal = ({
                       Decimals
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <TextField
                       margin="dense"
                       id="decimals"
@@ -240,7 +252,7 @@ const EditSwapModal = ({
                     />
                   </Grid>
                   {/* Limit Enabled */}
-                  <Grid display="flex" alignItems="center" item md={4}>
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -249,24 +261,41 @@ const EditSwapModal = ({
                       Limit
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <FormControlLabel
                       label="Enabled Limit"
                       name="limitEnabled"
                       control={
                         <Checkbox
                           {...label}
-                          name="limitEnabled"
                           onChange={() => setCheck(!check)}
+                          defaultChecked={check}
                         />
                       }
                     />
+                    {/* <FormControlLabel
+                      label="Enabled Limit"
+                      name="limitEnabled"
+                      control={
+                        <Checkbox
+                          {...label}
+                          defaultChecked={state.limitEnabled}
+                          onChange={handleChange}
+                        />
+                      }
+                    /> */}
                   </Grid>
-
                   {/* Limit  */}
+                  {/* check */}
                   {check ? (
                     <>
-                      <Grid display="flex" alignItems="center" item md={4}>
+                      <Grid
+                        item
+                        xs={4}
+                        md={4}
+                        display="flex"
+                        alignItems="center"
+                      >
                         <Typography
                           variant="subtitle1"
                           color="inherit"
@@ -275,16 +304,17 @@ const EditSwapModal = ({
                           Limit Swap
                         </Typography>
                       </Grid>
-                      <Grid item md={8}>
+                      <Grid item xs={8} md={8}>
                         <TextField
                           margin="dense"
                           id="limit"
                           name="limit"
                           label="Limit"
-                          type="number"
+                          //type="number"
                           fullWidth
                           error={Boolean(touched.limit && errors.limit)}
                           helperText={touched.limit && errors.limit}
+                          defaultValue={limitSwap}
                           onBlur={handleBlur}
                           onChange={handleChange}
                         />

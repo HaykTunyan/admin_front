@@ -1,14 +1,8 @@
 import React, { useState } from "react";
 import {
-  Divider as MuiDivider,
-  Typography as MuiTypography,
   FormControl as MuiFormControl,
-  Grid as MuiGrid,
-  Alert as MuiAlert,
   Button as MuiButton,
-  Card as MuiCard,
   TextField as MuiTextField,
-  Avatar as MuiAvatar,
   InputLabel,
   Select,
   MenuItem,
@@ -23,15 +17,12 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { updateUserKYC_req } from "../api/userSettingskycAPI";
 
-const Typography = styled(MuiTypography)(spacing);
-const Card = styled(MuiCard)(spacing);
-const Grid = styled(MuiGrid)(spacing);
 const Spacer = styled.div(spacing);
 const TextField = styled(MuiTextField)(spacing);
 const Button = styled(MuiButton)(spacing);
 const FormControl = styled(MuiFormControl)(spacing);
 
-const RejectKYCModal = () => {
+const RejectKYCModal = ({ getUserKYC }) => {
   const [open, setOpen] = useState(false);
   const [initialValues, setInitialValues] = useState({
     title: "",
@@ -63,7 +54,7 @@ const RejectKYCModal = () => {
   async function rejectUserKYC(values) {
     let data = {
       user_id: userId, // is required
-      status_kyc: 4,
+      status_kyc: 2,
       content: values.content,
       title: values.title,
       // 1-email, 2 - phone 3 - only notification
@@ -75,6 +66,7 @@ const RejectKYCModal = () => {
         console.log("UPDATE USER KYC RESPONSE ==>", response);
         setOpen(false);
       }
+      getUserKYC();
     } catch (e) {
       console.log("UPDATE USER KYC ERROR ==>", e.response);
       setOpen(false);

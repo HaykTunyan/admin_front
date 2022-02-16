@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
-import { spacing } from "@material-ui/system";
 import {
   Button,
   Dialog,
@@ -12,9 +11,6 @@ import {
 } from "@material-ui/core";
 import moment from "moment";
 import { XCircle } from "react-feather";
-
-// Spacing.
-const Spacer = styled.div(spacing);
 
 // Custom Style.
 const IconButton = styled(MuiIconButton)`
@@ -66,69 +62,67 @@ const PandingInformationModal = ({
           </DialogTitle>
           <DialogContent>
             <Grid container pt={6} spacing={6} key={pandingId}>
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Name
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   {name}
                 </Typography>
               </Grid>
-
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Surename
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   {surname}
                 </Typography>
               </Grid>
-
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Birth Date
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   {moment(dateBirthday).format("DD/MM/YYYY HH:mm ")}
                 </Typography>
               </Grid>
-
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Contact Info
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   {contact}
                 </Typography>
               </Grid>
-
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Country
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   {country}
                 </Typography>
               </Grid>
-
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
                   Document Type
                 </Typography>
               </Grid>
-              <Grid display="flex" item md={6} alignItems="center">
+              <Grid item xs={6} md={6} display="flex" alignItems="center">
                 <Typography variant="subtitle1" color="inherit" component="div">
-                  {documentType}
+                  {documentType === 1 && <>Driver's license</>}
+                  {documentType === 2 && <>ID card</>}
+                  {documentType === 3 && <>Passport</>}
+                  {documentType === 4 && <>Residence</>}
                 </Typography>
               </Grid>
             </Grid>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -32,10 +32,10 @@ const IconButton = styled(MuiIconButton)`
 
 // Yup Validation.
 const AddSavingSchema = Yup.object().shape({
-  min: Yup.string().required("Field is required"),
-  max: Yup.string().required("Field is required"),
-  toPercent: Yup.string().required("Field is required"),
-  fromPercent: Yup.string().required("Field is required"),
+  min: Yup.number(),
+  max: Yup.number(),
+  toPercent: Yup.number(),
+  fromPercent: Yup.number(),
 });
 
 const EditFlexibleSavingModal = ({
@@ -44,12 +44,12 @@ const EditFlexibleSavingModal = ({
   max,
   toPercent,
   fromPercent,
+  getFlexible,
 }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const [state, setState] = useState({
     savingId: savingId,
-    type: "flexible", // for flexible
     min: min,
     max: max,
     toPercent: toPercent, //for flexible
@@ -65,11 +65,28 @@ const EditFlexibleSavingModal = ({
   };
 
   const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(editSaving(values)).then((data) => {
+    let data = {
+      savingId: values.savingId, // is required
+      min: Number(values.min),
+      max: Number(values.max),
+      toPercent: Number(values.toPercent),
+      fromPercent: Number(values.fromPercent),
+    };
+
+    let result = Object.keys(data).filter(
+      (key) => !data[key] || data[key] === ""
+    );
+
+    for (let item of result) {
+      delete data[`${item}`];
+    }
+    console.log("Data =>", data);
+
+    dispatch(editSaving(data)).then((data) => {
       if (data.success) {
         setOpen(false);
       }
+      getFlexible();
     });
   };
 
@@ -98,7 +115,7 @@ const EditFlexibleSavingModal = ({
                 <Form>
                   <Grid container pt={6} spacing={6}>
                     {/* Min */}
-                    <Grid display="flex" item md={4} alignItems="center">
+                    <Grid item xs={4} md={4} display="flex" alignItems="center">
                       <Typography
                         variant="subtitle1"
                         color="inherit"
@@ -107,23 +124,22 @@ const EditFlexibleSavingModal = ({
                         Min
                       </Typography>
                     </Grid>
-                    <Grid item md={8}>
+                    <Grid item xs={8} md={8}>
                       <TextField
                         margin="dense"
                         id="min"
                         name="min"
                         label="Min"
-                        type="number"
                         error={Boolean(touched.min && errors.min)}
                         fullWidth
                         helperText={touched.min && errors.min}
                         onBlur={handleBlur}
                         onChange={handleChange}
-                        defaultValue={state.max}
+                        defaultValue={state.min}
                       />
                     </Grid>
                     {/* Max */}
-                    <Grid display="flex" item md={4} alignItems="center">
+                    <Grid item xs={4} md={4} display="flex" alignItems="center">
                       <Typography
                         variant="subtitle1"
                         color="inherit"
@@ -132,13 +148,12 @@ const EditFlexibleSavingModal = ({
                         Max
                       </Typography>
                     </Grid>
-                    <Grid item md={8}>
+                    <Grid item xs={8} md={8}>
                       <TextField
                         margin="dense"
                         id="max"
                         name="max"
                         label="Max"
-                        type="number"
                         error={Boolean(touched.max && errors.max)}
                         fullWidth
                         helperText={touched.max && errors.max}
@@ -148,7 +163,13 @@ const EditFlexibleSavingModal = ({
                       />
                     </Grid>
                     {/* To Percent  */}
-                    <Grid display="flex" alignItems="center" item md={4}>
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      display="flex"
+                      alignItems="center"
+                    >
                       <Typography
                         variant="subtitle1"
                         color="inherit"
@@ -157,13 +178,12 @@ const EditFlexibleSavingModal = ({
                         7 Day API
                       </Typography>
                     </Grid>
-                    <Grid item md={4}>
+                    <Grid item xs={12} md={4}>
                       <TextField
                         margin="dense"
                         id="fromPercent"
                         name="fromPercent"
                         label="From"
-                        type="number"
                         fullWidth
                         error={Boolean(
                           touched.fromPercent && errors.fromPercent
@@ -174,13 +194,12 @@ const EditFlexibleSavingModal = ({
                         defaultValue={state.fromPercent}
                       />
                     </Grid>
-                    <Grid item md={4}>
+                    <Grid item xs={12} md={4}>
                       <TextField
                         margin="dense"
                         id="toPercent"
                         name="toPercent"
                         label="To"
-                        type="number"
                         fullWidth
                         error={Boolean(touched.toPercent && errors.toPercent)}
                         helperText={touched.toPercent && errors.toPercent}
@@ -211,7 +230,7 @@ const EditFlexibleSavingModal = ({
                       sx={{ width: "120px" }}
                       type="submit"
                     >
-                      Create Saving
+                      Edit Saving
                     </Button>
                   </Box>
                 </Form>

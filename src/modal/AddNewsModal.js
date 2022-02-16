@@ -29,7 +29,6 @@ const AddNewsModal = ({ getNews }) => {
   });
   const [content, setContent] = useState(null);
   const [contentError, setContentError] = useState(false);
-  const maxNumber = 69;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -136,8 +135,6 @@ const AddNewsModal = ({ getNews }) => {
                   <Divider my={5} />
                   <div>
                     <ImageUploading
-                      //multiple
-                      //maxNumber={maxNumber}
                       value={images}
                       onChange={onChange}
                       dataURLKey="data_url"

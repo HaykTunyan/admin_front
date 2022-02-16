@@ -11,93 +11,51 @@ import {
   TableBody,
   Table,
   TablePagination,
-  InputBase,
   Toolbar,
   Grid,
   Select,
   FormControl,
   MenuItem,
   InputLabel,
+  IconButton,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import CSVButton from "../../components/CSVButton";
-import { Search as SearchIcon } from "react-feather";
-import { useTranslation } from "react-i18next";
-import { darken } from "polished";
 import { getDashboardExchanges_req } from "../../api/dashboardAPI";
 import { getCoins_req } from "../../api/userWalletsAPI";
+import { ArrowDown, ArrowUp } from "react-feather";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
-const Spacer = styled.div(spacing);
 
-// Custom Style.
-const Input = styled(InputBase)`
-  color: inherit;
-  width: 100%;
-
-  > input {
-    color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)};
-    padding-right: ${(props) => props.theme.spacing(2.5)};
-    padding-bottom: ${(props) => props.theme.spacing(2.5)};
-    padding-left: ${(props) => props.theme.spacing(12)};
-    width: 160px;
-  }
-`;
-
-const Search = styled.div`
-  border-radius: 2px;
-  background-color: ${(props) => props.theme.header.background};
-  display: none;
-  position: relative;
-  width: 100%;
-
-  &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    display: block;
-  }
-`;
-
-const SearchIconWrapper = styled.div`
-  width: 50px;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
-
-const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
-  // hooks
-  const { t } = useTranslation();
+const ExchnageTab = ({ startDate, endDate }) => {
+  // Hooks.
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [popularity, setPopularity] = useState("");
   const [exchanges, setExchanges] = useState([]);
   const [coins, setCoins] = useState([]);
+  const [sortBy, setSortBy] = useState("increasing");
+
+  const handleCellClick = (sortType) => {
+    setSortBy(sortBy === "increasing" ? "decreasing" : "increasing");
+    getExchanges(Number(from), Number(to), "popularity", sortType);
+  };
 
   const handleChangeFrom = (event) => {
     setFrom(event.target.value);
+    getExchanges(Number(event.target.value), Number(to), "popularity", sortBy);
   };
 
   const handleChangeTo = (event) => {
     setTo(event.target.value);
-  };
-
-  const handlePopularityChange = (event) => {
-    setPopularity(event.target.value);
+    getExchanges(
+      Number(from),
+      Number(event.target.value),
+      "popularity",
+      sortBy
+    );
   };
 
   const handleChangePage = (event, newPage) => {
@@ -109,57 +67,58 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
     setPage(0);
   };
 
-  async function getExchanges() {
+  async function getExchanges(coinFrom, coinTo, sortParam, sortType) {
+    let data = {
+      start_date: startDate,
+      end_date: endDate,
+      coin_from_id: coinFrom,
+      coin_to_id: coinTo,
+      sort_param: sortParam,
+      sort_type: sortType,
+    };
     try {
-      const response = await getDashboardExchanges_req(startDate, endDate);
+      const response = await getDashboardExchanges_req(data);
       if (response) {
-        console.log("GET EXCHANGE RESPONSE ==>", response);
         setExchanges(response.result);
       }
-    } catch (e) {
-      console.log("GET EXCHANGE ERROR ==>", e.response);
-    }
+    } catch (e) {}
   }
 
   async function getCoins() {
     try {
       const response = await getCoins_req();
       if (response) {
-        console.log("GET COINS RESPONSE ==>", response);
         setCoins(response);
       }
-    } catch (e) {
-      console.log("GET COINS ERROR ==>", e.response);
-    }
+    } catch (e) {}
   }
 
   useEffect(() => {
-    getExchanges();
     getCoins();
   }, []);
+
+  useEffect(() => {
+    getExchanges(Number(from), Number(to), "popularity", sortBy);
+  }, [startDate, endDate]);
 
   return (
     <Fragment>
       <TableContainer component={Paper}>
-        <Toolbar>
-          <Grid item md={2}>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("Search")} />
-            </Search>
-          </Grid>
-          <Spacer mx={5} />
-          <Grid item md={2}>
-            <FormControl fullWidth variant="standard">
-              <InputLabel id="select-from-label">Exchanged Coin</InputLabel>
+        <Toolbar
+          sx={{
+            paddingY: "12px",
+            display: { xs: "grid", sm: "flex" },
+          }}
+        >
+          <Grid item xs={12} sm={3} md={2} m={2}>
+            <FormControl fullWidth>
+              <InputLabel id="exchange-label">Exchanged Coin</InputLabel>
               <Select
-                labelId="select-from-label"
-                id="select-from-label"
+                labelId="exchange-label"
+                id="exchange-label"
                 value={from}
                 onChange={handleChangeFrom}
-                label="From"
+                label="Exchanged Coin"
               >
                 <MenuItem value="all">
                   <em>From All</em>
@@ -170,16 +129,15 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
               </Select>
             </FormControl>
           </Grid>
-          <Spacer mx={5} />
-          <Grid item md={2}>
-            <FormControl fullWidth variant="standard">
-              <InputLabel id="select-to-label">Received Coin</InputLabel>
+          <Grid item xs={12} sm={3} md={2} m={2}>
+            <FormControl fullWidth>
+              <InputLabel id="received-label">Received Coin</InputLabel>
               <Select
-                labelId="select-to-label"
-                id="select-to-label"
+                labelId="received-label"
+                id="received-label"
                 value={to}
                 onChange={handleChangeTo}
-                label="To"
+                label="Received Coin"
               >
                 <MenuItem value="all">
                   <em>To All</em>
@@ -187,28 +145,6 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
                 {coins.map((coin) => (
                   <MenuItem value={coin.id}>{coin.name}</MenuItem>
                 ))}
-                {/* <MenuItem value={10}>Coin - 10 000 </MenuItem>
-                <MenuItem value={20}> Coin - 50 000 </MenuItem>
-                <MenuItem value={30}> Coin - 1 000 000 </MenuItem> */}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Spacer mx={5} />
-          <Grid item md={2}>
-            <FormControl fullWidth variant="standard">
-              <InputLabel id="select-from-label">Popularity</InputLabel>
-              <Select
-                labelId="select-from-label"
-                id="select-from-label"
-                value={popularity}
-                onChange={handlePopularityChange}
-                label="From"
-              >
-                <MenuItem value="all">
-                  <em>No Filter</em>
-                </MenuItem>
-                <MenuItem value={10}>Ascending</MenuItem>
-                <MenuItem value={20}>Descending</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -220,7 +156,29 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
               <TableCell>Received Coin</TableCell>
               <TableCell align="center">Exchange</TableCell>
               <TableCell align="center">Amount</TableCell>
-              <TableCell align="center">Popularity of Exchange</TableCell>
+              <TableCell
+                align="center"
+                onClick={() =>
+                  handleCellClick(
+                    sortBy === "decreasing" ? "increasing" : "decreasing"
+                  )
+                }
+              >
+                Popularity of Exchange
+                <IconButton
+                  onClick={() =>
+                    handleCellClick(
+                      sortBy === "decreasing" ? "increasing" : "decreasing"
+                    )
+                  }
+                >
+                  {sortBy === "increasing" ? (
+                    <ArrowUp size={16} />
+                  ) : (
+                    <ArrowDown size={16} />
+                  )}
+                </IconButton>
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -255,7 +213,7 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
         <TablePagination
           rowsPerPageOptions={[5, 10]}
           component="div"
-          count={exchanges.length}
+          count={exchanges?.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -266,7 +224,7 @@ const ExchnageTab = ({ rowExchange, startDate, endDate }) => {
         <Typography variant="subtitle1" color="inherit" component="div">
           Export Data
         </Typography>
-        <CSVButton data={rowExchange} />
+        <CSVButton data={exchanges} />
       </Box>
     </Fragment>
   );

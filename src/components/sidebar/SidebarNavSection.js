@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components/macro";
-
 import { Typography } from "@material-ui/core";
-
 import SidebarNavList from "./SidebarNavList";
 
 const Title = styled(Typography)`
@@ -21,13 +19,18 @@ const SidebarNavSection = (props) => {
     pages,
     className,
     component: Component = "nav",
+    handleDrawerToggle,
     ...rest
   } = props;
 
   return (
     <Component {...rest}>
-      {title && <Title variant="subtitle2">{title}</Title>}
-      <SidebarNavList pages={pages} depth={0} />
+      {title && <Title variant="subtitle1">{title}</Title>}
+      <SidebarNavList
+        pages={pages}
+        depth={0}
+        handleDrawerToggle={handleDrawerToggle}
+      />
     </Component>
   );
 };

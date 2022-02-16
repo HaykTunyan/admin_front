@@ -3,7 +3,6 @@ import styled, { css } from "styled-components/macro";
 import { rgba } from "polished";
 import {
   Box,
-  Button,
   Card as MuiCard,
   CardContent as MuiCardContent,
   Chip as MuiChip,
@@ -13,7 +12,6 @@ import { spacing } from "@material-ui/system";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
-const Spacer = styled.div(spacing);
 
 // Custom Style.
 const Card = styled(MuiCard)`
@@ -37,76 +35,21 @@ const CardContent = styled(MuiCardContent)`
   }
 `;
 
-const Chip = styled(MuiChip)`
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  height: 20px;
-  padding: 4px 0;
-  font-size: 85%;
-  background-color: ${(props) => props.theme.palette.secondary.main};
-  color: ${(props) => props.theme.palette.common.white};
-  margin-bottom: ${(props) => props.theme.spacing(4)};
-
-  span {
-    padding-left: ${(props) => props.theme.spacing(2)};
-    padding-right: ${(props) => props.theme.spacing(2)};
-  }
-`;
-
-const Percentage = styled(MuiTypography)`
-  span {
-    color: ${(props) => props.percentagecolor};
-    font-weight: ${(props) => props.theme.typography.fontWeightBold};
-    background: ${(props) => rgba(props.percentagecolor, 0.1)};
-    padding: 2px;
-    border-radius: 3px;
-    margin-right: ${(props) => props.theme.spacing(2)};
-  }
-
-  ${(props) =>
-    props.illustration &&
-    props.theme.palette.mode !== "dark" &&
-    css`
-      color: ${(props) => rgba(props.theme.palette.primary.main, 0.85)};
-    `}
-`;
-
-const IllustrationImage = styled.img`
-  height: 100px;
-  position: absolute;
-  right: ${(props) => props.theme.spacing(1)};
-  bottom: ${(props) => props.theme.spacing(1)};
-  display: none;
-
-  ${(props) => props.theme.breakpoints.between("xs", "lg")} {
-    display: block;
-  }
-
-  @media (min-width: 1600px) {
-    display: block;
-  }
-`;
-
-const Stats = ({ title, amount, view, ViewMore, className }) => {
+const Stats = ({ title, amount, ViewMore, className, color }) => {
   return (
-    <Card sx={className}>
-      <CardContent>
+    <Card sx={{ cursor: "pointer", background: className }}>
+      <CardContent onClick={ViewMore}>
         <Box display="flex" justifyContent="space-between">
-          <Typography variant="h6">{title}</Typography>
-          {!view && (
-            <Button
-              size="small"
-              type="button"
-              children="View"
-              onClick={ViewMore}
-            />
-          )}
+          <Typography variant="h6" sx={{ color: color }}>
+            {title}
+          </Typography>
         </Box>
 
         <Typography variant="h3" mb={3}>
           {amount ? (
-            <Box fontWeight="fontWeightRegular">{amount}%</Box>
+            <Box fontWeight="fontWeightRegular" sx={{ color: color }}>
+              {amount}%
+            </Box>
           ) : (
             <Box py={4} />
           )}

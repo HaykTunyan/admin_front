@@ -69,7 +69,6 @@ const ResetPassword = () => {
       <Brand />
       <Wrapper>
         <Helmet title="Reset Password" />
-
         <Typography component="h1" variant="h4" align="center" gutterBottom>
           Reset Password
         </Typography>

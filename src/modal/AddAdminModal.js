@@ -38,7 +38,7 @@ const addAdminValidation = Yup.object().shape({
     .required(" Passowrd is required "),
 });
 
-const AddAdminModal = () => {
+const AddAdminModal = ({ getAdminUsers, primission }) => {
   //  hooks.
   const [open, setOpen] = useState(false);
   const label = { inputProps: { "aria-label": "Checkbox" } };
@@ -62,16 +62,14 @@ const AddAdminModal = () => {
   };
 
   const handleSubmit = (values) => {
-    console.log("values", values);
     dispatch(createAdmin(values))
       .then((data) => {
         if (data.success) {
-          console.log(" data success ", data.success);
           setOpen(false);
+          getAdminUsers();
         }
       })
       .catch((error) => {
-        console.log("error", error?.message);
         setMessageError(error?.response?.data);
       });
   };
@@ -93,7 +91,7 @@ const AddAdminModal = () => {
             validationSchema={addAdminValidation}
             onSubmit={handleSubmit}
           >
-            {({ errors, touched, handleChange, handleBlur }) => (
+            {({ errors, touched, handleChange, handleBlur, values }) => (
               <Form>
                 {invalid && (
                   <>
@@ -165,13 +163,14 @@ const AddAdminModal = () => {
                 <Typography variant="subtitle1">Permissions</Typography>
                 <Box sx={{ display: "flex", flexDirection: "column", m: 5 }}>
                   <FormControlLabel
-                    label="FSend"
+                    label="Fake Send"
                     control={
                       <Checkbox
                         {...label}
-                        onChange={handleChange}
                         name="permissions"
-                        defaultValue={state.permissions}
+                        value={1}
+                        defaultValue={1}
+                        onChange={handleChange}
                       />
                     }
                   />
@@ -180,8 +179,9 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        defaultValue={state.permissions}
                         name="permissions"
+                        value={2}
+                        defaultValue={2}
                         onChange={handleChange}
                       />
                     }
@@ -191,8 +191,9 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        defaultValue={state.permissions}
                         name="permissions"
+                        value={3}
+                        defaultValue={3}
                         onChange={handleChange}
                       />
                     }
@@ -202,8 +203,9 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        defaultValue={state.permissions}
                         name="permissions"
+                        value={4}
+                        defaultValue={4}
                         onChange={handleChange}
                       />
                     }
@@ -213,8 +215,9 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        defaultValue={state.permissions}
                         name="permissions"
+                        value={5}
+                        defaultValue={5}
                         onChange={handleChange}
                       />
                     }
@@ -224,12 +227,28 @@ const AddAdminModal = () => {
                     control={
                       <Checkbox
                         {...label}
-                        defaultValue={state.permissions}
                         name="permissions"
+                        value={6}
+                        defaultValue={6}
                         onChange={handleChange}
                       />
                     }
                   />
+                  {/* Primission Super Admin */}
+                  {primission.role === 1 && (
+                    <FormControlLabel
+                      label="Create and Edit the Admin Settings"
+                      control={
+                        <Checkbox
+                          {...label}
+                          name="permissions"
+                          value={7}
+                          defaultValue={7}
+                          onChange={handleChange}
+                        />
+                      }
+                    />
+                  )}
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Button

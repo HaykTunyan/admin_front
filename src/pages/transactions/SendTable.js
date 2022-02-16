@@ -1,10 +1,8 @@
 import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { makeStyles } from "@mui/styles";
 import { instance } from "../../services/api";
 import moment from "moment";
 import { spacing } from "@material-ui/system";
-import { darken } from "polished";
 import { useTranslation } from "react-i18next";
 import {
   Box,
@@ -18,7 +16,6 @@ import {
   Typography,
   TablePagination,
   Grid,
-  InputBase,
   Card as MuiCard,
   Select,
   FormControl,
@@ -27,62 +24,27 @@ import {
   Chip as MuiChip,
   Tooltip,
   Button,
+  IconButton,
 } from "@material-ui/core";
 import CSVButton from "../../components/CSVButton";
-import { Search as SearchIcon } from "react-feather";
-import DatePickerFilter from "../../components/date-picker/DatePickerFilter";
-import NoData from "../../components/NoData";
+import { ArrowDown, ArrowUp } from "react-feather";
+import DateRange from "../../components/date-picker/DateRange";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
 const Card = styled(MuiCard)(spacing);
-const Spacer = styled.div(spacing);
 
 // Custom Style.
-const Search = styled.div`
-  border-radius: 2px;
-  background-color: ${(props) => props.theme.header.background};
-  display: none;
-  position: relative;
-  width: 100%;
 
-  &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    display: block;
-  }
-`;
-
-const SearchIconWrapper = styled.div`
-  width: 50px;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
-
-const Input = styled(InputBase)`
-  color: inherit;
-  width: 100%;
-
-  > input {
-    color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)};
-    padding-right: ${(props) => props.theme.spacing(2.5)};
-    padding-bottom: ${(props) => props.theme.spacing(2.5)};
-    padding-left: ${(props) => props.theme.spacing(12)};
-    width: 100%;
-  }
-`;
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 10;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    },
+  },
+};
 
 const Chip = styled(MuiChip)`
   height: 20px;
@@ -93,41 +55,127 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
-const useStyles = makeStyles({
-  rootTable: {
-    margin: "10px",
-  },
-});
-
 const SendTable = () => {
   //  hooks.
   const { t } = useTranslation();
-  const classes = useStyles();
-  const [send, setSend] = useState([]);
+  const [send, setSend] = useState([]); // send.
   const [page, setPage] = useState(0); // page.
   const [rowsPerPage, setRowsPerPage] = useState(5); // limit.
-  const [operationType, setOperationType] = useState("");
-  const [coinAll, setCoinAll] = useState("");
-  const [transactionType, setTransactionType] = useState("");
-  const [statusValue, setStatusValue] = useState("");
+  const [operationType, setOperationType] = useState(""); // operation type.
+  const [coinAll, setCoinAll] = useState(""); // coin.
+  const [transactionType, setTransactionType] = useState(""); // transaction type.
+  const [statusValue, setStatusValue] = useState(""); // value.
+  const [time, setTime] = useState([null, null]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [coinSettings, getCoinSettings] = useState([]);
+  const [sortPhone, setSortPhone] = useState("");
+  const [country, setCountry] = useState("");
+  const [receive] = useState();
   const rows = send.transactions;
+  // Sorting.
+  const [sortDate, setSortDate] = useState(true);
+  const [sortEmail, setSortEmail] = useState(true);
+  const [sortAmount, setSortAmount] = useState(true);
 
-  const handleOperationType = (event) => {
+  // Sorting Functions.
+  const sortingDate = () => {
+    setSortDate(!sortDate);
+    if (sortDate) {
+      getSorting("send_receive", "decreasing", "date");
+    } else {
+      getSorting("send_receive", "increasing", "date");
+    }
+  };
+
+  // Sorting Email.
+  const sortingEmail = () => {
+    setSortEmail(!sortEmail);
+    if (sortEmail) {
+      getSorting("send_receive", "decreasing", "email");
+    } else {
+      getSorting("send_receive", "increasing", "email");
+    }
+  };
+
+  // Sorting Phone
+  const sortingPhone = (event) => {
+    setSortPhone(event.target.value);
+    getPhoneSorting(event.target.value);
+  };
+
+  // Amount Receive.
+  const sortingAmountReceive = (event) => {
+    setSortAmount(!sortAmount);
+    if (sortAmount) {
+      getSorting("receive", "decreasing", "amount_received");
+    } else {
+      getSorting("receive", "increasing", "amount_received");
+    }
+  };
+
+  // Amount Send.
+  const sortingAmountSend = (event) => {
+    setSortAmount(!sortAmount);
+    if (sortAmount) {
+      getSorting("send", "decreasing", "amount_sent");
+    } else {
+      getSorting("send", "increasing", "amount_sent");
+    }
+  };
+
+  // on Change Time.
+  const onChangeTime = (newValue) => {
+    setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));
+    setEndDate(moment(newValue[1]).format("YYYY-MM-DD"));
+    setTime(newValue);
+    getDateFilters(
+      moment(newValue[0]).format("YYYY-MM-DD"),
+      moment(newValue[1]).format("YYYY-MM-DD")
+    );
+  };
+
+  // Operation Type.
+  const handleOperationType = (event, operationType) => {
     setOperationType(event.target.value);
+    if (operationType?.props?.value === "all") {
+      getSend();
+    } else {
+      getSendOperationFilter(operationType?.props?.value);
+    }
   };
 
-  const handleCoinAll = (event) => {
+  // Coin Type.
+  const handleCoinAll = (event, coinAll) => {
     setCoinAll(event.target.value);
+    if (coinAll?.props.value === "all") {
+      getSend();
+    } else {
+      getSendCoinFilter(coinAll?.props.value);
+    }
   };
 
-  const handleTransactionType = (event) => {
+  // Transaction Type
+  const handleTransactionType = (event, transactionType) => {
     setTransactionType(event.target.value);
+    if (transactionType?.props?.value === "all") {
+      getSend();
+    } else {
+      getSendFilter(transactionType?.props?.value);
+    }
   };
 
-  const handleStatusValue = (event) => {
+  // Status Type
+  const handleStatusValue = (event, statusValue) => {
     setStatusValue(event.target.value);
+    if (statusValue?.props?.value === "all") {
+      getSend();
+    } else {
+      getSendStatusFilter(statusValue?.props?.value);
+    }
   };
 
+  // Pagination Function.
   const handleChangePage = (event, newPage) => {
     getSend(newPage + 1);
     setPage(newPage);
@@ -139,13 +187,14 @@ const SendTable = () => {
   };
 
   //  get Send/Receive
-  const getSend = (page, rowsPerPage) => {
+  const getSend = (page, rowsPerPage, transaction_type) => {
     return instance
       .get("/admin/transaction/all", {
         params: {
           limit: rowsPerPage,
           page: page,
           type: "send_receive",
+          transaction_type: transaction_type,
         },
       })
       .then((data) => {
@@ -158,33 +207,160 @@ const SendTable = () => {
       .finally(() => {});
   };
 
+  // get getSettingCoin Data.
+  const getSettingCoin = () => {
+    return instance
+      .get("/admin/settings/coins")
+      .then((data) => {
+        getCoinSettings(data.data);
+        return data;
+      })
+      .catch((error) => {
+        return Promise.reject(error);
+      })
+      .finally(() => {});
+  };
+
+  // get Coin Filter Data
+  const getSendCoinFilter = (coin_id) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "send_receive",
+          coin_id: coin_id,
+        },
+      })
+      .then((data) => {
+        setSend(data.data);
+        return data;
+      });
+  };
+
+  // get Send Operation Filter Data
+  const getSendOperationFilter = (send_receive) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: send_receive,
+        },
+      })
+      .then((data) => {
+        setSend(data.data);
+        return data;
+      });
+  };
+
+  // get Send Filter Data
+  const getSendFilter = (transaction_type) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "send_receive",
+          transaction_type: transaction_type,
+        },
+      })
+      .then((data) => {
+        setSend(data.data);
+        return data;
+      });
+  };
+
+  // get Send Status Filter Data
+  const getSendStatusFilter = (status) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "send_receive",
+          status: status,
+        },
+      })
+      .then((data) => {
+        setSend(data.data);
+        return data;
+      });
+  };
+
+  // get Send Sorting Data.
+  const getSorting = (type, sort_type, sort_params) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: type,
+          sort_type: sort_type,
+          sort_param: sort_params,
+        },
+      })
+      .then((data) => {
+        setSend(data.data);
+        return data;
+      });
+  };
+
+  // get Country Code.
+  const getCountry = () => {
+    return instance.get("/admin/settings/countries").then((data) => {
+      setCountry(data.data);
+      return data;
+    });
+  };
+
+  // get Date FIlters Date.
+  const getDateFilters = (start_date, end_date) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "send_receive",
+          start_date: start_date,
+          end_date: end_date,
+        },
+      })
+      .then((data) => {
+        setSend(data.data);
+        return data;
+      });
+  };
+
+  // Phone Sorting.
+  const getPhoneSorting = (telefon_code) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "send_receive",
+          telefon_code: telefon_code,
+        },
+      })
+      .then((data) => {
+        setSend(data.data);
+        return data;
+      });
+  };
+
   // Use Effect.
   useEffect(() => {
     getSend();
+    getSettingCoin();
+    getSendCoinFilter();
+    getSendOperationFilter();
+    getSorting();
+    getDateFilters();
+    getCountry();
+    getPhoneSorting();
   }, []);
-
-  // No Data.
-  if (send.transactionsCount === 0) {
-    return <NoData />;
-  }
 
   return (
     <Fragment>
-      <Card p={4} sx={{ display: "flex" }}>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
-          <Box component="div">
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("searchList")} />
-            </Search>
-          </Box>
+      <Card
+        p={2}
+        sx={{
+          display: { xs: "grid", sm: "flex" },
+          flexFlow: "row",
+          alignItems: "center",
+        }}
+      >
+        <Grid item xs={12} sm={2} md={2} m={2}>
+          <DateRange value={time} onChange={onChangeTime} />
         </Grid>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
-          <DatePickerFilter />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
+        <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
             <InputLabel id="select-operation-type">Operation Type</InputLabel>
             <Select
@@ -194,15 +370,13 @@ const SendTable = () => {
               onChange={handleOperationType}
               label="Operation Type"
             >
-              <MenuItem value="all">
-                <em>All</em>
-              </MenuItem>
+              <MenuItem value="all">All</MenuItem>
               <MenuItem value="receive">Receive</MenuItem>
               <MenuItem value="send"> Send </MenuItem>
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
+        <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
             <InputLabel id="select-coin">Coin</InputLabel>
             <Select
@@ -215,12 +389,13 @@ const SendTable = () => {
               <MenuItem value="all">
                 <em>All</em>
               </MenuItem>
-              <MenuItem value="btc">btc</MenuItem>
-              <MenuItem value="cxc"> cxc </MenuItem>
+              {coinSettings.map((item) => (
+                <MenuItem value={item.id}> {item.coin} </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
+        <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
             <InputLabel id="select-transaction">Transaction Type</InputLabel>
             <Select
@@ -233,12 +408,12 @@ const SendTable = () => {
               <MenuItem value="all">
                 <em>All</em>
               </MenuItem>
-              <MenuItem value="internal">Internal</MenuItem>
+              <MenuItem value="fake">Internal</MenuItem>
               <MenuItem value="real"> Real </MenuItem>
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
+        <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
             <InputLabel id="select-status">Status</InputLabel>
             <Select
@@ -251,87 +426,187 @@ const SendTable = () => {
               <MenuItem value="all">
                 <em>All</em>
               </MenuItem>
-              <MenuItem value="panding">Pending</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
               <MenuItem value="rejected"> Rejected </MenuItem>
-              <MenuItem value="approved"> Approved </MenuItem>
+              <MenuItem value="accepted"> Approved </MenuItem>
             </Select>
           </FormControl>
         </Grid>
       </Card>
       <Paper>
-        <TableContainer component={Paper} className={classes.rootTable}>
+        <TableContainer component={Paper} mt={5}>
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone Number</TableCell>
-                <TableCell>Amount</TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    Date
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <IconButton onClick={sortingDate}>
+                        {sortDate ? (
+                          <ArrowUp size={16} />
+                        ) : (
+                          <ArrowDown size={16} />
+                        )}
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    Email
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <IconButton onClick={sortingEmail}>
+                        {sortEmail ? (
+                          <ArrowUp size={16} />
+                        ) : (
+                          <ArrowDown size={16} />
+                        )}
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box>Phone</Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        marginLeft: "20px",
+                      }}
+                    >
+                      <FormControl sx={{ minWidth: "100px" }}>
+                        <InputLabel id="select-phone-label">Sort</InputLabel>
+                        <Select
+                          labelId="select-phone-label"
+                          id="select-phone-label"
+                          value={sortPhone}
+                          onChange={sortingPhone}
+                          autoWidth
+                          label="Sort"
+                          fullWidth
+                          MenuProps={MenuProps}
+                        >
+                          {country &&
+                            country.map((item) => (
+                              <MenuItem key={item.id} value={item.id}>
+                                <Box sx={{ display: "flex", width: "100%" }}>
+                                  <Box mr={2}>{item.telefon}</Box>
+                                </Box>
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    Amount
+                    {operationType === "send" && (
+                      <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <IconButton onClick={sortingAmountSend}>
+                          {sortAmount ? (
+                            <ArrowUp size={16} />
+                          ) : (
+                            <ArrowDown size={16} />
+                          )}
+                        </IconButton>
+                      </Box>
+                    )}
+                    {operationType === "receive" && (
+                      <Box sx={{ display: "flex", justifyContent: "center" }}>
+                        <IconButton onClick={sortingAmountReceive}>
+                          {sortAmount ? (
+                            <ArrowUp size={16} />
+                          ) : (
+                            <ArrowDown size={16} />
+                          )}
+                        </IconButton>
+                      </Box>
+                    )}
+                  </Box>
+                </TableCell>
                 <TableCell>Coin</TableCell>
                 <TableCell>TX Id</TableCell>
                 <TableCell>Type</TableCell>
-                <TableCell>Type of operations:</TableCell>
+                <TableCell>Type of operations</TableCell>
                 <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows &&
-                send.transactions
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <TableRow
-                      key={row.key}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {moment(row.date).format("DD/MM/YYYY HH:mm ")}{" "}
-                      </TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>{row.phone}</TableCell>
-                      <TableCell>
-                        {row.amount_sent != null ? (
-                          <>{row.amount_sent}</>
-                        ) : (
-                          <>{row.amount_received}</>
-                        )}
-                      </TableCell>
-
-                      <TableCell>{row.coinFrom}</TableCell>
-
-                      <TableCell>
-                        <Tooltip title={row.transaction_id} arrow>
-                          <Button>{row.transaction_id.substring(0, 9)}</Button>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell>
-                        {row.type === "fake" ? (
-                          <Chip label={row.type} color="error" />
-                        ) : (
-                          <Chip label={row.type} color="success" />
-                        )}
-                      </TableCell>
-                      <TableCell>{row.operation_type}</TableCell>
-                      <TableCell>
-                        {row.status === "accepted" ? (
-                          <Chip label={row.status} color="success" />
-                        ) : (
-                          <Chip label={row.status} color="error" />
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+              {send.transactions &&
+                send.transactions.map((row) => (
+                  <TableRow
+                    key={row.key}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {moment(row.date).format("DD/MM/YYYY HH:mm ")}{" "}
+                    </TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>{row.phone}</TableCell>
+                    <TableCell>
+                      {row.amount_sent != null ? (
+                        <>{row.amount_sent}</>
+                      ) : (
+                        <>{row.amount_received}</>
+                      )}
+                    </TableCell>
+                    <TableCell>{row.cointo}</TableCell>
+                    <TableCell>
+                      <Tooltip title={row.transaction_id} arrow>
+                        <Button>{row.transaction_id?.substring(0, 9)}</Button>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      {row.type === "fake" ? (
+                        <Chip
+                          label={row.type[0].toUpperCase() + row.type.slice(1)}
+                          color="error"
+                        />
+                      ) : (
+                        <Chip
+                          label={row.type[0].toUpperCase() + row.type.slice(1)}
+                          color="success"
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>{row.operation_type}</TableCell>
+                    <TableCell>
+                      {row.status === "accepted" ? (
+                        <Chip
+                          label={
+                            row.status[0].toUpperCase() + row.status.slice(1)
+                          }
+                          color="success"
+                        />
+                      ) : (
+                        <Chip
+                          label={
+                            row.status[0].toUpperCase() + row.status.slice(1)
+                          }
+                          color="error"
+                        />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
           {/* Pagination */}
-          <TablePagination
-            rowsPerPageOptions={[10]}
-            component="div"
-            count={send?.transactionsCount}
-            rowsPerPage={send?.limit}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          {send.transactions && (
+            <TablePagination
+              rowsPerPageOptions={[10]}
+              component="div"
+              count={send?.transactionsCount}
+              rowsPerPage={send?.limit}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          )}
         </TableContainer>
       </Paper>
       {rows && (

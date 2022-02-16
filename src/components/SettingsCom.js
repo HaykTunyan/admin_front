@@ -27,7 +27,7 @@ const Fab = styled(MuiFab)`
 `;
 
 const Wrapper = styled.div`
-  width: 258px;
+  width: 254px;
   overflow-x: hidden;
 `;
 

@@ -20,7 +20,7 @@ import { instance } from "../../services/api";
 const Toolbar = styled(MuiToolbar)(spacing);
 
 const DesktopCall = () => {
-  // hooks.
+  // Hooks.
   const title = "Desktop Info";
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -68,7 +68,7 @@ const DesktopCall = () => {
             Desktop Info
           </Typography>
         </Toolbar>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell width="30%">Device Name</TableCell>
@@ -94,15 +94,17 @@ const DesktopCall = () => {
           </TableBody>
         </Table>
         {/* Pagination */}
-        <TablePagination
-          rowsPerPageOptions={[10]}
-          component="div"
-          count={rowWeb?.allCount}
-          rowsPerPage={rowWeb?.limit}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {rowWeb?.deviceStatistics && (
+          <TablePagination
+            rowsPerPageOptions={[10]}
+            component="div"
+            count={rowWeb?.allCount}
+            rowsPerPage={rowWeb?.limit}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        )}
       </TableContainer>
     </Fragment>
   );

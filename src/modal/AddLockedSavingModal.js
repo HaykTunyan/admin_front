@@ -40,13 +40,19 @@ const IconButton = styled(MuiIconButton)`
 const AddSavingSchema = Yup.object().shape({
   min: Yup.number()
     .required("Field is required")
-    .min(0, " Filed can not be minus value"),
+    .min(0, " Field can not be a negative value"),
   max: Yup.number()
     .required("Field is required")
-    .min(0, " Filed can not be minus value"),
+    .min(0, "Field can not be a negative value"),
+  duration: Yup.array().of(
+    Yup.object().shape({
+      days: Yup.number().required("Field is required!"),
+      percent: Yup.number().required("Field is required!"),
+    })
+  ),
 });
 
-const AddLockedSavingModal = () => {
+const AddLockedSavingModal = ({ getLocked }) => {
   //  hooks.
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
@@ -56,6 +62,12 @@ const AddLockedSavingModal = () => {
     type: "locked",
     min: "",
     max: "",
+    duration: [
+      {
+        days: "",
+        percent: "",
+      },
+    ],
   });
 
   const handleClickOpen = () => {
@@ -67,14 +79,24 @@ const AddLockedSavingModal = () => {
   };
 
   // Form Req.
-  const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(addSaving(values))
+  const addSavings = (values) => {
+    let data = {
+      coin: Number(values.coin),
+      type: "locked",
+      min: Number(values.min),
+      max: Number(values.max),
+      duration: values.duration, //for locked
+    };
+
+    console.log("DATA ==>", data);
+
+    dispatch(addSaving(data))
       .then((data) => {
         if (data.success) {
           setOpen(false);
         }
         setOpen(false);
+        getLocked();
       })
       .catch((error) => {
         console.log(" error messages ", error?.response?.data);
@@ -115,18 +137,18 @@ const AddLockedSavingModal = () => {
           <Formik
             initialValues={{
               ...state,
-              duration: [
-                {
-                  days: "",
-                  percent: "",
-                },
-              ],
             }}
-            // initialForms={state}
             validationSchema={AddSavingSchema}
-            onSubmit={handleSubmit}
+            onSubmit={addSavings}
           >
-            {({ values, errors, touched, handleChange, handleBlur }) => (
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+            }) => (
               <Form>
                 {errorMes && (
                   <>
@@ -160,7 +182,7 @@ const AddLockedSavingModal = () => {
                 )}
                 <Grid container pt={6} spacing={6}>
                   {/* Saving Coin  */}
-                  <Grid display="flex" item md={4} alignItems="center">
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -169,7 +191,7 @@ const AddLockedSavingModal = () => {
                       Saving Coin
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <FormControl fullWidth>
                       <InputLabel id="select-from-coin">
                         From Coin Name
@@ -191,7 +213,7 @@ const AddLockedSavingModal = () => {
                     </FormControl>
                   </Grid>
                   {/* Min Coin */}
-                  <Grid display="flex" item md={4} alignItems="center">
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -200,15 +222,14 @@ const AddLockedSavingModal = () => {
                       Min
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <TextField
                       margin="dense"
                       id="min"
                       name="min"
                       label="Min"
-                      type="number"
-                      error={Boolean(touched.min && errors.min)}
                       fullWidth
+                      error={Boolean(touched.min && errors.min)}
                       helperText={touched.min && errors.min}
                       onBlur={handleBlur}
                       onChange={handleChange}
@@ -216,7 +237,7 @@ const AddLockedSavingModal = () => {
                     />
                   </Grid>
                   {/* Max Coin */}
-                  <Grid display="flex" item md={4} alignItems="center">
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -225,13 +246,12 @@ const AddLockedSavingModal = () => {
                       Max
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <TextField
                       margin="dense"
                       id="max"
                       name="max"
                       label="Max"
-                      type="number"
                       error={Boolean(touched.max && errors.max)}
                       fullWidth
                       helperText={touched.max && errors.max}
@@ -241,7 +261,7 @@ const AddLockedSavingModal = () => {
                     />
                   </Grid>
 
-                  <Grid item md={12}>
+                  <Grid item xs={12} md={12}>
                     <FieldArray name="duration">
                       {({ insert, remove, push }) => (
                         <>
@@ -266,12 +286,13 @@ const AddLockedSavingModal = () => {
                             <Spacer my={4} />
                           </>
 
-                          {values.duration.length > 0 &&
-                            values.duration.map((friend, index) => (
+                          {state.duration.length > 0 &&
+                            state.duration.map((duration, index) => (
                               <>
                                 <Box
                                   display="flex"
                                   justifyContent="space-between"
+                                  alignItems="center"
                                   key={index}
                                 >
                                   <Grid item md={5}>
@@ -283,9 +304,38 @@ const AddLockedSavingModal = () => {
                                       type="number"
                                       fullWidth
                                       onChange={handleChange}
+                                      error={Boolean(
+                                        touched.duration && errors.duration
+                                      )}
+                                      helperText={
+                                        touched.duration && errors.duration
+                                      }
                                     />
                                   </Grid>
-                                  <Grid item md={2}>
+                                  <Grid item md={5}>
+                                    <TextField
+                                      margin="dense"
+                                      id="percent"
+                                      name={`duration.${index}.percent`}
+                                      label="%"
+                                      fullWidth
+                                      type="number"
+                                      InputProps={{
+                                        inputProps: {
+                                          min: 0,
+                                          step: 0.0000001,
+                                        },
+                                      }}
+                                      onChange={handleChange}
+                                      error={Boolean(
+                                        touched.duration && errors.duration
+                                      )}
+                                      helperText={
+                                        touched.duration && errors.duration
+                                      }
+                                    />
+                                  </Grid>
+                                  <Grid item md={1}>
                                     <Box
                                       display="flex"
                                       justifyContent="center"
@@ -299,17 +349,6 @@ const AddLockedSavingModal = () => {
                                         <XCircle />
                                       </IconButton>
                                     </Box>
-                                  </Grid>
-                                  <Grid item md={5}>
-                                    <TextField
-                                      margin="dense"
-                                      id="percent"
-                                      name={`duration.${index}.percent`}
-                                      label="%"
-                                      type="number"
-                                      fullWidth
-                                      onChange={handleChange}
-                                    />
                                   </Grid>
                                 </Box>
                               </>
@@ -340,7 +379,7 @@ const AddLockedSavingModal = () => {
                   <Button
                     variant="contained"
                     sx={{ width: "120px" }}
-                    type="submit"
+                    onClick={handleSubmit}
                   >
                     Create Saving
                   </Button>

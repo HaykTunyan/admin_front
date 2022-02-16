@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
-import { useFormik, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import {
   Button,
-  Paper,
   TextField as MuiTextField,
   Dialog,
   DialogContent,
@@ -40,7 +39,13 @@ const editAffilateValidation = Yup.object().shape({
     .required(" Passowrd is required "),
 });
 
-const EditAffiliateModal = ({ email, phone, password, userId }) => {
+const EditAffiliateModal = ({
+  email,
+  phone,
+  password,
+  userId,
+  getUserList_req,
+}) => {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState({
     userId: userId,
@@ -61,11 +66,11 @@ const EditAffiliateModal = ({ email, phone, password, userId }) => {
   };
 
   const handleSubmit = (values) => {
-    console.log("values", values);
     dispatch(editAffiliate(values)).then((data) => {
       if (data.success) {
         setOpen(false);
       }
+      getUserList_req();
     });
   };
 

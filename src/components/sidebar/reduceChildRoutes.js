@@ -1,11 +1,10 @@
 import React from "react";
 import { matchPath } from "react-router-dom";
-
 import SidebarNavListItem from "./SidebarNavListItem";
 import SidebarNavList from "./SidebarNavList";
 
 const reduceChildRoutes = (props) => {
-  const { items, page, depth, currentRoute } = props;
+  const { items, page, depth, currentRoute, handleDrawerToggle } = props;
 
   if (page.children) {
     const open = page.href
@@ -27,6 +26,7 @@ const reduceChildRoutes = (props) => {
         open={!!open}
         title={page.title}
         href={page.href}
+        handleDrawerToggle={handleDrawerToggle}
       >
         <SidebarNavList depth={depth + 1} pages={page.children} />
       </SidebarNavListItem>
@@ -40,6 +40,7 @@ const reduceChildRoutes = (props) => {
         key={page.title}
         badge={page.badge}
         title={page.title}
+        handleDrawerToggle={handleDrawerToggle}
       />
     );
   }

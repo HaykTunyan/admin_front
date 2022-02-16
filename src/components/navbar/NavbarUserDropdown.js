@@ -8,7 +8,6 @@ import {
   IconButton as MuiIconButton,
   Avatar as MuiAvatar,
 } from "@material-ui/core";
-import useAuth from "../../hooks/useAuth";
 import { logout_req } from "../../redux/actions/users";
 import { useDispatch } from "react-redux";
 
@@ -23,10 +22,9 @@ const IconButton = styled(MuiIconButton)`
 const Avatar = styled(MuiAvatar)``;
 
 const NavbarUserDropdown = () => {
-  // hooks.
+  // Hooks.
   const [anchorMenu, setAnchorMenu] = useState(null);
   const navigate = useNavigate();
-  const { signOut } = useAuth();
   const dispatch = useDispatch();
 
   const toggleMenu = (event) => {
@@ -34,13 +32,10 @@ const NavbarUserDropdown = () => {
   };
 
   const closeMenu = () => {
-    // navigate("/profile");
     setAnchorMenu(null);
   };
 
   const handleSignOut = async () => {
-    // await signOut();
-    // await logout_req().then(navigate("/auth/sign-in"));
     dispatch(logout_req());
     navigate("/auth/sign-in");
   };
@@ -68,10 +63,6 @@ const NavbarUserDropdown = () => {
         open={Boolean(anchorMenu)}
         onClose={closeMenu}
       >
-        {/* <MenuItem onClick={closeMenu} disabled="true">
-          Profile
-        </MenuItem>
-        <MenuItem onClick={openSettings}>Settings</MenuItem> */}
         <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
       </Menu>
     </Fragment>

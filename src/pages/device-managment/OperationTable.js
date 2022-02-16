@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import {
@@ -24,7 +24,7 @@ const TableWrapper = styled.div`
 `;
 
 const OperationTable = ({ rowList }) => {
-  // hooks.
+  // Hooks.
   const title = "Operation Sistem";
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -39,7 +39,7 @@ const OperationTable = ({ rowList }) => {
   };
 
   return (
-    <>
+    <Fragment>
       <Card mb={6}>
         <CardHeader title="Operation Sistems" />
         <Paper>
@@ -72,19 +72,21 @@ const OperationTable = ({ rowList }) => {
               </TableBody>
             </Table>
             {/* Pagination */}
-            <TablePagination
-              rowsPerPageOptions={[10]}
-              component="div"
-              count={rowList?.allCount}
-              rowsPerPage={rowList?.limit}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+            {rowList?.deviceStatistics && (
+              <TablePagination
+                rowsPerPageOptions={[10]}
+                component="div"
+                count={rowList?.allCount}
+                rowsPerPage={rowList?.limit}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            )}
           </TableWrapper>
         </Paper>
       </Card>
-    </>
+    </Fragment>
   );
 };
 

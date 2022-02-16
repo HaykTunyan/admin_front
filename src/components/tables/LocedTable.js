@@ -1,9 +1,9 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { darken } from "polished";
 import { Search as SearchIcon } from "react-feather";
-import { useTranslation } from "react-i18next";
+import { instance } from "../../services/api";
 import {
   Card as MuiCard,
   InputBase,
@@ -19,11 +19,18 @@ import {
   Toolbar,
   Grid,
   Chip,
+  OutlinedInput,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  ListItemText,
+  Select,
+  Checkbox,
+  Divider,
 } from "@material-ui/core";
 import AddLockedSavingModal from "../../modal/AddLockedSavingModal";
 import EditLockedSavingModal from "../../modal/EditLocledSavingModal";
 import NoData from "../NoData";
-
 // Spacing.
 const Card = styled(MuiCard)(spacing);
 const Paper = styled(MuiPaper)(spacing);
@@ -79,12 +86,36 @@ const TableWrapper = styled.div`
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
 
-const LocedTable = ({ title, rowList, rowBody }) => {
-  // hooks.
-  const { t } = useTranslation();
+let searchTimeout = 0;
+
+const LockedTable = ({ title, rowList, rowBody, getLocked }) => {
+  // Hooks.
   const [alignment, setAlignment] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filterCoin, setFilterCoin] = useState([]);
+  const [coinIds, setCoinIds] = useState([]);
+  const [coinSettings, getCoinSettings] = useState([]);
+  const [search, setSearch] = useState("");
+
+  const handleFilterCoin = (event) => {
+    const {
+      target: { value },
+    } = event;
+
+    setFilterCoin(typeof value === "string" ? value.split(",") : value);
+  };
+
+  const handleCoinChange = (item) => {
+    let from = [...coinIds];
+
+    from.indexOf(item.id) === -1
+      ? from.push(item.id)
+      : from.splice(from.indexOf(item.id), 1);
+
+    setCoinIds(from);
+    getLocked(from);
+  };
 
   const handleAlignment = (event, newAlignment) => {
     setAlignment(newAlignment);
@@ -99,29 +130,111 @@ const LocedTable = ({ title, rowList, rowBody }) => {
     setPage(0);
   };
 
+  const onSearchChange = (event) => {
+    clearTimeout(searchTimeout);
+    setSearch(event.target.value);
+
+    searchTimeout = setTimeout(async () => {
+      if (event.target.value.length > 2 || event.target.value.length === 0) {
+        try {
+          getSettingCoin(event.target.value);
+        } catch (e) {}
+      }
+    }, 100);
+  };
+
+  // get getSettingCoin.
+  const getSettingCoin = (coinName) => {
+    let params = {};
+
+    if (coinName) {
+      params.coin_name = coinName;
+    }
+
+    return instance
+      .get("/admin/settings/coins", { params: params })
+      .then((data) => {
+        getCoinSettings(data.data);
+        return data;
+      })
+      .catch((error) => {
+        return Promise.reject(error);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    getSettingCoin();
+  }, []);
+
   if (!rowBody) {
     return <NoData />;
   }
+
+  const onKeyDown = (e) => {
+    e.stopPropagation();
+  };
 
   return (
     <Fragment>
       <Card mb={6}>
         <Paper>
-          <Toolbar pt={5}>
-            <Grid flex justifyContent="space-between" container spacing={6}>
-              <Grid item>
-                <Search>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <Input placeholder={t("Search")} />
-                </Search>
+          <Toolbar sx={{ paddingY: "10px" }}>
+            <Grid alignItems="center" container spacing={6}>
+              <Grid item xs={12} md={6} lg={3}>
+                <FormControl sx={{ m: 1 }} fullWidth>
+                  <InputLabel id="coin-checkbox-label">Coin Filter</InputLabel>
+                  <Select
+                    labelId="coin-checkbox-label"
+                    id="coin-checkbox-label"
+                    multiple
+                    value={filterCoin}
+                    onChange={handleFilterCoin}
+                    input={<OutlinedInput label="Coin Filter" />}
+                    renderValue={(selected) => selected.join(", ")}
+                  >
+                    <Search>
+                      <SearchIconWrapper>
+                        <SearchIcon />
+                      </SearchIconWrapper>
+                      <Input
+                        placeholder={"Search coin"}
+                        fullWidth
+                        value={search}
+                        onChange={onSearchChange}
+                        onKeyDown={onKeyDown}
+                      />
+                    </Search>
+                    {coinSettings.map((item) => (
+                      <MenuItem
+                        key={item.id}
+                        value={item.name}
+                        onClick={() => handleCoinChange(item)}
+                      >
+                        <Checkbox
+                          checked={filterCoin.indexOf(item.name) > -1}
+                        />
+                        <ListItemText primary={item.name} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
-              <Grid item>
-                <AddLockedSavingModal />
+              <Grid
+                item
+                xs={12}
+                md={2}
+                sx={{
+                  display: "flex",
+                  marginLeft: { lg: "auto" },
+                  justifyContent: { xs: "center", md: "flex-end" },
+                }}
+              >
+                <AddLockedSavingModal getLocked={getLocked} />
               </Grid>
             </Grid>
           </Toolbar>
+          <Divider my={6} />
           <TableWrapper>
             <Table>
               <TableHead>
@@ -169,6 +282,7 @@ const LocedTable = ({ title, rowList, rowBody }) => {
                           min={item.min}
                           max={item.max}
                           duration={item.duration}
+                          getLocked={getLocked}
                         />
                       </TableCell>
                     </TableRow>
@@ -179,7 +293,7 @@ const LocedTable = ({ title, rowList, rowBody }) => {
             <TablePagination
               rowsPerPageOptions={[5, 10]}
               component="div"
-              count={rowBody.length}
+              count={rowBody?.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -192,4 +306,4 @@ const LocedTable = ({ title, rowList, rowBody }) => {
   );
 };
 
-export default LocedTable;
+export default LockedTable;

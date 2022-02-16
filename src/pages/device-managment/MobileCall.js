@@ -20,7 +20,7 @@ import { instance } from "../../services/api";
 const Toolbar = styled(MuiToolbar)(spacing);
 
 const MobileCall = () => {
-  // hooks.
+  // Hooks.
   const title = " Mobile Version ";
   const [rowMobie, setRowMobile] = useState(null);
   const [page, setPage] = useState(0);
@@ -69,7 +69,7 @@ const MobileCall = () => {
             Mobile Info
           </Typography>
         </Toolbar>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell width="30%">Device Name</TableCell>
@@ -95,15 +95,17 @@ const MobileCall = () => {
           </TableBody>
         </Table>
         {/* Pagination */}
-        <TablePagination
-          rowsPerPageOptions={[5]}
-          component="div"
-          count={rowMobie?.allCount}
-          rowsPerPage={rowMobie?.limit}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {rowMobie?.deviceStatistics && (
+          <TablePagination
+            rowsPerPageOptions={[5]}
+            component="div"
+            count={rowMobie?.allCount}
+            rowsPerPage={rowMobie?.limit}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        )}
       </TableContainer>
     </Fragment>
   );

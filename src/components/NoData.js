@@ -5,10 +5,13 @@ const NoData = () => {
   return (
     <Fragment>
       <Card
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        sx={{ marginY: "50px", padding: "20px", alignItems: "center" }}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          marginY: "50px",
+          padding: "20px",
+          alignItems: "center",
+        }}
       >
         <Typography component="h2" fontWeight="bold" textAlign="center">
           No available data

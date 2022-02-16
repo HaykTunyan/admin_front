@@ -1,9 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import styled from "styled-components/macro";
-import { makeStyles } from "@mui/styles";
-import moment from "moment";
 import { instance } from "../../services/api";
-import { darken } from "polished";
+import moment from "moment";
 import { spacing } from "@material-ui/system";
 import {
   Box,
@@ -22,59 +20,31 @@ import {
   FormControl,
   MenuItem,
   InputLabel,
-  InputBase,
   Chip as MuiChip,
   Tooltip,
   Button,
+  IconButton,
 } from "@material-ui/core";
-import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import CSVButton from "../../components/CSVButton";
-import NoData from "../../components/NoData";
-import DatePickerFilter from "../../components/date-picker/DatePickerFilter";
+import DateRange from "../../components/date-picker/DateRange";
+import { ArrowDown, ArrowUp } from "react-feather";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
 const Card = styled(MuiCard)(spacing);
-const Spacer = styled.div(spacing);
 
 // Custom Style.
-const useStyles = makeStyles({
-  rootTable: {
-    margin: "10px",
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 10;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    },
   },
-});
-
-const Search = styled.div`
-  border-radius: 2px;
-  background-color: ${(props) => props.theme.header.background};
-  display: none;
-  position: relative;
-  width: 100%;
-
-  &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    display: block;
-  }
-`;
-
-const SearchIconWrapper = styled.div`
-  width: 50px;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
+};
 
 const Chip = styled(MuiChip)`
   height: 20px;
@@ -85,48 +55,100 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
-const Input = styled(InputBase)`
-  color: inherit;
-  width: 100%;
-
-  > input {
-    color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)};
-    padding-right: ${(props) => props.theme.spacing(2.5)};
-    padding-bottom: ${(props) => props.theme.spacing(2.5)};
-    padding-left: ${(props) => props.theme.spacing(12)};
-    width: 100%;
-  }
-`;
-
 const SwapTable = () => {
   // hooks.
   const { t } = useTranslation();
-  const classes = useStyles();
   const [swap, setSwap] = useState([]);
   const [page, setPage] = useState(0); // page.
   const [rowsPerPage, setRowsPerPage] = useState(10); // limit.
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [statusValue, setStatusValue] = useState("");
+  const [value, setValue] = useState([null, null]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [sortPhone, setSortPhone] = useState("");
+  const [country, setCountry] = useState("");
+  const [coinSettings, getCoinSettings] = useState([]);
   const rows = swap?.transactions;
+  // Sorting.
+  const [sortDate, setSortDate] = useState(true);
+  const [sortEmail, setSortEmail] = useState(true);
+  const [sortAmount, setSortAmount] = useState(true);
+
+  // Sorting Functions.
+  const sortingDate = () => {
+    setSortDate(!sortDate);
+    if (sortDate) {
+      getSorting("decreasing", "date");
+    } else {
+      getSorting("increasing", "date");
+    }
+  };
+
+  const sortingEmail = () => {
+    setSortEmail(!sortEmail);
+    if (sortEmail) {
+      getSorting("decreasing", "email");
+    } else {
+      getSorting("increasing", "email");
+    }
+  };
+
+  const sortingPhone = (event) => {
+    setSortPhone(event.target.value);
+    getPhoneSorting(event.target.value);
+  };
+
+  const sortingAmount = () => {
+    setSortAmount(!sortAmount);
+    if (sortAmount) {
+      getSorting("decreasing", "amount_received");
+    } else {
+      getSorting("increasing", "amount_received");
+    }
+  };
+
+  // Date Range Picker.
+  const onChangeTime = (newValue) => {
+    setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));
+    setEndDate(moment(newValue[1]).format("YYYY-MM-DD"));
+    setValue(newValue);
+    getDateFilters(
+      moment(newValue[0]).format("YYYY-MM-DD"),
+      moment(newValue[1]).format("YYYY-MM-DD")
+    );
+  };
 
   // Filter Search.
-
-  const handleChangeFrom = (event) => {
+  const handleChangeFrom = (event, from) => {
     setFrom(event.target.value);
+    if (from?.props.value === "all") {
+      getSwap();
+    } else {
+      getFromCoin(from?.props.value);
+    }
   };
 
-  const handleChangeTo = (event) => {
+  const handleChangeTo = (event, to) => {
     setTo(event.target.value);
+    if (to?.props.value === "all") {
+      getSwap();
+    } else {
+      getToCoin(to?.props.value);
+    }
   };
 
-  const handleStatusValue = (event) => {
+  const handleStatusValue = (event, statusValue) => {
     setStatusValue(event.target.value);
+    if (statusValue?.props?.value === "all") {
+      getSwap();
+    } else {
+      getSendStatusFilter(statusValue?.props?.value);
+    }
   };
 
   // Table Pagination.
-
   const handleChangePage = (event, newPage) => {
     getSwap(newPage + 1);
     setPage(newPage);
@@ -144,9 +166,9 @@ const SwapTable = () => {
     return instance
       .get("/admin/transaction/all", {
         params: {
+          type: "swap",
           limit: rowsPerPage,
           page: page,
-          type: "swap",
         },
       })
       .then((data) => {
@@ -159,33 +181,137 @@ const SwapTable = () => {
       .finally(() => {});
   };
 
+  // get Send Sorting Data.
+  const getSorting = (sort_type, sort_params) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "swap",
+          sort_type: sort_type,
+          sort_param: sort_params,
+        },
+      })
+      .then((data) => {
+        setSwap(data.data);
+        return data;
+      });
+  };
+
+  // get Date FIlters Date.
+  const getDateFilters = (start_date, end_date) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "swap",
+          start_date: start_date,
+          end_date: end_date,
+        },
+      })
+      .then((data) => {
+        setSwap(data.data);
+        return data;
+      });
+  };
+
+  // get Country Code.
+  const getCountry = () => {
+    return instance.get("/admin/settings/countries").then((data) => {
+      setCountry(data.data);
+      return data;
+    });
+  };
+
+  // get getSettingCoin Data.
+  const getSettingCoin = () => {
+    return instance.get("/admin/settings/coins").then((data) => {
+      getCoinSettings(data.data);
+      return data;
+    });
+  };
+
+  // get Send Status Filter Data
+  const getSendStatusFilter = (status) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "swap",
+          status: status,
+        },
+      })
+      .then((data) => {
+        setSwap(data.data);
+        return data;
+      });
+  };
+
+  // Phone Sorting.
+  const getPhoneSorting = (telefon_code) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "swap",
+          telefon_code: telefon_code,
+        },
+      })
+      .then((data) => {
+        setSwap(data.data);
+        return data;
+      });
+  };
+
+  // get Coin Filter Data
+  const getFromCoin = (coin_from_id) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "swap",
+          coin_from_id: coin_from_id,
+        },
+      })
+      .then((data) => {
+        setSwap(data.data);
+        return data;
+      });
+  };
+
+  // get Coin Filter Data
+  const getToCoin = (coin_to_id) => {
+    return instance
+      .get("/admin/transaction/all", {
+        params: {
+          type: "swap",
+          coin_to_id: coin_to_id,
+        },
+      })
+      .then((data) => {
+        setSwap(data.data);
+        return data;
+      });
+  };
+
   // Use Effect.
   useEffect(() => {
     getSwap();
+    getSorting();
+    getDateFilters();
+    getSettingCoin();
+    getCountry();
   }, []);
-
-  // Loader.
-  if (swap.transactionsCount === 0) {
-    return <NoData />;
-  }
 
   return (
     <Fragment>
-      <Card p={4} sx={{ display: "flex" }}>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
-          <Box component="div">
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <Input placeholder={t("searchList")} />
-            </Search>
-          </Box>
+      <Card
+        p={2}
+        sx={{
+          display: { xs: "grid", sm: "flex" },
+          flexFlow: "row",
+          alignItems: "center",
+        }}
+      >
+        <Grid item xs={12} sm={2} md={2} m={2}>
+          <DateRange value={value} onChange={onChangeTime} />
         </Grid>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
-          <DatePickerFilter />
-        </Grid>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
+        <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
             <InputLabel id="select-from-label">From Coin</InputLabel>
             <Select
@@ -198,13 +324,13 @@ const SwapTable = () => {
               <MenuItem value="all">
                 <em>All</em>
               </MenuItem>
-              <MenuItem value={10}>Pending</MenuItem>
-              <MenuItem value={20}> Rejected </MenuItem>
-              <MenuItem value={30}> Approved </MenuItem>
+              {coinSettings.map((item) => (
+                <MenuItem value={item.id}> {item.coin} </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
+        <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
             <InputLabel id="select-to-label">To Coin</InputLabel>
             <Select
@@ -217,13 +343,13 @@ const SwapTable = () => {
               <MenuItem value="all">
                 <em>All</em>
               </MenuItem>
-              <MenuItem value={10}>Pending</MenuItem>
-              <MenuItem value={20}> Rejected </MenuItem>
-              <MenuItem value={30}> Approved </MenuItem>
+              {coinSettings.map((item) => (
+                <MenuItem value={item.id}> {item.coin} </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12} sm={6} md={2} mx={1}>
+        <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
             <InputLabel id="select-status">Status</InputLabel>
             <Select
@@ -244,18 +370,91 @@ const SwapTable = () => {
         </Grid>
       </Card>
       <Paper>
-        <TableContainer component={Paper} className={classes.rootTable}>
+        <TableContainer component={Paper} mt={5}>
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Date</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Phone</TableCell>
-                <TableCell>Amount</TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    Date
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <IconButton onClick={sortingDate}>
+                        {sortDate ? (
+                          <ArrowUp size={16} />
+                        ) : (
+                          <ArrowDown size={16} />
+                        )}
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    Email
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <IconButton onClick={sortingEmail}>
+                        {sortEmail ? (
+                          <ArrowUp size={16} />
+                        ) : (
+                          <ArrowDown size={16} />
+                        )}
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box>Phone</Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        marginLeft: "20px",
+                      }}
+                    >
+                      <FormControl sx={{ minWidth: "100px" }}>
+                        <InputLabel id="select-phone-label">Sort</InputLabel>
+                        <Select
+                          labelId="select-phone-label"
+                          id="select-phone-label"
+                          value={sortPhone}
+                          onChange={sortingPhone}
+                          autoWidth
+                          label="Sort"
+                          fullWidth
+                          MenuProps={MenuProps}
+                        >
+                          {country &&
+                            country.map((item) => (
+                              <MenuItem key={item.id} value={item.id}>
+                                <Box sx={{ display: "flex", width: "100%" }}>
+                                  <Box mr={2}>{item.telefon}</Box>
+                                </Box>
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    Amount
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <IconButton onClick={sortingAmount}>
+                        {sortAmount ? (
+                          <ArrowUp size={16} />
+                        ) : (
+                          <ArrowDown size={16} />
+                        )}
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </TableCell>
                 <TableCell>Coin</TableCell>
                 <TableCell>TX ID</TableCell>
                 <TableCell>Type</TableCell>
-                <TableCell>Type of operations:</TableCell>
+                <TableCell>Type of operations</TableCell>
                 <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
@@ -278,25 +477,48 @@ const SwapTable = () => {
                         <>{row.amount_received}</>
                       )}
                     </TableCell>
-                    <TableCell>{row.coinFrom}</TableCell>
+                    <TableCell>
+                      <Box component="div" sx={{ display: "flex" }}>
+                        <span>{row.coinfrom}</span>
+                        <span> - </span>
+                        <span>{row.cointo}</span>
+                      </Box>
+                      {row.coinFrom}
+                    </TableCell>
                     <TableCell>
                       <Tooltip title={row.transaction_id} arrow>
-                        <Button>{row.transaction_id.substring(0, 9)}</Button>
+                        <Button>{row.transaction_id?.substring(0, 9)}</Button>
                       </Tooltip>
                     </TableCell>
                     <TableCell>
                       {row.type === "fake" ? (
-                        <Chip label={row.type} color="error" />
+                        <Chip
+                          label={row.type[0].toUpperCase() + row.type.slice(1)}
+                          color="error"
+                        />
                       ) : (
-                        <Chip label={row.type} color="success" />
+                        <Chip
+                          label={row.type[0].toUpperCase() + row.type.slice(1)}
+                          color="success"
+                        />
                       )}
                     </TableCell>
                     <TableCell>{row.operation_type}</TableCell>
                     <TableCell>
                       {row.status === "accepted" ? (
-                        <Chip label={row.status} color="success" />
+                        <Chip
+                          label={
+                            row.status[0].toUpperCase() + row.status.slice(1)
+                          }
+                          color="success"
+                        />
                       ) : (
-                        <Chip label={row.status} color="error" />
+                        <Chip
+                          label={
+                            row.status[0].toUpperCase() + row.status.slice(1)
+                          }
+                          color="error"
+                        />
                       )}
                     </TableCell>
                   </TableRow>
@@ -304,15 +526,17 @@ const SwapTable = () => {
             </TableBody>
           </Table>
           {/* Pagination */}
-          <TablePagination
-            rowsPerPageOptions={[10]}
-            component="div"
-            count={swap?.transactionsCount}
-            rowsPerPage={swap?.limit}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          {rows && (
+            <TablePagination
+              rowsPerPageOptions={[10]}
+              component="div"
+              count={swap?.transactionsCount}
+              rowsPerPage={swap?.limit}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          )}
         </TableContainer>
       </Paper>
       {rows && (

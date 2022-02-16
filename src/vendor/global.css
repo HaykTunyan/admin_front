@@ -1,17 +1,75 @@
 /* Global Style. */
 
-.eAeGVh {
+.eAeGVh,
+.iBDqqN,
+.kvYIxQ,
+.kSRUHX,
+.gfYzTx,
+.dXxQrz,
+.hQuJkG,
+.QnYlU,
+.dxJFTK,
+.crZmLZ,
+.SEQpL,
+.iKkdNi,
+.iNIfOG,
+.jBnGJk,
+.dZxNzM,
+.bNkJrO,
+.fsQOjh,
+.KmjsW,
+.hRA-DUK,
+.gcZSxW,
+.gVmmqG,
+.gdgcXw,
+.ieHMRv {
   display: block;
 }
 
-.kSRUHX {
-    display: block;
+.ifWCsM {
+  overflow-x: auto;
 }
 
-.gfYzTx {
-    display: block;
+.jDWkqq {
+  padding: 10px;
 }
 
-.dXxQrz {
-    display: block;
+.dsTILO,
+.dCUDpK {
+  padding: 6px;
+}
+
+.MuiTableCell-root {
+  padding: 8px;
+}
+
+.eIWVsK {
+  background-color: #303f9f;
+}
+
+.input-search {
+  display: block;
+} 
+
+.UsersList__Search-sc-11qbpp7m-3,
+.UsersList__Search-sc9qbpp7m-3 {
+  display: block !important;
+}
+
+@media screen and (min-width: 1280px) and (max-width: 1535px){
+  .user-table {
+    width: calc(100% - 240px)!important;
+  }
+}
+
+@media screen and (min-width: 1536px) and (max-width: 1700px){
+  .user-table {
+    width: calc(100% - 140px)!important;
+  }
+}
+
+@media screen and (min-width: 1701px) and (max-width: 1860px){
+  .user-table {
+    width: calc(100% - 60px)!important;
+  }
 }

@@ -42,7 +42,7 @@ const PandingValidation = Yup.object().shape({
   content: Yup.string().required("Text is requrired"),
 });
 
-const PandingVerififeyModal = ({ subTitle, kycId, statusKyc }) => {
+const PandingVerififeyModal = ({ subTitle, kycId, statusKyc, getKYC }) => {
   const [open, setOpen] = useState(false);
   const label = { inputProps: { "aria-label": "Checkbox" } };
   const [messageError, setMessageError] = useState([]);
@@ -66,13 +66,22 @@ const PandingVerififeyModal = ({ subTitle, kycId, statusKyc }) => {
   };
 
   const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(editKYC(values)).then((data) => {
+    let types = [];
+    for (let type of values.notification_type) {
+      types.push(Number(type));
+    }
+    let data = {
+      user_id: kycId,
+      status_kyc: statusKyc,
+      content: values.content,
+      title: values.title,
+      notification_type: types,
+    };
+    dispatch(editKYC(data)).then((data) => {
       if (data.success) {
         setOpen(false);
       }
     });
-    return <SuccessModal />;
   };
 
   return (

@@ -33,29 +33,28 @@ const IconButton = styled(MuiIconButton)`
 
 // Yup Validation.
 const AddSavingSchema = Yup.object().shape({
-  min: Yup.number()
-    .required("Field is required")
-    .min(0, "Filed can not be minus value"),
-  max: Yup.number()
-    .required("Field is required")
-    .min(0, "Filed can not be minus value"),
+  min: Yup.number().min(0, "Field can not be minus value"),
+  max: Yup.number().min(0, "Field can not be minus value"),
+  duration: Yup.array().of(
+    Yup.object().shape({
+      days: Yup.number(),
+      percent: Yup.number(),
+    })
+  ),
 });
 
-const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
+const EditLockedSavingModal = ({ savingId, min, max, duration, getLocked }) => {
   // hooks.
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
-  const [newDuretion, setNewDuretion] = useState([]);
+  // const [newDuretion, setNewDuretion] = useState([]);
   const [errorMes, setErrorMes] = useState([]);
   const [state, setState] = useState({
     savingId: savingId,
     min: min,
     max: max,
+    duration: duration,
   });
-
-  const addDuretion = () => {
-    setNewDuretion((oldDuretion) => [...oldDuretion, oldDuretion.length]);
-  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -66,12 +65,28 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
   };
 
   const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(editSaving(values))
+    let data = {
+      savingId: values.savingId, // is required
+      min: Number(values.min),
+      max: Number(values.max),
+      duration: values.duration, //for locked
+    };
+
+    let result = Object.keys(data).filter(
+      (key) => !data[key] || data[key] === ""
+    );
+
+    for (let item of result) {
+      delete data[`${item}`];
+    }
+    console.log("Data =>", data);
+
+    dispatch(editSaving(data))
       .then((data) => {
         if (data.success) {
           setOpen(false);
         }
+        getLocked();
       })
       .catch((error) => {
         console.log(" error messages ", error?.response?.data);
@@ -95,7 +110,6 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
             <Formik
               initialValues={{
                 ...state,
-                duration: duration,
               }}
               initialForms={state}
               validationSchema={AddSavingSchema}
@@ -103,12 +117,9 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
             >
               {({ values, errors, touched, handleChange, handleBlur }) => (
                 <Form>
-                  {/*  */}
-
-                  {/*  */}
                   <Grid container pt={6} spacing={6}>
                     {/* Min */}
-                    <Grid display="flex" item md={4} alignItems="center">
+                    <Grid item xs={4} md={4} display="flex" alignItems="center">
                       <Typography
                         variant="subtitle1"
                         color="inherit"
@@ -117,23 +128,22 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                         Min
                       </Typography>
                     </Grid>
-                    <Grid item md={8}>
+                    <Grid item xs={8} md={8}>
                       <TextField
                         margin="dense"
                         id="min"
                         name="min"
                         label="Min"
-                        type="number"
                         error={Boolean(touched.min && errors.min)}
                         fullWidth
                         helperText={touched.min && errors.min}
                         onBlur={handleBlur}
                         onChange={handleChange}
-                        defaultValue={state.max}
+                        defaultValue={state.min}
                       />
                     </Grid>
                     {/* Max */}
-                    <Grid display="flex" item md={4} alignItems="center">
+                    <Grid item xs={4} md={4} display="flex" alignItems="center">
                       <Typography
                         variant="subtitle1"
                         color="inherit"
@@ -142,13 +152,12 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                         Max
                       </Typography>
                     </Grid>
-                    <Grid item md={8}>
+                    <Grid item xs={8} md={8}>
                       <TextField
                         margin="dense"
                         id="max"
                         name="max"
                         label="Max"
-                        type="number"
                         error={Boolean(touched.max && errors.max)}
                         fullWidth
                         helperText={touched.max && errors.max}
@@ -157,8 +166,8 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                         defaultValue={state.max}
                       />
                     </Grid>
-                    {/* Duretion */}
-                    <Grid item md={12}>
+                    {/* Duration */}
+                    <Grid item xs={12} md={12}>
                       <FieldArray name="duration">
                         {({ insert, remove, push }) => (
                           <>
@@ -192,7 +201,9 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                                 <Box
                                   display="flex"
                                   justifyContent="space-between"
+                                  alignItems="center"
                                   key={index}
+                                  paddingY={2}
                                 >
                                   <Grid item md={5}>
                                     <TextField
@@ -206,7 +217,25 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                                       onChange={handleChange}
                                     />
                                   </Grid>
-                                  <Grid item md={2}>
+                                  <Grid item md={5}>
+                                    <TextField
+                                      margin="dense"
+                                      id="percent"
+                                      name={`duration.${index}.percent`}
+                                      defaultValue={item.percent}
+                                      label="%"
+                                      type="number"
+                                      InputProps={{
+                                        inputProps: {
+                                          min: 0,
+                                          step: 0.0000001,
+                                        },
+                                      }}
+                                      fullWidth
+                                      onChange={handleChange}
+                                    />
+                                  </Grid>
+                                  <Grid item md={1}>
                                     <Box
                                       display="flex"
                                       justifyContent="center"
@@ -220,18 +249,6 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                                         <XCircle />
                                       </IconButton>
                                     </Box>
-                                  </Grid>
-                                  <Grid item md={5}>
-                                    <TextField
-                                      margin="dense"
-                                      id="percent"
-                                      name={`duration.${index}.percent`}
-                                      defaultValue={item.percent}
-                                      label="%"
-                                      type="number"
-                                      fullWidth
-                                      onChange={handleChange}
-                                    />
                                   </Grid>
                                 </Box>
                               ))}
@@ -261,7 +278,7 @@ const EditLockedSavingModal = ({ savingId, min, max, duration }) => {
                       variant="contained"
                       type="submit"
                     >
-                      Create Saving
+                      Edit Saving
                     </Button>
                   </Box>
                 </Form>

@@ -1,6 +1,6 @@
-import { createContext, useEffect, useLayoutEffect, useReducer } from "react";
+import { createContext, useLayoutEffect, useReducer } from "react";
 import axios from "../utils/axios";
-import { isValidToken, setSession } from "../utils/jwt";
+import { setSession } from "../utils/jwt";
 
 const INITIALIZE = "INITIALIZE";
 const SIGN_IN = "SIGN_IN";

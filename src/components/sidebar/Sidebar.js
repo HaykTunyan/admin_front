@@ -43,13 +43,13 @@ const BrandLogo = styled(Logo)`
   margin-right: 20px;
 `;
 
-const Sidebar = ({ items, ...rest }) => {
+const Sidebar = ({ items, handleDrawerToggle, ...rest }) => {
   return (
     <Drawer variant="permanent" {...rest}>
       <Brand component={NavLink} to="/dashboard">
         <BrandLogo />
       </Brand>
-      <SidebarNav items={items} />
+      <SidebarNav items={items} handleDrawerToggle={handleDrawerToggle} />
     </Drawer>
   );
 };

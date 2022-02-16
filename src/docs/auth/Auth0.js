@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-
 import {
   Box,
   Breadcrumbs as MuiBreadcrumbs,
@@ -12,13 +11,10 @@ import {
   Typography as MuiTypography,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-
 import Code from "../../../components/Code";
 
 const Divider = styled(MuiDivider)(spacing);
-
 const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
 const Typography = styled(MuiTypography)(spacing);
 
 function Introduction() {

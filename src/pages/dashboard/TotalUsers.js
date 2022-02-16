@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components/macro";
 import {
   Typography as MuiTypography,
@@ -9,6 +10,7 @@ import {
   TableCell,
   TableBody,
   Table,
+  Button,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
 import { getDashboardUsers_req } from "../../api/dashboardAPI";
@@ -17,23 +19,25 @@ import { getDashboardUsers_req } from "../../api/dashboardAPI";
 const Typography = styled(MuiTypography)(spacing);
 
 const TotalUsers = ({ startDate, endDate }) => {
+  const navigate = useNavigate();
   const [totalUsers, setTotalUsers] = useState({});
+
+  function goTo() {
+    navigate("/users");
+  }
 
   async function getTotalUsers() {
     try {
       const response = await getDashboardUsers_req(startDate, endDate);
       if (response) {
-        console.log("GET TOTAL USERS RESPONSE ==>", response);
         setTotalUsers(response);
       }
-    } catch (e) {
-      console.log("GET TOTAL USERS ERROR ==>", e.response);
-    }
+    } catch (e) {}
   }
 
   useEffect(() => {
     getTotalUsers();
-  }, []);
+  }, [startDate, endDate]);
 
   return (
     <Fragment>
@@ -62,9 +66,14 @@ const TotalUsers = ({ startDate, endDate }) => {
               }}
             >
               <TableCell align="left">
-                <Typography variant="inherit" gutterBottom>
+                <Button
+                  color="inherit"
+                  variant="text"
+                  style={{ justifyContent: "flex-start" }}
+                  onClick={goTo}
+                >
                   All
-                </Typography>
+                </Button>
               </TableCell>
               <TableCell align="center">
                 <Typography variant="inherit" gutterBottom>
@@ -80,9 +89,14 @@ const TotalUsers = ({ startDate, endDate }) => {
               }}
             >
               <TableCell align="left">
-                <Typography variant="inherit" gutterBottom>
+                <Button
+                  color="inherit"
+                  variant="text"
+                  style={{ justifyContent: "flex-start" }}
+                  onClick={goTo}
+                >
                   Verified
-                </Typography>
+                </Button>
               </TableCell>
               <TableCell align="center">
                 <Typography variant="inherit" gutterBottom>
@@ -98,9 +112,14 @@ const TotalUsers = ({ startDate, endDate }) => {
               }}
             >
               <TableCell align="left">
-                <Typography variant="inherit" gutterBottom>
+                <Button
+                  color="inherit"
+                  variant="text"
+                  style={{ justifyContent: "flex-start" }}
+                  onClick={goTo}
+                >
                   Unverified
-                </Typography>
+                </Button>
               </TableCell>
               <TableCell align="center">
                 <Typography variant="inherit" gutterBottom>

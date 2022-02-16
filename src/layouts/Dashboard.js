@@ -9,10 +9,9 @@ import GlobalStyle from "../components/GlobalStyle";
 import Navbar from "../components/navbar/Navbar";
 import dashboardItems from "../components/sidebar/dashboardItems";
 import Sidebar from "../components/sidebar/Sidebar";
-import Footer from "../components/Footer";
 import SettingsCom from "../components/SettingsCom";
 
-const drawerWidth = 258;
+const drawerWidth = 254;
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -25,7 +24,7 @@ const Root = styled.div`
 `;
 
 const Drawer = styled.div`
-  ${(props) => props.theme.breakpoints.up("md")} {
+  ${(props) => props.theme.breakpoints.up("lg")} {
     width: ${drawerWidth}px;
     flex-shrink: 0;
   }
@@ -53,13 +52,12 @@ const MainContent = styled(Paper)`
 
 const Dashboard = ({ children }) => {
   // hooks.
-  console.log(" children ", children);
   const [mobileOpen, setMobileOpen] = useState(false);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
   const theme = useTheme();
-  const isLgUp = useMediaQuery(theme.breakpoints.up("xl"));
+  const isLgUp = useMediaQuery(theme.breakpoints.up("lg"));
 
   return (
     <Root>
@@ -70,27 +68,27 @@ const Dashboard = ({ children }) => {
           <Sidebar
             PaperProps={{ style: { width: drawerWidth } }}
             variant="temporary"
-            open={mobileOpen}
             onClose={handleDrawerToggle}
+            handleDrawerToggle={handleDrawerToggle}
+            open={mobileOpen}
             items={dashboardItems}
           />
         </Hidden>
-        <Hidden mdDown implementation="css">
+        <Hidden lgDown implementation="css">
           <Sidebar
             PaperProps={{ style: { width: drawerWidth } }}
             items={dashboardItems}
+            handleDrawerToggle={handleDrawerToggle}
           />
         </Hidden>
       </Drawer>
       <AppContent>
         <Navbar onDrawerToggle={handleDrawerToggle} />
-        <MainContent p={isLgUp ? 12 : 4}>
+        <MainContent p={isLgUp ? 6 : 3}>
           {children}
           <Outlet />
         </MainContent>
-        {/* <Footer /> */}
       </AppContent>
-      <SettingsCom />
     </Root>
   );
 };

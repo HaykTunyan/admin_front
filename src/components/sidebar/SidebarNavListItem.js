@@ -1,8 +1,7 @@
-import React, { forwardRef, Fragment } from "react";
+import React, { forwardRef, Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { NavLink } from "react-router-dom";
 import { rgba, darken } from "polished";
-
 import {
   Chip,
   Collapse,
@@ -94,10 +93,11 @@ const SidebarNavListItem = (props) => {
     children,
     icon: Icon,
     badge,
+    handleDrawerToggle,
     open: openProp = false,
   } = props;
 
-  const [open, setOpen] = React.useState(openProp);
+  const [open, setOpen] = useState(openProp);
 
   const handleToggle = () => {
     setOpen((state) => !state);

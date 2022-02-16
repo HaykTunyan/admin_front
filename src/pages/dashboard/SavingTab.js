@@ -14,7 +14,6 @@ import {
   TableCell,
   TableBody,
   Table,
-  InputBase,
   Toolbar,
   Grid,
   Chip as MuiChip,
@@ -32,66 +31,16 @@ import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
 import CSVButton from "../../components/CSVButton";
-import { Search as SearchIcon } from "react-feather";
-import { useTranslation } from "react-i18next";
-import { darken } from "polished";
 import {
   getDashboardSavingsList_req,
   getDashboardSavings_req,
 } from "../../api/dashboardAPI";
-import moment from "moment";
+import { getCoins_req } from "../../api/userWalletsAPI";
+import { ArrowDown, ArrowUp } from "react-feather";
 
-// Spacing.
+// Spacing and Style .
 const Typography = styled(MuiTypography)(spacing);
 const Card = styled(MuiCard)(spacing);
-const Spacer = styled.div(spacing);
-
-// Custom Style.
-const Input = styled(InputBase)`
-  color: inherit;
-  width: 100%;
-
-  > input {
-    color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)};
-    padding-right: ${(props) => props.theme.spacing(2.5)};
-    padding-bottom: ${(props) => props.theme.spacing(2.5)};
-    padding-left: ${(props) => props.theme.spacing(12)};
-    width: 160px;
-  }
-`;
-
-const Search = styled.div`
-  border-radius: 2px;
-  background-color: ${(props) => props.theme.header.background};
-  display: none;
-  position: relative;
-  width: 100%;
-
-  &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    display: block;
-  }
-`;
-
-const SearchIconWrapper = styled.div`
-  width: 50px;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
-
 const Chip = styled(MuiChip)`
   height: 20px;
   padding: 4px 0;
@@ -101,43 +50,58 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
-const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
-  // hooks.
-  const { t } = useTranslation();
+const SavingTab = ({ startDate, endDate }) => {
+  // Hooks.
   const [panel, setPanel] = useState(1);
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [popularity, setPopularity] = useState("");
-  // Locked Pages.
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [pageLocked, setLockedPage] = useState(0);
   const [rowsLockedPage, setRowsLockedPage] = useState(5);
-  // Flexible.
-  const [pageFlexible, setFlexiblePage] = useState(0);
-  const [rowsFlexiblePage, setRowsFlexiblePage] = useState(5);
-
   const [savings, setSavings] = useState([]);
   const [savingsList, setSavingsList] = useState({});
+  const [coins, setCoins] = useState([]);
+  const [selectedCoin, setSelectedCoin] = useState("");
   const [open, setOpen] = useState({});
+  const [sortBy, setSortBy] = useState("increasing");
 
-  const handleChangeFrom = (event) => {
-    setFrom(event.target.value);
+  const handleCellClick = (sortType) => {
+    setSortBy(sortBy === "increasing" ? "decreasing" : "increasing");
+    getSavings(
+      panel === 1 ? "locked" : "flexible",
+      Number(selectedCoin),
+      selectedStatus,
+      "popularity",
+      sortType
+    );
   };
 
-  const handleChangeTo = (event) => {
-    setTo(event.target.value);
+  const handleCoinChange = (event) => {
+    setSelectedCoin(event.target.value);
+    getSavings(
+      panel === 1 ? "locked" : "flexible",
+      Number(event.target.value),
+      selectedStatus !== "all" ? selectedStatus : "",
+      "popularity",
+      sortBy
+    );
   };
 
-  const handlePopularityChange = (event) => {
-    setPopularity(event.target.value);
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+    getSavings(
+      panel === 1 ? "locked" : "flexible",
+      Number(selectedCoin),
+      event.target.value,
+      "popularity",
+      sortBy
+    );
   };
 
   const handleChangePanel = (event, newPanel) => {
-    console.log("NEW PANEL ==>", newPanel);
     setPanel(newPanel);
     getSavings(newPanel === 1 ? "locked" : "flexible");
   };
 
-  // Locked Pagination.
+  // Pagination.
   const handleLockedPage = (event, newLockedPage) => {
     setLockedPage(newLockedPage);
   };
@@ -147,22 +111,16 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
     setLockedPage(0);
   };
 
-  // Flexible Pagination.
-  const handleFlexiblePage = (event, newFlexiblePage) => {
-    setFlexiblePage(newFlexiblePage);
-  };
-
-  const handleRowsFlexiblePage = (event) => {
-    setRowsFlexiblePage(+event.target.value);
-    setFlexiblePage(0);
-  };
-
   const handleExpand = (e, coinId) => {
     if (
       open[`${e.currentTarget.id}`] === undefined ||
       open[`${e.currentTarget.id}`] === false
     ) {
-      getSavingsList(panel === 1 ? "locked" : "flexible", coinId);
+      getSavingsList(
+        panel === 1 ? "locked" : "flexible",
+        coinId,
+        selectedStatus
+      );
     }
     setOpen({
       ...open,
@@ -170,45 +128,63 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
     });
   };
 
-  async function getSavings(type) {
-    console.log("TYPE ==>", type);
+  async function getSavings(type, coinId, status, sortParam, sortType) {
+    setOpen(false);
+    let data = {
+      start_date: startDate,
+      end_date: endDate,
+      coin_id: coinId,
+      status: status,
+      sort_param: sortParam,
+      sort_type: sortType,
+    };
     try {
-      const response = await getDashboardSavings_req(type, startDate, endDate);
+      const response = await getDashboardSavings_req(type, data);
       if (response) {
-        console.log("GET SAVINGS RESPONSE ==>", response);
         setSavings(response.result);
       }
-    } catch (e) {
-      console.log("GET SAVINGS ERROR ==>", e);
-    }
+    } catch (e) {}
   }
 
-  async function getSavingsList(type, coinId) {
-    console.log("TYPE ==>", type);
-    console.log("Coin ID ==>", coinId);
+  async function getSavingsList(type, coinId, status) {
+    let data = {
+      start_date: startDate,
+      end_date: endDate,
+      coin_id: coinId,
+      status: status,
+      limit: 10,
+      page: 1,
+    };
     try {
-      const response = await getDashboardSavingsList_req(
-        type,
-        startDate,
-        endDate,
-        coinId,
-        10,
-        1
-      );
+      const response = await getDashboardSavingsList_req(type, data);
       if (response) {
-        console.log("GET SAVINGS LIST RESPONSE ==>", response);
         setSavingsList({ ...savingsList, [`${coinId}`]: response.savings });
       }
-    } catch (e) {
-      console.log("GET SAVINGS LIST ERROR ==>", e.response);
-    }
+    } catch (e) {}
   }
 
-  console.log("Savings ==>", savingsList);
+  async function getCoins() {
+    try {
+      const response = await getCoins_req();
+      if (response) {
+        setCoins(response);
+      }
+    } catch (e) {}
+  }
 
   useEffect(() => {
-    getSavings("locked");
+    getCoins();
   }, []);
+
+  useEffect(() => {
+    getSavings(
+      panel === 1 ? "locked" : "flexible",
+      Number(selectedCoin),
+      selectedStatus,
+      "popularity",
+      sortBy
+    );
+  }, [startDate, endDate]);
 
   return (
     <Fragment>
@@ -227,60 +203,43 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
               </Box>
               <TabPanel value={panel}>
                 <TableContainer component={Paper}>
-                  <Toolbar alignItems="center">
-                    <Grid item md={3}>
-                      <Search>
-                        <SearchIconWrapper>
-                          <SearchIcon />
-                        </SearchIconWrapper>
-                        <Input placeholder={t("Search")} />
-                      </Search>
+                  <Toolbar sx={{ display: { xs: "grid", sm: "flex" } }}>
+                    <Grid item xs={12} sm={4} md={2} m={2}>
+                      <Box component="div">
+                        <FormControl fullWidth>
+                          <InputLabel id="coin-label">Coin</InputLabel>
+                          <Select
+                            labelId="coin-label"
+                            id="coin-label"
+                            value={selectedCoin}
+                            onChange={handleCoinChange}
+                            label="Coin"
+                          >
+                            <MenuItem value="all">
+                              <em>From All</em>
+                            </MenuItem>
+                            {coins.map((coin) => (
+                              <MenuItem value={coin.id}>{coin.name}</MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Box>
                     </Grid>
-                    <Spacer mx={5} />
-                    <Grid item md={1}>
-                      <FormControl
-                        fullWidth
-                        variant="standard"
-                        sx={{ minWidth: 120 }}
-                      >
-                        <InputLabel id="select-from-label">Status</InputLabel>
+                    <Grid item xs={12} sm={4} md={2} m={2}>
+                      <FormControl fullWidth>
+                        <InputLabel id="status-label">Status</InputLabel>
                         <Select
-                          labelId="select-from-label"
-                          id="select-from-label"
-                          value={from}
-                          onChange={handleChangeFrom}
+                          labelId="status-label"
+                          id="status-label"
+                          value={selectedStatus}
+                          onChange={handleStatusChange}
                           label="From"
                         >
                           <MenuItem value="all">All</MenuItem>
-                          <MenuItem value={10}>Active</MenuItem>
-                          <MenuItem value={20}>
+                          <MenuItem value={"active"}>Active</MenuItem>
+                          <MenuItem value={"finished"}>
                             {panel === 1 ? "Closed" : "Redeemed"}
                           </MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Spacer mx={5} />
-                    <Grid item md={1}>
-                      <FormControl
-                        fullWidth
-                        variant="standard"
-                        sx={{ minWidth: 120 }}
-                      >
-                        <InputLabel id="select-from-label">
-                          Popularity
-                        </InputLabel>
-                        <Select
-                          labelId="select-from-label"
-                          id="select-from-label"
-                          value={popularity}
-                          onChange={handlePopularityChange}
-                          label="From"
-                        >
-                          <MenuItem value="all">
-                            <em>No Filter</em>
-                          </MenuItem>
-                          <MenuItem value={10}>Ascending</MenuItem>
-                          <MenuItem value={20}>Descending</MenuItem>
                         </Select>
                       </FormControl>
                     </Grid>
@@ -303,9 +262,33 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
                             Amount
                           </Typography>
                         </TableCell>
-                        <TableCell align="center">
-                          <Typography variant="h6" gutterBottom>
+                        <TableCell
+                          align="center"
+                          onClick={() =>
+                            handleCellClick(
+                              sortBy === "decreasing"
+                                ? "increasing"
+                                : "decreasing"
+                            )
+                          }
+                        >
+                          <Typography variant="h6">
                             Popularity
+                            <IconButton
+                              onClick={() =>
+                                handleCellClick(
+                                  sortBy === "decreasing"
+                                    ? "increasing"
+                                    : "decreasing"
+                                )
+                              }
+                            >
+                              {sortBy === "increasing" ? (
+                                <ArrowUp size={16} />
+                              ) : (
+                                <ArrowDown size={16} />
+                              )}
+                            </IconButton>
                           </Typography>
                         </TableCell>
                         <TableCell align="center">
@@ -316,143 +299,128 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {
-                        // .slice(
-                        //   pageLocked * rowsLockedPage,
-                        //   pageLocked * rowsLockedPage + rowsLockedPage
-                        // )
-                        savings.map((row, key) => (
-                          <>
-                            <TableRow
-                              key={key}
-                              sx={{
-                                "&:last-child td, &:last-child th": {
-                                  border: 0,
-                                },
-                              }}
-                            >
-                              <TableCell component="th" scope="row">
-                                {row.name}
-                              </TableCell>
-                              <TableCell align="center">
-                                {`${row.total_balance} ${row.coin}`}
-                              </TableCell>
-                              <TableCell align="center">
-                                {`$${row.total_balance_usd}`}
-                              </TableCell>
-                              <TableCell align="center">
-                                {`${row.popularity}%`}
-                              </TableCell>
-                              <TableCell>
-                                <IconButton
-                                  id={`${row.coin_id}`}
-                                  aria-label="expand row"
-                                  size="small"
-                                  onClick={(e) => handleExpand(e, row.coin_id)}
-                                >
-                                  {open[`${row.coin_id}`] ? (
-                                    <KeyboardArrowUpIcon />
-                                  ) : (
-                                    <KeyboardArrowDownIcon />
-                                  )}
-                                </IconButton>
-                              </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell
-                                style={{ paddingBottom: 0, paddingTop: 0 }}
-                                colSpan={6}
+                      {savings.map((row, key) => (
+                        <>
+                          <TableRow
+                            key={key}
+                            sx={{
+                              "&:last-child td, &:last-child th": {
+                                border: 0,
+                              },
+                            }}
+                          >
+                            <TableCell component="th" scope="row">
+                              {row.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              {`${row.total_balance} ${row.coin}`}
+                            </TableCell>
+                            <TableCell align="center">
+                              {`$${row.total_balance_usd}`}
+                            </TableCell>
+                            <TableCell align="center">
+                              {`${row.popularity ? row.popularity : 0}%`}
+                            </TableCell>
+                            <TableCell>
+                              <IconButton
+                                id={`${row.coin_id}`}
+                                aria-label="expand row"
+                                size="small"
+                                onClick={(e) => handleExpand(e, row.coin_id)}
                               >
-                                <Collapse
-                                  in={open[`${row.coin_id}`]}
-                                  timeout="auto"
-                                  unmountOnExit
-                                >
-                                  <Table aria-label="simple table" mt={6}>
-                                    <TableHead>
-                                      <TableRow>
-                                        <TableCell align="">
-                                          <Typography variant="h6" gutterBottom>
-                                            Saving ID
-                                          </Typography>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                          <Typography variant="h6" gutterBottom>
-                                            Amount
-                                          </Typography>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                          <Typography variant="h6" gutterBottom>
-                                            Amount in $
-                                          </Typography>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                          <Typography variant="h6" gutterBottom>
-                                            Status
-                                          </Typography>
-                                        </TableCell>
-                                      </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                      {
-                                        // .slice(
-                                        //   pageLocked * rowsLockedPage,
-                                        //   pageLocked * rowsLockedPage + rowsLockedPage
-                                        // )
-                                        (
-                                          savingsList[`${row.coin_id}`] || []
-                                        ).map((row, key) => (
-                                          <TableRow
-                                            key={String(key + row.coin_id)}
-                                            sx={{
-                                              "&:last-child td, &:last-child th":
-                                                {
-                                                  border: 0,
-                                                },
-                                            }}
-                                          >
-                                            <TableCell
-                                              component="th"
-                                              scope="row"
-                                            >
-                                              {row.saving_id}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                              {`${row.amount} ${row.coin}`}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                              {`$${row.amount_usd}`}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                              {row.status === "active" ? (
-                                                <Chip
-                                                  label="Active"
-                                                  color="success"
-                                                />
-                                              ) : (
-                                                <Chip
-                                                  label="Completed"
-                                                  color="primary"
-                                                />
-                                              )}
-                                            </TableCell>
-                                          </TableRow>
-                                        ))
-                                      }
-                                    </TableBody>
-                                  </Table>
-                                </Collapse>
-                              </TableCell>
-                            </TableRow>
-                          </>
-                        ))
-                      }
+                                {open[`${row.coin_id}`] ? (
+                                  <KeyboardArrowUpIcon />
+                                ) : (
+                                  <KeyboardArrowDownIcon />
+                                )}
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell
+                              style={{ paddingBottom: 0, paddingTop: 0 }}
+                              colSpan={6}
+                            >
+                              <Collapse
+                                in={open[`${row.coin_id}`]}
+                                timeout="auto"
+                                unmountOnExit
+                              >
+                                <Table aria-label="simple table" mt={6}>
+                                  <TableHead>
+                                    <TableRow>
+                                      <TableCell align="">
+                                        <Typography variant="h6" gutterBottom>
+                                          Saving ID
+                                        </Typography>
+                                      </TableCell>
+                                      <TableCell align="center">
+                                        <Typography variant="h6" gutterBottom>
+                                          Amount
+                                        </Typography>
+                                      </TableCell>
+                                      <TableCell align="center">
+                                        <Typography variant="h6" gutterBottom>
+                                          Amount in $
+                                        </Typography>
+                                      </TableCell>
+                                      <TableCell align="center">
+                                        <Typography variant="h6" gutterBottom>
+                                          Status
+                                        </Typography>
+                                      </TableCell>
+                                    </TableRow>
+                                  </TableHead>
+                                  <TableBody>
+                                    {(savingsList[`${row.coin_id}`] || []).map(
+                                      (row, key) => (
+                                        <TableRow
+                                          key={String(key + row.coin_id)}
+                                          sx={{
+                                            "&:last-child td, &:last-child th":
+                                              {
+                                                border: 0,
+                                              },
+                                          }}
+                                        >
+                                          <TableCell component="th" scope="row">
+                                            {row.saving_id}
+                                          </TableCell>
+                                          <TableCell align="center">
+                                            {`${row.amount} ${row.coin}`}
+                                          </TableCell>
+                                          <TableCell align="center">
+                                            {`$${row.amount_usd}`}
+                                          </TableCell>
+                                          <TableCell align="center">
+                                            {row.status === "active" ? (
+                                              <Chip
+                                                label="Active"
+                                                color="success"
+                                              />
+                                            ) : (
+                                              <Chip
+                                                label="Completed"
+                                                color="primary"
+                                              />
+                                            )}
+                                          </TableCell>
+                                        </TableRow>
+                                      )
+                                    )}
+                                  </TableBody>
+                                </Table>
+                              </Collapse>
+                            </TableCell>
+                          </TableRow>
+                        </>
+                      ))}
                     </TableBody>
                   </Table>
                   <TablePagination
-                    rowsPerPageOptions={[5, 10, 20]}
+                    rowsPerPageOptions={[5, 10]}
                     component="div"
-                    count={rowLocked.length}
+                    count={savings?.length}
                     rowsPerPage={rowsLockedPage}
                     page={pageLocked}
                     onPageChange={handleLockedPage}
@@ -472,7 +440,7 @@ const SavingTab = ({ rowLocked, rowFlexible, startDate, endDate }) => {
                   >
                     Export Data
                   </Typography>
-                  <CSVButton data={rowLocked} />
+                  <CSVButton data={savings} />
                 </Box>
               </TabPanel>
             </TabContext>

@@ -128,7 +128,6 @@ const EditNewsModal = ({ news, getNews }) => {
                 <DialogTitle>Edit Information for News</DialogTitle>
                 <DialogContent>
                   <TextField
-                    autoFocus
                     margin="dense"
                     id="title-one"
                     label="Title H1"
@@ -138,7 +137,6 @@ const EditNewsModal = ({ news, getNews }) => {
                     onChange={handleChange("title")}
                   />
                   <TextField
-                    autoFocus
                     margin="dense"
                     id="description"
                     label="Description One"

@@ -34,8 +34,6 @@ const TopDeviceModal = ({ title, rowList }) => {
     setOpen(false);
   };
 
-  console.log(" rowList in Top Device Modal ", rowList);
-
   return (
     <>
       <IconButton variant="outlined" onClick={handleClickOpen}>

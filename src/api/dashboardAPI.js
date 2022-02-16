@@ -4,11 +4,11 @@ export const getTotalAmounts_req = async (startDate, endDate) => {
   let queryString = "";
 
   if (startDate && endDate) {
-    queryString = `startDate=${startDate}&endDate=${endDate}`;
+    queryString = `start_date=${startDate}&end_date=${endDate}`;
   } else if (startDate) {
-    queryString = `startDate=${startDate}`;
+    queryString = `start_date=${startDate}`;
   } else if (endDate) {
-    queryString = `endDate=${endDate}`;
+    queryString = `end_date=${endDate}`;
   }
 
   const response = await instance.get(`/admin/dashboard?${queryString}`);
@@ -19,110 +19,118 @@ export const getDashboardUsers_req = async (startDate, endDate) => {
   let queryString = "";
 
   if (startDate && endDate) {
-    queryString = `startDate=${startDate}&endDate=${endDate}`;
+    queryString = `start_date=${startDate}&end_date=${endDate}`;
   } else if (startDate) {
-    queryString = `startDate=${startDate}`;
+    queryString = `start_date=${startDate}`;
   } else if (endDate) {
-    queryString = `endDate=${endDate}`;
+    queryString = `end_date=${endDate}`;
   }
 
   const response = await instance.get(`/admin/dashboard/users?${queryString}`);
   return response.data;
 };
 
-export const getDashboardCoins_req = async (startDate, endDate) => {
-  let queryString = "";
+export const getDashboardCoins_req = async (data) => {
+  let params = {};
 
-  if (startDate && endDate) {
-    queryString = `startDate=${startDate}&endDate=${endDate}`;
-  } else if (startDate) {
-    queryString = `startDate=${startDate}`;
-  } else if (endDate) {
-    queryString = `endDate=${endDate}`;
-  }
-  const response = await instance.get(`/admin/dashboard/coins?${queryString}`);
+  Object.keys(data).map((key) => {
+    if (data[key]) {
+      params[key] = data[key];
+
+      return key;
+    }
+  });
+
+  const response = await instance.get(`/admin/dashboard/coins`, {
+    params: params,
+  });
   return response.data;
 };
 
-export const getDashboardSend_req = async (startDate, endDate) => {
-  let queryString = "";
+export const getDashboardSend_req = async (data) => {
+  let params = {};
 
-  if (startDate && endDate) {
-    queryString = `startDate=${startDate}&endDate=${endDate}`;
-  } else if (startDate) {
-    queryString = `startDate=${startDate}`;
-  } else if (endDate) {
-    queryString = `endDate=${endDate}`;
-  }
-  const response = await instance.get(`/admin/dashboard/send?${queryString}`);
+  Object.keys(data).map((key) => {
+    if (data[key]) {
+      params[key] = data[key];
+
+      return key;
+    }
+  });
+
+  const response = await instance.get(`/admin/dashboard/send`, {
+    params: params,
+  });
   return response.data;
 };
 
-export const getDashboardReceive_req = async (startDate, endDate) => {
-  let queryString = "";
+export const getDashboardReceive_req = async (data) => {
+  let params = {};
 
-  if (startDate && endDate) {
-    queryString = `startDate=${startDate}&endDate=${endDate}`;
-  } else if (startDate) {
-    queryString = `startDate=${startDate}`;
-  } else if (endDate) {
-    queryString = `endDate=${endDate}`;
-  }
+  Object.keys(data).map((key) => {
+    if (data[key]) {
+      params[key] = data[key];
+
+      return key;
+    }
+  });
+
+  const response = await instance.get(`/admin/dashboard/receive`, {
+    params: params,
+  });
+  return response.data;
+};
+
+export const getDashboardSavings_req = async (type, data) => {
+  let params = {};
+
+  Object.keys(data).map((key) => {
+    if (data[key]) {
+      params[key] = data[key];
+
+      return key;
+    }
+  });
+
+  const response = await instance.get(`/admin/dashboard/savings?type=${type}`, {
+    params: params,
+  });
+  return response.data;
+};
+
+export const getDashboardSavingsList_req = async (type, data) => {
+  let params = {};
+
+  Object.keys(data).map((key) => {
+    if (data[key]) {
+      params[key] = data[key];
+
+      return key;
+    }
+  });
+
   const response = await instance.get(
-    `/admin/dashboard/receive?${queryString}`
+    `/admin/dashboard/savings/list?type=${type}`,
+    {
+      params: params,
+    }
   );
   return response.data;
 };
 
-export const getDashboardSavings_req = async (type, startDate, endDate) => {
-  let queryString = "";
+export const getDashboardExchanges_req = async (data) => {
+  let params = {};
 
-  if (startDate && endDate) {
-    queryString = `startDate=${startDate}&endDate=${endDate}`;
-  } else if (startDate) {
-    queryString = `startDate=${startDate}`;
-  } else if (endDate) {
-    queryString = `endDate=${endDate}`;
-  }
-  const response = await instance.get(
-    `/admin/dashboard/savings?${queryString}&type=${type}`
-  );
-  return response.data;
-};
+  Object.keys(data).map((key) => {
+    if (data[key]) {
+      params[key] = data[key];
 
-export const getDashboardSavingsList_req = async (
-  type,
-  startDate,
-  endDate,
-  coinId,
-  limit,
-  page
-) => {
-  let queryString = "";
+      return key;
+    }
+  });
 
-  if (startDate && endDate) {
-    queryString = `startDate=${startDate}&endDate=${endDate}`;
-  } else if (startDate) {
-    queryString = `startDate=${startDate}`;
-  } else if (endDate) {
-    queryString = `endDate=${endDate}`;
-  }
-  const response = await instance.get(
-    `/admin/dashboard/savings/list?type=${type}&coinId=${coinId}&limit=${limit}&page=${page}&${queryString}`
-  );
-  return response.data;
-};
-
-export const getDashboardExchanges_req = async (startDate, endDate) => {
-  let queryString = "";
-
-  if (startDate && endDate) {
-    queryString = `startDate=${startDate}&endDate=${endDate}`;
-  } else if (startDate) {
-    queryString = `startDate=${startDate}`;
-  } else if (endDate) {
-    queryString = `endDate=${endDate}`;
-  }
-  const response = await instance.get(`/admin/dashboard/swap?${queryString}`);
+  const response = await instance.get(`/admin/dashboard/swap`, {
+    params: params,
+  });
   return response.data;
 };

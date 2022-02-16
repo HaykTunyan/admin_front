@@ -11,7 +11,6 @@ import {
   Tab,
 } from "@material-ui/core";
 import { spacing } from "@material-ui/system";
-import { useSelector } from "react-redux";
 import DateRange from "../../components/date-picker/DateRange";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
@@ -38,22 +37,12 @@ const DashboardPage = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalAmounts, setTotalAmounts] = useState({});
-  // Redux Moke data.
-  const rowReceive = [];
-  const rowUsers = [];
-  const rowBalance = [];
-  const rowSend = [];
-  const rowExchange = [];
-  const rowLocked = [];
-  const rowFlexible = [];
 
   const onChangeTime = (newValue) => {
-    setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));
-    setEndDate(moment(newValue[1]).format("YYYY-MM-DD"));
+    setStartDate(newValue[0] ? moment(newValue[0]).format("YYYY-MM-DD") : null);
+    setEndDate(newValue[1] ? moment(newValue[1]).format("YYYY-MM-DD") : null);
     setValue(newValue);
   };
-
-  console.log("START DATE ==>", startDate, "END DATE ==>", endDate);
 
   const handleChange = (event, newPanel) => {
     setPanel(newPanel);
@@ -63,12 +52,9 @@ const DashboardPage = () => {
     try {
       const response = await getTotalAmounts_req();
       if (response) {
-        console.log("GET TOTAL AMOUNTS RESPONSE ==>", response);
         setTotalAmounts(response);
       }
-    } catch (e) {
-      console.log("GET TOTAL AMOUNTS ERROR ==>", e.response);
-    }
+    } catch (e) {}
   }
 
   useEffect(() => {
@@ -78,7 +64,7 @@ const DashboardPage = () => {
   return (
     <Fragment>
       <Helmet title="Dashboard" />
-      <Grid justifyContent="space-between" container spacing={6}>
+      <Grid container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom>
             Dashboard
@@ -86,19 +72,19 @@ const DashboardPage = () => {
         </Grid>
       </Grid>
       <Divider my={6} />
-      <Grid container justifyContent="space-between">
-        <Card mb={6}>
-          <CardContent flex>
+      <Card my={6}>
+        <CardContent>
+          <Grid container>
             <DateRange value={value} onChange={onChangeTime} />
-          </CardContent>
-        </Card>
-      </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
       <Divider my={6} />
-      <Grid xs={12}>
+      <Grid xs={12} item>
         <Grid item>
           <Box sx={{ width: "100%" }}>
             <TabContext value={panel}>
-              <Box sx={{ width: "100%" }}>
+              <Box sx={{ width: "100%", overflowX: "auto" }}>
                 <TabList
                   onChange={handleChange}
                   aria-label="lab API tabs example"
@@ -212,62 +198,37 @@ const DashboardPage = () => {
               {/* Panel One */}
               <TabPanel value="1">
                 <Grid item xs={12}>
-                  <TotalUsers
-                    rowUsers={rowUsers}
-                    startDate={startDate}
-                    endDate={endDate}
-                  />
+                  <TotalUsers startDate={startDate} endDate={endDate} />
                 </Grid>
               </TabPanel>
               {/* Panel Two */}
               <TabPanel value="2">
                 <Grid item xs={12}>
-                  <CurrentTab
-                    rowBalance={rowBalance}
-                    startDate={startDate}
-                    endDate={endDate}
-                  />
+                  <CurrentTab startDate={startDate} endDate={endDate} />
                 </Grid>
               </TabPanel>
               {/* Panel Three */}
               <TabPanel value="3">
                 <Grid item xs={12}>
-                  <ReceiveTab
-                    rowReceive={rowReceive}
-                    startDate={startDate}
-                    endDate={endDate}
-                  />
+                  <ReceiveTab startDate={startDate} endDate={endDate} />
                 </Grid>
               </TabPanel>
               {/* Panel Four */}
               <TabPanel value="4">
                 <Grid item xs={12}>
-                  <SendTab
-                    rowSend={rowSend}
-                    startDate={startDate}
-                    endDate={endDate}
-                  />
+                  <SendTab startDate={startDate} endDate={endDate} />
                 </Grid>
               </TabPanel>
               {/* Panel Five */}
               <TabPanel value="5">
                 <Grid item xs={12}>
-                  <ExchnageTab
-                    rowExchange={rowExchange}
-                    startDate={startDate}
-                    endDate={endDate}
-                  />
+                  <ExchnageTab startDate={startDate} endDate={endDate} />
                 </Grid>
               </TabPanel>
               {/* Panel Six */}
               <TabPanel value="6">
                 <Grid item xs={12}>
-                  <SavingTab
-                    rowLocked={rowLocked}
-                    rowFlexible={rowFlexible}
-                    startDate={startDate}
-                    endDate={endDate}
-                  />
+                  <SavingTab startDate={startDate} endDate={endDate} />
                 </Grid>
               </TabPanel>
             </TabContext>

@@ -28,7 +28,7 @@ const NavbarSimple = ({ onDrawerToggle }) => {
       <AppBar position="sticky" elevation={0}>
         <Toolbar>
           <Grid container alignItems="center">
-            <Hidden mdUp>
+            <Hidden lgUp>
               <Grid item>
                 <IconButton
                   color="inherit"

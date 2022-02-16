@@ -38,9 +38,11 @@ const Grid = styled(MuiGrid)(spacing);
 const Spacer = styled.div(spacing);
 const Avatar = styled(MuiAvatar)``;
 
-const UserView = (state) => {
+const UserView = () => {
   //  hooks.
   const navigate = useNavigate();
+  const { state } = useLocation();
+  // const { id, affiliate } = state;
   const [tab, setTab] = useState("1");
   const [profile, getProfile] = useState([]);
   const location = useLocation();
@@ -97,25 +99,24 @@ const UserView = (state) => {
               </Typography>
               <Spacer mb={4} />
               <Grid container direction="row" alignItems="center" mb={2}>
-                <Grid item item sx={6} md={2}>
+                <Grid item xs={6} md={2}>
                   <Avatar sx={{ width: 22, height: 22 }}>A</Avatar>
                 </Grid>
                 <Spacer mx={4} />
-                <Grid item item sx={6} md={2}>
+                <Grid item xs={6} md={2}>
                   <Typography variant="subtitle1">
-                    {" "}
                     {profile?.userAccountInfo?.full_name}{" "}
                   </Typography>
                 </Grid>
               </Grid>
               <Grid container direction="row" alignItems="center" mb={2}>
-                <Grid item item sx={6} md={2}>
+                <Grid item xs={6} md={2}>
                   <Typography variant="inherit" fontWeight="bold">
                     Date Registration
                   </Typography>
                 </Grid>
                 <Spacer mx={4} />
-                <Grid item item sx={6} md={2}>
+                <Grid item xs={6} md={2}>
                   <Typography variant="subtitle1">
                     {moment(profile?.userAccountInfo?.created_date).format(
                       "DD/MM/YYYY HH:mm "
@@ -124,37 +125,37 @@ const UserView = (state) => {
                 </Grid>
               </Grid>
               <Grid container direction="row" alignItems="center" mb={2}>
-                <Grid item item sx={6} md={2}>
+                <Grid item xs={6} md={2}>
                   <Typography variant="inherit" fontWeight="bold">
                     Referral
                   </Typography>
                 </Grid>
                 <Spacer mx={4} />
-                <Grid item item sx={6} md={2}>
+                <Grid item xs={6} md={2}>
                   <Typography variant="subtitle1">
                     {profile.userAccountInfo?.userReferral?.referral_code}
                   </Typography>
                 </Grid>
               </Grid>
               <Grid container direction="row" alignItems="center" mb={2}>
-                <Grid item item sx={6} md={2}>
+                <Grid item xs={6} md={2}>
                   <Typography variant="inherit" fontWeight="bold">
-                    Locetion
+                    Location
                   </Typography>
                 </Grid>
                 <Spacer mx={4} />
-                <Grid item item sx={6} md={2}>
+                <Grid item xs={6} md={2}>
                   <Typography variant="subtitle1"> Yerevan </Typography>
                 </Grid>
               </Grid>
               <Grid container direction="row" alignItems="center" mb={2}>
-                <Grid item item sx={6} md={2}>
+                <Grid item xs={6} md={2}>
                   <Typography variant="inherit" fontWeight="bold">
                     User ID
                   </Typography>
                 </Grid>
                 <Spacer mx={4} />
-                <Grid item item sx={6} md={2}>
+                <Grid item xs={6} md={2}>
                   <Typography variant="subtitle1">
                     {profile?.userAccountInfo?.id}
                   </Typography>

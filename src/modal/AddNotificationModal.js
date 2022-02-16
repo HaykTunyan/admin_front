@@ -7,10 +7,7 @@ import {
   DialogContent,
   FormControl,
   DialogTitle,
-  InputLabel,
-  MenuItem,
   Box,
-  Select,
 } from "@material-ui/core";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -81,7 +78,6 @@ const AddNotificationModal = ({ getTemplates }) => {
                         variant="outlined"
                         fullWidth
                         my={3}
-                        //defaultValue="Input Title"
                         onChange={handleChange("title")}
                         error={touched.title && errors.title}
                         helperText={touched.title && errors.title}
@@ -94,9 +90,7 @@ const AddNotificationModal = ({ getTemplates }) => {
                       id="message"
                       multiline={true}
                       rows={3}
-                      //maxRows={4}
                       variant="outlined"
-                      //defaultValue=" Send Notification for Users "
                       onChange={handleChange("message")}
                       error={touched.message && errors.message}
                       helperText={touched.message && errors.message}

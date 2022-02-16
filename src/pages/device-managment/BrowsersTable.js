@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import {
@@ -14,17 +14,15 @@ import {
 } from "@material-ui/core";
 import TopDeviceModal from "../../modal/TopDeviceModal";
 
-//  Spacing.
+//  Spacing and Style.
 const Card = styled(MuiCard)(spacing);
-
-//  Custom Style.
 const TableWrapper = styled.div`
   overflow-y: auto;
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
 
 const BrowsersTable = ({ rowBrowser }) => {
-  //  hooks.
+  //  Hooks.
   const title = " Browsers Version";
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -39,7 +37,7 @@ const BrowsersTable = ({ rowBrowser }) => {
   };
 
   return (
-    <>
+    <Fragment>
       <Card mb={6}>
         <CardHeader title="Browsers" />
         <Paper>
@@ -84,7 +82,7 @@ const BrowsersTable = ({ rowBrowser }) => {
           </TableWrapper>
         </Paper>
       </Card>
-    </>
+    </Fragment>
   );
 };
 

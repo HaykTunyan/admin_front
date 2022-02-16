@@ -1,12 +1,11 @@
-import React, { useState } from "react";
-
+import React, { useState, createContext } from "react";
 import { THEMES } from "../config/constants";
 
 const initialState = {
   theme: THEMES.DARK,
   setTheme: (theme) => {},
 };
-const ThemeContext = React.createContext(initialState);
+const ThemeContext = createContext(initialState);
 
 function ThemeProvider({ children }) {
   const initialState = () => {

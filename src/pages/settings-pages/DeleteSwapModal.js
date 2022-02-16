@@ -22,7 +22,7 @@ const IconButton = styled(MuiIconButton)`
   }
 `;
 
-const DeleteSwapModal = ({ swapId }) => {
+const DeleteSwapModal = ({ swapId, getSwap }) => {
   // hooks
   const [open, setOpen] = useState(false);
 
@@ -38,6 +38,7 @@ const DeleteSwapModal = ({ swapId }) => {
     return instance
       .delete(`/admin/swap-settings/${swapId} `, { mode: "no-cors" })
       .then((data) => {
+        getSwap();
         return data;
       })
       .catch((error) => {

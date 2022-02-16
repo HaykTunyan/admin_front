@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
-import { Formik, Form, ErrorMessage, FieldArray } from "formik";
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { spacing } from "@material-ui/system";
 import { useDispatch } from "react-redux";
@@ -29,20 +29,7 @@ import { instance } from "../services/api";
 const Spacer = styled.div(spacing);
 const Alert = styled(MuiAlert)(spacing);
 
-// Yup Validation.
-const AddSwapSchema = Yup.object().shape({
-  decimals: Yup.number()
-    .required("Field is required")
-    .min(0, "Filed can not be minus value"),
-  fee: Yup.number()
-    .required("Field is required")
-    .min(0, "Filed can not be minus value"),
-  min: Yup.number()
-    .required("Field is required")
-    .min(0, "Filed can not be minus value"),
-});
-
-const AddSwapModal = () => {
+const AddSwapModal = ({ getSwap }) => {
   // hooks.
   const dispatch = useDispatch();
   const label = { inputProps: { "aria-label": "Checkbox" } };
@@ -56,7 +43,25 @@ const AddSwapModal = () => {
     decimals: "",
     fee: "",
     min: "",
-    limitEnabled: check,
+    limit: "",
+  });
+
+  // Yup Validation.
+  const AddSwapSchema = Yup.object().shape({
+    decimals: Yup.number()
+      .required("Field is required")
+      .min(0, "Field can not be negative value"),
+    fee: Yup.number()
+      .required("Field is required")
+      .min(0, "Field can not be negative value"),
+    min: Yup.number()
+      .required("Field is required")
+      .min(0, "Field can not be negative value"),
+    limit: check
+      ? Yup.number()
+          .required("Field is required")
+          .min(0, " Field can not be negative value")
+      : Yup.number(),
   });
 
   const handleClickOpen = () => {
@@ -69,11 +74,31 @@ const AddSwapModal = () => {
 
   // Form Submit.
   const handleSubmit = (values) => {
-    console.log("values", values);
-    dispatch(addSwap(values))
+    let data = {
+      fromCoin: Number(values.fromCoin),
+      toCoin: Number(values.toCoin),
+      decimals: values.decimals,
+      fee: Number(values.fee),
+      min: Number(values.min),
+      limit: Number(values.limit),
+      limitEnabled: check,
+    };
+
+    let result = Object.keys(data).filter(
+      (key) =>
+        (!data[key] || data[key] === "") && typeof data[key] !== "boolean"
+    );
+
+    for (let item of result) {
+      delete data[`${item}`];
+    }
+    console.log("Data =>", data);
+
+    dispatch(addSwap(data))
       .then((data) => {
         console.log("data", data);
         setOpen(false);
+        getSwap();
       })
       .catch((error) => {
         console.log("error messages", error?.response?.data);
@@ -158,7 +183,7 @@ const AddSwapModal = () => {
                 )}
                 <Grid container pt={6} spacing={6}>
                   {/* From Coin */}
-                  <Grid display="flex" item md={4} alignItems="center">
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -167,7 +192,7 @@ const AddSwapModal = () => {
                       From Coin
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <FormControl fullWidth>
                       <InputLabel id="select-from-coin">
                         From Coin Name
@@ -189,7 +214,7 @@ const AddSwapModal = () => {
                     </FormControl>
                   </Grid>
                   {/* To Coin */}
-                  <Grid display="flex" item md={4} alignItems="center">
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -198,7 +223,7 @@ const AddSwapModal = () => {
                       To Coin
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <FormControl fullWidth>
                       <InputLabel id="select-to-coin">To Coin Name</InputLabel>
                       <Select
@@ -218,7 +243,7 @@ const AddSwapModal = () => {
                     </FormControl>
                   </Grid>
                   {/* Decimals */}
-                  <Grid display="flex" item md={4} alignItems="center">
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -227,7 +252,7 @@ const AddSwapModal = () => {
                       Decimals
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <TextField
                       margin="dense"
                       id="decimals"
@@ -244,11 +269,11 @@ const AddSwapModal = () => {
                       helperText={touched.decimals && errors.decimals}
                       onBlur={handleBlur}
                       onChange={handleChange}
-                      defaultValue={values.decimals}
+                      defaultValue={state.decimals}
                     />
                   </Grid>
                   {/* Fee  */}
-                  <Grid display="flex" alignItems="center" item md={4}>
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -257,28 +282,28 @@ const AddSwapModal = () => {
                       Fee %
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <TextField
                       margin="dense"
                       id="fee"
                       name="fee"
                       label="Fee %"
-                      type="number"
+                      //type="number"
                       fullWidth
-                      InputProps={{
-                        inputProps: {
-                          min: 0,
-                        },
-                      }}
+                      // InputProps={{
+                      //   inputProps: {
+                      //     min: 0,
+                      //   },
+                      // }}
                       error={Boolean(touched.fee && errors.fee)}
                       helperText={touched.fee && errors.fee}
                       onBlur={handleBlur}
                       onChange={handleChange}
-                      defaultValue={values.fee}
+                      defaultValue={state.fee}
                     />
                   </Grid>
                   {/* Min */}
-                  <Grid display="flex" alignItems="center" item md={4}>
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -287,28 +312,28 @@ const AddSwapModal = () => {
                       Min
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <TextField
                       margin="dense"
                       id="min"
                       name="min"
                       label="Min"
-                      type="number"
+                      //type="number"
                       fullWidth
-                      InputProps={{
-                        inputProps: {
-                          min: 0,
-                        },
-                      }}
+                      // InputProps={{
+                      //   inputProps: {
+                      //     min: 0,
+                      //   },
+                      // }}
                       error={Boolean(touched.min && errors.min)}
                       helperText={touched.min && errors.min}
                       onBlur={handleBlur}
                       onChange={handleChange}
-                      defaultValue={values.min}
+                      defaultValue={state.min}
                     />
                   </Grid>
                   {/* Limit Enabled */}
-                  <Grid display="flex" alignItems="center" item md={4}>
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
@@ -317,7 +342,7 @@ const AddSwapModal = () => {
                       Limit
                     </Typography>
                   </Grid>
-                  <Grid item md={8}>
+                  <Grid item xs={8} md={8}>
                     <FormControlLabel
                       label="Enable Limit"
                       name="limitEnabled"
@@ -325,7 +350,7 @@ const AddSwapModal = () => {
                         <Checkbox
                           {...label}
                           name="limitEnabled"
-                          defaultValue={values.limitEnabled}
+                          defaultValue={check}
                           onChange={() => setCheck(!check)}
                         />
                       }
@@ -334,7 +359,13 @@ const AddSwapModal = () => {
                   {/* Limit  */}
                   {check ? (
                     <>
-                      <Grid display="flex" alignItems="center" item md={4}>
+                      <Grid
+                        item
+                        xs={4}
+                        md={4}
+                        display="flex"
+                        alignItems="center"
+                      >
                         <Typography
                           variant="subtitle1"
                           color="inherit"
@@ -343,24 +374,24 @@ const AddSwapModal = () => {
                           Limit Swap
                         </Typography>
                       </Grid>
-                      <Grid item md={8}>
+                      <Grid item xs={8} md={8}>
                         <TextField
                           margin="dense"
                           id="limit"
                           name="limit"
                           label="Limit"
-                          type="number"
+                          //type="number"
                           fullWidth
-                          InputProps={{
-                            inputProps: {
-                              min: 0,
-                            },
-                          }}
+                          // InputProps={{
+                          //   inputProps: {
+                          //     min: 0,
+                          //   },
+                          // }}
                           error={Boolean(touched.limit && errors.limit)}
                           helperText={touched.limit && errors.limit}
                           onBlur={handleBlur}
                           onChange={handleChange}
-                          defaultValue={values.limit}
+                          defaultValue={state.limit}
                         />
                       </Grid>
                     </>

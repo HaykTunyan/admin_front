@@ -98,9 +98,11 @@ const ReferralTable = () => {
                           <span> {item.userEmail} </span>
                         </TableCell>
                         <TableCell align="center">
-                          <span>https://bein.demka.online/</span>
-                          <Spacer mx={2} />
-                          <span>{item.referralCode}</span>
+                          <Box component="div" sx={{ display: "flex" }}>
+                            <span>https://bein.demka.online/</span>
+                            <span>=</span>
+                            <span>{item.referralCode}</span>
+                          </Box>
                         </TableCell>
                         <TableCell align="center">
                           {item.registersCount}
@@ -135,17 +137,19 @@ const ReferralTable = () => {
                 </TableBody>
               </Table>
               {/* Pagination */}
-              <Box py={5} display="flex" justifyContent="flex-end">
-                <TablePagination
-                  rowsPerPageOptions={[10]}
-                  component="div"
-                  count={referralRow?.allCount}
-                  rowsPerPage={referralRow?.limit}
-                  page={page}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-              </Box>
+              {referralRow?.referrals && (
+                <Box py={5} display="flex" justifyContent="flex-end">
+                  <TablePagination
+                    rowsPerPageOptions={[10]}
+                    component="div"
+                    count={referralRow?.allCount}
+                    rowsPerPage={referralRow?.limit}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </Box>
+              )}
             </TableContainer>
           </Paper>
         </Grid>

@@ -25,10 +25,11 @@ const Items = styled.div`
   padding-bottom: ${(props) => props.theme.spacing(2.5)};
 `;
 
-const SidebarNav = ({ items }) => {
+const SidebarNav = ({ items, handleDrawerToggle }) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("xl"));
   const ScrollbarComponent = matches ? PerfectScrollbar : Scrollbar;
+  console.log(" handleDrawerToggle SidebarNav ", handleDrawerToggle);
 
   return (
     <ScrollbarComponent>
@@ -41,6 +42,7 @@ const SidebarNav = ({ items }) => {
                 key={item.title}
                 pages={item.pages}
                 title={item.title}
+                handleDrawerToggle={handleDrawerToggle}
               />
             ))}
         </Items>

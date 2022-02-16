@@ -68,15 +68,17 @@ const UniqueTable = () => {
           </TableBody>
         </Table>
         {/* Pagination */}
-        <TablePagination
-          rowsPerPageOptions={[5, 10]}
-          component="div"
-          count={uniqueData.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {uniqueData && (
+          <TablePagination
+            rowsPerPageOptions={[5, 10]}
+            component="div"
+            count={uniqueData?.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        )}
       </TableContainer>
     </Fragment>
   );

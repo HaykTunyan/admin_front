@@ -16,7 +16,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { sendNotification_req } from "../api/notificationsAPI";
 
-const SendNotificationModal = ({ item }) => {
+const SendNotificationModal = ({ item, primission }) => {
   const [open, setOpen] = useState(false);
   const [initialValues, setInitialValues] = useState({
     title: item.title,
@@ -63,16 +63,12 @@ const SendNotificationModal = ({ item }) => {
       // if send all is true users can be empty
       users: initialValues.sendTo === 3 ? [] : users,
     };
-
-    console.log("Data ===>", data);
     try {
       const response = await sendNotification_req(data);
       if (response) {
-        console.log("SEND NOTIF RESPONSE ==>", response);
         setOpen(false);
       }
     } catch (e) {
-      console.log("SEND NOTIF ERROR ==>", e.response);
       setOpen(false);
     }
   }
@@ -124,51 +120,57 @@ const SendNotificationModal = ({ item }) => {
                       helperText={touched.message && errors.message}
                     />
                   </FormControl>
-                  <Box my={8}>
-                    <FormControl fullWidth my={8} variant="outlined">
-                      <InputLabel id="simple-select">Send to</InputLabel>
-                      <Select
-                        labelId="simple-select"
-                        id="simple-select"
-                        value={initialValues.sendTo}
-                        label="Send to"
-                        onChange={handleSendTo}
-                      >
-                        <MenuItem value={1}>Send to one user</MenuItem>
-                        <MenuItem value={2}>Send to group</MenuItem>
-                        <MenuItem value={3}>Send to all</MenuItem>
-                      </Select>
-                    </FormControl>
-                    {(initialValues.sendTo === 1 ||
-                      initialValues.sendTo === 2) && (
-                      <FormControl fullWidth my={8} variant="outlined">
-                        <TextField
-                          placeholder="Please fill in the user'(s) email or id"
-                          id="emailOrId_input"
-                          multiline={true}
-                          variant="outlined"
-                          onChange={handleChange("emailOrId")}
-                          error={touched.emailOrId && errors.emailOrId}
-                          helperText={touched.emailOrId && errors.emailOrId}
-                        />
-                      </FormControl>
-                    )}
-                  </Box>
-                  <Box my={8}>
-                    <FormControl fullWidth my={8} variant="outlined">
-                      <InputLabel id="simple-select">Where to send</InputLabel>
-                      <Select
-                        labelId="simple-select"
-                        id="simple-select"
-                        value={initialValues.whereTo}
-                        label="Where to send"
-                        onChange={handleWhereTo}
-                      >
-                        <MenuItem value={1}>Email</MenuItem>
-                        <MenuItem value={3}>Personal Account</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box>
+                  {primission?.role === 1 && (
+                    <>
+                      <Box my={8}>
+                        <FormControl fullWidth my={8} variant="outlined">
+                          <InputLabel id="simple-select">Send to</InputLabel>
+                          <Select
+                            labelId="simple-select"
+                            id="simple-select"
+                            value={initialValues.sendTo}
+                            label="Send to"
+                            onChange={handleSendTo}
+                          >
+                            <MenuItem value={1}>Send to one user</MenuItem>
+                            <MenuItem value={2}>Send to group</MenuItem>
+                            <MenuItem value={3}>Send to all</MenuItem>
+                          </Select>
+                        </FormControl>
+                        {(initialValues.sendTo === 1 ||
+                          initialValues.sendTo === 2) && (
+                          <FormControl fullWidth my={8} variant="outlined">
+                            <TextField
+                              placeholder="Please fill in the user'(s) email or id"
+                              id="emailOrId_input"
+                              multiline={true}
+                              variant="outlined"
+                              onChange={handleChange("emailOrId")}
+                              error={touched.emailOrId && errors.emailOrId}
+                              helperText={touched.emailOrId && errors.emailOrId}
+                            />
+                          </FormControl>
+                        )}
+                      </Box>
+                      <Box my={8}>
+                        <FormControl fullWidth my={8} variant="outlined">
+                          <InputLabel id="simple-select">
+                            Where to send
+                          </InputLabel>
+                          <Select
+                            labelId="simple-select"
+                            id="simple-select"
+                            value={initialValues.whereTo}
+                            label="Where to send"
+                            onChange={handleWhereTo}
+                          >
+                            <MenuItem value={1}>Email</MenuItem>
+                            <MenuItem value={3}>Personal Account</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Box>
+                    </>
+                  )}
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClose} sx={{ width: "120px" }}>

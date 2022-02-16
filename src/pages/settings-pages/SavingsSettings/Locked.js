@@ -39,9 +39,23 @@ const Locked = () => {
   const [locked, setLocked] = useState([]);
 
   // get Locked.
-  const getLocked = () => {
+  const getLocked = (coinIds, coinName) => {
+    let coinIdsString = coinIds ? coinIds.toString() : null;
+
+    let params = {
+      type: "locked",
+      coin_ids: coinIdsString,
+      coin_name: coinName ? coinName : null,
+    };
+
+    Object.keys(params).map((key) => {
+      if (!params[key]) {
+        delete params[key];
+      }
+    });
+
     return instance
-      .get("/admin/saving-settings", { params: { type: "locked" } })
+      .get("/admin/saving-settings", { params: params })
       .then((data) => {
         setLocked(data.data);
         return data;
@@ -59,13 +73,20 @@ const Locked = () => {
 
   return (
     <>
-      <LocedTable title={title} rowList={rowList} rowBody={locked} />
-      <Box m={4} display="flex" justifyContent="flex-end" alignItems="center">
-        <Typography variant="subtitle1" color="inherit" component="div">
-          Export Data
-        </Typography>
-        <CSVButton data={locked} />
-      </Box>
+      <LocedTable
+        title={title}
+        rowList={rowList}
+        rowBody={locked}
+        getLocked={getLocked}
+      />
+      {locked && (
+        <Box m={4} display="flex" justifyContent="flex-end" alignItems="center">
+          <Typography variant="subtitle1" color="inherit" component="div">
+            Export Data
+          </Typography>
+          <CSVButton data={locked} />
+        </Box>
+      )}
     </>
   );
 };

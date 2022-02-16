@@ -13,19 +13,14 @@ import {
   Card as MuiCard,
   Typography,
   TablePagination,
-  InputBase,
 } from "@material-ui/core";
-import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { spacing } from "@material-ui/system";
 import styled from "styled-components/macro";
 import AddAdminModal from "../../../modal/AddAdminModal";
 import EditAdminModal from "../../../modal/EditAdminModal";
-import { Search as SearchIcon } from "react-feather";
-import CSVButton from "../../../components/CSVButton";
-import { darken } from "polished";
 import { instance } from "../../../services/api";
-import Loader from "../../../components/Loader";
+import NoData from "../../../components/NoData";
 
 // Spacing.
 const Divider = styled(MuiDivider)(spacing);
@@ -39,57 +34,12 @@ const TableWrapper = styled.div`
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
 
-const Search = styled.div`
-  border-radius: 2px;
-  background-color: ${(props) => props.theme.header.background};
-  display: none;
-  position: relative;
-  // width: 100%;
-
-  &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    display: block;
-  }
-`;
-
-const SearchIconWrapper = styled.div`
-  width: 50px;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
-
-const Input = styled(InputBase)`
-  color: inherit;
-  width: 100%;
-
-  > input {
-    color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)};
-    padding-right: ${(props) => props.theme.spacing(2.5)};
-    padding-bottom: ${(props) => props.theme.spacing(2.5)};
-    padding-left: ${(props) => props.theme.spacing(12)};
-    width: 160px;
-  }
-`;
-
 const Administrators = () => {
-  // hooks.
-  const { t } = useTranslation();
+  // Hooks.
   const [rowAdmin, getRowAdmin] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [primission, setPrimission] = useState("");
 
   const handleChangePage = (event, newPage) => {
     getAdminUsers(newPage + 1);
@@ -121,25 +71,32 @@ const Administrators = () => {
       .finally(() => {});
   };
 
+  const getPrimission = () => {
+    return instance.get("/admin/profile").then((data) => {
+      setPrimission(data.data);
+      return data;
+    });
+  };
+
   // use Effect.
   useEffect(() => {
     getAdminUsers();
+    getPrimission();
   }, []);
 
   if (!rowAdmin?.admins) {
-    return <Loader />;
+    return <NoData />;
   }
 
   return (
     <>
       <Helmet title="Administrators" />
-      <Grid justifyContent="space-between" container spacing={10}>
+      <Grid container spacing={10}>
         <Grid item>
           <Typography variant="h3" gutterBottom display="inline">
             Administrators
           </Typography>
         </Grid>
-        <Grid item></Grid>
       </Grid>
       <Divider my={6} />
       <Grid container spacing={6}>
@@ -147,17 +104,12 @@ const Administrators = () => {
           <Card mb={6}>
             <CardContent>
               <Card mb={6}>
-                <Grid display="flex" justifyContent="space-between">
+                <Grid display="flex" justifyContent="flex-end">
                   <Grid item>
-                    <Search>
-                      <SearchIconWrapper>
-                        <SearchIcon />
-                      </SearchIconWrapper>
-                      <Input placeholder={t("searchList")} />
-                    </Search>
-                  </Grid>
-                  <Grid item>
-                    <AddAdminModal />
+                    <AddAdminModal
+                      getAdminUsers={getAdminUsers}
+                      primission={primission}
+                    />
                   </Grid>
                 </Grid>
                 <Paper>
@@ -186,6 +138,7 @@ const Administrators = () => {
                                     id={row.id}
                                     permissions={row.permissions}
                                     role={row.role}
+                                    getAdminUsers={getAdminUsers}
                                   />
                                 </Box>
                               </TableCell>
@@ -208,17 +161,6 @@ const Administrators = () => {
               />
             </CardContent>
           </Card>
-          <Box
-            mt={8}
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="center"
-          >
-            <Typography variant="subtitle1" color="inherit" component="div">
-              Export Data
-            </Typography>
-            <CSVButton data={rowAdmin?.admins} />
-          </Box>
         </Grid>
       </Grid>
     </>

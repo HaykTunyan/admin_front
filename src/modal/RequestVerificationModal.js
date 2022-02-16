@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Divider as MuiDivider,
   Typography as MuiTypography,
   FormControl as MuiFormControl,
   IconButton,
   Grid as MuiGrid,
-  Alert as MuiAlert,
   Button as MuiButton,
   Card as MuiCard,
   CardContent,
@@ -19,13 +18,19 @@ import {
   DialogContent,
   DialogTitle,
   Box,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import { useLocation } from "react-router-dom";
 import { spacing } from "@material-ui/system";
 import styled from "styled-components/macro";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { sendNotification_req } from "../api/notificationsAPI";
+import {
+  getNotifTemplates_req,
+  sendNotification_req,
+} from "../api/notificationsAPI";
+import { editUserData_req } from "../api/userAPI";
 
 const Typography = styled(MuiTypography)(spacing);
 const Card = styled(MuiCard)(spacing);
@@ -35,8 +40,17 @@ const TextField = styled(MuiTextField)(spacing);
 const Button = styled(MuiButton)(spacing);
 const FormControl = styled(MuiFormControl)(spacing);
 
-const RequestVerificationModal = () => {
+const RequestVerificationModal = ({
+  id,
+  blockedUser,
+  getUserData,
+  setAlert,
+  setAlertType,
+}) => {
   const [open, setOpen] = useState(false);
+  const [templates, setTemplates] = useState("");
+  const [notifList, setNotifList] = useState([]);
+
   const [initialValues, setInitialValues] = useState({
     title: "",
     message: "",
@@ -44,13 +58,21 @@ const RequestVerificationModal = () => {
     whereTo: 3,
   });
 
+  const [notify, setNotify] = useState(false);
+
   const location = useLocation();
   const profileId = location?.state;
   const userId = profileId?.id;
 
   const sendNotifSchema = yup.object().shape({
-    title: yup.string().required("Field is required"),
-    message: yup.string().required("Field is required"),
+    title:
+      id === "blockUser" && notify
+        ? yup.string().notRequired()
+        : yup.string().required("Field is required"),
+    message:
+      id === "blockUser" && notify
+        ? yup.string().notRequired()
+        : yup.string().required("Field is required"),
   });
 
   const handleClickOpen = () => {
@@ -65,7 +87,35 @@ const RequestVerificationModal = () => {
     setInitialValues({ ...initialValues, whereTo: event.target.value });
   };
 
+  const handleTemplates = (event) => {
+    setTemplates(event.target.value);
+    setInitialValues({
+      ...initialValues,
+      title: notifList[event.target.value - 1].title,
+      message: notifList[event.target.value - 1].content,
+    });
+  };
+
+  const handleCheckbox = () => {
+    setNotify(!notify);
+  };
+
   async function sendNotification(values) {
+    if (id === "blockUser") {
+      let field = "block_status";
+      try {
+        const response = await editUserData_req(userId, field, !blockedUser);
+        if (response) {
+          console.log("BLOCK USER RESPONSE ==>", response);
+          getUserData();
+          setOpen(false);
+        }
+      } catch (error) {
+        console.log("BLOCK USER ERROR ==>", error.response.data);
+        setOpen(false);
+      }
+    }
+
     let data = {
       title: values.title,
       content: values.message,
@@ -77,26 +127,51 @@ const RequestVerificationModal = () => {
     };
 
     console.log("Data ===>", data);
-    try {
-      const response = await sendNotification_req(data);
-      if (response) {
-        console.log("SEND NOTIF RESPONSE ==>", response);
+    if (!notify) {
+      try {
+        const response = await sendNotification_req(data);
+        if (response) {
+          console.log("SEND NOTIF RESPONSE ==>", response);
+          setOpen(false);
+          setAlert(true);
+          setAlertType("success");
+        }
+      } catch (e) {
+        console.log("SEND NOTIF ERROR ==>", e.response);
         setOpen(false);
+        setAlert(true);
+        setAlertType("error");
       }
-    } catch (e) {
-      console.log("SEND NOTIF ERROR ==>", e.response);
-      setOpen(false);
     }
   }
+
+  async function getNotifTemplates() {
+    try {
+      const response = await getNotifTemplates_req(1, 40);
+      if (response) {
+        console.log("GETTING NOTIF TEMPLATES RESPONSE ==>", response);
+        setNotifList(response.templates);
+      }
+    } catch (e) {
+      console.log("GETTING NOTIF TEMPLATES ERROR ==>", e.response);
+    }
+  }
+
+  useEffect(() => {
+    getNotifTemplates();
+  }, []);
 
   return (
     <div>
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
-        Request Verification
+        {id === "blockUser"
+          ? `${blockedUser ? "Unblock" : "Block"} Sending`
+          : "Request Verification"}
       </Button>
       <Formik
+        enableReinitialize={true}
         validateOnChange={true}
-        initialValues={{ ...initialValues }}
+        initialValues={initialValues}
         validationSchema={sendNotifSchema}
         onSubmit={(values) => {
           sendNotification(values);
@@ -106,14 +181,41 @@ const RequestVerificationModal = () => {
           return (
             <>
               <Dialog open={open} onClose={handleClose} fullWidth>
-                <DialogTitle>Request Verification</DialogTitle>
+                <DialogTitle>
+                  {" "}
+                  {id === "blockUser"
+                    ? "Block Sending"
+                    : "Request Verification"}
+                </DialogTitle>
+                <Spacer mt={3} />
                 <DialogContent>
+                  <FormControl fullWidth variant="outlined">
+                    <InputLabel id="simple-select">
+                      Notification Templates
+                    </InputLabel>
+                    <Select
+                      labelId="simple-select"
+                      id="simple-select"
+                      value={templates}
+                      label="Notification Templates"
+                      onChange={handleTemplates}
+                    >
+                      {notifList.map((notif, key) => {
+                        return (
+                          <MenuItem key={key} value={key + 1}>
+                            {notif.title}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                  <Spacer mt={5} />
                   <FormControl fullWidth variant="outlined">
                     <TextField
                       id="title"
                       label="Title"
                       variant="outlined"
-                      fullWidth
+                      //fullWidth
                       //my={3}
                       defaultValue={initialValues.title}
                       onChange={handleChange("title")}
@@ -149,17 +251,37 @@ const RequestVerificationModal = () => {
                       <MenuItem value={3}>Personal Account</MenuItem>
                     </Select>
                   </FormControl>
+                  <Spacer mt={5} />
+                  {id === "blockUser" && (
+                    <FormControlLabel
+                      control={
+                        <Checkbox checked={notify} onChange={handleCheckbox} />
+                      }
+                      label="Do not notify user"
+                    />
+                  )}
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose} sx={{ width: "120px" }}>
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => handleSubmit()}
-                    sx={{ width: "130px" }}
-                  >
-                    Send
-                  </Button>
+                  {id === "blockUser" ? (
+                    <Button
+                      onClick={() => handleSubmit()}
+                      sx={{ width: "130px" }}
+                    >
+                      {`${blockedUser ? "Unblock" : "Block"}`}
+                    </Button>
+                  ) : (
+                    <>
+                      <Button onClick={handleClose} sx={{ width: "120px" }}>
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={() => handleSubmit()}
+                        sx={{ width: "130px" }}
+                      >
+                        Send
+                      </Button>
+                    </>
+                  )}
                 </DialogActions>
               </Dialog>
             </>

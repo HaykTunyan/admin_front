@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { darken } from "polished";
-import { Search as SearchIcon } from "react-feather";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
+import { instance } from "../../../../services/api";
 import {
   Typography as MuiTypography,
   Tab,
@@ -32,15 +32,20 @@ import {
   Button,
   TextField,
   CardContent,
+  IconButton,
 } from "@material-ui/core";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
 import {
+  deleteAffiliateSaving_req,
   editUserSavings_req,
   getUserSavings_req,
 } from "../../../../api/userSavingsAPI";
 import moment from "moment";
+import { getCoins_req } from "../../../../api/userWalletsAPI";
+import { ArrowDown, ArrowUp } from "react-feather";
+import AddAffiliateSaving from "../../../../modal/AddAffiliateSaving";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -56,51 +61,6 @@ const Chip = styled(MuiChip)`
   background-color: ${(props) =>
     props.theme.palette[props.color ? props.color : "primary"].light};
   color: ${(props) => props.theme.palette.common.white};
-`;
-
-const Input = styled(InputBase)`
-  color: inherit;
-  width: 100%;
-
-  > input {
-    color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)};
-    padding-right: ${(props) => props.theme.spacing(2.5)};
-    padding-bottom: ${(props) => props.theme.spacing(2.5)};
-    padding-left: ${(props) => props.theme.spacing(12)};
-    width: 160px;
-  }
-`;
-
-const Search = styled.div`
-  border-radius: 2px;
-  background-color: ${(props) => props.theme.header.background};
-  display: none;
-  position: relative;
-  width: 100%;
-
-  &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    display: block;
-  }
-`;
-
-const SearchIconWrapper = styled.div`
-  width: 50px;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
 `;
 
 const TableWrapper = styled.div`
@@ -194,15 +154,21 @@ const Deposits = () => {
   const profileId = location?.state;
   const userId = profileId?.id;
   const { t } = useTranslation();
+  const { affiliate } = location.state;
   const titleLocked = "Locked Info";
   const titleFlexible = "Flexible Info";
   const [tab, setTab] = useState(1);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [alignment, setAlignment] = useState("");
   const [savings, setSavings] = useState([]);
+  const [coins, setCoins] = useState([]);
+  const [selectedCoin, setSelectedCoin] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [allCount, setAllCount] = useState({});
   const [error, setError] = useState("");
+  const [primission, setPrimission] = useState("");
+
+  const [sortBy, setSortBy] = useState("increasing");
 
   const [changeAPY, setChangeAPY] = useState({
     fromPercent: null,
@@ -214,12 +180,29 @@ const Deposits = () => {
     ai: null,
   });
 
-  const handleAlignment = (event, newAlignment) => {
-    setAlignment(newAlignment);
+  const handleCellClick = (sortType) => {
+    setSortBy(sortBy === "increasing" ? "decreasing" : "increasing");
+    getUserSavings(
+      tab === 1 ? "flexible" : "locked",
+      1,
+      rowsPerPage,
+      selectedStatus === "all" ? null : selectedStatus,
+      Number(selectedCoin),
+      `${tab === 1 ? "total_amount" : "amount"}`,
+      sortType
+    );
   };
 
   const handleChangePage = (event, newPage) => {
-    getUserSavings(newPage + 1);
+    getUserSavings(
+      tab === 1 ? "flexible" : "locked",
+      newPage + 1,
+      rowsPerPage,
+      selectedStatus === "all" ? null : selectedStatus,
+      Number(selectedCoin),
+      `${tab === 1 ? "total_amount" : "amount"}`,
+      sortBy
+    );
     setPage(newPage);
   };
 
@@ -230,7 +213,41 @@ const Deposits = () => {
 
   const handleChangeTab = (event, newTab) => {
     setTab(newTab);
-    getUserSavings(newTab === 1 ? "flexible" : "locked");
+    getUserSavings(
+      newTab === 1 ? "flexible" : "locked",
+      1,
+      rowsPerPage,
+      selectedStatus === "all" ? null : selectedStatus,
+      Number(selectedCoin),
+      `${tab === 1 ? "total_amount" : "amount"}`,
+      sortBy
+    );
+  };
+
+  const handleCoinChange = (event) => {
+    setSelectedCoin(event.target.value);
+    getUserSavings(
+      tab === 1 ? "flexible" : "locked",
+      1,
+      rowsPerPage,
+      selectedStatus === "all" ? null : selectedStatus,
+      Number(event.target.value),
+      `${tab === 1 ? "total_amount" : "amount"}`,
+      sortBy
+    );
+  };
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+    getUserSavings(
+      tab === 1 ? "flexible" : "locked",
+      1,
+      rowsPerPage,
+      event.target.value === "all" ? null : event.target.value,
+      Number(selectedCoin),
+      `${tab === 1 ? "total_amount" : "amount"}`,
+      sortBy
+    );
   };
 
   function valuetext(value) {
@@ -269,20 +286,64 @@ const Deposits = () => {
       const response = await editUserSavings_req(userId, data);
       if (response) {
         console.log("EDIT USER SAVINGS RESPONSE ==>", response);
-        getUserSavings(type);
+        getUserSavings(
+          type,
+          1,
+          rowsPerPage,
+          selectedStatus === "all" ? null : selectedStatus,
+          Number(selectedCoin),
+          `${tab === 1 ? "total_amount" : "amount"}`,
+          sortBy
+        );
       }
     } catch (e) {
       console.log("EDIT USER SAVINGS ERROR ==>", e.response);
     }
   }
 
-  async function getUserSavings(type, page, rowsPerPage) {
+  async function deleteSaving(savingId) {
+    try {
+      const response = await deleteAffiliateSaving_req(userId, savingId);
+      if (response) {
+        console.log("DELETE AFFILIATE SAVING RESPONSE ==>", response);
+        getUserSavings(
+          tab === 1 ? "flexible" : "locked",
+          1,
+          rowsPerPage,
+          selectedStatus === "all" ? null : selectedStatus,
+          Number(selectedCoin),
+          `${tab === 1 ? "total_amount" : "amount"}`,
+          sortBy
+        );
+      }
+    } catch (e) {
+      console.log("DELETE AFFILIATE SAVING ERROR ==>", e.response);
+    }
+  }
+
+  async function getUserSavings(
+    type,
+    page,
+    rowsPerPage,
+    status,
+    coinId,
+    sortParam,
+    sortType
+  ) {
+    let data = {
+      status: status,
+      coin_id: coinId,
+      sort_param: sortParam,
+      sort_type: sortType,
+    };
+
     try {
       const response = await getUserSavings_req(
         userId,
         type,
         page,
-        rowsPerPage
+        rowsPerPage,
+        data
       );
       if (response) {
         console.log("GET USER SAVINGS RESPONSE ==>", response);
@@ -294,8 +355,38 @@ const Deposits = () => {
     }
   }
 
+  async function getCoins() {
+    try {
+      const response = await getCoins_req();
+      if (response) {
+        console.log("GET COINS RESPONSE ==>", response);
+        setCoins(response);
+      }
+    } catch (e) {
+      console.log("GET COINS ERROR ==>", e.response);
+    }
+  }
+
+  // Profile.
+  const getPrimission = () => {
+    return instance.get("/admin/profile").then((data) => {
+      setPrimission(data.data);
+      return data;
+    });
+  };
+
   useEffect(() => {
-    getUserSavings("flexible");
+    getUserSavings(
+      "flexible",
+      page,
+      rowsPerPage,
+      selectedStatus === "all" ? null : selectedStatus,
+      Number(selectedCoin),
+      `${tab === 1 ? "total_amount" : "amount"}`,
+      sortBy
+    );
+    getCoins();
+    getPrimission();
   }, []);
 
   return (
@@ -312,121 +403,190 @@ const Deposits = () => {
             </TabList>
           </Box>
           <Spacer my={6} />
-          <Card p={4}>
+          <Card>
             <CardContent>
-              <Grid container>
-                <Grid sx={12} md={3}>
-                  <Typography variant="inherit" fontWeight="bold">
-                    {`Active ${
-                      tab === 1 ? "Flexible" : "Locked"
-                    } deposits Amount`}
-                  </Typography>
-                  <Spacer mx={6} />
-                  <Typography variant="subtitle1">
-                    {savings?.activeDeposits}
-                  </Typography>
+              <Grid container display="flex" flexDirection="column">
+                <Grid item container direction="row" alignItems="center">
+                  <Grid item xs={12} md={4}>
+                    <Box
+                      sx={{
+                        display: { xs: "flex" },
+                        justifyContent: { xs: "space-between" },
+                      }}
+                    >
+                      <Typography variant="inherit" fontWeight="bold">
+                        {`Active ${
+                          tab === 1 ? "Flexible" : "Locked"
+                        } Deposits Amount`}
+                      </Typography>
+                      <Box>{savings?.activeDeposits}</Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} md={2} sx={{ mx: "50px" }}>
+                    <Box
+                      sx={{
+                        display: { xs: "flex" },
+                        justifyContent: { xs: "space-between" },
+                      }}
+                    >
+                      <Typography variant="inherit" fontWeight="bold">
+                        Profit
+                      </Typography>
+                      <Box>{savings?.activeProfit}</Box>
+                    </Box>
+                  </Grid>
                 </Grid>
-                <Grid sx={12} md={3}>
-                  <Typography variant="inherit" fontWeight="bold">
-                    {`Active ${tab === 1 ? "Flexible" : "Locked"} Profit`}
-                  </Typography>
-                  <Spacer mx={6} />
-                  <Typography variant="subtitle1">
-                    {savings?.activeProfit}
-                  </Typography>
-                </Grid>
-                <Grid sx={12} md={3}>
-                  <Typography variant="inherit" fontWeight="bold">
-                    {`Closed ${
-                      tab === 1 ? "Flexible" : "Locked"
-                    } deposits Amount`}
-                  </Typography>
-                  <Spacer mx={6} />
-                  <Typography variant="subtitle1">
-                    {savings?.closedDeposits}
-                  </Typography>
-                </Grid>
-                <Grid sx={12} md={3}>
-                  <Typography variant="inherit" fontWeight="bold">
-                    {`Closed ${tab === 1 ? "Flexible" : "Locked"} Profit`}
-                  </Typography>
-                  <Spacer mx={6} />
-                  <Typography variant="subtitle1">
-                    {savings?.closedProfit}
-                  </Typography>
+                <Spacer my={3} />
+                <Grid item container direction="row" alignItems="center">
+                  <Grid item xs={12} md={4}>
+                    <Box
+                      sx={{
+                        display: { xs: "flex" },
+                        justifyContent: { xs: "space-between" },
+                      }}
+                    >
+                      <Typography variant="inherit" fontWeight="bold">
+                        {`Closed ${
+                          tab === 1 ? "Flexible" : "Locked"
+                        } Deposits Amount`}
+                      </Typography>
+                      <Box>{savings?.closedDeposits}</Box>
+                    </Box>
+                  </Grid>
+                  <Grid item xs={12} md={2} sx={{ mx: "50px" }}>
+                    <Box
+                      sx={{
+                        display: { xs: "flex" },
+                        justifyContent: { xs: "space-between" },
+                      }}
+                    >
+                      <Typography variant="inherit" fontWeight="bold">
+                        Profit
+                      </Typography>
+                      <Box>{savings?.closedProfit}</Box>
+                    </Box>
+                  </Grid>
                 </Grid>
               </Grid>
             </CardContent>
           </Card>
           <Spacer my={6} />
           {/*Filters  */}
-          <Card mb={6} p={2} sx={{ display: "flex" }}>
-            <Grid item md={2}>
+          <Card
+            mb={6}
+            p={2}
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              alignItems: "center",
+            }}
+          >
+            <Grid item xs={12} md={3}>
               <FormControl fullWidth>
                 <InputLabel id="select-coin">Coin</InputLabel>
                 <Select
                   labelId="select-coin"
                   id="select-coin"
-                  //value={operationType}
-                  //onChange={handleOperationType}
                   label="Coin"
+                  value={selectedCoin}
+                  onChange={handleCoinChange}
                 >
                   <MenuItem value="all">
                     <em>All</em>
                   </MenuItem>
-                  <MenuItem value="receive">Bitcoin</MenuItem>
-                  <MenuItem value="send">Beincoin</MenuItem>
-                  <MenuItem value="send">Ripple</MenuItem>
+                  {coins.map((coin) => (
+                    <MenuItem value={coin.id}>{coin.name}</MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
-            <Spacer mx={2} />
-            <Grid item md={2}>
+            <Spacer my={2} mx={2} />
+            <Grid item xs={12} md={3}>
               <FormControl fullWidth>
                 <InputLabel id="select-status">Status</InputLabel>
                 <Select
                   labelId="select-status"
                   id="select-status"
-                  //value={coinAll}
-                  //onChange={handleCoinAll}
                   label="Status"
+                  value={selectedStatus}
+                  onChange={handleStatusChange}
                 >
                   <MenuItem value="all">
                     <em>All</em>
                   </MenuItem>
-                  <MenuItem value="statusCLosed">
+                  <MenuItem value="finished">
                     {tab === 1 ? "Closed" : "Done"}
                   </MenuItem>
-                  <MenuItem value="statusRedeem">
+                  <MenuItem value="active">
                     {tab === 1 ? "Redeem" : "In progress"}
                   </MenuItem>
                 </Select>
               </FormControl>
             </Grid>
+            {affiliate && (
+              <>
+                <Spacer my={2} mx={2} />
+                <Grid item xs={12} md={3}>
+                  <AddAffiliateSaving
+                    tab={tab}
+                    userId={userId}
+                    getUserSavings={getUserSavings}
+                  />
+                </Grid>
+              </>
+            )}
           </Card>
 
           {/* Tab One */}
           <TabPanel value={1}>
             <Card mb={6}>
-              <CardHeader
-                action={
-                  <Search>
-                    <SearchIconWrapper>
-                      <SearchIcon />
-                    </SearchIconWrapper>
-                    <Input placeholder={t("Search")} />
-                  </Search>
-                }
-                title={titleFlexible}
-              />
+              <CardHeader title={titleFlexible} />
               <Paper>
                 <TableWrapper>
                   <Table>
                     <TableHead>
                       <TableRow>
                         {rowListFlexible?.map((item) => (
-                          <TableCell key={item.id} sx={{ font: "bold" }}>
-                            {item.head}
+                          <TableCell
+                            key={item.id}
+                            sx={{ font: "bold" }}
+                            onClick={() => {
+                              console.log("ITEM ==>", item, selectedStatus);
+                              if (
+                                Number(item.id) === 2 &&
+                                selectedStatus === "finished"
+                              ) {
+                                handleCellClick(
+                                  sortBy === "decreasing"
+                                    ? "increasing"
+                                    : "decreasing"
+                                );
+                              }
+                            }}
+                          >
+                            {Number(item.id) === 2 &&
+                            selectedStatus === "finished" ? (
+                              <Button color="inherit">
+                                {item.head}
+                                <IconButton
+                                  onClick={() =>
+                                    handleCellClick(
+                                      sortBy === "decreasing"
+                                        ? "increasing"
+                                        : "decreasing"
+                                    )
+                                  }
+                                >
+                                  {sortBy === "increasing" ? (
+                                    <ArrowUp size={16} />
+                                  ) : (
+                                    <ArrowDown size={16} />
+                                  )}
+                                </IconButton>
+                              </Button>
+                            ) : (
+                              item.head
+                            )}
                           </TableCell>
                         ))}
                       </TableRow>
@@ -463,7 +623,6 @@ const Deposits = () => {
                                       id="fromPercent"
                                       name="fromPercent"
                                       type="number"
-                                      fullWidth
                                       placeholder="From Percent"
                                       onChange={(e) =>
                                         setChangeAPY({
@@ -471,6 +630,7 @@ const Deposits = () => {
                                           fromPercent: e.target.value,
                                         })
                                       }
+                                      sx={{ width: "150px" }}
                                     />
                                   </Grid>
                                   <Grid item>
@@ -487,6 +647,7 @@ const Deposits = () => {
                                           toPercent: e.target.value,
                                         })
                                       }
+                                      sx={{ width: "150px" }}
                                     />
                                   </Grid>
                                 </Grid>
@@ -501,38 +662,55 @@ const Deposits = () => {
                                 <Chip label="Closed" color="error" />
                               )}
                             </TableCell>
-                            <TableCell>
-                              {item.status === "active" && (
-                                <Grid
-                                  container
-                                  direction="column"
-                                  alignItems="center"
-                                  mb={2}
-                                >
-                                  <Button
-                                    variant="contained"
-                                    onClick={() => {
-                                      if (
-                                        changeAPY[`editing_${item.saving_id}`]
-                                      ) {
-                                        saveEditedData(item);
-                                      } else {
-                                        setChangeAPY({
-                                          ...changeAPY,
-                                          [`editing_${item.saving_id}`]: true,
-                                        });
-                                      }
-                                    }}
+                            {/* Primission Super Admin */}
+                            {primission.role === 1 && (
+                              <TableCell>
+                                {item.status === "active" && (
+                                  <Grid
+                                    container
+                                    direction="row"
+                                    alignItems="center"
+                                    mb={2}
                                   >
-                                    {changeAPY[`editing_${item.saving_id}`] &&
-                                    changeAPY[`editing_${item.saving_id}`] ===
-                                      true
-                                      ? "Save 7-Day APY"
-                                      : "Change 7-Day APY"}
-                                  </Button>
-                                </Grid>
-                              )}
-                            </TableCell>
+                                    <Button
+                                      variant="contained"
+                                      onClick={() => {
+                                        if (
+                                          changeAPY[`editing_${item.saving_id}`]
+                                        ) {
+                                          saveEditedData(item);
+                                        } else {
+                                          setChangeAPY({
+                                            ...changeAPY,
+                                            [`editing_${item.saving_id}`]: true,
+                                          });
+                                        }
+                                      }}
+                                      sx={{ width: "150px" }}
+                                    >
+                                      {changeAPY[`editing_${item.saving_id}`] &&
+                                      changeAPY[`editing_${item.saving_id}`] ===
+                                        true
+                                        ? "Save 7-Day APY"
+                                        : "Change 7-Day APY"}
+                                    </Button>
+                                  </Grid>
+                                )}
+                              </TableCell>
+                            )}
+                            {affiliate && (
+                              <TableCell>
+                                <Button
+                                  variant="contained"
+                                  sx={{ width: "50px", mx: "15px" }}
+                                  onClick={() => {
+                                    deleteSaving(item.saving_id);
+                                  }}
+                                >
+                                  {"Delete"}
+                                </Button>
+                              </TableCell>
+                            )}
                           </TableRow>
                         ))}
                     </TableBody>
@@ -554,25 +732,52 @@ const Deposits = () => {
           {/* Tab Two */}
           <TabPanel value={2}>
             <Card mb={6}>
-              <CardHeader
-                action={
-                  <Search>
-                    <SearchIconWrapper>
-                      <SearchIcon />
-                    </SearchIconWrapper>
-                    <Input placeholder={t("Search")} />
-                  </Search>
-                }
-                title={titleLocked}
-              />
+              <CardHeader title={titleLocked} />
               <Paper>
                 <TableWrapper>
                   <Table>
                     <TableHead>
                       <TableRow>
                         {rowListLocked?.map((item) => (
-                          <TableCell key={item.id} sx={{ font: "bold" }}>
-                            {item.head}
+                          <TableCell
+                            key={item.id}
+                            sx={{ font: "bold", alignItems: "center" }}
+                            onClick={() => {
+                              if (
+                                Number(item.id) === 2 &&
+                                selectedStatus === "active"
+                              ) {
+                                handleCellClick(
+                                  sortBy === "decreasing"
+                                    ? "increasing"
+                                    : "decreasing"
+                                );
+                              }
+                            }}
+                          >
+                            {Number(item.id) === 2 &&
+                            selectedStatus === "active" ? (
+                              <Button color="inherit">
+                                {item.head}
+                                <IconButton
+                                  onClick={() =>
+                                    handleCellClick(
+                                      sortBy === "decreasing"
+                                        ? "increasing"
+                                        : "decreasing"
+                                    )
+                                  }
+                                >
+                                  {sortBy === "increasing" ? (
+                                    <ArrowUp size={16} />
+                                  ) : (
+                                    <ArrowDown size={16} />
+                                  )}
+                                </IconButton>
+                              </Button>
+                            ) : (
+                              item.head
+                            )}
                           </TableCell>
                         ))}
                       </TableRow>
@@ -639,6 +844,7 @@ const Deposits = () => {
                                 <span>{item.duration}day(s)</span>
                               )}
                             </TableCell>
+                            {/* Primission Super Admin. */}
                             <TableCell sx={{ color: "green" }}>
                               <Box>
                                 <Slider
@@ -652,6 +858,9 @@ const Deposits = () => {
                                   getAriaValueText={valuetext}
                                   step={1}
                                   valueLabelDisplay="on"
+                                  disabled={
+                                    primission.role === 1 ? "false" : "true"
+                                  }
                                 />
                               </Box>
                               <Spacer my={2} />
@@ -662,10 +871,18 @@ const Deposits = () => {
                                 {moment(item.end_date).format("DD/MM/YYYY")}
                               </Typography>
                             </TableCell>
+                            {/* Peimission Super Admin. */}
                             <TableCell>
                               <FormGroup>
                                 <FormControlLabel
-                                  control={<Switch checked={item.resaving} />}
+                                  control={
+                                    <Switch
+                                      checked={item.resaving}
+                                      disabled={
+                                        primission.role === 1 ? "false" : "true"
+                                      }
+                                    />
+                                  }
                                   label="ReSaving"
                                 />
                               </FormGroup>
@@ -677,38 +894,46 @@ const Deposits = () => {
                                 <Chip label="Done" color="info" />
                               )}
                             </TableCell>
-                            <TableCell>
-                              {item.status === "active" && (
-                                <Grid
-                                  container
-                                  direction="column"
-                                  alignItems="center"
-                                  mb={2}
-                                >
-                                  <Button
-                                    variant="contained"
-                                    onClick={() => {
-                                      if (
-                                        changeDays[`editing_${item.saving_id}`]
-                                      ) {
-                                        saveEditedData(item);
-                                      } else {
-                                        setChangeDays({
-                                          ...changeDays,
-                                          [`editing_${item.saving_id}`]: true,
-                                        });
-                                      }
-                                    }}
+                            {/* Primission Super Admin. */}
+                            {primission.role === 1 && (
+                              <TableCell>
+                                {item.status === "active" && (
+                                  <Grid
+                                    container
+                                    direction="column"
+                                    alignItems="center"
+                                    mb={2}
                                   >
-                                    {changeDays[`editing_${item.saving_id}`] &&
-                                    changeDays[`editing_${item.saving_id}`] ===
-                                      true
-                                      ? "Save Duration/AI"
-                                      : "Change Duration/AI"}
-                                  </Button>
-                                </Grid>
-                              )}
-                            </TableCell>
+                                    <Button
+                                      variant="contained"
+                                      onClick={() => {
+                                        if (
+                                          changeDays[
+                                            `editing_${item.saving_id}`
+                                          ]
+                                        ) {
+                                          saveEditedData(item);
+                                        } else {
+                                          setChangeDays({
+                                            ...changeDays,
+                                            [`editing_${item.saving_id}`]: true,
+                                          });
+                                        }
+                                      }}
+                                    >
+                                      {changeDays[
+                                        `editing_${item.saving_id}`
+                                      ] &&
+                                      changeDays[
+                                        `editing_${item.saving_id}`
+                                      ] === true
+                                        ? "Save Duration/AI"
+                                        : "Change Duration/AI"}
+                                    </Button>
+                                  </Grid>
+                                )}
+                              </TableCell>
+                            )}
                           </TableRow>
                         ))}
                     </TableBody>

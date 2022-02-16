@@ -3,7 +3,6 @@ import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { Grid, Card as MuiCard } from "@material-ui/core";
 import TabletCell from "./TabletCall";
-import UniqueTable from "./UniqueTable";
 import OperationTable from "./OperationTable";
 import BrowsersTable from "./BrowsersTable";
 import { instance } from "../../services/api";
@@ -58,12 +57,6 @@ const TabletTab = () => {
       <Grid item xs={12} md={12}>
         <TabletCell />
       </Grid>
-      {/* Unique User */}
-      {/* <Grid item xs={12} md={12}>
-        <Card my={6}>
-          <UniqueTable />
-        </Card>
-      </Grid> */}
       {/* Operation Sistem */}
       <Grid item xs={12} md={6}>
         <Card my={6}>

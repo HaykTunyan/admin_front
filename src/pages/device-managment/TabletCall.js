@@ -19,8 +19,8 @@ import { instance } from "../../services/api";
 // Spacing.
 const Toolbar = styled(MuiToolbar)(spacing);
 
-const TabletCell = ({ tabletData }) => {
-  //  hooks.
+const TabletCell = () => {
+  //  Hooks.
   const title = " Tablet Info ";
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -36,7 +36,7 @@ const TabletCell = ({ tabletData }) => {
     setPage(1);
   };
 
-  // Tablet
+  // getTableStatistics.
   const getTableStatistics = (page, rowsPerPage) => {
     return instance
       .get("/admin/device-statistics/for", {
@@ -69,7 +69,7 @@ const TabletCell = ({ tabletData }) => {
             Tablet Info
           </Typography>
         </Toolbar>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Table aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell width="30%">Device Name</TableCell>
@@ -95,15 +95,17 @@ const TabletCell = ({ tabletData }) => {
           </TableBody>
         </Table>
         {/* Pagination */}
-        <TablePagination
-          rowsPerPageOptions={[10]}
-          component="div"
-          count={rowTable?.allCount}
-          rowsPerPage={rowTable?.limit}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {rowTable?.deviceStatistics && (
+          <TablePagination
+            rowsPerPageOptions={[10]}
+            component="div"
+            count={rowTable?.allCount}
+            rowsPerPage={rowTable?.limit}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        )}
       </TableContainer>
     </Fragment>
   );

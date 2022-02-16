@@ -30,7 +30,7 @@ const ChartWrapper = styled.div`
 `;
 
 const DeviceManagement = () => {
-  // hooks.
+  // Hooks.
   const [tabOne, setOpenOne] = useState(false);
   const [tabThree, setOpenThree] = useState(false);
   const [tabTwo, setOpenTwo] = useState(false);
@@ -108,17 +108,10 @@ const DeviceManagement = () => {
   };
 
   const getAllBrowsers = () => {
-    return instance
-      .get("/admin/device-statistics/browser", {
-        // params: {
-        //   page: 1,
-        //   limit: 10,
-        // },
-      })
-      .then((data) => {
-        setAllBrowsers(data.data);
-        return data;
-      });
+    return instance.get("/admin/device-statistics/browser", {}).then((data) => {
+      setAllBrowsers(data.data);
+      return data;
+    });
   };
 
   useEffect(() => {
@@ -129,7 +122,7 @@ const DeviceManagement = () => {
   return (
     <>
       <Helmet title="Device management" />
-      <Grid justifyContent="space-between" container spacing={6}>
+      <Grid container spacing={6}>
         <Grid item>
           <Typography variant="h3" gutterBottom>
             Users Device in Project
@@ -143,35 +136,45 @@ const DeviceManagement = () => {
             title={"All Devices"}
             chip="100%"
             ViewMore={openDevice}
-            className={allTab && { background: "#376fd0" }}
+            className={allTab && "#376fd0"}
+            color={allTab && "#FFFFFF"}
           />
         </Grid>
-        <Grid item xs={12} md={3}>
-          <Stats
-            title={mobileList?.type?.toUpperCase()}
-            amount={mobileList?.percent}
-            ViewMore={openMobile}
-            className={tabOne && { background: "#376fd0" }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Stats
-            title={tabletList?.type?.toUpperCase()}
-            amount={tabletList?.percent}
-            percentagecolor={green[500]}
-            ViewMore={openTablet}
-            className={tabTwo && { background: "#376fd0" }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Stats
-            title={webList?.type?.toUpperCase()}
-            amount={webList?.percent}
-            percentagecolor={green[500]}
-            ViewMore={openDescktop}
-            className={tabThree && { background: "#376fd0" }}
-          />
-        </Grid>
+        {mobileList && (
+          <Grid item xs={12} md={3}>
+            <Stats
+              title={mobileList?.type?.toUpperCase()}
+              amount={mobileList?.percent}
+              ViewMore={openMobile}
+              className={tabOne && "#376fd0"}
+              color={tabOne && "#FFFFFF"}
+            />
+          </Grid>
+        )}
+        {tabletList && (
+          <Grid item xs={12} md={3}>
+            <Stats
+              title={tabletList?.type?.toUpperCase()}
+              amount={tabletList?.percent}
+              percentagecolor={green[500]}
+              ViewMore={openTablet}
+              className={tabTwo && "#376fd0"}
+              color={tabTwo && "#FFFFFF"}
+            />
+          </Grid>
+        )}
+        {webList && (
+          <Grid item xs={12} md={3}>
+            <Stats
+              title={webList?.type?.toUpperCase()}
+              amount={webList?.percent}
+              percentagecolor={green[500]}
+              ViewMore={openDescktop}
+              className={tabThree && "#376fd0"}
+              color={tabThree && "#FFFFFF"}
+            />
+          </Grid>
+        )}
       </Grid>
       <Divider my={6} />
       <Grid container spacing={6}>
@@ -194,7 +197,7 @@ const DeviceManagement = () => {
       {allTab && (
         <Grid container spacing={6}>
           {/* Chart Data */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} xs={12} md={6}>
             <Card my={6}>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -208,7 +211,7 @@ const DeviceManagement = () => {
             </Card>
           </Grid>
           {/* Browsers */}
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} xs={12} md={6}>
             <Card my={6}>
               <BrowsersTable rowBrowser={allBrowswers} />
             </Card>

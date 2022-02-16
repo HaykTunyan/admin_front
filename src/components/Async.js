@@ -1,34 +1,34 @@
-// import * as React from "react";
-// import Loader from "./Loader";
+import * as React from "react";
+import Loader from "./Loader";
 
-// const sleep = (m) => new Promise((r) => setTimeout(r, m));
+const sleep = (m) => new Promise((r) => setTimeout(r, m));
 
-// export default function asyncComponent(importComponent) {
-//   class AsyncComponent extends React.Component {
-//     constructor(props) {
-//       super(props);
+export default function asyncComponent(importComponent) {
+  class AsyncComponent extends React.Component {
+    constructor(props) {
+      super(props);
 
-//       this.state = {
-//         component: null,
-//       };
-//     }
+      this.state = {
+        component: null,
+      };
+    }
 
-//     async componentDidMount() {
-//       await sleep(process.env.NODE_ENV === "development" ? 150 : 0);
+    async componentDidMount() {
+      await sleep(process.env.NODE_ENV === "development" ? 150 : 0);
 
-//       const { default: component } = await importComponent();
+      const { default: component } = await importComponent();
 
-//       this.setState({
-//         component: component,
-//       });
-//     }
+      this.setState({
+        component: component,
+      });
+    }
 
-//     render() {
-//       const C = this.state.component;
+    render() {
+      const C = this.state.component;
 
-//       return C ? <C {...this.props} /> : <Loader />;
-//     }
-//   }
+      return C ? <C {...this.props} /> : <Loader />;
+    }
+  }
 
-//   return AsyncComponent;
-// }
+  return AsyncComponent;
+}

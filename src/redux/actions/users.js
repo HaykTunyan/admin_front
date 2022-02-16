@@ -46,7 +46,6 @@ export const getUserList_req = () => (dispatch) => {
     .get("/admin/user/all", { mode: "no-cors" })
     .then(({ data: { data } }) => {
       dispatch({ type: USER_LIST, payload: { data } });
-      console.log("data users list", data);
       return data;
     })
     .catch((err) => {

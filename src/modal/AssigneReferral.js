@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components/macro";
-import { UserPlus } from "react-feather";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { spacing } from "@material-ui/system";
@@ -12,16 +11,9 @@ import {
   DialogContent,
   DialogTitle,
   Box,
-  Typography,
   Alert as MuiAlert,
 } from "@material-ui/core";
-import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
 import { assigneReferralUser } from "../redux/actions/referral";
-
-const style = {
-  width: 360,
-  bgcolor: "background.paper",
-};
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
@@ -32,7 +24,7 @@ const addAdminValidation = Yup.object().shape({
   user_id: Yup.number().required("Id is requrired"),
 });
 
-const AssigneReferral = ({ id }) => {
+const AssigneReferral = ({ id, getUnassigned }) => {
   //  hooks.
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
@@ -52,22 +44,18 @@ const AssigneReferral = ({ id }) => {
   };
 
   const handleSubmit = (values) => {
-    console.log("values", values);
     dispatch(assigneReferralUser(values))
       .then((data) => {
         if (data.success) {
-          console.log(" data success ", data.success);
           setOpen(false);
         }
+        getUnassigned();
       })
       .catch((error) => {
-        console.log("error", error?.message);
         setMessageError(error?.response?.data);
       });
   };
   const invalid = messageError?.message;
-
-  console.log("messageError", messageError);
 
   return (
     <>

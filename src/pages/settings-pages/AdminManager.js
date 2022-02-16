@@ -62,7 +62,6 @@ const AdminManager = () => {
               </Box>
             </Grid>
           </Grid>
-
           <Button variant="contained" color="primary">
             Save changes
           </Button>

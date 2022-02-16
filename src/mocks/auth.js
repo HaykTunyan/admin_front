@@ -1,7 +1,5 @@
 import faker from "faker";
-
 import mock from "./adapter";
-
 import { verify, sign } from "../utils/jwt";
 
 const JWT_SECRET = "super-secret-key";
@@ -46,7 +44,6 @@ mock.onPost("/api/auth/sign-in").reply(async (config) => {
 
     return [200, { accessToken, user }];
   } catch (error) {
-    console.error(error);
     return [500, { message: "Internal server error" }];
   }
 });
@@ -106,7 +103,6 @@ mock.onGet("/api/auth/my-account").reply((config) => {
 
     return [200, { user }];
   } catch (error) {
-    console.error(error);
     return [500, { message: "Internal server error" }];
   }
 });
