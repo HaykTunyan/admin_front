@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Button,
   TextField,
@@ -12,9 +12,12 @@ import {
 import { Formik } from "formik";
 import * as yup from "yup";
 import { createNotifTemplate_req } from "../api/notificationsAPI";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 const AddNotificationModal = ({ getTemplates }) => {
+  // Hooks.
   const [open, setOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [initialValues, setInitialValues] = useState({
     title: "",
     message: "",
@@ -40,19 +43,22 @@ const AddNotificationModal = ({ getTemplates }) => {
     };
     try {
       const response = await createNotifTemplate_req(data);
+      setSuccess(false);
       if (response) {
-        console.log("CREATING NOTIF TEMPLATE RESPONSE ==>", response);
         setOpen(false);
         getTemplates();
       }
+      setSuccess(true);
     } catch (e) {
-      console.log("CREATING NOTIF TEMPLATE ERROR ==>", e.response);
       setOpen(false);
     }
   }
 
   return (
-    <div>
+    <Fragment>
+      {success === true && (
+        <ConfirmationNotice opening={true} title="Create New Notification" />
+      )}
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         Add Notification
       </Button>
@@ -113,7 +119,7 @@ const AddNotificationModal = ({ getTemplates }) => {
           );
         }}
       </Formik>
-    </div>
+    </Fragment>
   );
 };
 

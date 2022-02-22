@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Button,
   TextField,
@@ -15,9 +15,12 @@ import {
 import { Formik } from "formik";
 import * as yup from "yup";
 import { sendNotification_req } from "../api/notificationsAPI";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 const SendNotificationModal = ({ item, primission }) => {
+  // Hooks.
   const [open, setOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [initialValues, setInitialValues] = useState({
     title: item.title,
     message: item.content,
@@ -66,7 +69,9 @@ const SendNotificationModal = ({ item, primission }) => {
     try {
       const response = await sendNotification_req(data);
       if (response) {
+        setSuccess(false);
         setOpen(false);
+        setSuccess(true);
       }
     } catch (e) {
       setOpen(false);
@@ -74,7 +79,10 @@ const SendNotificationModal = ({ item, primission }) => {
   }
 
   return (
-    <div>
+    <Fragment>
+      {success === true && (
+        <ConfirmationNotice opening={success} title="Action Success" />
+      )}
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         Action
       </Button>
@@ -188,7 +196,7 @@ const SendNotificationModal = ({ item, primission }) => {
           );
         }}
       </Formik>
-    </div>
+    </Fragment>
   );
 };
 

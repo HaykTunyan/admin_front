@@ -21,17 +21,19 @@ import { generateReferral } from "../../redux/actions/referral";
 import { instance } from "../../services/api";
 import moment from "moment";
 import AssigneReferral from "../../modal/AssigneReferral";
+import ConfirmationNotice from "../../components/ConfirmationNotice";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
 
 const ReferralUsers = () => {
-  // hooks.
+  // Hooks.
   const dispatch = useDispatch();
   const [showList, setShowList] = useState(false);
   const [unassignedList, setUnassignedList] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [success, setSuccess] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     getUnassigned(newPage + 1);
@@ -46,9 +48,11 @@ const ReferralUsers = () => {
   const handleGenerate = () => {
     try {
       dispatch(generateReferral()).then((data) => {
+        setSuccess(false);
         if (data.success) {
           setShowList(true);
         }
+        setSuccess(true);
         getUnassigned();
       });
     } catch (error) {
@@ -81,6 +85,9 @@ const ReferralUsers = () => {
 
   return (
     <Fragment>
+      {success === true && (
+        <ConfirmationNotice opening={success} title="Generete success" />
+      )}
       <Card xs={12}>
         <CardContent>
           <Grid

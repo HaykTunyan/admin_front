@@ -24,11 +24,13 @@ import {
   Tooltip,
   Button,
   IconButton,
+  Autocomplete,
+  TextField,
 } from "@material-ui/core";
-import { useTranslation } from "react-i18next";
 import CSVButton from "../../components/CSVButton";
 import DateRange from "../../components/date-picker/DateRange";
 import { ArrowDown, ArrowUp } from "react-feather";
+import Loader from "../../components/Loader";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -56,8 +58,7 @@ const Chip = styled(MuiChip)`
 `;
 
 const SwapTable = () => {
-  // hooks.
-  const { t } = useTranslation();
+  // Hooks.
   const [swap, setSwap] = useState([]);
   const [page, setPage] = useState(0); // page.
   const [rowsPerPage, setRowsPerPage] = useState(10); // limit.
@@ -70,11 +71,15 @@ const SwapTable = () => {
   const [sortPhone, setSortPhone] = useState("");
   const [country, setCountry] = useState("");
   const [coinSettings, getCoinSettings] = useState([]);
-  const rows = swap?.transactions;
   // Sorting.
   const [sortDate, setSortDate] = useState(true);
   const [sortEmail, setSortEmail] = useState(true);
   const [sortAmount, setSortAmount] = useState(true);
+  const [sortParams, setSortParmas] = useState("");
+  const [sortType, setSortType] = useState("");
+  const [inputPhone, setPhoneValue] = useState("");
+  // State.
+  const rows = swap?.transactions;
 
   // Sorting Functions.
   const sortingDate = () => {
@@ -86,6 +91,7 @@ const SwapTable = () => {
     }
   };
 
+  // Sorting Email.
   const sortingEmail = () => {
     setSortEmail(!sortEmail);
     if (sortEmail) {
@@ -95,11 +101,19 @@ const SwapTable = () => {
     }
   };
 
+  // Sorting Phone.
   const sortingPhone = (event) => {
     setSortPhone(event.target.value);
     getPhoneSorting(event.target.value);
   };
 
+  const handleCountry = (event, newPhoneValue) => {
+    setSortPhone(event?.target?.value);
+    setPhoneValue(newPhoneValue);
+    getPhoneSorting(event?.target?.value);
+  };
+
+  // Sorting Amount.
   const sortingAmount = () => {
     setSortAmount(!sortAmount);
     if (sortAmount) {
@@ -123,10 +137,11 @@ const SwapTable = () => {
   // Filter Search.
   const handleChangeFrom = (event, from) => {
     setFrom(event.target.value);
-    if (from?.props.value === "all") {
-      getSwap();
-    } else {
+    console.log(" from  change", from);
+    if (from?.props.value != "all") {
       getFromCoin(from?.props.value);
+    } else {
+      getSwap();
     }
   };
 
@@ -141,10 +156,10 @@ const SwapTable = () => {
 
   const handleStatusValue = (event, statusValue) => {
     setStatusValue(event.target.value);
-    if (statusValue?.props?.value === "all") {
-      getSwap();
-    } else {
+    if (statusValue?.props?.value != "all") {
       getSendStatusFilter(statusValue?.props?.value);
+    } else {
+      getSwap();
     }
   };
 
@@ -162,13 +177,26 @@ const SwapTable = () => {
   // End FIlter .
 
   // get Swap.
-  const getSwap = (page, rowsPerPage) => {
+  const getSwap = (
+    page,
+    rowsPerPage,
+    startDate,
+    endDate,
+    from,
+    to,
+    statusValue
+  ) => {
     return instance
       .get("/admin/transaction/all", {
         params: {
           type: "swap",
           limit: rowsPerPage,
           page: page,
+          start_date: startDate,
+          end_date: endDate,
+          coin_from_id: from,
+          coin_to_id: to,
+          status: statusValue,
         },
       })
       .then((data) => {
@@ -182,13 +210,20 @@ const SwapTable = () => {
   };
 
   // get Send Sorting Data.
-  const getSorting = (sort_type, sort_params) => {
+  const getSorting = (sort_type, sort_params, page, rowsPerPage) => {
     return instance
       .get("/admin/transaction/all", {
         params: {
           type: "swap",
           sort_type: sort_type,
           sort_param: sort_params,
+          limit: rowsPerPage,
+          page: page,
+          start_date: startDate,
+          end_date: endDate,
+          coin_from_id: from,
+          coin_to_id: to,
+          status: statusValue,
         },
       })
       .then((data) => {
@@ -205,6 +240,8 @@ const SwapTable = () => {
           type: "swap",
           start_date: start_date,
           end_date: end_date,
+          limit: rowsPerPage,
+          page: page,
         },
       })
       .then((data) => {
@@ -236,6 +273,8 @@ const SwapTable = () => {
         params: {
           type: "swap",
           status: status,
+          limit: rowsPerPage,
+          page: page,
         },
       })
       .then((data) => {
@@ -251,6 +290,8 @@ const SwapTable = () => {
         params: {
           type: "swap",
           telefon_code: telefon_code,
+          limit: rowsPerPage,
+          page: page,
         },
       })
       .then((data) => {
@@ -260,12 +301,15 @@ const SwapTable = () => {
   };
 
   // get Coin Filter Data
-  const getFromCoin = (coin_from_id) => {
+  const getFromCoin = (coin_from_id, page, rowsPerPage, to) => {
     return instance
       .get("/admin/transaction/all", {
         params: {
           type: "swap",
           coin_from_id: coin_from_id,
+          limit: rowsPerPage,
+          page: page,
+          coin_to_id: to,
         },
       })
       .then((data) => {
@@ -275,12 +319,15 @@ const SwapTable = () => {
   };
 
   // get Coin Filter Data
-  const getToCoin = (coin_to_id) => {
+  const getToCoin = (coin_to_id, page, rowsPerPage, from) => {
     return instance
       .get("/admin/transaction/all", {
         params: {
           type: "swap",
           coin_to_id: coin_to_id,
+          limit: rowsPerPage,
+          page: page,
+          coin_from_id: from,
         },
       })
       .then((data) => {
@@ -292,10 +339,12 @@ const SwapTable = () => {
   // Use Effect.
   useEffect(() => {
     getSwap();
-    getSorting();
-    getDateFilters();
-    getSettingCoin();
-    getCountry();
+    setTimeout(() => {
+      getSorting();
+      getDateFilters();
+      getSettingCoin();
+      getCountry();
+    }, 700);
   }, []);
 
   return (
@@ -412,7 +461,34 @@ const SwapTable = () => {
                         marginLeft: "20px",
                       }}
                     >
-                      <FormControl sx={{ minWidth: "100px" }}>
+                      <Autocomplete
+                        inputValue={inputPhone}
+                        onInputChange={handleCountry}
+                        id="country-states"
+                        options={country}
+                        getOptionLabel={(country) => country.telefon}
+                        sx={{ width: 150 }}
+                        renderOption={(props, option) => (
+                          <Box
+                            component="li"
+                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                            {...props}
+                          >
+                            {option.telefon}
+                          </Box>
+                        )}
+                        renderInput={(params) => (
+                          <>
+                            {console.log(" params ", params)}
+                            <TextField
+                              {...params}
+                              label="Phone"
+                              value={params?.inputProps?.value}
+                            />
+                          </>
+                        )}
+                      />
+                      {/* <FormControl sx={{ minWidth: "100px" }}>
                         <InputLabel id="select-phone-label">Sort</InputLabel>
                         <Select
                           labelId="select-phone-label"
@@ -433,7 +509,7 @@ const SwapTable = () => {
                               </MenuItem>
                             ))}
                         </Select>
-                      </FormControl>
+                      </FormControl> */}
                     </Box>
                   </Box>
                 </TableCell>
@@ -539,7 +615,7 @@ const SwapTable = () => {
           )}
         </TableContainer>
       </Paper>
-      {rows && (
+      {rows ? (
         <Box
           mt={8}
           display="flex"
@@ -550,6 +626,10 @@ const SwapTable = () => {
             Export Data
           </Typography>
           <CSVButton data={rows} />
+        </Box>
+      ) : (
+        <Box sx={{ marginTop: "100px" }}>
+          <Loader />
         </Box>
       )}
     </Fragment>

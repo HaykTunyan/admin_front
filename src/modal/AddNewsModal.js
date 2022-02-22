@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, Fragment } from "react";
 import {
   Button,
   TextField,
@@ -16,13 +16,15 @@ import TinymceNew from "../components/TinymceNew";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { addNews_req } from "../api/newsAPI";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 const AddNewsModal = ({ getNews }) => {
-  //  hooks.
+  //  Hooks.
   const editorRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [images, setImages] = useState([]);
   const [imagesError, setImagesError] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [initialValues, setInitialValues] = useState({
     title: "",
     description: "",
@@ -59,14 +61,13 @@ const AddNewsModal = ({ getNews }) => {
     try {
       const response = await addNews_req(formData);
       if (response) {
-        console.log("ADDING NEWS RESPONSE ==>", response);
         setOpen(false);
         setImagesError(false);
         setContentError(false);
         getNews();
+        setSuccess(true);
       }
     } catch (e) {
-      console.log("ADDING NEWS ERROR ==>", e.response);
       setOpen(false);
       setImagesError(false);
       setContentError(false);
@@ -79,7 +80,8 @@ const AddNewsModal = ({ getNews }) => {
   });
 
   return (
-    <div>
+    <Fragment>
+      {success && <ConfirmationNotice title="Add New News" />}
       <Button variant="contained" onClick={handleClickOpen}>
         Add News
       </Button>
@@ -251,7 +253,7 @@ const AddNewsModal = ({ getNews }) => {
           );
         }}
       </Formik>
-    </div>
+    </Fragment>
   );
 };
 

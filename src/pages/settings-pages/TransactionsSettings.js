@@ -115,7 +115,7 @@ const TransactionsSettings = () => {
       target: { value },
     } = event;
 
-    setFilterCoin(typeof value === "string" ? value.split(",") : value);
+    setFilterCoin(typeof value === "string" ? value.split(" ,") : value);
   };
 
   const handleCoinChange = (item) => {
@@ -168,8 +168,6 @@ const TransactionsSettings = () => {
         delete params[key];
       }
     });
-
-    console.log("PARAMS ===>", params);
 
     return instance
       .get("/admin/coin-settings", { params: params })

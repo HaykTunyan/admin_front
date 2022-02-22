@@ -27,7 +27,7 @@ const useStyles = makeStyles({
 });
 
 const ReferralTable = () => {
-  // hooks.
+  // Hooks.
   const classes = useStyles();
   const [referralRow, setReferralRow] = useState(null);
   const [page, setPage] = useState(0);

@@ -23,16 +23,16 @@ const errorResponse = (error) => {
     console.log("Store ==>", store);
     store.dispatch(logout_req());
   }
-  if (error.config.method !== "get" && error.response?.data?.message) {
-    let message = error.response.data.message;
-    if (error.response.data.errors) {
-      message += `\n ${Object.values(error.response.data.errors)
-        .map(({ msg }) => msg)
-        .join(`\n`)}`;
-    }
-    if (error.config.url !== "/auth/login") {
-    }
-  }
+  // if (error.config.method !== "get" && error.response?.data?.message) {
+  //   let message = error.response.data.message;
+  //   if (error.response.data.errors) {
+  //     message += `\n ${Object.values(error.response.data.errors)
+  //       .map(({ msg }) => msg)
+  //       .join(`\n`)}`;
+  //   }
+  //   if (error.config.url !== "/auth/login") {
+  //   }
+  // }
   return Promise.reject(error);
 };
 

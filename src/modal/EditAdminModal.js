@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { Formik, Form } from "formik";
@@ -20,6 +20,7 @@ import {
 } from "@material-ui/core";
 import { Edit2 } from "react-feather";
 import { editAdmin } from "../redux/actions/user-managment";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
@@ -40,8 +41,12 @@ const editAdminSchema = Yup.object().shape({
 });
 
 const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
+  // Hooks.
+  const dispatch = useDispatch();
+  const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [open, setOpen] = useState(false);
   const [messageError, setMessageError] = useState([]);
+  const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
     name: name,
     email: email,
@@ -50,9 +55,6 @@ const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
     permissions: permissions,
     adminId: id,
   });
-
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  const dispatch = useDispatch();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -65,9 +67,11 @@ const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
   const handleSubmit = (values) => {
     dispatch(editAdmin(values))
       .then((data) => {
+        setSuccess(false);
         if (data.success) {
           setOpen(false);
         }
+        setSuccess(true);
         getAdminUsers();
       })
       .catch((error) => {
@@ -78,7 +82,10 @@ const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
   const invalid = messageError?.message;
 
   return (
-    <div>
+    <Fragment>
+      {success === true && (
+        <ConfirmationNotice opening={true} title="Edit Admin User" />
+      )}
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
         <Edit2 />
       </IconButton>
@@ -294,7 +301,7 @@ const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
           </Formik>
         </DialogContent>
       </Dialog>
-    </div>
+    </Fragment>
   );
 };
 

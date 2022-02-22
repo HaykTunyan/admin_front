@@ -25,6 +25,8 @@ import {
   Tooltip,
   Button,
   IconButton,
+  Autocomplete,
+  TextField,
 } from "@material-ui/core";
 import { ArrowDown, ArrowUp } from "react-feather";
 import CSVButton from "../../components/CSVButton";
@@ -47,8 +49,7 @@ const Chip = styled(MuiChip)`
 `;
 
 const SavingsTable = () => {
-  // hooks.
-  const { t } = useTranslation();
+  // Hooks.
   const [savings, setSavings] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -61,11 +62,15 @@ const SavingsTable = () => {
   const [coinSettings, getCoinSettings] = useState([]);
   const [sortPhone, setSortPhone] = useState("");
   const [country, setCountry] = useState("");
-  const rows = savings?.transactions;
   // Sorting.
   const [sortDate, setSortDate] = useState(true);
   const [sortEmail, setSortEmail] = useState(true);
   const [sortAmount, setSortAmount] = useState(true);
+  const [sortParams, setSortParmas] = useState("");
+  const [sortType, setSortType] = useState("");
+  const [inputPhone, setPhoneValue] = useState("");
+  // State.
+  const rows = savings?.transactions;
 
   // Sorting Functions.
   const sortingDate = () => {
@@ -94,6 +99,12 @@ const SavingsTable = () => {
     getPhoneSorting(sortPhone?.props?.value);
   };
 
+  const handleCountry = (event, newPhoneValue) => {
+    setSortPhone(event?.target?.value);
+    setPhoneValue(newPhoneValue);
+    getPhoneSorting(event?.target?.value);
+  };
+
   // Sorting Amount.
   const sortingAmount = () => {
     setSortAmount(!sortAmount);
@@ -119,6 +130,7 @@ const SavingsTable = () => {
   const handleCoinAll = (event, coinAll) => {
     setCoinAll(event.target.value);
     if (coinAll?.props?.value === "all") {
+      setCoinAll(event.target.value);
       getSavings();
     } else {
       getSendCoinFilter(coinAll?.props?.value);
@@ -127,7 +139,11 @@ const SavingsTable = () => {
 
   const handleDepositeType = (event) => {
     setDepositeType(event.target.value);
-    getDepositeSorting(event.target.value);
+    if (depositType?.props?.value != "All") {
+      getDepositeSorting(event.target.value);
+    } else {
+      getSavings();
+    }
   };
 
   const handleTransactionType = (event, transactionType) => {
@@ -157,6 +173,7 @@ const SavingsTable = () => {
           type: "savings",
           limit: rowsPerPage,
           page: page,
+          coin_id: coinAll,
         },
       })
       .then((data) => {
@@ -206,6 +223,8 @@ const SavingsTable = () => {
           type: "savings",
           sort_type: sort_type,
           sort_param: sort_params,
+          limit: rowsPerPage,
+          page: page,
         },
       })
       .then((data) => {
@@ -222,6 +241,8 @@ const SavingsTable = () => {
           type: "savings",
           start_date: start_date,
           end_date: end_date,
+          limit: rowsPerPage,
+          page: page,
         },
       })
       .then((data) => {
@@ -237,6 +258,8 @@ const SavingsTable = () => {
         params: {
           type: "savings",
           transaction_type: transaction_type,
+          limit: rowsPerPage,
+          page: page,
         },
       })
       .then((data) => {
@@ -260,6 +283,8 @@ const SavingsTable = () => {
         params: {
           type: "savings",
           telefon_code: telefon_code,
+          limit: rowsPerPage,
+          page: page,
         },
       })
       .then((data) => {
@@ -286,12 +311,14 @@ const SavingsTable = () => {
   // Use Effect.
   useEffect(() => {
     getSavings();
-    getSettingCoin();
-    getSendCoinFilter();
-    getSorting();
-    getDateFilters();
-    getCountry();
-    getPhoneSorting();
+    setTimeout(() => {
+      getSettingCoin();
+      getSendCoinFilter();
+      getSorting();
+      getDateFilters();
+      getCountry();
+      getPhoneSorting();
+    }, 700);
   }, []);
 
   return (
@@ -406,7 +433,27 @@ const SavingsTable = () => {
                         marginLeft: "20px",
                       }}
                     >
-                      <FormControl sx={{ minWidth: "100px" }}>
+                      <Autocomplete
+                        inputValue={inputPhone}
+                        onInputChange={handleCountry}
+                        id="country-states"
+                        options={country}
+                        getOptionLabel={(country) => country.telefon}
+                        sx={{ width: 150 }}
+                        renderOption={(props, option) => (
+                          <Box
+                            component="li"
+                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                            {...props}
+                          >
+                            {option.telefon}
+                          </Box>
+                        )}
+                        renderInput={(params) => (
+                          <TextField {...params} label="Phone" />
+                        )}
+                      />
+                      {/* <FormControl sx={{ minWidth: "100px" }}>
                         <InputLabel id="select-phone-label">Sort</InputLabel>
                         <Select
                           labelId="select-phone-label"
@@ -426,7 +473,7 @@ const SavingsTable = () => {
                               </MenuItem>
                             ))}
                         </Select>
-                      </FormControl>
+                      </FormControl> */}
                     </Box>
                   </Box>
                 </TableCell>
@@ -451,73 +498,66 @@ const SavingsTable = () => {
                 <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
-            {rows ? (
-              <TableBody>
-                {rows &&
-                  rows.map((row) => (
-                    <TableRow
-                      key={row.key}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell>
-                        {moment(row.date).format("DD/MM/YYYY HH:mm ")}
-                      </TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>{row.phone}</TableCell>
-                      <TableCell>
-                        {row.amount_sent != null ? (
-                          <>{row.amount_sent}</>
-                        ) : (
-                          <>{row.amount_received}</>
-                        )}
-                      </TableCell>
-                      <TableCell>{row.cointo}</TableCell>
-                      <TableCell>
-                        <Tooltip title={row.transaction_id} arrow>
-                          <Button>{row.transaction_id?.substring(0, 9)}</Button>
-                        </Tooltip>
-                      </TableCell>
-                      <TableCell>
-                        {row.type === "fake" ? (
-                          <Chip
-                            label={
-                              row.type[0].toUpperCase() + row.type.slice(1)
-                            }
-                            color="error"
-                          />
-                        ) : (
-                          <Chip
-                            label={
-                              row.type[0].toUpperCase() + row.type.slice(1)
-                            }
-                            color="success"
-                          />
-                        )}
-                      </TableCell>
-                      <TableCell>{row.operation_type}</TableCell>
-                      <TableCell>
-                        {row.status === "accepted" ? (
-                          <Chip
-                            label={
-                              row.status[0].toUpperCase() + row.status.slice(1)
-                            }
-                            color="success"
-                          />
-                        ) : (
-                          <Chip
-                            label={
-                              row.status[0].toUpperCase() + row.status.slice(1)
-                            }
-                            color="error"
-                          />
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            ) : (
-              <Loader />
-            )}
+
+            <TableBody>
+              {rows &&
+                rows.map((row) => (
+                  <TableRow
+                    key={row.key}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell>
+                      {moment(row.date).format("DD/MM/YYYY HH:mm ")}
+                    </TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>{row.phone}</TableCell>
+                    <TableCell>
+                      {row.amount_sent != null ? (
+                        <>{row.amount_sent}</>
+                      ) : (
+                        <>{row.amount_received}</>
+                      )}
+                    </TableCell>
+                    <TableCell>{row.cointo}</TableCell>
+                    <TableCell>
+                      <Tooltip title={row.transaction_id} arrow>
+                        <Button>{row.transaction_id?.substring(0, 9)}</Button>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      {row.type === "fake" ? (
+                        <Chip
+                          label={row.type[0].toUpperCase() + row.type.slice(1)}
+                          color="error"
+                        />
+                      ) : (
+                        <Chip
+                          label={row.type[0].toUpperCase() + row.type.slice(1)}
+                          color="success"
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>{row.operation_type}</TableCell>
+                    <TableCell>
+                      {row.status === "accepted" ? (
+                        <Chip
+                          label={
+                            row.status[0].toUpperCase() + row.status.slice(1)
+                          }
+                          color="success"
+                        />
+                      ) : (
+                        <Chip
+                          label={
+                            row.status[0].toUpperCase() + row.status.slice(1)
+                          }
+                          color="error"
+                        />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
           </Table>
           {/* Pagination */}
           {rows && (
@@ -533,7 +573,7 @@ const SavingsTable = () => {
           )}
         </TableContainer>
       </Paper>
-      {rows && (
+      {rows ? (
         <Box
           mt={8}
           display="flex"
@@ -544,6 +584,10 @@ const SavingsTable = () => {
             Export Data
           </Typography>
           <CSVButton data={rows} />
+        </Box>
+      ) : (
+        <Box sx={{ marginTop: "100px" }}>
+          <Loader />
         </Box>
       )}
     </Fragment>

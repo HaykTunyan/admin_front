@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -14,6 +14,7 @@ import {
   Alert as MuiAlert,
 } from "@material-ui/core";
 import { assigneReferralUser } from "../redux/actions/referral";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
@@ -29,6 +30,7 @@ const AssigneReferral = ({ id, getUnassigned }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const [messageError, setMessageError] = useState([]);
+  const [success, setSuccess] = useState(false);
 
   const [state, setState] = useState({
     user_id: "",
@@ -46,9 +48,11 @@ const AssigneReferral = ({ id, getUnassigned }) => {
   const handleSubmit = (values) => {
     dispatch(assigneReferralUser(values))
       .then((data) => {
+        setSuccess(false);
         if (data.success) {
           setOpen(false);
         }
+        setSuccess(true);
         getUnassigned();
       })
       .catch((error) => {
@@ -58,7 +62,10 @@ const AssigneReferral = ({ id, getUnassigned }) => {
   const invalid = messageError?.message;
 
   return (
-    <>
+    <Fragment>
+      {success === true && (
+        <ConfirmationNotice opening={true} title="Assign User success" />
+      )}
       <Button color="primary" variant="contained" onClick={handleClickOpen}>
         Assign
       </Button>
@@ -144,7 +151,7 @@ const AssigneReferral = ({ id, getUnassigned }) => {
           </Formik>
         </DialogContent>
       </Dialog>
-    </>
+    </Fragment>
   );
 };
 

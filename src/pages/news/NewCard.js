@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import {
+  Box,
   Button,
   Card as MuiCard,
   CardActions,
@@ -43,7 +44,9 @@ const NewsCard = ({
             image={`data:image/png;base64,${image}`}
             title="Contemplative Reptile"
           />
-        ) : null}
+        ) : (
+          <Box sx={{ height: "100%" }} />
+        )}
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
             {title}

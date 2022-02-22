@@ -8,7 +8,7 @@ import { InputBase } from "@material-ui/core";
 const Search = styled.div`
   border-radius: 2px;
   background-color: ${(props) => props.theme.header.background};
-  display: none;
+  display: block;
   position: relative;
   // width: 100%;
 

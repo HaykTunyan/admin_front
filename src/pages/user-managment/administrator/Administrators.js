@@ -84,10 +84,6 @@ const Administrators = () => {
     getPrimission();
   }, []);
 
-  if (!rowAdmin?.admins) {
-    return <NoData />;
-  }
-
   return (
     <>
       <Helmet title="Administrators" />
@@ -101,66 +97,72 @@ const Administrators = () => {
       <Divider my={6} />
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <Card mb={6}>
-            <CardContent>
-              <Card mb={6}>
-                <Grid display="flex" justifyContent="flex-end">
-                  <Grid item>
-                    <AddAdminModal
-                      getAdminUsers={getAdminUsers}
-                      primission={primission}
-                    />
+          {rowAdmin?.admins ? (
+            <Card mb={6}>
+              <CardContent>
+                <Card mb={6}>
+                  <Grid display="flex" justifyContent="flex-end">
+                    <Grid item>
+                      <AddAdminModal
+                        getAdminUsers={getAdminUsers}
+                        primission={primission}
+                      />
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Paper>
-                  <TableWrapper>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Admin Name</TableCell>
-                          <TableCell align="center">Email</TableCell>
-                          <TableCell align="center">Action</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {rowAdmin?.admins &&
-                          rowAdmin?.admins.map((row) => (
-                            <TableRow key={row.id}>
-                              <TableCell component="th" scope="row">
-                                {row.name}
-                              </TableCell>
-                              <TableCell align="center">{row.email}</TableCell>
-                              <TableCell align="center">
-                                <Box mr={2}>
-                                  <EditAdminModal
-                                    email={row.email}
-                                    name={row.name}
-                                    id={row.id}
-                                    permissions={row.permissions}
-                                    role={row.role}
-                                    getAdminUsers={getAdminUsers}
-                                  />
-                                </Box>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                      </TableBody>
-                    </Table>
-                  </TableWrapper>
-                </Paper>
-              </Card>
-              {/* Pagination */}
-              <TablePagination
-                rowsPerPageOptions={[10]}
-                component="div"
-                count={rowAdmin?.allCount}
-                rowsPerPage={rowAdmin?.limit}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </CardContent>
-          </Card>
+                  <Paper>
+                    <TableWrapper>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Admin Name</TableCell>
+                            <TableCell align="center">Email</TableCell>
+                            <TableCell align="center">Action</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {rowAdmin?.admins &&
+                            rowAdmin?.admins.map((row) => (
+                              <TableRow key={row.id}>
+                                <TableCell component="th" scope="row">
+                                  {row.name}
+                                </TableCell>
+                                <TableCell align="center">
+                                  {row.email}
+                                </TableCell>
+                                <TableCell align="center">
+                                  <Box mr={2}>
+                                    <EditAdminModal
+                                      email={row.email}
+                                      name={row.name}
+                                      id={row.id}
+                                      permissions={row.permissions}
+                                      role={row.role}
+                                      getAdminUsers={getAdminUsers}
+                                    />
+                                  </Box>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </TableWrapper>
+                  </Paper>
+                </Card>
+                {/* Pagination */}
+                <TablePagination
+                  rowsPerPageOptions={[10]}
+                  component="div"
+                  count={rowAdmin?.allCount}
+                  rowsPerPage={rowAdmin?.limit}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </CardContent>
+            </Card>
+          ) : (
+            <NoData />
+          )}
         </Grid>
       </Grid>
     </>

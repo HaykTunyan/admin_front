@@ -28,6 +28,10 @@ import {
   Button,
   RadioGroup,
   Radio,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import Loader from "../../../components/Loader";
 import EditAffiliateModal from "../../../modal/EditAffiliateUser";
@@ -50,165 +54,192 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
+export const cellList = [
+  {
+    id: "1",
+    head: "ID",
+    sortable: false,
+  },
+  {
+    id: "2",
+    head: "Email",
+    sortable: true,
+    param: "email",
+  },
+  {
+    id: "3",
+    head: "Phone",
+    sortable: false,
+  },
+  {
+    id: "4",
+    head: "Balance",
+    sortable: true,
+    param: "total_balance",
+  },
+  {
+    id: "5",
+    head: "Flexible",
+    sortable: true,
+    param: "flexible",
+  },
+  {
+    id: "6",
+    head: "Locked",
+    sortable: true,
+    param: "locked",
+  },
+  {
+    id: "7",
+    head: "Received",
+    sortable: true,
+    param: "total_receive",
+  },
+  {
+    id: "8",
+    head: "Status KYC",
+    sortable: false,
+  },
+  {
+    id: "9",
+    head: "Date Register",
+    sortable: true,
+    param: "registration_date",
+  },
+  {
+    id: "10",
+    head: "Geo Position",
+    sortable: true,
+    param: "geo_position",
+  },
+  {
+    id: "11",
+    head: "Sent",
+    sortable: true,
+    param: "total_sent",
+  },
+  {
+    id: "12",
+    head: "Referral",
+    sortable: false,
+  },
+  {
+    id: "13",
+    head: "Currency",
+    sortable: false,
+  },
+  {
+    id: "14",
+    head: "View",
+    sortable: false,
+  },
+];
+
 const UsersList = ({ affiliate }) => {
-  // Hooks
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [rowUserList, setRowUserList] = useState([]);
+  const rowList = rowUserList?.users;
+
+  //Pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  //Search
+  const [searchEmail, setSearchEmail] = useState(null);
+  // Filters
   const [value, setValue] = useState([null, null]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const rowList = rowUserList?.users;
-  // Sorting.
-  const [sent, setSent] = useState(true);
-  const [received, setRecived] = useState(true);
-  const [balance, setBalance] = useState(true);
-  const [email, setEmail] = useState(true);
-  const [registration, setRegistration] = useState(true);
-  const [position, setPosition] = useState(true);
-  const [searchEmail, setSearchEmail] = useState(null);
-  // Sorting.
-  const [flexibleSort, setFlexibleSort] = useState("");
-  const [flexibleActive, setFlexibleActive] = useState(true);
-  const [flexibleFinished, setFlexibleFinished] = useState(true);
-  const [lockedSort, setLockedSort] = useState("");
-  const [lockedActive, setLockedActive] = useState(true);
-  const [lockedFinished, setLockedFinished] = useState(true);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  // Sorting
+  const [depositSort, setDepositSort] = useState("");
+  const [sort, setSort] = useState({
+    type: "decreasing",
+    param: "",
+  });
 
-  // Flexible Sorting.
-  const handleChangeFlexible = (event, flexibleSort) => {
-    setFlexibleSort(event.target.value);
-    if (flexibleSort === "active") {
-      handleFlexibleActive(event.target.value);
-    } else {
-      handleFlexibleFinished(event.target.value);
-    }
-  };
-
-  const handleFlexibleActive = (radioValue) => {
-    setFlexibleActive(!flexibleActive);
-    if (flexibleActive) {
-      getSorting("decreasing", "flexible_active");
-    } else {
-      getSorting("increasing", "flexible_active");
-    }
-  };
-
-  const handleFlexibleFinished = (radioValue) => {
-    setFlexibleFinished(!flexibleFinished);
-    if (flexibleFinished) {
-      getSorting("decreasing", "flexible_finished");
-    } else {
-      getSorting("increasing", "flexible_finished");
-    }
-  };
-
-  // Locked Sorting.
-  const handleChangeLocked = (event, lockedSort) => {
-    setLockedSort(event.target.value);
-    if (lockedSort === "active") {
-      handleLockedActive(event.target.value);
-    } else {
-      handleLockedFinish(event.target.value);
-    }
-  };
-
-  const handleLockedActive = (radioValue) => {
-    setLockedActive(!lockedActive);
-    if (lockedActive) {
-      getSorting("decreasing", "locked_active");
-    } else {
-      getSorting("increasing", "locked_active");
-    }
-  };
-
-  const handleLockedFinish = (radioValue) => {
-    setLockedFinished(!lockedFinished);
-    if (lockedFinished) {
-      getSorting("decreasing", "locked_finished");
-    } else {
-      getSorting("increasing", "locked_finished");
-    }
-  };
-
-  // Sent Sorting.
-  const sortingSent = () => {
-    setSent(!sent);
-    if (sent) {
-      getSorting("decreasing", "total_sent");
-    } else {
-      getSorting("increasing", "total_sent");
-    }
-  };
-
-  // Recived Sorting.
-  const sortingRecived = () => {
-    setRecived(!received);
-    if (received) {
-      getSorting("decreasing", "total_receive");
-    } else {
-      getSorting("increasing", "total_receive");
-    }
-  };
-
-  // Balance Sorting.
-  const sortingBalance = () => {
-    setBalance(!balance);
-    if (balance) {
-      getSorting("decreasing", "total_balance");
-    } else {
-      getSorting("increasing", "total_balance");
-    }
-  };
-
-  // Registration Sorting.
-  const sortingRegistration = () => {
-    setRegistration(!registration);
-    if (registration) {
-      getSorting("decreasing", "registration_date");
-    } else {
-      getSorting("increasing", "registration_date");
-    }
-  };
-
-  // Email Sorting.
-  const sortingEmail = () => {
-    setEmail(!email);
-    if (email) {
-      getSorting("decreasing", "email");
-    } else {
-      getSorting("increasing", "email");
-    }
-  };
-
-  // Postion Sorting.
-  const sortingPosition = () => {
-    setPosition(!position);
-    if (position) {
-      getSorting("decreasing", "geo_position");
-    } else {
-      getSorting("increasing", "geo_position");
-    }
-  };
-
+  // Handling Search
   const handleSearch = (searchValue, page, rowPerPage) => {
     setSearchEmail(searchValue);
-    if (searchValue === "") {
-      getUserList_req();
-    } else {
-      getUserFilterList(searchValue, page, rowPerPage);
-    }
+
+    getUserList_req(
+      1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(selectedStatus),
+      searchValue === "" ? null : searchValue
+    );
   };
 
+  // Handling Calendar
   const onChangeTime = (newValue) => {
     setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));
     setEndDate(moment(newValue[1]).format("YYYY-MM-DD"));
     setValue(newValue);
-    getTimeFiltering(
-      moment(newValue[0]).format("YYYY-MM-DD"),
-      moment(newValue[1]).format("YYYY-MM-DD")
+
+    if (newValue[1]) {
+      getUserList_req(
+        1,
+        rowsPerPage,
+        moment(newValue[0]).format("YYYY-MM-DD"),
+        moment(newValue[1]).format("YYYY-MM-DD"),
+        Number(selectedStatus),
+        searchEmail
+      );
+    }
+  };
+
+  // Status KYC Filter
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+    getUserList_req(
+      page,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(event.target.value),
+      searchEmail
+    );
+  };
+
+  //Handle Sorting
+  const handleSorting = (id, param) => {
+    setSort({
+      [`sorted_${id}`]: true,
+      type: sort.type === "decreasing" ? "increasing" : "decreasing",
+      param: id === 5 || id === 6 ? `${param}_${depositSort}` : param,
+    });
+
+    getUserList_req(
+      page,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(selectedStatus),
+      searchEmail,
+      sort.type === "decreasing" ? "increasing" : "decreasing",
+      id === 5 || id === 6 ? `${param}_${depositSort}` : param
+    );
+  };
+
+  const handleDepositChange = (id, param) => {
+    setSort({
+      [`sorted_${id}`]: true,
+      type: sort.type,
+      param: `${param}_${depositSort === "active" ? "finished" : "active"}`,
+    });
+    setDepositSort(depositSort === "active" ? "finished" : "active");
+
+    getUserList_req(
+      page,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(selectedStatus),
+      searchEmail,
+      sort.type,
+      `${param}_${depositSort === "active" ? "finished" : "active"}`
     );
   };
 
@@ -217,7 +248,14 @@ const UsersList = ({ affiliate }) => {
   };
 
   const handleChangePage = (event, newPage) => {
-    getUserList_req(newPage + 1);
+    getUserList_req(
+      newPage + 1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(selectedStatus),
+      searchEmail
+    );
     setPage(newPage);
   };
 
@@ -226,15 +264,42 @@ const UsersList = ({ affiliate }) => {
     setPage(1);
   };
 
-  const getUserList_req = (page, rowsPerPage) => {
+  const getUserList_req = (
+    page,
+    rowsPerPage,
+    createdFrom,
+    createdTo,
+    status,
+    email,
+    sort_type,
+    sort_param
+  ) => {
+    let params = {
+      isAffiliate: affiliate,
+      page: page,
+      limit: rowsPerPage,
+      createdFrom: createdFrom,
+      createdTo: createdTo,
+      status_kyc: status,
+      email: email,
+      sort_type: sort_type,
+      sort_param: sort_param,
+    };
+
+    let result = Object.keys(params).filter(
+      (key) => !params[key] || params[key] === ""
+    );
+
+    for (let item of result) {
+      delete params[`${item}`];
+    }
+
+    console.log("PARAMS ==>", params);
+
     return instance
       .get(`/admin/user/all`, {
         mode: "no-cors",
-        params: {
-          isAffiliate: affiliate,
-          page: page,
-          limit: rowsPerPage,
-        },
+        params: params,
       })
       .then((data) => {
         setRowUserList(data.data);
@@ -244,63 +309,11 @@ const UsersList = ({ affiliate }) => {
         return Promise.reject(err);
       })
       .finally(() => {});
-  };
-
-  const getUserFilterList = (searchValue) => {
-    return instance
-      .get(`/admin/user/all`, {
-        mode: "no-cors",
-        params: {
-          isAffiliate: affiliate,
-          email: searchValue,
-        },
-      })
-      .then((data) => {
-        setRowUserList(data.data);
-        return data;
-      })
-      .catch((err) => {
-        return Promise.reject(err);
-      })
-      .finally(() => {});
-  };
-
-  const getSorting = (sort_type, sort_param, page, rowsPerPage) => {
-    return instance
-      .get(`/admin/user/all`, {
-        mode: "no-cors",
-        params: {
-          isAffiliate: affiliate,
-          sort_type: sort_type,
-          sort_param: sort_param,
-          page: page,
-          limit: rowsPerPage,
-        },
-      })
-      .then((data) => {
-        setRowUserList(data.data);
-        return data;
-      });
-  };
-
-  const getTimeFiltering = (createdFrom, createdTo, page, rowsPerPage) => {
-    return instance.get(`/admin/user/all`, {
-      params: {
-        isAffiliate: affiliate,
-        createdFrom: createdFrom,
-        createdTo: createdTo,
-        page: page,
-        limit: rowsPerPage,
-      },
-    });
   };
 
   // Use Effect.
   useEffect(() => {
     getUserList_req();
-    getUserFilterList();
-    getSorting();
-    getTimeFiltering();
   }, [affiliate]);
 
   return (
@@ -319,8 +332,8 @@ const UsersList = ({ affiliate }) => {
       </Grid>
       <Divider my={6} />
       <Card p={4}>
-        <Grid container alignItems="center">
-          <Grid item xs={12} sm={4} md={2}>
+        <Grid container>
+          <Grid item xs={12} sm={4} md={3}>
             <Box
               component="div"
               sx={{
@@ -333,8 +346,43 @@ const UsersList = ({ affiliate }) => {
               />
             </Box>
           </Grid>
-          <Grid item xs={12} sm={4} md={3}>
+          <Grid
+            item
+            xs={12}
+            sm={4}
+            md={3}
+            sx={{
+              paddingX: "10px",
+            }}
+          >
             <DateRange value={value} onChange={onChangeTime} />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={4}
+            md={3}
+            sx={{
+              paddingX: "10px",
+            }}
+          >
+            <FormControl fullWidth>
+              <InputLabel id="select-status">Status</InputLabel>
+              <Select
+                labelId="select-status"
+                id="select-status"
+                label="Status"
+                value={selectedStatus}
+                onChange={handleStatusChange}
+              >
+                <MenuItem value="all">
+                  <em>All</em>
+                </MenuItem>
+                <MenuItem value={"4"}>{"Verification passed"}</MenuItem>
+                <MenuItem value={"1"}>{"Pending"}</MenuItem>
+                <MenuItem value={"2"}>{"Rejected"}</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
           {affiliate && (
             <>
@@ -369,82 +417,36 @@ const UsersList = ({ affiliate }) => {
                 >
                   <TableHead>
                     <TableRow>
-                      {/* ID */}
-                      <TableCell sx={{ padding: "10px" }}>ID</TableCell>
-                      {/* Email */}
-                      <TableCell align="center">
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          Email
+                      {cellList?.map((item) => (
+                        <TableCell key={item.id} align="center">
                           <Box
-                            sx={{ display: "flex", justifyContent: "center" }}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                            }}
+                            onMouseOver={() =>
+                              setSort({ ...sort, [`show_${item.id}`]: true })
+                            }
+                            onMouseLeave={() =>
+                              setSort({ ...sort, [`show_${item.id}`]: false })
+                            }
+                            onClick={() =>
+                              handleSorting(Number(item.id), item.param)
+                            }
                           >
-                            <IconButton onClick={sortingEmail}>
-                              {email ? (
-                                <ArrowUp size={16} />
-                              ) : (
-                                <ArrowDown size={16} />
-                              )}
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      {/* Phone */}
-                      <TableCell align="center">Phone</TableCell>
-                      {/* Balance */}
-                      <TableCell align="center">
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          Balance
-                          <Box
-                            sx={{ display: "flex", justifyContent: "center" }}
-                          >
-                            <IconButton onClick={sortingBalance}>
-                              {balance ? (
-                                <ArrowUp size={16} />
-                              ) : (
-                                <ArrowDown size={16} />
-                              )}
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      {/* Flexible */}
-                      <TableCell align="center">
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                          }}
-                        >
-                          Flexible
-                        </Box>
-                        <RadioGroup
-                          aria-labelledby="flexible-radio-group"
-                          name="flexible-radio-group"
-                          value={flexibleSort}
-                          onChange={handleChangeFlexible}
-                          display="flex"
-                          justifyContent="space-between"
-                          width="max-content"
-                        >
-                          <Breadcrumbs
-                            aria-label="breadcrumb"
-                            display="flex"
-                            justifyContent="space-around"
-                            width="max-content"
-                            align="center"
-                          >
-                            {/* Flexible Active */}
-                            <Box>
-                              {flexibleSort === "active" && (
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <IconButton onClick={handleFlexibleActive}>
-                                    {flexibleActive ? (
+                            {item.head}
+
+                            {item.sortable === true &&
+                              (sort[`sorted_${item.id}`] === true ||
+                                sort[`show_${item.id}`] === true) && (
+                                <Box sx={{ display: "flex" }}>
+                                  <IconButton
+                                    onClick={() =>
+                                      handleSorting(Number(item.id), item.param)
+                                    }
+                                  >
+                                    {sort.type === "increasing" ? (
                                       <ArrowUp size={16} />
                                     ) : (
                                       <ArrowDown size={16} />
@@ -452,218 +454,50 @@ const UsersList = ({ affiliate }) => {
                                   </IconButton>
                                 </Box>
                               )}
-
-                              <FormControlLabel
-                                value="active"
-                                control={<Radio size="small" />}
-                                label="active"
-                                labelPlacement="top"
-                              />
-                            </Box>
-                            {/* Flexible Finished */}
-                            <Box>
-                              {flexibleSort === "finished" && (
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <IconButton onClick={handleFlexibleFinished}>
-                                    {flexibleFinished ? (
-                                      <ArrowUp size={16} />
-                                    ) : (
-                                      <ArrowDown size={16} />
-                                    )}
-                                  </IconButton>
+                          </Box>
+                          {(Number(item.id) === 5 || Number(item.id) === 6) && (
+                            <RadioGroup
+                              aria-labelledby={`radio-group`}
+                              name={`radio-group`}
+                              value={
+                                sort[`sorted_${item.id}`] === true &&
+                                depositSort
+                              }
+                              onChange={() =>
+                                handleDepositChange(item.id, item.param)
+                              }
+                              display="flex"
+                              justifyContent="space-between"
+                              width="max-content"
+                            >
+                              <Breadcrumbs
+                                aria-label="breadcrumb"
+                                display="flex"
+                                justifyContent="space-around"
+                                width="max-content"
+                                align="center"
+                              >
+                                <Box>
+                                  <FormControlLabel
+                                    value="active"
+                                    control={<Radio size="small" />}
+                                    label="active"
+                                    labelPlacement="top"
+                                  />
                                 </Box>
-                              )}
-
-                              <FormControlLabel
-                                value="finished"
-                                control={<Radio size="small" />}
-                                label="finished"
-                                labelPlacement="top"
-                              />
-                            </Box>
-                          </Breadcrumbs>
-                        </RadioGroup>
-                      </TableCell>
-                      {/* Locked */}
-                      <TableCell align="center">
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          Locked
-                        </Box>
-                        <RadioGroup
-                          aria-labelledby="locked-radio-group"
-                          name="locked-radio-group"
-                          value={lockedSort}
-                          defaultValue={lockedSort}
-                          onChange={handleChangeLocked}
-                          display="flex"
-                          justifyContent="space-between"
-                          width="max-content"
-                        >
-                          <Breadcrumbs
-                            aria-label="breadcrumb"
-                            display="flex"
-                            justifyContent="space-around"
-                            width="max-content"
-                            align="center"
-                          >
-                            {/* Locked Active */}
-                            <Box>
-                              {lockedSort === "active" && (
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <IconButton onClick={handleLockedActive}>
-                                    {lockedActive ? (
-                                      <ArrowUp size={16} />
-                                    ) : (
-                                      <ArrowDown size={16} />
-                                    )}
-                                  </IconButton>
+                                <Box>
+                                  <FormControlLabel
+                                    value="finished"
+                                    control={<Radio size="small" />}
+                                    label="finished"
+                                    labelPlacement="top"
+                                  />
                                 </Box>
-                              )}
-
-                              <FormControlLabel
-                                value="active"
-                                control={<Radio size="small" />}
-                                label="active"
-                                labelPlacement="top"
-                              />
-                            </Box>
-                            {/* Locked Finished */}
-                            <Box>
-                              {lockedSort === "finished" && (
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                  }}
-                                >
-                                  <IconButton onClick={handleLockedFinish}>
-                                    {lockedFinished ? (
-                                      <ArrowUp size={16} />
-                                    ) : (
-                                      <ArrowDown size={16} />
-                                    )}
-                                  </IconButton>
-                                </Box>
-                              )}
-
-                              <FormControlLabel
-                                value="finished"
-                                control={<Radio size="small" />}
-                                label="finished"
-                                labelPlacement="top"
-                              />
-                            </Box>
-                          </Breadcrumbs>
-                        </RadioGroup>
-                      </TableCell>
-                      {/* Received */}
-                      <TableCell align="center">
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          Received
-                          <Box
-                            sx={{ display: "flex", justifyContent: "center" }}
-                          >
-                            <IconButton onClick={sortingRecived}>
-                              {received ? (
-                                <ArrowUp size={16} />
-                              ) : (
-                                <ArrowDown size={16} />
-                              )}
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      {/* Status KYC */}
-                      <TableCell align="center">Status KYC</TableCell>
-                      {/* Date Register */}
-                      <TableCell align="center">
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          Date Register
-                          <Box
-                            sx={{ display: "flex", justifyContent: "center" }}
-                          >
-                            <IconButton onClick={sortingRegistration}>
-                              {registration ? (
-                                <ArrowUp size={16} />
-                              ) : (
-                                <ArrowDown size={16} />
-                              )}
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      {/* Geo Position */}
-                      <TableCell align="center">
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          Geo Position
-                          <Box
-                            sx={{ display: "flex", justifyContent: "center" }}
-                          >
-                            <IconButton onClick={sortingPosition}>
-                              {position ? (
-                                <ArrowUp size={16} />
-                              ) : (
-                                <ArrowDown size={16} />
-                              )}
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      {/* Sent */}
-                      <TableCell align="center">
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          Sent
-                          <Box sx={{ display: "flex" }}>
-                            <IconButton onClick={sortingSent}>
-                              {sent ? (
-                                <ArrowUp size={16} />
-                              ) : (
-                                <ArrowDown size={16} />
-                              )}
-                            </IconButton>
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      {/* Referral */}
-                      <TableCell align="center">Referral</TableCell>
-                      {/* Currency */}
-                      <TableCell align="center">Currency</TableCell>
-                      {/* View */}
-                      <TableCell align="center">View</TableCell>
+                              </Breadcrumbs>
+                            </RadioGroup>
+                          )}
+                        </TableCell>
+                      ))}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -730,7 +564,9 @@ const UsersList = ({ affiliate }) => {
                             ) / 100}
                           </TableCell>
                           <TableCell align="center">
-                            {row.status === "true" ? (
+                            {row.status_kyc === 1 || row.status_kyc === 3 ? (
+                              <Chip label="Pending" color="warning" />
+                            ) : row.status_kyc === 4 ? (
                               <Chip label="Verified" color="success" />
                             ) : (
                               <Chip label="Unverified" color="error" />
@@ -738,7 +574,7 @@ const UsersList = ({ affiliate }) => {
                           </TableCell>
                           <TableCell align="center">
                             {/* {row.registrationDate} */}
-                            {moment(row.registrationDate).format(
+                            {moment(row.registration_date).format(
                               "DD/MM/YYYY HH:mm "
                             )}
                           </TableCell>

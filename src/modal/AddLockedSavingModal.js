@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form, FieldArray } from "formik";
 import * as Yup from "yup";
@@ -24,6 +24,7 @@ import {
 import { addSaving } from "../redux/actions/settings";
 import { instance } from "../services/api";
 import { XCircle } from "react-feather";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -53,11 +54,12 @@ const AddSavingSchema = Yup.object().shape({
 });
 
 const AddLockedSavingModal = ({ getLocked }) => {
-  //  hooks.
+  //  Hooks.
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [errorMes, setErrorMes] = useState([]);
   const [coinSettings, getCoinSettings] = useState([]);
+  const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
     type: "locked",
     min: "",
@@ -88,18 +90,18 @@ const AddLockedSavingModal = ({ getLocked }) => {
       duration: values.duration, //for locked
     };
 
-    console.log("DATA ==>", data);
-
     dispatch(addSaving(data))
       .then((data) => {
+        setSuccess(false);
         if (data.success) {
           setOpen(false);
+          getLocked();
         }
         setOpen(false);
         getLocked();
+        setSuccess(true);
       })
       .catch((error) => {
-        console.log(" error messages ", error?.response?.data);
         setErrorMes(error?.response?.data);
       });
   };
@@ -123,7 +125,10 @@ const AddLockedSavingModal = ({ getLocked }) => {
   }, []);
 
   return (
-    <>
+    <Fragment>
+      {success === true && (
+        <ConfirmationNotice opening={true} title="Add Locked Savings succes" />
+      )}
       <Button variant="contained" onClick={handleClickOpen}>
         Add Saving
       </Button>
@@ -389,7 +394,7 @@ const AddLockedSavingModal = ({ getLocked }) => {
           </Formik>
         </DialogContent>
       </Dialog>
-    </>
+    </Fragment>
   );
 };
 

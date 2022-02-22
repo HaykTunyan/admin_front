@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
 import { Formik, Form } from "formik";
@@ -18,6 +18,7 @@ import {
 } from "@material-ui/core";
 import { Edit2 } from "react-feather";
 import { editCoin } from "../redux/actions/settings";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
@@ -38,12 +39,10 @@ const editTransactionSchema = Yup.object().shape({
   price: Yup.number()
     .moreThan(0, "Price must be greater than 0.")
     .required("Price is required."),
-  priceChange: Yup.number()
-    .moreThan(0, "Price Change must be greater than 0.")
-    .required("Price Change is required."),
-  priceChangePercent: Yup.number()
-    .moreThan(0, "Price Change Percent must be greater than 0.")
-    .required("Price Change Percent is required."),
+  priceChange: Yup.number().required("Price Change is required."),
+  priceChangePercent: Yup.number().required(
+    "Price Change Percent is required."
+  ),
 });
 
 const EditTransactionModal = ({
@@ -60,7 +59,10 @@ const EditTransactionModal = ({
   suspendReceiveTransaction,
   getCoins,
 }) => {
+  const dispatch = useDispatch();
+  const label = { inputProps: { "aria-label": "Checkbox" } };
   const [open, setOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
     coinId: coinId, //is id on list
     name: name,
@@ -75,9 +77,6 @@ const EditTransactionModal = ({
   const [suspendReceive, setSuspendReceive] = useState(
     suspendReceiveTransaction
   );
-
-  const label = { inputProps: { "aria-label": "Checkbox" } };
-  const dispatch = useDispatch();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -117,18 +116,25 @@ const EditTransactionModal = ({
     for (let item of result) {
       delete data[`${item}`];
     }
-    console.log("Data =>", data);
 
     dispatch(editCoin(data)).then((data) => {
+      setSuccess(false);
       if (data.success) {
         setOpen(false);
+        getCoins();
       }
-      getCoins();
+      setSuccess(true);
     });
   };
 
   return (
-    <div>
+    <Fragment>
+      {success === true && (
+        <ConfirmationNotice
+          opening={success}
+          title="Transaction Coin Editing"
+        />
+      )}
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
         <Edit2 />
       </IconButton>
@@ -314,7 +320,7 @@ const EditTransactionModal = ({
           </Formik>
         </DialogContent>
       </Dialog>
-    </div>
+    </Fragment>
   );
 };
 

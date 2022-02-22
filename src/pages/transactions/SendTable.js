@@ -3,7 +3,6 @@ import styled from "styled-components/macro";
 import { instance } from "../../services/api";
 import moment from "moment";
 import { spacing } from "@material-ui/system";
-import { useTranslation } from "react-i18next";
 import {
   Box,
   Paper as MuiPaper,
@@ -25,10 +24,13 @@ import {
   Tooltip,
   Button,
   IconButton,
+  Autocomplete,
+  TextField,
 } from "@material-ui/core";
 import CSVButton from "../../components/CSVButton";
 import { ArrowDown, ArrowUp } from "react-feather";
 import DateRange from "../../components/date-picker/DateRange";
+import Loader from "../../components/Loader";
 
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
@@ -56,27 +58,30 @@ const Chip = styled(MuiChip)`
 `;
 
 const SendTable = () => {
-  //  hooks.
-  const { t } = useTranslation();
+  //  Hooks.
   const [send, setSend] = useState([]); // send.
   const [page, setPage] = useState(0); // page.
   const [rowsPerPage, setRowsPerPage] = useState(5); // limit.
   const [operationType, setOperationType] = useState(""); // operation type.
   const [coinAll, setCoinAll] = useState(""); // coin.
   const [transactionType, setTransactionType] = useState(""); // transaction type.
-  const [statusValue, setStatusValue] = useState(""); // value.
+  const [statusValue, setStatusValue] = useState(""); // status value.
   const [time, setTime] = useState([null, null]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [coinSettings, getCoinSettings] = useState([]);
   const [sortPhone, setSortPhone] = useState("");
   const [country, setCountry] = useState("");
-  const [receive] = useState();
-  const rows = send.transactions;
   // Sorting.
   const [sortDate, setSortDate] = useState(true);
   const [sortEmail, setSortEmail] = useState(true);
   const [sortAmount, setSortAmount] = useState(true);
+  const [sortParams, setSortParmas] = useState("");
+  const [sortType, setSortType] = useState("");
+  const [inputPhone, setPhoneValue] = useState("");
+  // State.
+  const rows = send?.transactions;
+  const setType = operationType?.props?.value;
 
   // Sorting Functions.
   const sortingDate = () => {
@@ -102,6 +107,13 @@ const SendTable = () => {
   const sortingPhone = (event) => {
     setSortPhone(event.target.value);
     getPhoneSorting(event.target.value);
+  };
+
+  const handleCountry = (event, newPhoneValue) => {
+    console.log(" event ", event);
+    setSortPhone(event?.target?.value);
+    setPhoneValue(newPhoneValue);
+    getPhoneSorting(event?.target?.value);
   };
 
   // Amount Receive.
@@ -151,6 +163,7 @@ const SendTable = () => {
     if (coinAll?.props.value === "all") {
       getSend();
     } else {
+      getSend();
       getSendCoinFilter(coinAll?.props.value);
     }
   };
@@ -177,8 +190,8 @@ const SendTable = () => {
 
   // Pagination Function.
   const handleChangePage = (event, newPage) => {
-    getSend(newPage + 1);
     setPage(newPage);
+    getSend(newPage + 1);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -187,14 +200,25 @@ const SendTable = () => {
   };
 
   //  get Send/Receive
-  const getSend = (page, rowsPerPage, transaction_type) => {
+  const getSend = (
+    page,
+    rowsPerPage,
+    setType,
+    transaction_type,
+    sortType,
+    sortParams,
+    coinAll
+  ) => {
     return instance
       .get("/admin/transaction/all", {
         params: {
           limit: rowsPerPage,
           page: page,
-          type: "send_receive",
+          type: (setType = !"All" ? setType : "send_receive"),
           transaction_type: transaction_type,
+          sort_type: sortType,
+          sort_param: sortParams,
+          coin_id: coinAll?.props?.value,
         },
       })
       .then((data) => {
@@ -338,13 +362,15 @@ const SendTable = () => {
   // Use Effect.
   useEffect(() => {
     getSend();
-    getSettingCoin();
-    getSendCoinFilter();
-    getSendOperationFilter();
-    getSorting();
-    getDateFilters();
-    getCountry();
-    getPhoneSorting();
+    setTimeout(() => {
+      getSettingCoin();
+      getSendCoinFilter();
+      getSendOperationFilter();
+      getSorting();
+      getDateFilters();
+      getCountry();
+      getPhoneSorting();
+    }, 700);
   }, []);
 
   return (
@@ -476,28 +502,26 @@ const SendTable = () => {
                         marginLeft: "20px",
                       }}
                     >
-                      <FormControl sx={{ minWidth: "100px" }}>
-                        <InputLabel id="select-phone-label">Sort</InputLabel>
-                        <Select
-                          labelId="select-phone-label"
-                          id="select-phone-label"
-                          value={sortPhone}
-                          onChange={sortingPhone}
-                          autoWidth
-                          label="Sort"
-                          fullWidth
-                          MenuProps={MenuProps}
-                        >
-                          {country &&
-                            country.map((item) => (
-                              <MenuItem key={item.id} value={item.id}>
-                                <Box sx={{ display: "flex", width: "100%" }}>
-                                  <Box mr={2}>{item.telefon}</Box>
-                                </Box>
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </FormControl>
+                      <Autocomplete
+                        inputValue={inputPhone}
+                        onInputChange={handleCountry}
+                        id="country-states"
+                        options={country}
+                        getOptionLabel={(country) => country.telefon}
+                        sx={{ width: 150 }}
+                        renderOption={(props, option) => (
+                          <Box
+                            component="li"
+                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                            {...props}
+                          >
+                            {option.telefon}
+                          </Box>
+                        )}
+                        renderInput={(params) => (
+                          <TextField {...params} label="Phone" />
+                        )}
+                      />
                     </Box>
                   </Box>
                 </TableCell>
@@ -535,15 +559,16 @@ const SendTable = () => {
                 <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
-              {send.transactions &&
-                send.transactions.map((row) => (
+              {rows &&
+                rows.map((row) => (
                   <TableRow
                     key={row.key}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {moment(row.date).format("DD/MM/YYYY HH:mm ")}{" "}
+                      {moment(row.date).format("DD/MM/YYYY HH:mm ")}
                     </TableCell>
                     <TableCell>{row.email}</TableCell>
                     <TableCell>{row.phone}</TableCell>
@@ -596,7 +621,7 @@ const SendTable = () => {
             </TableBody>
           </Table>
           {/* Pagination */}
-          {send.transactions && (
+          {rows && (
             <TablePagination
               rowsPerPageOptions={[10]}
               component="div"
@@ -609,7 +634,7 @@ const SendTable = () => {
           )}
         </TableContainer>
       </Paper>
-      {rows && (
+      {rows ? (
         <Box
           mt={8}
           display="flex"
@@ -620,6 +645,10 @@ const SendTable = () => {
             Export Data
           </Typography>
           <CSVButton data={rows} />
+        </Box>
+      ) : (
+        <Box sx={{ marginTop: "100px" }}>
+          <Loader />
         </Box>
       )}
     </Fragment>

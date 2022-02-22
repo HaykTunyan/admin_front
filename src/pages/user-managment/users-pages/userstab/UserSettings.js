@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import styled from "styled-components/macro";
 import {
   Typography as MuiTypography,
@@ -26,7 +26,8 @@ import {
   editUserWallets_req,
   getUserWallets_req,
 } from "../../../../api/userWalletsAPI";
-import TransferAccountModal from "../../../../modal/Confirmations/TransferAccountModal";
+import ConfirmationNotice from "../../../../components/ConfirmationNotice";
+import ActionConfirmationModal from "../../../../modal/Confirmations/ActionConfirmationModal";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -65,6 +66,8 @@ const UserSettings = () => {
   const [limitAmount, setLimitAmount] = useState(0);
   const [walletsValue, setWalletsValue] = useState("");
   const [wallets, setWallets] = useState([]);
+  const [successTrasfers, setSuccessTransfers] = useState(false);
+  const [confirmModal, setConfirmModal] = useState(false);
 
   const location = useLocation();
   const profileId = location?.state;
@@ -91,12 +94,9 @@ const UserSettings = () => {
     try {
       const response = await getUserWallets_req(userId);
       if (response) {
-        console.log("GET USER WALLETS RESPONSE ==>", response);
         setWallets(response.result);
       }
-    } catch (e) {
-      console.log("GET USER WALLETS ERROR ==>", e.response);
-    }
+    } catch (e) {}
   };
 
   const handleWalletChoice = (event) => {
@@ -104,7 +104,6 @@ const UserSettings = () => {
   };
 
   const handleLimitChange = (event) => {
-    console.log("LIMIT ==>", event.target.value);
     setLimitAmount(event.target.value);
   };
 
@@ -113,7 +112,6 @@ const UserSettings = () => {
     try {
       const response = await getUserData_req(userId);
       if (response) {
-        console.log("GET USER DATA RESPONSE ==>", response);
         let data = {
           email: response.userAccountInfo.email,
           full_name: response.userAccountInfo.full_name,
@@ -124,10 +122,8 @@ const UserSettings = () => {
         setAffiliateUser(response.userAccountInfo.is_affiliate);
         setBlockedUser(response.userAccountInfo.block_status);
         setLoading(false);
-        //setUserData(response.userAccountInfo);
       }
     } catch (e) {
-      console.log("GET USER DATA ==>", e.response);
       setLoading(false);
     }
   }
@@ -145,12 +141,10 @@ const UserSettings = () => {
           limitAmount
         );
         if (response) {
-          console.log("SET LIMIT FOR WALLET RESPONSE ==>", response);
           setWalletsValue("");
           setLimit(false);
         }
       } catch (e) {
-        console.log("SET LIMIT FOR WALLET ERROR ==>", e.response);
         setWalletsValue("");
         setLimitAmount(0);
       }
@@ -190,23 +184,27 @@ const UserSettings = () => {
     }
   }
 
-  async function transferAccount(e) {
+  async function transferAccount() {
     setAffiliateUser(!affiliateUser);
+    setSuccessTransfers(false);
 
     try {
       const response = await editUserData_req(
         userId,
-        e.target.id,
+        "is_affiliate",
         !affiliateUser
       );
       if (response) {
-        console.log("TRANSFER ACCOUNT RESPONSE ==>", response);
+        setSuccessTransfers(false);
         getUserData();
-        setErrors({ ...errors, [`${e.target.id}`]: "" });
+        setErrors({ ...errors, [`is_affiliate`]: "" });
+        setConfirmModal(false);
+        setSuccessTransfers(true);
       }
     } catch (error) {
-      console.log("TRANSFER ACCOUNT ERROR ==>", error.response.data);
+      console.log("ERROR ==>", error);
       if (Array.isArray(error.response.data.message)) {
+        setSuccessTransfers(false);
         setErrors({
           ...errors,
           [`${error.response.data.message[0].property}`]:
@@ -215,18 +213,28 @@ const UserSettings = () => {
       } else {
         setErrors({
           ...errors,
-          [`${e.target.id}`]: error.response.data.message,
+          [`is_affiliate`]: error.response.data.message,
         });
       }
+
+      setConfirmModal(false);
     }
   }
 
-  if (loading) {
-    return <></>;
-  }
-
   return (
-    <>
+    <Fragment>
+      {successTrasfers === true && (
+        <ConfirmationNotice
+          opening={successTrasfers}
+          title="Transfer Account Success"
+        />
+      )}
+      {confirmModal && (
+        <ActionConfirmationModal
+          onClose={() => setConfirmModal(false)}
+          onConfirm={() => transferAccount()}
+        />
+      )}
       <Card>
         <CardContent sx={{ px: { xs: "16px" }, py: { xs: "20px" } }}>
           {/* Password */}
@@ -536,24 +544,15 @@ const UserSettings = () => {
                 id={"is_affiliate"}
                 variant="contained"
                 sx={{ width: "100%" }}
-                onClick={(e) => transferAccount(e)}
+                onClick={() => setConfirmModal(true)}
               >
                 {`Transfer account to ${affiliateUser ? "real" : "Affiliate"}`}
               </Button>
-
-              {/* <TransferAccountModal
-                setAffiliateUser={setAffiliateUser}
-                affiliateUser={affiliateUser}
-                userId={userId}
-                getUserData={getUserData}
-                setErrors={setErrors}
-                errors={errors}
-              /> */}
             </Grid>
           </Grid>
         </CardContent>
       </Card>
-    </>
+    </Fragment>
   );
 };
 

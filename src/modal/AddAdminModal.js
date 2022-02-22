@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import { UserPlus } from "react-feather";
 import { Formik, Form } from "formik";
@@ -19,6 +19,7 @@ import {
   Alert as MuiAlert,
 } from "@material-ui/core";
 import { createAdmin } from "../redux/actions/user-managment";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
@@ -39,11 +40,12 @@ const addAdminValidation = Yup.object().shape({
 });
 
 const AddAdminModal = ({ getAdminUsers, primission }) => {
-  //  hooks.
-  const [open, setOpen] = useState(false);
+  //  Hooks.
   const label = { inputProps: { "aria-label": "Checkbox" } };
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
   const [messageError, setMessageError] = useState([]);
+  const [success, setSuccess] = useState(false);
 
   const [state, setState] = useState({
     email: "",
@@ -64,10 +66,12 @@ const AddAdminModal = ({ getAdminUsers, primission }) => {
   const handleSubmit = (values) => {
     dispatch(createAdmin(values))
       .then((data) => {
+        setSuccess(false);
         if (data.success) {
           setOpen(false);
           getAdminUsers();
         }
+        setSuccess(true);
       })
       .catch((error) => {
         setMessageError(error?.response?.data);
@@ -76,7 +80,10 @@ const AddAdminModal = ({ getAdminUsers, primission }) => {
   const invalid = messageError?.message;
 
   return (
-    <div>
+    <Fragment>
+      {success == true && (
+        <ConfirmationNotice opening={success} title="Create New Admin User" />
+      )}
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
         <UserPlus />
       </IconButton>
@@ -272,7 +279,7 @@ const AddAdminModal = ({ getAdminUsers, primission }) => {
           </Formik>
         </DialogContent>
       </Dialog>
-    </div>
+    </Fragment>
   );
 };
 

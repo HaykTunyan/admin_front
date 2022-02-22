@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -28,6 +28,7 @@ import {
   createAffiliateFlexible_req,
   createAffiliateLocked_req,
 } from "../api/userSavingsAPI";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -43,6 +44,8 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
   const [date, setDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [resaving, setResaving] = useState(false);
+  const [successSaving, setSuccessSaving] = useState(false);
+  const [successLocked, setSuccessLocked] = useState(false);
   const [state, setState] = useState({
     walletId: "",
     type: "",
@@ -135,17 +138,15 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
         delete data[`${item}`];
       }
 
-      console.log("FLEXIBLE DATA ==>", data);
-
       try {
         const response = await createAffiliateFlexible_req(data);
+        setSuccessSaving(false);
         if (response) {
-          console.log("ADD AFFILIATE FLEXIBLE SAVING RESPONSE ==>", response);
           getUserSavings("flexible");
           setOpen(false);
         }
+        setSuccessSaving(true);
       } catch (e) {
-        console.log("ADD AFFILIATE FLEXIBLE SAVING ERROR ==>", e.response);
         setErrorMes(e?.response?.data);
       }
     } else {
@@ -170,13 +171,13 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
 
       try {
         const response = await createAffiliateLocked_req(data);
+        setSuccessLocked(false);
         if (response) {
-          console.log("ADD AFFILIATE LOCKED SAVING RESPONSE ==>", response);
           getUserSavings("locked");
           setOpen(false);
         }
+        setSuccessLocked(true);
       } catch (e) {
-        console.log("ADD AFFILIATE LOCKED SAVING ERROR ==>", e.response);
         setErrorMes(e?.response?.data);
       }
     }
@@ -184,15 +185,12 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
 
   // get User Wallets
   async function getUserWallets() {
-    console.log("User Id ==>", userId);
     try {
       const response = await getUserWallets_req(userId);
       if (response) {
-        console.log("GET USER WALLETS RESPONSE ==>", response);
         setWallets(response.result);
       }
     } catch (e) {
-      console.log("GET USER WALLETS ERROR ==>", e.response);
       return Promise.reject(e);
     }
   }
@@ -201,10 +199,15 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
     getUserWallets();
   }, []);
 
-  console.log("WALLET ID ==>", walletId);
-
   return (
-    <>
+    <Fragment>
+      {successSaving === true && (
+        <ConfirmationNotice opening={successSaving} title="Flexible success" />
+      )}
+      {successLocked === true && (
+        <ConfirmationNotice opening={successLocked} title="Locked success" />
+      )}
+
       <Button variant="contained" onClick={handleClickOpen}>
         {`Add ${tab === 1 ? "Flexible" : "Locked"} Saving`}
       </Button>
@@ -582,7 +585,7 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
           </Formik>
         </DialogContent>
       </Dialog>
-    </>
+    </Fragment>
   );
 };
 

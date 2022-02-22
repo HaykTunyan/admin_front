@@ -22,8 +22,10 @@
 .gcZSxW,
 .gVmmqG,
 .gdgcXw,
-.ieHMRv {
-  display: block;
+.ieHMRv,
+.lmWXhI,
+.hQERwa {
+  display: block !important;
 }
 
 .ifWCsM {
@@ -43,13 +45,17 @@
   padding: 8px;
 }
 
-.eIWVsK {
-  background-color: #303f9f;
-}
-
 .input-search {
   display: block;
 } 
+
+.cyanhC > input {
+  height: 30px;
+}
+
+.MuiDrawer-paperAnchorLeft {
+  background-color: #303f9f !important;
+}
 
 .UsersList__Search-sc-11qbpp7m-3,
 .UsersList__Search-sc9qbpp7m-3 {

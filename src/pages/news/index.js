@@ -21,6 +21,7 @@ import {
   publishNews_req,
 } from "../../api/newsAPI";
 import moment from "moment";
+import ConfirmationNotice from "../../components/ConfirmationNotice";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -44,6 +45,8 @@ const NewsComponent = () => {
   const [newsList, setNewsList] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [success, setSuccess] = useState(false);
+  const [publish, setPublish] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     getNews(newPage + 1);
@@ -68,7 +71,9 @@ const NewsComponent = () => {
     try {
       const response = await deleteNews_req(id);
       if (response) {
+        setSuccess(false);
         getNews();
+        setSuccess(true);
       }
     } catch (e) {}
   }
@@ -83,7 +88,9 @@ const NewsComponent = () => {
     try {
       const response = await publishNews_req(formData);
       if (response) {
+        setPublish(false);
         getNews();
+        setPublish(true);
       }
     } catch (e) {}
   }
@@ -164,6 +171,12 @@ const NewsComponent = () => {
           </Box>
         </Grid>
       </Grid>
+      {success === true && (
+        <ConfirmationNotice opening={success} title="Update News List" />
+      )}
+      {publish === true && (
+        <ConfirmationNotice opening={publish} title="Publish News" />
+      )}
     </Fragment>
   );
 };

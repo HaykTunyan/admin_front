@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -24,6 +24,7 @@ import {
 import { DateTimePicker } from "@material-ui/lab";
 import { getUserWallets_req } from "../api/userWalletsAPI";
 import { addAffiliateExchanges_req } from "../api/userExchangesAPI";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -37,6 +38,7 @@ const AddAffiliateSwap = ({ userId, getUserExchanges }) => {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [value, setValue] = useState(null);
+  const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
     fromWallet: "",
     toWallet: "",
@@ -91,17 +93,15 @@ const AddAffiliateSwap = ({ userId, getUserExchanges }) => {
       date: values.date,
     };
 
-    console.log("DATA ==>", data);
-
     try {
       const response = await addAffiliateExchanges_req(data);
+      setSuccess(false);
       if (response) {
-        console.log("ADD AFFILIATE EXCHANGE RESPONSE ==>", response);
         getUserExchanges();
         setOpen(false);
       }
+      setSuccess(true);
     } catch (e) {
-      console.log("ADD AFFILIATE EXCHANGE ERROR ==>", e);
       setErrorMes(e?.response?.data);
     }
   }
@@ -111,11 +111,9 @@ const AddAffiliateSwap = ({ userId, getUserExchanges }) => {
     try {
       const response = await getUserWallets_req(userId);
       if (response) {
-        console.log("GET USER WALLETS RESPONSE ==>", response);
         setWallets(response.result);
       }
     } catch (e) {
-      console.log("GET USER WALLETS ERROR ==>", e);
       return Promise.reject(e);
     }
   }
@@ -124,12 +122,14 @@ const AddAffiliateSwap = ({ userId, getUserExchanges }) => {
     getUserWallets();
   }, []);
 
-  const fontColor = {
-    style: { color: "rgb(50, 50, 50)" },
-  };
-
   return (
-    <>
+    <Fragment>
+      {success === true && (
+        <ConfirmationNotice
+          opening={success}
+          title="Create Affilate Exchange"
+        />
+      )}
       <Button variant="contained" onClick={handleClickOpen}>
         Add Exchange
       </Button>
@@ -361,7 +361,7 @@ const AddAffiliateSwap = ({ userId, getUserExchanges }) => {
           </Formik>
         </DialogContent>
       </Dialog>
-    </>
+    </Fragment>
   );
 };
 

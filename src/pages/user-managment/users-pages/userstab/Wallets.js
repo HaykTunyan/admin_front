@@ -39,7 +39,7 @@ const Wallets = () => {
   const userId = profileId?.id;
   const [wallets, setWallets] = useState([]);
   const [sortBy, setSortBy] = useState("increasing");
-  const [sussess, setSuccess] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleCellClick = (sortType) => {
     setSortBy(sortBy === "increasing" ? "decreasing" : "increasing");
@@ -64,7 +64,7 @@ const Wallets = () => {
       if (response) {
         console.log("BLOCK USER WALLET RESPONSE ==>", response);
         getUserWallets("total_balance_usd", sortBy);
-        setSuccess(!sussess);
+        setSuccess(!success);
       }
     } catch (e) {
       console.log("BLOCK USER WALLET ERROR ==>", e);
@@ -167,7 +167,7 @@ const Wallets = () => {
             </Table>
           </TableWrapper>
         </Paper>
-        {sussess && <SuccessModal />}
+        {success && <SuccessModal />}
       </Card>
     </>
   );

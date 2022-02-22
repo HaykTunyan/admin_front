@@ -76,9 +76,9 @@ const NotVerifiedTable = () => {
   const sortingSortRegister = () => {
     setSortRegister(!sortRegister);
     if (sortRegister) {
-      getSortingData("decreasing", "date");
+      getSortingData("decreasing", "registration_date");
     } else {
-      getSortingData("increasing", "date");
+      getSortingData("increasing", "registration_date");
     }
   };
 
@@ -201,12 +201,12 @@ const NotVerifiedTable = () => {
     <Fragment>
       <Card p={4}>
         <Grid container alignItems="center" spacing={4}>
-          <Grid item xs={3} md={3}>
+          <Grid item xs={12} md={3}>
             <Box component="div">
               <SearchComponent onChange={(e) => searchItems(e.target.value)} />
             </Box>
           </Grid>
-          <Grid item xs={3} md={3}>
+          <Grid item xs={12} md={3}>
             <DateRange value={value} onChange={onChangeTime} />
           </Grid>
         </Grid>

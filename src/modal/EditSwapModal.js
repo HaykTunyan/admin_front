@@ -21,6 +21,7 @@ import EditIcon from "@material-ui/icons/EditOutlined";
 import { spacing } from "@material-ui/system";
 import { useDispatch } from "react-redux";
 import { editSwap } from "../redux/actions/settings";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -47,10 +48,11 @@ const EditSwapModal = ({
 }) => {
   // hooks.
   const dispatch = useDispatch();
+  const label = { inputProps: { "aria-label": "Checkbox" } };
   const [open, setOpen] = useState(false);
   const [check, setCheck] = useState(limitEnabledSwap);
-  const label = { inputProps: { "aria-label": "Checkbox" } };
   const [errorMes, setErrorMes] = useState([]);
+  const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
     swapId: idSwap, //is required
     decimals: decimalsSwap,
@@ -101,15 +103,15 @@ const EditSwapModal = ({
     for (let item of result) {
       delete data[`${item}`];
     }
-    console.log("Data =>", data);
 
     dispatch(editSwap(data))
       .then((data) => {
+        setSuccess(false);
         setOpen(false);
         getSwap();
+        setSuccess(true);
       })
       .catch((error) => {
-        console.log("error messages", error?.response?.data);
         setErrorMes(error?.response?.data);
       });
   };
@@ -118,10 +120,12 @@ const EditSwapModal = ({
 
   return (
     <Fragment>
+      {success === true && (
+        <ConfirmationNotice opening={success} title="Edit Swap" />
+      )}
       <IconButton aria-label="done" onClick={handleClickOpen}>
         <EditIcon />
       </IconButton>
-
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
           <Typography variant="h4" color="inherit" component="div">

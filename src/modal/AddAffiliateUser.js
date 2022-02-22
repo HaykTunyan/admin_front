@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components/macro";
 import {
   Button,
@@ -16,6 +16,7 @@ import * as Yup from "yup";
 import { spacing } from "@material-ui/system";
 import userSingleton from "../singletons/user.singleton";
 import { createAffiliateUser_req } from "../api/userAPI";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
@@ -30,10 +31,10 @@ const AddAffiliateUser = ({ getUserList }) => {
     password: "",
   });
   const [errorMes, setErrorMes] = useState([]);
-
   const [emailAuth, setEmailAuth] = useState(false);
   const [phoneAuth, setPhoneAuth] = useState(false);
   const [check2FA, setCheck2FA] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   // validation Schema.
   const addAffilateValidation = Yup.object().shape(
@@ -115,8 +116,6 @@ const AddAffiliateUser = ({ getUserList }) => {
       delete data[`${item}`];
     }
 
-    console.log("DATA", data);
-
     try {
       const response = await createAffiliateUser_req(data);
       if (response) {
@@ -125,6 +124,7 @@ const AddAffiliateUser = ({ getUserList }) => {
         userSingleton._affiliateList = true;
         getUserList();
         setOpen(false);
+        setSuccess(true);
       }
     } catch (e) {
       console.log("ADD AFFILIATE USER ERROR ==>", e, e.response);
@@ -133,7 +133,7 @@ const AddAffiliateUser = ({ getUserList }) => {
   };
 
   return (
-    <div>
+    <Fragment>
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         Add Affiliate User
       </Button>
@@ -285,7 +285,8 @@ const AddAffiliateUser = ({ getUserList }) => {
           </Formik>
         </DialogContent>
       </Dialog>
-    </div>
+      <>{success && <ConfirmationNotice title="Creat New Affilate User" />}</>
+    </Fragment>
   );
 };
 

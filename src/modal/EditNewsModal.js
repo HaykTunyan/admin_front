@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, Fragment } from "react";
 import {
   Button,
   TextField,
@@ -16,11 +16,11 @@ import TinymceNew from "../components/TinymceNew";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { editNews_req } from "../api/newsAPI";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 const EditNewsModal = ({ news, getNews }) => {
-  console.log("NEWS ==>", news);
   const editorRef = useRef(null);
-
+  const [success, setSuccess] = useState(false);
   const [open, setOpen] = useState(false);
   const [initialState, setInitialState] = useState({
     title: news.title,
@@ -94,19 +94,22 @@ const EditNewsModal = ({ news, getNews }) => {
 
     try {
       const response = await editNews_req(formData);
+      setSuccess(false);
       if (response) {
-        console.log("EDITING NEWS RESPONSE ==>", response);
         setOpen(false);
         getNews();
       }
+      setSuccess(true);
     } catch (e) {
-      console.log("EDITING NEWS ERROR ==>", e.response);
       setOpen(false);
     }
   }
 
   return (
-    <div>
+    <Fragment>
+      {success === true && (
+        <ConfirmationNotice opening={success} title="Edit News" />
+      )}
       <Button size="small" color="primary" onClick={handleClickOpen}>
         Edit
       </Button>
@@ -254,7 +257,7 @@ const EditNewsModal = ({ news, getNews }) => {
           );
         }}
       </Formik>
-    </div>
+    </Fragment>
   );
 };
 

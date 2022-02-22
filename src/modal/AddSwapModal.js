@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
@@ -24,6 +24,7 @@ import {
 } from "@material-ui/core";
 import { addSwap } from "../redux/actions/settings";
 import { instance } from "../services/api";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -37,6 +38,7 @@ const AddSwapModal = ({ getSwap }) => {
   const [check, setCheck] = useState(false);
   const [coinSettings, getCoinSettings] = useState([]);
   const [errorMes, setErrorMes] = useState([]);
+  const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
     fromCoin: Number,
     toCoin: Number,
@@ -92,24 +94,21 @@ const AddSwapModal = ({ getSwap }) => {
     for (let item of result) {
       delete data[`${item}`];
     }
-    console.log("Data =>", data);
 
     dispatch(addSwap(data))
       .then((data) => {
-        console.log("data", data);
+        setSuccess(false);
         setOpen(false);
         getSwap();
+        setSuccess(true);
       })
       .catch((error) => {
-        console.log("error messages", error?.response?.data);
         setErrorMes(error?.response?.data);
       });
   };
 
   // Error Messages.
   const invalid = errorMes?.message;
-
-  console.log(" error ", errorMes);
 
   // get getSettingCoin.
   const getSettingCoin = () => {
@@ -130,7 +129,10 @@ const AddSwapModal = ({ getSwap }) => {
   }, []);
 
   return (
-    <>
+    <Fragment>
+      {success === true && (
+        <ConfirmationNotice opening={success} title="Add Swap " />
+      )}
       <Button variant="contained" onClick={handleClickOpen}>
         Add Swap
       </Button>
@@ -145,7 +147,6 @@ const AddSwapModal = ({ getSwap }) => {
             initialValues={{
               ...state,
             }}
-            // initialForms={state}
             validationSchema={AddSwapSchema}
             onSubmit={handleSubmit}
           >
@@ -288,13 +289,7 @@ const AddSwapModal = ({ getSwap }) => {
                       id="fee"
                       name="fee"
                       label="Fee %"
-                      //type="number"
                       fullWidth
-                      // InputProps={{
-                      //   inputProps: {
-                      //     min: 0,
-                      //   },
-                      // }}
                       error={Boolean(touched.fee && errors.fee)}
                       helperText={touched.fee && errors.fee}
                       onBlur={handleBlur}
@@ -318,13 +313,7 @@ const AddSwapModal = ({ getSwap }) => {
                       id="min"
                       name="min"
                       label="Min"
-                      //type="number"
                       fullWidth
-                      // InputProps={{
-                      //   inputProps: {
-                      //     min: 0,
-                      //   },
-                      // }}
                       error={Boolean(touched.min && errors.min)}
                       helperText={touched.min && errors.min}
                       onBlur={handleBlur}
@@ -380,13 +369,7 @@ const AddSwapModal = ({ getSwap }) => {
                           id="limit"
                           name="limit"
                           label="Limit"
-                          //type="number"
                           fullWidth
-                          // InputProps={{
-                          //   inputProps: {
-                          //     min: 0,
-                          //   },
-                          // }}
                           error={Boolean(touched.limit && errors.limit)}
                           helperText={touched.limit && errors.limit}
                           onBlur={handleBlur}
@@ -426,7 +409,7 @@ const AddSwapModal = ({ getSwap }) => {
           </Formik>
         </DialogContent>
       </Dialog>
-    </>
+    </Fragment>
   );
 };
 

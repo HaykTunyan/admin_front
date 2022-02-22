@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { Trash } from "react-feather";
 import { instance } from "../../services/api";
+import ConfirmationNotice from "../../components/ConfirmationNotice";
 
 // Custom Style.
 const IconButton = styled(MuiIconButton)`
@@ -25,6 +26,7 @@ const IconButton = styled(MuiIconButton)`
 const DeleteSwapModal = ({ swapId, getSwap }) => {
   // hooks
   const [open, setOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -38,7 +40,9 @@ const DeleteSwapModal = ({ swapId, getSwap }) => {
     return instance
       .delete(`/admin/swap-settings/${swapId} `, { mode: "no-cors" })
       .then((data) => {
+        setSuccess(false);
         getSwap();
+        setSuccess(true);
         return data;
       })
       .catch((error) => {
@@ -49,6 +53,12 @@ const DeleteSwapModal = ({ swapId, getSwap }) => {
 
   return (
     <Fragment>
+      {success === true && (
+        <ConfirmationNotice
+          opening={success}
+          title="Delete Item successfully"
+        />
+      )}
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
         <Trash />
       </IconButton>
