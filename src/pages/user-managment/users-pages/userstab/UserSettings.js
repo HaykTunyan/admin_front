@@ -39,6 +39,12 @@ const Button = styled(MuiButton)(spacing);
 
 const UserSettings = () => {
   const [loading, setLoading] = useState(true);
+  const [defaultData, setDefaultData] = useState({
+    email: "",
+    full_name: "",
+    phone: "",
+    password: "",
+  });
   const [editedData, setEditedData] = useState({
     email: "",
     full_name: "",
@@ -66,7 +72,10 @@ const UserSettings = () => {
   const [limitAmount, setLimitAmount] = useState(0);
   const [walletsValue, setWalletsValue] = useState("");
   const [wallets, setWallets] = useState([]);
-  const [successTrasfers, setSuccessTransfers] = useState(false);
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+  });
   const [confirmModal, setConfirmModal] = useState(false);
 
   const location = useLocation();
@@ -108,7 +117,7 @@ const UserSettings = () => {
   };
 
   async function getUserData() {
-    //setLoading(true);
+    setLoading(true);
     try {
       const response = await getUserData_req(userId);
       if (response) {
@@ -118,7 +127,7 @@ const UserSettings = () => {
           phone: response.userAccountInfo.phone,
           password: response.userAccountInfo.password,
         };
-        setEditedData(data);
+        setDefaultData(data);
         setAffiliateUser(response.userAccountInfo.is_affiliate);
         setBlockedUser(response.userAccountInfo.block_status);
         setLoading(false);
@@ -152,9 +161,10 @@ const UserSettings = () => {
   }
 
   async function editData(e) {
+    setMessage({ ...message, open: false, error: false, type: "edit" });
     setValues({ ...values, [`${e.target.id}`]: !values[`${e.target.id}`] });
 
-    if (values[`${e.target.id}`]) {
+    if (values[`${e.target.id}`] && editedData[`${e.target.id}`]) {
       try {
         const response = await editUserData_req(
           userId,
@@ -164,6 +174,7 @@ const UserSettings = () => {
         if (response) {
           console.log("EDIT USER DATA RESPONSE ==>", response);
           getUserData();
+          setMessage({ ...message, open: true, type: "edit" });
           setErrors({ ...errors, [`${e.target.id}`]: "" });
         }
       } catch (error) {
@@ -180,13 +191,15 @@ const UserSettings = () => {
             [`${e.target.id}`]: error.response.data.message,
           });
         }
+
+        setMessage({ ...message, open: true, error: true });
       }
     }
   }
 
   async function transferAccount() {
     setAffiliateUser(!affiliateUser);
-    setSuccessTransfers(false);
+    setMessage({ ...message, open: false, error: false, type: "transfer" });
 
     try {
       const response = await editUserData_req(
@@ -195,16 +208,14 @@ const UserSettings = () => {
         !affiliateUser
       );
       if (response) {
-        setSuccessTransfers(false);
         getUserData();
         setErrors({ ...errors, [`is_affiliate`]: "" });
         setConfirmModal(false);
-        setSuccessTransfers(true);
+        setMessage({ ...message, open: true, type: "transfer" });
       }
     } catch (error) {
       console.log("ERROR ==>", error);
       if (Array.isArray(error.response.data.message)) {
-        setSuccessTransfers(false);
         setErrors({
           ...errors,
           [`${error.response.data.message[0].property}`]:
@@ -218,15 +229,26 @@ const UserSettings = () => {
       }
 
       setConfirmModal(false);
+      setMessage({ ...message, open: true, error: true });
     }
+  }
+
+  if (loading) {
+    return <></>;
   }
 
   return (
     <Fragment>
-      {successTrasfers === true && (
+      {message.open === true && (
         <ConfirmationNotice
-          opening={successTrasfers}
-          title="Transfer Account Success"
+          error={message.error}
+          title={
+            message.error === true
+              ? "An error occurred, try again"
+              : message.type === "transfer"
+              ? `Account transferred to ${affiliateUser ? "Affiliate" : "real"}`
+              : "Successfully Edited"
+          }
         />
       )}
       {confirmModal && (
@@ -258,9 +280,9 @@ const UserSettings = () => {
                   id="outlined-adornment-password"
                   type={values.showPassword ? "text" : "password"}
                   disabled={values.password === false}
-                  onChange={(e) =>
-                    setEditedData({ ...editedData, password: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setEditedData({ ...editedData, password: e.target.value });
+                  }}
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
@@ -321,7 +343,7 @@ const UserSettings = () => {
                   label={"Email"}
                   type="email"
                   variant="outlined"
-                  defaultValue={editedData.email}
+                  defaultValue={defaultData.email}
                   disabled={!affiliateUser || values.email === false}
                   onChange={(e) =>
                     setEditedData({ ...editedData, email: e.target.value })
@@ -374,7 +396,7 @@ const UserSettings = () => {
                   label="Phone"
                   type="tel"
                   variant="outlined"
-                  defaultValue={editedData.phone}
+                  defaultValue={defaultData.phone}
                   disabled={!affiliateUser || values.phone === false}
                   onChange={(e) =>
                     setEditedData({ ...editedData, phone: e.target.value })
@@ -423,7 +445,7 @@ const UserSettings = () => {
                   label="Name"
                   type="text"
                   variant="outlined"
-                  defaultValue={editedData.full_name}
+                  defaultValue={defaultData.full_name}
                   disabled={!affiliateUser || values.userName === false}
                   onChange={(e) =>
                     setEditedData({ ...editedData, full_name: e.target.value })

@@ -20,9 +20,9 @@ import {
   IconButton,
 } from "@material-ui/core";
 import CSVButton from "../../components/CSVButton";
-import PandingInformationModal from "../../modal/PandingInformationModal";
-import PandingDocumentModal from "../../modal/PandingDocumentModal";
-import PandingVerififeyModal from "../../modal/PandingVerififeyModal";
+import PendingInformationModal from "../../modal/PendingInformationModal";
+import PendingDocumentModal from "../../modal/PendingDocumentModal";
+import PendingVerifyModal from "../../modal/PendingVerifyModal";
 import NoData from "../../components/NoData";
 import DateRange from "../../components/date-picker/DateRange";
 import { ArrowDown, ArrowUp } from "react-feather";
@@ -39,72 +39,130 @@ const useStyles = makeStyles({
   },
 });
 
+export const cellList = [
+  {
+    id: "1",
+    head: "ID",
+    sortable: true,
+    param: "id",
+  },
+  {
+    id: "2",
+    head: "Email",
+    sortable: true,
+    param: "email",
+  },
+  {
+    id: "3",
+    head: "Registration Date",
+    sortable: true,
+    param: "registration_date",
+  },
+  {
+    id: "4",
+    head: "Verification Date",
+    sortable: true,
+    param: "verification_date",
+  },
+  {
+    id: "5",
+    head: "Information",
+    sortable: false,
+  },
+  {
+    id: "6",
+    head: "Uploaded Documents",
+    sortable: false,
+  },
+  {
+    id: "7",
+    head: "Send for Verification",
+    sortable: false,
+  },
+];
+
 const VerifiedTable = () => {
   // Hooks.
   const classes = useStyles();
   const [rowVerified, setRowVerified] = useState([]);
+  const rows = rowVerified?.kyc;
+
+  //Pagination
   const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  //Search
+  const [searchInput, setSearchInput] = useState("");
+  //Filters
   const [value, setValue] = useState([null, null]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchInput, setSearchInput] = useState("");
-  const [primission, setPrimission] = useState("");
-  const rows = rowVerified?.kyc;
-  // Sorting.
-  const [sortId, setSortId] = useState(true);
-  const [sortEmail, setSortEmail] = useState(true);
-  const [sortRegister, setSortRegister] = useState(true);
-  const [sortVerify, setSortVerify] = useState(true);
+  //Sorting
+  const [sort, setSort] = useState({
+    type: "decreasing",
+    param: "",
+  });
+  //Permissions
+  const [permission, setPermission] = useState("");
 
-  // Sorting Functions.
-  const sortingSortId = () => {
-    setSortId(!sortId);
-    if (sortId) {
-      getSortingData("decreasing", "id");
-    } else {
-      getSortingData("increasing", "id");
-    }
-  };
-
-  const sortingSortEmail = () => {
-    setSortEmail(!sortEmail);
-    if (sortEmail) {
-      getSortingData("decreasing", "email");
-    } else {
-      getSortingData("increasing", "email");
-    }
-  };
-
-  const sortingSortRegister = () => {
-    setSortRegister(!sortRegister);
-    if (sortRegister) {
-      getSortingData("decreasing", "registration_date");
-    } else {
-      getSortingData("increasing", "registration_date");
-    }
-  };
-
-  const sortingSortVerify = () => {
-    setSortVerify(!sortVerify);
-    if (sortVerify) {
-      getSortingData("decreasing", "verification_date");
-    } else {
-      getSortingData("increasing", "verification_date");
-    }
-  };
-
+  //Handling Search
   const searchItems = (searchValue) => {
     setSearchInput(searchValue);
-    if (searchValue === "") {
-      getKyc();
-    } else {
-      getSearchData(searchValue);
+
+    getKyc(
+      1,
+      rowsPerPage,
+      searchValue === "" ? null : searchValue,
+      startDate,
+      endDate
+    );
+  };
+
+  //Handling Calendar
+  const onChangeTime = (newValue) => {
+    setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));
+    setEndDate(moment(newValue[1]).format("YYYY-MM-DD"));
+    setValue(newValue);
+
+    if (newValue[1]) {
+      getKyc(
+        1,
+        rowsPerPage,
+        searchInput,
+        moment(newValue[0]).format("YYYY-MM-DD"),
+        moment(newValue[1]).format("YYYY-MM-DD")
+      );
     }
+  };
+
+  //Handling Sorting
+  const handleSorting = (id, param) => {
+    setSort({
+      [`sorted_${id}`]: true,
+      type: sort.type === "decreasing" ? "increasing" : "decreasing",
+      param: param,
+    });
+
+    getKyc(
+      page,
+      rowsPerPage,
+      searchInput,
+      startDate,
+      endDate,
+      sort.type === "decreasing" ? "increasing" : "decreasing",
+      param
+    );
   };
 
   const handleChangePage = (event, newPage) => {
-    getKyc(newPage + 1);
+    getKyc(
+      newPage + 1,
+      rowsPerPage,
+      searchInput,
+      startDate,
+      endDate,
+      sort.type,
+      sort.param
+    );
     setPage(newPage);
   };
 
@@ -113,33 +171,47 @@ const VerifiedTable = () => {
     setPage(1);
   };
 
-  const onChangeTime = (newValue) => {
-    setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));
-    setEndDate(moment(newValue[1]).format("YYYY-MM-DD"));
-    setValue(newValue);
-    getTimeFilter(
-      moment(newValue[0]).format("YYYY-MM-DD"),
-      moment(newValue[1]).format("YYYY-MM-DD")
-    );
-  };
-
   // Profile.
-  const getPrimission = () => {
+  const getPermission = () => {
     return instance.get("/admin/profile").then((data) => {
-      setPrimission(data.data);
+      setPermission(data.data);
       return data;
     });
   };
 
   // get Savings.
-  const getKyc = (page, rowsPerPage) => {
+  const getKyc = (
+    page,
+    rowsPerPage,
+    search,
+    start_date,
+    end_date,
+    sort_type,
+    sort_param
+  ) => {
+    let params = {
+      type: 4,
+      page: page,
+      limit: rowsPerPage,
+      search: search,
+      start_date: start_date,
+      end_date: end_date,
+      sort_type: sort_type,
+      sort_param: sort_param,
+    };
+
+    let result = Object.keys(params).filter(
+      (key) => !params[key] || params[key] === ""
+    );
+
+    for (let item of result) {
+      delete params[`${item}`];
+    }
+
+    console.log("PARAMS ==>", params);
     return instance
       .get("/admin/kyc/all", {
-        params: {
-          limit: rowsPerPage,
-          page: page,
-          type: 4,
-        },
+        params: params,
       })
       .then((data) => {
         setRowVerified(data.data);
@@ -149,69 +221,12 @@ const VerifiedTable = () => {
         return Promise.reject(err);
       })
       .finally(() => {});
-  };
-
-  const getTimeFilter = (start_date, end_date, page, rowsPerPage) => {
-    return instance
-      .get("/admin/kyc/all", {
-        params: {
-          type: 4,
-          start_date: start_date,
-          end_date: end_date,
-          page: page,
-          limit: rowsPerPage,
-        },
-      })
-      .then((data) => {
-        setRowVerified(data.data);
-        return data;
-      })
-      .catch((err) => {
-        return Promise.reject(err);
-      })
-      .finally(() => {});
-  };
-
-  const getSearchData = (search) => {
-    return instance
-      .get("/admin/kyc/all", {
-        params: {
-          type: 4,
-          search: search,
-        },
-      })
-      .then((data) => {
-        setRowVerified(data.data);
-        return data;
-      })
-      .catch((err) => {
-        return Promise.reject(err);
-      })
-      .finally(() => {});
-  };
-
-  const getSortingData = (sort_type, sort_param) => {
-    return instance
-      .get("/admin/kyc/all", {
-        params: {
-          type: 4,
-          sort_type: sort_type,
-          sort_param: sort_param,
-        },
-      })
-      .then((data) => {
-        setRowVerified(data.data);
-        return data;
-      });
   };
 
   // Use Effect.
   useEffect(() => {
-    getPrimission();
+    getPermission();
     getKyc();
-    getTimeFilter();
-    getSearchData();
-    getSortingData();
   }, []);
 
   return (
@@ -236,65 +251,45 @@ const VerifiedTable = () => {
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="left">
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      ID
-                      <Box sx={{ display: "flex", justifyContent: "center" }}>
-                        <IconButton onClick={sortingSortId}>
-                          {sortId ? (
-                            <ArrowUp size={16} />
-                          ) : (
-                            <ArrowDown size={16} />
+                  {cellList?.map((item) => (
+                    <TableCell key={item.id} align="left">
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                        onMouseOver={() =>
+                          setSort({ ...sort, [`show_${item.id}`]: true })
+                        }
+                        onMouseLeave={() =>
+                          setSort({ ...sort, [`show_${item.id}`]: false })
+                        }
+                        onClick={() =>
+                          handleSorting(Number(item.id), item.param)
+                        }
+                      >
+                        {item.head}
+
+                        {item.sortable === true &&
+                          (sort[`sorted_${item.id}`] === true ||
+                            sort[`show_${item.id}`] === true) && (
+                            <Box sx={{ display: "flex" }}>
+                              <IconButton
+                                onClick={() =>
+                                  handleSorting(Number(item.id), item.param)
+                                }
+                              >
+                                {sort.type === "increasing" ? (
+                                  <ArrowUp size={16} />
+                                ) : (
+                                  <ArrowDown size={16} />
+                                )}
+                              </IconButton>
+                            </Box>
                           )}
-                        </IconButton>
                       </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      Email
-                      <Box sx={{ display: "flex", justifyContent: "center" }}>
-                        <IconButton onClick={sortingSortEmail}>
-                          {sortEmail ? (
-                            <ArrowUp size={16} />
-                          ) : (
-                            <ArrowDown size={16} />
-                          )}
-                        </IconButton>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      Registration Date
-                      <Box sx={{ display: "flex", justifyContent: "center" }}>
-                        <IconButton onClick={sortingSortRegister}>
-                          {sortRegister ? (
-                            <ArrowUp size={16} />
-                          ) : (
-                            <ArrowDown size={16} />
-                          )}
-                        </IconButton>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      Verification Date
-                      <Box sx={{ display: "flex", justifyContent: "center" }}>
-                        <IconButton onClick={sortingSortVerify}>
-                          {sortVerify ? (
-                            <ArrowUp size={16} />
-                          ) : (
-                            <ArrowDown size={16} />
-                          )}
-                        </IconButton>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>Information</TableCell>
-                  <TableCell>Uploaded Documents</TableCell>
-                  <TableCell>Send for verification</TableCell>
+                    </TableCell>
+                  ))}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -317,7 +312,7 @@ const VerifiedTable = () => {
                         )}
                       </TableCell>
                       <TableCell>
-                        <PandingInformationModal
+                        <PendingInformationModal
                           pandingId={row.user_id}
                           name={row.name}
                           surname={row.surname}
@@ -328,7 +323,7 @@ const VerifiedTable = () => {
                         />
                       </TableCell>
                       <TableCell>
-                        <PandingDocumentModal
+                        <PendingDocumentModal
                           pandingId={row.user_id}
                           documentType={row.document_type}
                           documentBack={row.document_back}
@@ -337,11 +332,13 @@ const VerifiedTable = () => {
                         />
                       </TableCell>
                       <TableCell>
-                        {primission?.role === 1 && (
-                          <PandingVerififeyModal
+                        {permission?.role === 1 && (
+                          <PendingVerifyModal
                             subTitle="Verifiy Again"
-                            kycId={row.user_id}
+                            user_id={row.user_id}
                             statusKyc={2}
+                            from={"verified"}
+                            getKYC={getKyc}
                           />
                         )}
                       </TableCell>

@@ -64,12 +64,6 @@ const AddLockedSavingModal = ({ getLocked }) => {
     type: "locked",
     min: "",
     max: "",
-    duration: [
-      {
-        days: "",
-        percent: "",
-      },
-    ],
   });
 
   const handleClickOpen = () => {
@@ -82,6 +76,8 @@ const AddLockedSavingModal = ({ getLocked }) => {
 
   // Form Req.
   const addSavings = (values) => {
+    setSuccess(false);
+
     let data = {
       coin: Number(values.coin),
       type: "locked",
@@ -92,7 +88,6 @@ const AddLockedSavingModal = ({ getLocked }) => {
 
     dispatch(addSaving(data))
       .then((data) => {
-        setSuccess(false);
         if (data.success) {
           setOpen(false);
           getLocked();
@@ -126,9 +121,7 @@ const AddLockedSavingModal = ({ getLocked }) => {
 
   return (
     <Fragment>
-      {success === true && (
-        <ConfirmationNotice opening={true} title="Add Locked Savings succes" />
-      )}
+      {success === true && <ConfirmationNotice title="Locked Saving added" />}
       <Button variant="contained" onClick={handleClickOpen}>
         Add Saving
       </Button>
@@ -140,8 +133,15 @@ const AddLockedSavingModal = ({ getLocked }) => {
         </DialogTitle>
         <DialogContent>
           <Formik
+            enableReinitialize={true}
             initialValues={{
               ...state,
+              duration: [
+                {
+                  days: "",
+                  percent: "",
+                },
+              ],
             }}
             validationSchema={AddSavingSchema}
             onSubmit={addSavings}
@@ -283,7 +283,12 @@ const AddLockedSavingModal = ({ getLocked }) => {
                               <Button
                                 size="small"
                                 variant="contained"
-                                onClick={() => push({ days: "", percent: "" })}
+                                onClick={() => {
+                                  push({
+                                    days: "",
+                                    percent: "",
+                                  });
+                                }}
                               >
                                 Add
                               </Button>
@@ -291,8 +296,8 @@ const AddLockedSavingModal = ({ getLocked }) => {
                             <Spacer my={4} />
                           </>
 
-                          {state.duration.length > 0 &&
-                            state.duration.map((duration, index) => (
+                          {values.duration.length > 0 &&
+                            values.duration.map((duration, index) => (
                               <>
                                 <Box
                                   display="flex"
@@ -349,7 +354,9 @@ const AddLockedSavingModal = ({ getLocked }) => {
                                       <IconButton
                                         aria-label="close"
                                         color="primary"
-                                        onClick={() => remove(index)}
+                                        onClick={() => {
+                                          remove(index);
+                                        }}
                                       >
                                         <XCircle />
                                       </IconButton>

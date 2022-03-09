@@ -21,6 +21,7 @@ import {
 import RequestVerificationModal from "../../../../modal/RequestVerificationModal";
 import DocumentsModal from "../../../../modal/DocumentsModal";
 import RejectKYCModal from "../../../../modal/RejectKYCModal";
+import ConfirmationNotice from "../../../../components/ConfirmationNotice";
 
 // Spacing.
 const Alert = styled(MuiAlert)(spacing);
@@ -49,20 +50,23 @@ const SettingsKYC = () => {
   const [alert, setAlert] = useState(false);
   const [alertType, setAlertType] = useState("success");
   const [userKYC, setUserKYC] = useState({});
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+  });
 
   async function getUserKYC() {
     try {
       const response = await getUserKYC_req(userId);
       if (response) {
-        console.log("GET USER KYC RESPONSE ==>", response);
         setUserKYC(response.userKyc);
       }
-    } catch (e) {
-      console.log("GET USER KYC ==>", e.response);
-    }
+    } catch (e) {}
   }
 
   async function updateUserKYC(status) {
+    setMessage({ ...message, open: false, error: false });
+
     let data = {
       user_id: userId, // is required
       status_kyc: status,
@@ -74,11 +78,11 @@ const SettingsKYC = () => {
     try {
       const response = await updateUserKYC_req(data);
       if (response) {
-        console.log("UPDATE USER KYC RESPONSE ==>", response);
+        setMessage({ ...message, open: true });
+        getUserKYC();
       }
-      getUserKYC();
     } catch (e) {
-      console.log("UPDATE USER KYC ERROR ==>", e.response);
+      setMessage({ ...message, open: true, error: true });
     }
   }
 
@@ -105,6 +109,16 @@ const SettingsKYC = () => {
 
   return (
     <>
+      {message.open === true && (
+        <ConfirmationNotice
+          error={message.error}
+          title={
+            message.error === true
+              ? "An error occurred, try again"
+              : `Verification approved`
+          }
+        />
+      )}
       <Card mb={6}>
         <CardContent>
           {alert && (
@@ -113,7 +127,7 @@ const SettingsKYC = () => {
               my={3}
             >
               {alertType === "success"
-                ? `Your data has been submitted successfully!`
+                ? `Request Verification sent`
                 : `An error occured! Try again.`}
             </Alert>
           )}

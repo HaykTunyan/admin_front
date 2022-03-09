@@ -13,7 +13,7 @@ export const rowList = [
   },
   {
     id: "2",
-    head: "Duretion ( day / % ) ",
+    head: "Duration ( day / % ) ",
     align: "",
   },
   {

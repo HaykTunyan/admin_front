@@ -3,8 +3,6 @@ import styled from "styled-components/macro";
 import { makeStyles } from "@mui/styles";
 import moment from "moment";
 import { spacing } from "@material-ui/system";
-import { darken } from "polished";
-import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import {
   Box,
@@ -18,7 +16,6 @@ import {
   Typography,
   TablePagination,
   Grid,
-  InputBase,
   Card as MuiCard,
   Select,
   FormControl,
@@ -31,11 +28,9 @@ import {
 import { Tooltip, tooltipClasses } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import { Search as SearchIcon } from "react-feather";
 import DateRange from "../../../../components/date-picker/DateRange";
 import { getUserTransactions_req } from "../../../../api/userTransactionsAPI";
 import AddTransactionHistory from "../../../../modal/AddTransactionHistory";
-import EditAffiliateSwap from "../../../../modal/EditAffiliateSwap";
 import { deleteAffiliateExchanges_req } from "../../../../api/userExchangesAPI";
 import EditTransactionHistory from "../../../../modal/EditTransactionHistory";
 import { getCoins_req } from "../../../../api/userWalletsAPI";
@@ -47,50 +42,6 @@ const Card = styled(MuiCard)(spacing);
 const Spacer = styled.div(spacing);
 
 // Custom Style.
-const Search = styled.div`
-  border-radius: 2px;
-  background-color: ${(props) => props.theme.header.background};
-  display: none;
-  position: relative;
-  width: 100%;
-
-  &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
-  }
-
-  ${(props) => props.theme.breakpoints.up("md")} {
-    display: block;
-  }
-`;
-
-const SearchIconWrapper = styled.div`
-  width: 50px;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-`;
-
-const Input = styled(InputBase)`
-  color: inherit;
-  width: 100%;
-
-  > input {
-    color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)};
-    padding-right: ${(props) => props.theme.spacing(2.5)};
-    padding-bottom: ${(props) => props.theme.spacing(2.5)};
-    padding-left: ${(props) => props.theme.spacing(12)};
-    width: 100%;
-  }
-`;
 
 const HtmlTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} enterTouchDelay />
@@ -109,17 +60,53 @@ const useStyles = makeStyles({
   },
 });
 
+export const cellList = [
+  {
+    id: "1",
+    head: "Date",
+    sortable: true,
+    param: "date",
+  },
+  {
+    id: "2",
+    head: "Type",
+    sortable: false,
+  },
+  {
+    id: "3",
+    head: "Coin",
+    sortable: false,
+  },
+  {
+    id: "4",
+    head: "Amount",
+    sortable: true,
+    param: "amount",
+  },
+  {
+    id: "5",
+    head: "Status",
+    sortable: false,
+  },
+  {
+    id: "6",
+    head: "Action",
+    sortable: false,
+  },
+];
+
 const TransactionHistory = () => {
+  //  Hooks.
   const location = useLocation();
   const profileId = location?.state;
   const userId = profileId?.id;
   const { affiliate } = location.state;
-  //  hooks.
-  const { t } = useTranslation();
   const classes = useStyles();
   const [transactions, setTransactions] = useState([]);
+  //Pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  //Filters
   const [value, setValue] = useState([null, null]);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -128,50 +115,151 @@ const TransactionHistory = () => {
   const [coins, setCoins] = useState([]);
   const [transactionType, setTransactionType] = useState("");
   const [statusValue, setStatusValue] = useState("");
+
   const [openFor, setOpenFor] = useState({});
 
-  const [sortBy, setSortBy] = useState({
-    sorted_date: false,
-    sorted_amount: false,
-    type: "increasing",
+  const [sort, setSort] = useState({
+    type: "decreasing",
+    param: "",
   });
 
-  const handleCellClick = (sortParam) => {
-    setSortBy({
-      ...sortBy,
-      [`sorted_${sortParam}`]: true,
-      [`sorted_${sortParam === "date" ? "amount" : "date"}`]: false,
-      type: sortBy.type === "increasing" ? "decreasing" : "increasing",
+  const handleCellClick = (id, param) => {
+    setSort({
+      [`sorted_${id}`]: true,
+      type: sort.type === "decreasing" ? "increasing" : "decreasing",
+      param:
+        id === 4
+          ? `${param}_${operationType === "receive" ? "received" : "sent"}`
+          : param,
     });
+
+    getTransactions(
+      1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      operationType,
+      Number(coinAll),
+      transactionType === "all" ? null : transactionType,
+      statusValue === "all" ? null : statusValue,
+      sort.type === "decreasing" ? "increasing" : "decreasing",
+      id === 4
+        ? `${param}_${operationType === "send" ? "sent" : "received"}`
+        : param
+    );
   };
 
   const onChangeTime = (newResult) => {
     setStartDate(moment(newResult[0]).format("YYYY-MM-DD"));
     setEndDate(moment(newResult[1]).format("YYYY-MM-DD"));
     setValue(newResult);
+
+    if (newResult[1]) {
+      getTransactions(
+        1,
+        rowsPerPage,
+        moment(newResult[0]).format("YYYY-MM-DD"),
+        moment(newResult[1]).format("YYYY-MM-DD"),
+        operationType,
+        Number(coinAll),
+        transactionType === "all" ? null : transactionType,
+        statusValue === "all" ? null : statusValue,
+        sort.type,
+        sort.param
+      );
+    }
   };
 
   const handleOperationType = (event) => {
+    setSort({
+      [`sorted_${4}`]: event.target.value === "all" ? false : true,
+      type: sort.type,
+      param:
+        event.target.value === "all"
+          ? null
+          : `amount_${event.target.value === "send" ? "sent" : "received"}`,
+    });
+
     setOperationType(event.target.value);
-    if (sortBy.sorted_amount === true) {
-      setSortBy({ ...sortBy, sorted_amount: false });
-    }
+
+    getTransactions(
+      page,
+      rowsPerPage,
+      startDate,
+      endDate,
+      event.target.value,
+      Number(coinAll),
+      transactionType === "all" ? null : transactionType,
+      statusValue === "all" ? null : statusValue,
+      sort.type,
+      event.target.value === "all"
+        ? null
+        : `amount_${event.target.value === "send" ? "sent" : "received"}`
+    );
   };
 
   const handleCoinAll = (event) => {
     setCoinAll(event.target.value);
+
+    getTransactions(
+      page,
+      rowsPerPage,
+      startDate,
+      endDate,
+      operationType,
+      Number(event.target.value),
+      transactionType === "all" ? null : transactionType,
+      statusValue === "all" ? null : statusValue,
+      sort.type,
+      sort.param
+    );
   };
 
   const handleTransactionType = (event) => {
     setTransactionType(event.target.value);
+    getTransactions(
+      page,
+      rowsPerPage,
+      startDate,
+      endDate,
+      operationType,
+      Number(coinAll),
+      event.target.value === "all" ? null : event.target.value,
+      statusValue === "all" ? null : statusValue,
+      sort.type,
+      sort.param
+    );
   };
 
   const handleStatusValue = (event) => {
     setStatusValue(event.target.value);
+    getTransactions(
+      page,
+      rowsPerPage,
+      startDate,
+      endDate,
+      operationType,
+      Number(coinAll),
+      transactionType === "all" ? null : transactionType,
+      event.target.value === "all" ? null : event.target.value,
+      sort.type,
+      sort.param
+    );
   };
 
   const handleChangePage = (event, newPage) => {
-    getTransactions(newPage + 1, rowsPerPage);
+    getTransactions(
+      newPage + 1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      operationType,
+      Number(coinAll),
+      transactionType === "all" ? null : transactionType,
+      statusValue === "all" ? null : statusValue,
+      sort.type,
+      sort.param
+    );
     setPage(newPage);
   };
 
@@ -193,53 +281,60 @@ const TransactionHistory = () => {
       transactionId: id,
     };
 
-    console.log("DELETE TRANSACTION HISTORY DATA ==>", data);
-
     try {
       const response = await deleteAffiliateExchanges_req(userId, id);
       if (response) {
-        console.log(
-          "DELETE AFFILIATE TRANSACTION HISTORY RESPONSE ==>",
-          response
+        getTransactions(
+          1,
+          rowsPerPage,
+          startDate,
+          endDate,
+          operationType,
+          Number(coinAll),
+          transactionType === "all" ? null : transactionType,
+          statusValue === "all" ? null : statusValue,
+          sort.type,
+          sort.param
         );
-        getTransactions(1, rowsPerPage);
       }
-    } catch (e) {
-      console.log("DELETE AFFILIATE TRANSACTION HISTORY ERROR==>", e.response);
-    }
+    } catch (e) {}
   }
 
-  async function getTransactions(page, rowsPerPage) {
+  async function getTransactions(
+    page,
+    rowsPerPage,
+    start_date,
+    end_date,
+    operation_type,
+    coinId,
+    transaction_type,
+    status,
+    sort_type,
+    sort_param
+  ) {
     let data = {
-      operation_type:
-        operationType && operationType !== "" && operationType !== "all"
-          ? operationType
-          : null, //['send', 'receive'],
-      coin_id: Number(coinAll), //1 | 2 | 3,
-      transaction_type:
-        transactionType && transactionType !== "" ? transactionType : null, //['real', 'fake'],
-      status: statusValue && statusValue !== "" ? statusValue : null, //['pending', 'accepted', 'rejected'],
-      start_date: startDate && startDate !== "" ? startDate : null, //start date,
-      end_date: endDate && endDate !== "" ? endDate : null, //end date,
-      sort_param:
-        sortBy.sorted_date === true && sortBy.sorted_amount === false
-          ? "date"
-          : sortBy.sorted_date === false && sortBy.sorted_amount === true
-          ? `amount_${operationType === "receive" ? "received" : "sent"}`
-          : null, //['date', 'amount'],
-      sort_type:
-        sortBy.sorted_date === true || sortBy.sorted_amount === true
-          ? sortBy.type
-          : null, //['increasing', 'decreasing']
+      page: page,
+      limit: rowsPerPage,
+      start_date: start_date,
+      end_date: end_date,
+      type: operation_type,
+      coin_id: coinId,
+      transaction_type: transaction_type,
+      status: status,
+      sort_type: sort_type,
+      sort_param: sort_param,
     };
 
+    let result = Object.keys(data).filter(
+      (key) => !data[key] || data[key] === ""
+    );
+
+    for (let item of result) {
+      delete data[`${item}`];
+    }
+
     try {
-      const response = await getUserTransactions_req(
-        userId,
-        page,
-        rowsPerPage,
-        data
-      );
+      const response = await getUserTransactions_req(userId, data);
       if (response) {
         console.log("GET USER TRANSACTIONS RESPONSE ==>", response);
         setTransactions(response);
@@ -253,19 +348,13 @@ const TransactionHistory = () => {
     try {
       const response = await getCoins_req();
       if (response) {
-        console.log("GET COINS RESPONSE ==>", response);
         setCoins(response);
       }
-    } catch (e) {
-      console.log("GET COINS ERROR ==>", e.response);
-    }
+    } catch (e) {}
   }
 
   useEffect(() => {
-    getTransactions(1, rowsPerPage);
-  }, [sortBy, operationType, coinAll, transactionType, statusValue, value[1]]);
-
-  useEffect(() => {
+    getTransactions();
     getCoins();
   }, []);
 
@@ -421,45 +510,59 @@ const TransactionHistory = () => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell onClick={() => handleCellClick("date")}>
-                  <Button color="inherit">
-                    Date
-                    {sortBy.sorted_date === true && (
-                      <IconButton onClick={() => handleCellClick("date")}>
-                        {sortBy.type === "increasing" ? (
-                          <ArrowUp size={16} />
-                        ) : (
-                          <ArrowDown size={16} />
+                {cellList?.map((item) => (
+                  <TableCell
+                    key={item.id}
+                    align={Number(item.id) === 6 ? "right" : "left"}
+                  >
+                    <Box
+                      // sx={{
+                      //   display: "flex",
+                      //   alignItems: "center",
+                      // }}
+                      onMouseOver={
+                        Number(item.id) === 4 &&
+                        (!operationType || operationType === "all")
+                          ? () => {}
+                          : () =>
+                              setSort({ ...sort, [`show_${item.id}`]: true })
+                      }
+                      onMouseLeave={
+                        Number(item.id) === 4 &&
+                        (!operationType || operationType === "all")
+                          ? () => {}
+                          : () =>
+                              setSort({ ...sort, [`show_${item.id}`]: false })
+                      }
+                      onClick={
+                        Number(item.id) === 4 &&
+                        (!operationType || operationType === "all")
+                          ? () => {}
+                          : () => handleCellClick(Number(item.id), item.param)
+                      }
+                    >
+                      {item.head}
+
+                      {item.sortable === true &&
+                        (sort[`sorted_${item.id}`] === true ||
+                          sort[`show_${item.id}`] === true) && (
+                          <Box sx={{ display: "flex" }}>
+                            <IconButton
+                              onClick={() =>
+                                handleCellClick(Number(item.id), item.param)
+                              }
+                            >
+                              {sort.type === "increasing" ? (
+                                <ArrowUp size={16} />
+                              ) : (
+                                <ArrowDown size={16} />
+                              )}
+                            </IconButton>
+                          </Box>
                         )}
-                      </IconButton>
-                    )}
-                  </Button>
-                </TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Coin</TableCell>
-                <TableCell
-                  onClick={() => {
-                    if (operationType !== "" && operationType !== "all") {
-                      console.log("Here ==>", operationType);
-                      handleCellClick(`amount`);
-                    }
-                  }}
-                >
-                  <Button color="inherit">
-                    Amount
-                    {sortBy.sorted_amount === true && (
-                      <IconButton onClick={() => handleCellClick(`amount`)}>
-                        {sortBy.type === "increasing" ? (
-                          <ArrowUp size={16} />
-                        ) : (
-                          <ArrowDown size={16} />
-                        )}
-                      </IconButton>
-                    )}
-                  </Button>
-                </TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell align="right">Action</TableCell>
+                    </Box>
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>

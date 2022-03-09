@@ -17,6 +17,7 @@ import styled from "styled-components/macro";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { sendNotification_req } from "../../../../api/notificationsAPI";
+import ConfirmationNotice from "../../../../components/ConfirmationNotice";
 
 // Spacing.
 const Typography = styled(MuiTypography)(spacing);
@@ -35,6 +36,11 @@ const Notification = () => {
     whereTo: 3,
   });
 
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+  });
+
   const location = useLocation();
   const profileId = location?.state;
   const userId = profileId?.id;
@@ -49,6 +55,8 @@ const Notification = () => {
   };
 
   async function sendNotification(values) {
+    setMessage({ ...message, open: false, error: false });
+
     let data = {
       title: values.title,
       content: values.message,
@@ -64,9 +72,11 @@ const Notification = () => {
       const response = await sendNotification_req(data);
       if (response) {
         console.log("SEND NOTIF RESPONSE ==>", response);
+        setMessage({ ...message, open: true });
       }
     } catch (e) {
       console.log("SEND NOTIF ERROR ==>", e.response);
+      setMessage({ ...message, open: true, error: true });
     }
   }
 
@@ -84,6 +94,16 @@ const Notification = () => {
           return (
             <>
               <Card>
+                {message.open === true && (
+                  <ConfirmationNotice
+                    error={message.error}
+                    title={
+                      message.error === true
+                        ? "An error occurred, try again"
+                        : `Notification sent`
+                    }
+                  />
+                )}
                 <CardContent p={5}>
                   <Grid container>
                     <Grid item xs={12} md={3}>

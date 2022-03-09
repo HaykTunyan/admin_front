@@ -22,6 +22,7 @@ import { instance } from "../../services/api";
 import moment from "moment";
 import AssigneReferral from "../../modal/AssigneReferral";
 import ConfirmationNotice from "../../components/ConfirmationNotice";
+import Loader from "../../components/Loader";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -33,7 +34,10 @@ const ReferralUsers = () => {
   const [unassignedList, setUnassignedList] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+  });
 
   const handleChangePage = (event, newPage) => {
     getUnassigned(newPage + 1);
@@ -46,17 +50,18 @@ const ReferralUsers = () => {
   };
 
   const handleGenerate = () => {
+    setMessage({ ...message, open: false, error: false });
     try {
       dispatch(generateReferral()).then((data) => {
-        setSuccess(false);
         if (data.success) {
           setShowList(true);
         }
-        setSuccess(true);
+        setMessage({ ...message, open: true });
         getUnassigned();
       });
     } catch (error) {
       console.log("error", error);
+      setMessage({ ...message, open: true, error: true });
     }
   };
 
@@ -85,8 +90,15 @@ const ReferralUsers = () => {
 
   return (
     <Fragment>
-      {success === true && (
-        <ConfirmationNotice opening={success} title="Generete success" />
+      {message.open === true && (
+        <ConfirmationNotice
+          error={message.error}
+          title={
+            message.error === true
+              ? "An error occurred, try again"
+              : "Successfully Generated"
+          }
+        />
       )}
       <Card xs={12}>
         <CardContent>
@@ -102,7 +114,7 @@ const ReferralUsers = () => {
               </Button>
             </Grid>
             <Grid item md={5}>
-              {unassignedList ? (
+              {unassignedList?.referrals ? (
                 <Grid item>
                   <Paper>
                     <TableContainer component={Paper}>
@@ -161,7 +173,11 @@ const ReferralUsers = () => {
                     </TableContainer>
                   </Paper>
                 </Grid>
-              ) : null}
+              ) : (
+                <Box sx={{ marginTop: "100px" }}>
+                  <Loader />
+                </Box>
+              )}
             </Grid>
           </Grid>
         </CardContent>

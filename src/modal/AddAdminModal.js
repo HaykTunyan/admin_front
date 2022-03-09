@@ -64,14 +64,14 @@ const AddAdminModal = ({ getAdminUsers, primission }) => {
   };
 
   const handleSubmit = (values) => {
+    setSuccess(false);
     dispatch(createAdmin(values))
       .then((data) => {
-        setSuccess(false);
         if (data.success) {
           setOpen(false);
           getAdminUsers();
+          setSuccess(true);
         }
-        setSuccess(true);
       })
       .catch((error) => {
         setMessageError(error?.response?.data);
@@ -81,9 +81,7 @@ const AddAdminModal = ({ getAdminUsers, primission }) => {
 
   return (
     <Fragment>
-      {success == true && (
-        <ConfirmationNotice opening={success} title="Create New Admin User" />
-      )}
+      {success == true && <ConfirmationNotice title="New Admin Added" />}
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
         <UserPlus />
       </IconButton>

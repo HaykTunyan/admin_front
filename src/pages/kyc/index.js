@@ -4,7 +4,7 @@ import { Divider, Grid, Typography, Box, Tab } from "@material-ui/core";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
-import PandingTable from "./Panding";
+import PendingTable from "./Pending";
 import VerifiedTable from "./VerifiedTab";
 import NotVerifiedTable from "./NotVerifiedTab";
 
@@ -49,7 +49,7 @@ const KYC = () => {
                 </TabList>
               </Box>
               <TabPanel value="1">
-                <PandingTable />
+                <PendingTable />
               </TabPanel>
               <TabPanel value="2">
                 <VerifiedTable />

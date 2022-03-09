@@ -54,17 +54,12 @@ const BalanceTab = ({ startDate, endDate }) => {
       coin_id: coinId,
     };
 
-    console.log("Data ==>", data);
-
     try {
       const response = await getDashboardCoins_req(data);
       if (response) {
-        console.log("GET BALANCE RESPONSE ==>", response);
         setBalance(response.result);
       }
-    } catch (e) {
-      console.log("GET BALANCE ERROR ==>", e.response);
-    }
+    } catch (e) {}
   }
 
   async function getCoins() {

@@ -44,8 +44,7 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
   const [date, setDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [resaving, setResaving] = useState(false);
-  const [successSaving, setSuccessSaving] = useState(false);
-  const [successLocked, setSuccessLocked] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
     walletId: "",
     type: "",
@@ -119,6 +118,7 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
 
   // Form Submit.
   async function addSaving(values) {
+    setSuccess(false);
     if (tab === 1) {
       let data = {
         userId: userId,
@@ -138,14 +138,15 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
         delete data[`${item}`];
       }
 
+      console.log("DATA ==>", data);
+
       try {
         const response = await createAffiliateFlexible_req(data);
-        setSuccessSaving(false);
         if (response) {
           getUserSavings("flexible");
           setOpen(false);
+          setSuccess(true);
         }
-        setSuccessSaving(true);
       } catch (e) {
         setErrorMes(e?.response?.data);
       }
@@ -171,12 +172,11 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
 
       try {
         const response = await createAffiliateLocked_req(data);
-        setSuccessLocked(false);
         if (response) {
           getUserSavings("locked");
           setOpen(false);
+          setSuccess(true);
         }
-        setSuccessLocked(true);
       } catch (e) {
         setErrorMes(e?.response?.data);
       }
@@ -201,13 +201,7 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
 
   return (
     <Fragment>
-      {successSaving === true && (
-        <ConfirmationNotice opening={successSaving} title="Flexible success" />
-      )}
-      {successLocked === true && (
-        <ConfirmationNotice opening={successLocked} title="Locked success" />
-      )}
-
+      {success === true && <ConfirmationNotice title="Saving Added" />}
       <Button variant="contained" onClick={handleClickOpen}>
         {`Add ${tab === 1 ? "Flexible" : "Locked"} Saving`}
       </Button>
@@ -572,10 +566,7 @@ const AddAffiliateSaving = ({ userId, tab, getUserSavings }) => {
                   <Button
                     variant="contained"
                     sx={{ width: "120px" }}
-                    onClick={() => {
-                      console.log("errors ==>", errors);
-                      handleSubmit();
-                    }}
+                    onClick={handleSubmit}
                   >
                     Add Saving
                   </Button>

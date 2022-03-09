@@ -3,7 +3,6 @@ import styled from "styled-components/macro";
 import { instance } from "../../services/api";
 import moment from "moment";
 import { spacing } from "@material-ui/system";
-import { useTranslation } from "react-i18next";
 import {
   Box,
   Grid,
@@ -27,6 +26,7 @@ import {
   IconButton,
   Autocomplete,
   TextField,
+  createFilterOptions,
 } from "@material-ui/core";
 import { ArrowDown, ArrowUp } from "react-feather";
 import CSVButton from "../../components/CSVButton";
@@ -36,9 +36,6 @@ import DateRange from "../../components/date-picker/DateRange";
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
 const Card = styled(MuiCard)(spacing);
-
-// Custom Style.
-
 const Chip = styled(MuiChip)`
   height: 20px;
   padding: 4px 0;
@@ -48,115 +45,194 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
+export const cellList = [
+  {
+    id: "1",
+    head: "Date",
+    sortable: true,
+    param: "date",
+  },
+  {
+    id: "2",
+    head: "Email",
+    sortable: true,
+    param: "email",
+  },
+  {
+    id: "3",
+    head: "Phone",
+    sortable: false,
+  },
+  {
+    id: "4",
+    head: "Amount",
+    sortable: true,
+    param: "amount_received",
+  },
+  {
+    id: "5",
+    head: "Coin",
+    sortable: false,
+  },
+  {
+    id: "6",
+    head: "TX Id",
+    sortable: false,
+  },
+  {
+    id: "7",
+    head: "Type",
+    sortable: false,
+  },
+  {
+    id: "8",
+    head: "Type of operations",
+    sortable: false,
+  },
+  {
+    id: "9",
+    head: "Status",
+    sortable: false,
+  },
+];
+
 const SavingsTable = () => {
   // Hooks.
   const [savings, setSavings] = useState([]);
+  // State.
+  const rows = savings?.transactions;
+  //Pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  //Filters
   const [coinAll, setCoinAll] = useState("");
   const [depositType, setDepositeType] = useState("");
   const [transactionType, setTransactionType] = useState("");
-  const [value, setValue] = useState([null, null]);
+  const [time, setTime] = useState([null, null]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [coinSettings, getCoinSettings] = useState([]);
-  const [sortPhone, setSortPhone] = useState("");
   const [country, setCountry] = useState("");
+  const [inputValue, setInputValue] = useState("");
   // Sorting.
-  const [sortDate, setSortDate] = useState(true);
-  const [sortEmail, setSortEmail] = useState(true);
-  const [sortAmount, setSortAmount] = useState(true);
-  const [sortParams, setSortParmas] = useState("");
-  const [sortType, setSortType] = useState("");
-  const [inputPhone, setPhoneValue] = useState("");
-  // State.
-  const rows = savings?.transactions;
+  const [sort, setSort] = useState({
+    type: "decreasing",
+    param: "",
+  });
 
-  // Sorting Functions.
-  const sortingDate = () => {
-    setSortDate(!sortDate);
-    if (sortDate) {
-      getSorting("decreasing", "date");
-    } else {
-      getSorting("increasing", "date");
-    }
-  };
+  const filterOptions = createFilterOptions({
+    matchFrom: "start",
+    limit: 8,
+    stringify: (country) => country.telefon,
+  });
 
-  // Sorting Email.
-  const sortingEmail = () => {
-    setSortEmail(!sortEmail);
-    if (sortEmail) {
-      getSorting("decreasing", "email");
-    } else {
-      getSorting("increasing", "email");
-    }
-  };
+  //Handle Sorting
+  const handleSorting = (id, param) => {
+    setSort({
+      [`sorted_${id}`]: true,
+      type: sort.type === "decreasing" ? "increasing" : "decreasing",
+      param: param,
+    });
 
-  // Sorting Phone.
-  const sortingPhone = (event, sortPhone) => {
-    setSortPhone(event.target.value);
-    // getPhoneSorting(event.target.value);
-    getPhoneSorting(sortPhone?.props?.value);
-  };
-
-  const handleCountry = (event, newPhoneValue) => {
-    setSortPhone(event?.target?.value);
-    setPhoneValue(newPhoneValue);
-    getPhoneSorting(event?.target?.value);
-  };
-
-  // Sorting Amount.
-  const sortingAmount = () => {
-    setSortAmount(!sortAmount);
-    if (sortAmount) {
-      getSorting("decreasing", "amount_received");
-    } else {
-      getSorting("increasing", "amount_received");
-    }
+    getSavings(
+      1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(coinAll),
+      depositType,
+      transactionType === "all" ? null : transactionType,
+      sort.type === "decreasing" ? "increasing" : "decreasing",
+      param,
+      inputValue
+    );
   };
 
   // on Change Time.
   const onChangeTime = (newValue) => {
     setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));
     setEndDate(moment(newValue[1]).format("YYYY-MM-DD"));
-    setValue(newValue);
-    getDateFilters(
-      moment(newValue[0]).format("YYYY-MM-DD"),
-      moment(newValue[1]).format("YYYY-MM-DD")
-    );
+    setTime(newValue);
+
+    if (newValue[1]) {
+      getSavings(
+        1,
+        rowsPerPage,
+        moment(newValue[0]).format("YYYY-MM-DD"),
+        moment(newValue[1]).format("YYYY-MM-DD"),
+        Number(coinAll),
+        depositType,
+        transactionType === "all" ? null : transactionType,
+        sort.type,
+        sort.param,
+        inputValue
+      );
+    }
   };
 
   // Coin Type.
-  const handleCoinAll = (event, coinAll) => {
+  const handleCoinAll = (event) => {
     setCoinAll(event.target.value);
-    if (coinAll?.props?.value === "all") {
-      setCoinAll(event.target.value);
-      getSavings();
-    } else {
-      getSendCoinFilter(coinAll?.props?.value);
-    }
+    getSavings(
+      1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(event.target.value),
+      depositType,
+      transactionType === "all" ? null : transactionType,
+      sort.type,
+      sort.param,
+      inputValue
+    );
   };
 
   const handleDepositeType = (event) => {
     setDepositeType(event.target.value);
-    if (depositType?.props?.value != "All") {
-      getDepositeSorting(event.target.value);
-    } else {
-      getSavings();
-    }
+    getSavings(
+      1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(coinAll),
+      event.target.value,
+      transactionType === "all" ? null : transactionType,
+      sort.type,
+      sort.param,
+      inputValue
+    );
   };
 
-  const handleTransactionType = (event, transactionType) => {
+  const handleTransactionType = (event) => {
     setTransactionType(event.target.value);
-    if (transactionType?.props?.value === "all") {
-      getSavings();
-    } else {
-      getSendFilter(transactionType?.props?.value);
-    }
+
+    getSavings(
+      1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(coinAll),
+      depositType,
+      event.target.value === "all" ? null : event.target.value,
+      sort.type,
+      sort.param,
+      inputValue
+    );
   };
 
   const handleChangePage = (event, newPage) => {
-    getSavings(newPage + 1);
+    getSavings(
+      newPage + 1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(coinAll),
+      depositType,
+      transactionType === "all" ? null : transactionType,
+      sort.type,
+      sort.param,
+      inputValue
+    );
     setPage(newPage);
   };
 
@@ -165,25 +241,21 @@ const SavingsTable = () => {
     setPage(1);
   };
 
-  // get Savings.
-  const getSavings = (page, rowsPerPage) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "savings",
-          limit: rowsPerPage,
-          page: page,
-          coin_id: coinAll,
-        },
-      })
-      .then((data) => {
-        setSavings(data.data);
-        return data;
-      })
-      .catch((err) => {
-        return Promise.reject(err);
-      })
-      .finally(() => {});
+  const handlePhoneCode = (value) => {
+    setInputValue(value);
+
+    getSavings(
+      1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(coinAll),
+      depositType,
+      transactionType === "all" ? null : transactionType,
+      sort.type,
+      sort.param,
+      value
+    );
   };
 
   // get getSettingCoin Data.
@@ -200,74 +272,6 @@ const SavingsTable = () => {
       .finally(() => {});
   };
 
-  // get Coin Filter Data.
-  const getSendCoinFilter = (coin_id) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "savings",
-          coin_id: coin_id,
-        },
-      })
-      .then((data) => {
-        setSavings(data.data);
-        return data;
-      });
-  };
-
-  // get Send Sorting Data.
-  const getSorting = (sort_type, sort_params) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "savings",
-          sort_type: sort_type,
-          sort_param: sort_params,
-          limit: rowsPerPage,
-          page: page,
-        },
-      })
-      .then((data) => {
-        setSavings(data.data);
-        return data;
-      });
-  };
-
-  // get Date Filters.
-  const getDateFilters = (start_date, end_date) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "savings",
-          start_date: start_date,
-          end_date: end_date,
-          limit: rowsPerPage,
-          page: page,
-        },
-      })
-      .then((data) => {
-        setSavings(data.data);
-        return data;
-      });
-  };
-
-  // get Send Filter Data
-  const getSendFilter = (transaction_type) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "savings",
-          transaction_type: transaction_type,
-          limit: rowsPerPage,
-          page: page,
-        },
-      })
-      .then((data) => {
-        setSavings(data.data);
-        return data;
-      });
-  };
-
   // get Country Code.
   const getCountry = () => {
     return instance.get("/admin/settings/countries").then((data) => {
@@ -276,49 +280,60 @@ const SavingsTable = () => {
     });
   };
 
-  // Phone Sorting.
-  const getPhoneSorting = (telefon_code) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "savings",
-          telefon_code: telefon_code,
-          limit: rowsPerPage,
-          page: page,
-        },
-      })
-      .then((data) => {
-        setSavings(data.data);
-        return data;
-      });
-  };
+  // get Savings.
+  const getSavings = (
+    page,
+    rowsPerPage,
+    start_date,
+    end_date,
+    coin_id,
+    type,
+    transaction_type,
+    sort_type,
+    sort_param,
+    code
+  ) => {
+    let params = {
+      page: page,
+      limit: rowsPerPage,
+      start_date: start_date,
+      end_date: end_date,
+      coin_id: coin_id,
+      type: type,
+      transaction_type: transaction_type,
+      sort_type: sort_type,
+      sort_param: sort_param,
+      telefon_code: code,
+    };
 
-  const getDepositeSorting = (deposite, page, rowsPerPage) => {
+    let result = Object.keys(params).filter(
+      (key) => !params[key] || params[key] === ""
+    );
+
+    for (let item of result) {
+      delete params[`${item}`];
+    }
+
     return instance
       .get("/admin/transaction/all", {
-        params: {
-          type: deposite,
-          page: page,
-          limit: rowsPerPage,
-        },
+        params: params,
       })
       .then((data) => {
         setSavings(data.data);
         return data;
-      });
+      })
+      .catch((err) => {
+        console.log("error ==>", err.response);
+        return Promise.reject(err);
+      })
+      .finally(() => {});
   };
 
   // Use Effect.
   useEffect(() => {
     getSavings();
-    setTimeout(() => {
-      getSettingCoin();
-      getSendCoinFilter();
-      getSorting();
-      getDateFilters();
-      getCountry();
-      getPhoneSorting();
-    }, 700);
+    getCountry();
+    getSettingCoin();
   }, []);
 
   return (
@@ -332,7 +347,7 @@ const SavingsTable = () => {
         }}
       >
         <Grid item xs={12} sm={2} md={2} m={2}>
-          <DateRange value={value} onChange={onChangeTime} />
+          <DateRange value={time} onChange={onChangeTime} />
         </Grid>
         <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
@@ -363,7 +378,7 @@ const SavingsTable = () => {
               onChange={handleDepositeType}
               label="Deposit Type"
             >
-              <MenuItem value="all">
+              <MenuItem value="savings">
                 <em>All</em>
               </MenuItem>
               <MenuItem value="flexible">Flexible</MenuItem>
@@ -395,107 +410,85 @@ const SavingsTable = () => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    Date
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                      <IconButton onClick={sortingDate}>
-                        {sortDate ? (
-                          <ArrowUp size={16} />
-                        ) : (
-                          <ArrowDown size={16} />
-                        )}
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    Email
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                      <IconButton onClick={sortingEmail}>
-                        {sortEmail ? (
-                          <ArrowUp size={16} />
-                        ) : (
-                          <ArrowDown size={16} />
-                        )}
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Box>Phone</Box>
+                {cellList?.map((item) => (
+                  <TableCell key={item.id} align="left">
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "center",
-                        marginLeft: "20px",
+                        alignItems: "center",
+                      }}
+                      onMouseOver={() => {
+                        setSort({ ...sort, [`show_${item.id}`]: true });
+                      }}
+                      onMouseLeave={() =>
+                        setSort({ ...sort, [`show_${item.id}`]: false })
+                      }
+                      onClick={() => {
+                        handleSorting(Number(item.id), item.param);
                       }}
                     >
-                      <Autocomplete
-                        inputValue={inputPhone}
-                        onInputChange={handleCountry}
-                        id="country-states"
-                        options={country}
-                        getOptionLabel={(country) => country.telefon}
-                        sx={{ width: 150 }}
-                        renderOption={(props, option) => (
-                          <Box
-                            component="li"
-                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                            {...props}
-                          >
-                            {option.telefon}
+                      {item.head}
+
+                      {item.sortable === true &&
+                        (sort[`sorted_${item.id}`] === true ||
+                          sort[`show_${item.id}`] === true) && (
+                          <Box sx={{ display: "flex" }}>
+                            <IconButton
+                              onClick={() =>
+                                handleSorting(Number(item.id), item.param)
+                              }
+                            >
+                              {sort.type === "increasing" ? (
+                                <ArrowUp size={16} />
+                              ) : (
+                                <ArrowDown size={16} />
+                              )}
+                            </IconButton>
                           </Box>
                         )}
-                        renderInput={(params) => (
-                          <TextField {...params} label="Phone" />
-                        )}
-                      />
-                      {/* <FormControl sx={{ minWidth: "100px" }}>
-                        <InputLabel id="select-phone-label">Sort</InputLabel>
-                        <Select
-                          labelId="select-phone-label"
-                          id="select-phone-label"
-                          value={sortPhone}
-                          onChange={sortingPhone}
-                          autoWidth
-                          label="Sort"
-                          fullWidth
+                      {Number(item.id) === 3 && (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            marginLeft: "20px",
+                          }}
                         >
-                          {country &&
-                            country.map((item) => (
-                              <MenuItem key={item.id} value={item.id}>
-                                <Box sx={{ display: "flex", width: "100%" }}>
-                                  <Box mr={2}>{item.telefon}</Box>
-                                </Box>
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </FormControl> */}
+                          <Autocomplete
+                            filterOptions={filterOptions}
+                            id="country-phone-select"
+                            sx={{ width: 150 }}
+                            options={country}
+                            inputValue={inputValue}
+                            onInputChange={(event, newInputValue) => {
+                              handlePhoneCode(newInputValue);
+                            }}
+                            autoHighlight
+                            getOptionLabel={(option) => option.telefon}
+                            renderOption={(props, option) => (
+                              <Box
+                                component="li"
+                                sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                                {...props}
+                              >
+                                {option.telefon}
+                              </Box>
+                            )}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Phone"
+                                inputProps={{
+                                  ...params.inputProps,
+                                }}
+                              />
+                            )}
+                          />
+                        </Box>
+                      )}
                     </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    Amount
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                      <IconButton onClick={sortingAmount}>
-                        {sortAmount ? (
-                          <ArrowUp size={16} />
-                        ) : (
-                          <ArrowDown size={16} />
-                        )}
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>Coin</TableCell>
-                <TableCell>TX ID</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Type of operations</TableCell>
-                <TableCell>Status</TableCell>
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
 

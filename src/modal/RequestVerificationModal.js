@@ -31,6 +31,7 @@ import {
   sendNotification_req,
 } from "../api/notificationsAPI";
 import { editUserData_req } from "../api/userAPI";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 const Typography = styled(MuiTypography)(spacing);
 const Card = styled(MuiCard)(spacing);
@@ -50,6 +51,10 @@ const RequestVerificationModal = ({
   const [open, setOpen] = useState(false);
   const [templates, setTemplates] = useState("");
   const [notifList, setNotifList] = useState([]);
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+  });
 
   const [initialValues, setInitialValues] = useState({
     title: "",
@@ -101,6 +106,8 @@ const RequestVerificationModal = ({
   };
 
   async function sendNotification(values) {
+    setMessage({ ...message, open: false, error: false });
+
     if (id === "blockUser") {
       let field = "block_status";
       try {
@@ -109,10 +116,12 @@ const RequestVerificationModal = ({
           console.log("BLOCK USER RESPONSE ==>", response);
           getUserData();
           setOpen(false);
+          setMessage({ ...message, open: true });
         }
       } catch (error) {
         console.log("BLOCK USER ERROR ==>", error.response.data);
         setOpen(false);
+        setMessage({ ...message, open: true, error: true });
       }
     }
 
@@ -163,6 +172,16 @@ const RequestVerificationModal = ({
 
   return (
     <div>
+      {message.open === true && (
+        <ConfirmationNotice
+          error={message.error}
+          title={
+            message.error === true
+              ? "An error occurred, try again"
+              : `Sending ${blockedUser ? "blocked" : "unblocked"}`
+          }
+        />
+      )}
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         {id === "blockUser"
           ? `${blockedUser ? "Unblock" : "Block"} Sending`

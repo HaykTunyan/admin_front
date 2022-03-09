@@ -42,6 +42,7 @@ const AddNewsModal = ({ getNews }) => {
   };
 
   async function addNews(values) {
+    setSuccess(false);
     const formData = new FormData();
     const status = false;
     let content = "";
@@ -81,7 +82,7 @@ const AddNewsModal = ({ getNews }) => {
 
   return (
     <Fragment>
-      {success && <ConfirmationNotice title="Add New News" />}
+      {success && <ConfirmationNotice title="News Added" />}
       <Button variant="contained" onClick={handleClickOpen}>
         Add News
       </Button>

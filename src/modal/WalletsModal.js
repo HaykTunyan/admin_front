@@ -18,6 +18,7 @@ import {
   addToUserWallet_req,
   sendToUserWallet_req,
 } from "../api/userWalletsAPI";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 const WalletsModal = ({ id, wallet, userId }) => {
   const [open, setOpen] = useState(false);
@@ -25,6 +26,11 @@ const WalletsModal = ({ id, wallet, userId }) => {
     amount: 0,
     address: "",
     tags: "",
+  });
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+    type: "topUp",
   });
 
   const [transaction, setTransaction] = useState(false);
@@ -51,6 +57,8 @@ const WalletsModal = ({ id, wallet, userId }) => {
   };
 
   async function handleWalletAction(values) {
+    setMessage({ ...message, open: false, error: false, type: id });
+
     let data = {
       userId: userId,
       walletId: wallet.id,
@@ -64,17 +72,20 @@ const WalletsModal = ({ id, wallet, userId }) => {
         if (response) {
           console.log("ADDED TO USER WALLET ==>", response);
           setOpen(false);
+          setMessage({ ...message, open: true, type: "topUp" });
         }
       } else {
         const response = await sendToUserWallet_req(data);
         if (response) {
           console.log("SENT TO USER WALLET ==>", response);
           setOpen(false);
+          setMessage({ ...message, open: true, type: "withdraw" });
         }
       }
     } catch (e) {
       console.log("WALLET ACCTION ERROR ==>", e);
       setOpen(false);
+      setMessage({ ...message, open: true, error: true });
     }
   }
 
@@ -186,6 +197,18 @@ const WalletsModal = ({ id, wallet, userId }) => {
           );
         }}
       </Formik>
+      {message.open === true && (
+        <ConfirmationNotice
+          error={message.error}
+          title={
+            message.error === true
+              ? "An error occurred, try again"
+              : message.type === "topUp"
+              ? "Balance toped up"
+              : "Amount withdrawn"
+          }
+        />
+      )}
     </div>
   );
 };

@@ -69,7 +69,7 @@ const Input = styled(InputBase)`
 const Search = styled.div`
   border-radius: 2px;
   background-color: ${(props) => props.theme.header.background};
-  display: none;
+  display: block;
   position: relative;
   width: 100%;
 
@@ -100,7 +100,7 @@ const SearchIconWrapper = styled.div`
 let searchTimeout = 0;
 
 const TransactionsSettings = () => {
-  // hooks.
+  // Hooks.
   const { t } = useTranslation();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -115,18 +115,18 @@ const TransactionsSettings = () => {
       target: { value },
     } = event;
 
-    setFilterCoin(typeof value === "string" ? value.split(" ,") : value);
+    setFilterCoin(typeof value === "string" ? value.slice(", ") : value);
   };
 
   const handleCoinChange = (item) => {
     let from = [...coinIds];
+    console.log(" from ", from);
 
     from.indexOf(item.id) === -1
       ? from.push(item.id)
       : from.splice(from.indexOf(item.id), 1);
 
     setCoinIds(from);
-    console.log("FROM ==>", from);
     getCoins(from);
   };
 
@@ -142,16 +142,27 @@ const TransactionsSettings = () => {
   const onSearchChange = (event) => {
     clearTimeout(searchTimeout);
     setSearch(event.target.value);
-
     searchTimeout = setTimeout(async () => {
-      if (event.target.value.length > 2 || event.target.value.length === 0) {
+      // try {
+      //   getSettingCoin(event.target.value);
+      //   console.log(" event target value ", event.target.value);
+      // } catch (e) {
+      //   console.log("ERROR in search", e);
+      // }
+      console.log(" event value ", event.target.value);
+      if (
+        event.target.value.length > 1 ||
+        event.target.value.length === 0 ||
+        event.target.value === String
+      ) {
         try {
           getSettingCoin(event.target.value);
+          console.log(" event target value ", event.target.value);
         } catch (e) {
           console.log("ERROR in search", e);
         }
       }
-    }, 100);
+    }, 0);
   };
 
   //  Get Coins
@@ -230,7 +241,7 @@ const TransactionsSettings = () => {
                   value={filterCoin}
                   onChange={handleFilterCoin}
                   input={<OutlinedInput label="Coin Filter" />}
-                  renderValue={(selected) => selected.join(", ")}
+                  renderValue={(selected) => selected.join(" , ")}
                 >
                   <Search>
                     <SearchIconWrapper>

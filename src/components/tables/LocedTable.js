@@ -53,7 +53,7 @@ const Input = styled(InputBase)`
 const Search = styled.div`
   border-radius: 2px;
   background-color: ${(props) => props.theme.header.background};
-  display: none;
+  display: block;
   position: relative;
   width: 100%;
 
@@ -135,12 +135,15 @@ const LockedTable = ({ title, rowList, rowBody, getLocked }) => {
     setSearch(event.target.value);
 
     searchTimeout = setTimeout(async () => {
-      if (event.target.value.length > 2 || event.target.value.length === 0) {
-        try {
-          getSettingCoin(event.target.value);
-        } catch (e) {}
-      }
-    }, 100);
+      try {
+        getSettingCoin(event.target.value);
+      } catch (e) {}
+      // if (event.target.value.length > 2 || event.target.value.length === 0) {
+      //   try {
+      //     getSettingCoin(event.target.value);
+      //   } catch (e) {}
+      // }
+    }, 0);
   };
 
   // get getSettingCoin.

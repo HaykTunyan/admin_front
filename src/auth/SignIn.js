@@ -115,10 +115,10 @@ const SignIn = () => {
             values,
           }) => (
             <form noValidate onSubmit={handleSubmit}>
-              <Alert mt={3} mb={3} severity="info">
+              {/* <Alert mt={3} mb={3} severity="info">
                 Use <strong className="red-color">{initialForm.name}</strong>{" "}
                 and <strong>{initialForm.password}</strong> to sign in
-              </Alert>
+              </Alert> */}
               {errors.submit && (
                 <Alert mt={2} mb={3} severity="warning">
                   {errors.submit}
@@ -149,7 +149,7 @@ const SignIn = () => {
                 my={2}
               />
               <Spacer my={4} />
-              <Box display="flex" justifyContent="space-between">
+              {/* <Box display="flex" justifyContent="space-between">
                 <FormControlLabel
                   control={<Checkbox value="remember" color="primary" />}
                   label="Remember me"
@@ -162,7 +162,7 @@ const SignIn = () => {
                 >
                   Forgot password
                 </Button>
-              </Box>
+              </Box> */}
               <Spacer my={4} />
               <Button
                 type="submit"

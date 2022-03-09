@@ -22,6 +22,7 @@ import {
 } from "../../api/newsAPI";
 import moment from "moment";
 import ConfirmationNotice from "../../components/ConfirmationNotice";
+import Loader from "../../components/Loader";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -41,12 +42,14 @@ const Chip = styled(MuiChip)`
 `;
 
 const NewsComponent = () => {
-  const { t } = useTranslation();
   const [newsList, setNewsList] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [success, setSuccess] = useState(false);
-  const [publish, setPublish] = useState(false);
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+    type: "delete",
+  });
 
   const handleChangePage = (event, newPage) => {
     getNews(newPage + 1);
@@ -68,17 +71,20 @@ const NewsComponent = () => {
   }
 
   async function deleteNews(id) {
+    setMessage({ ...message, open: false, error: false, type: "delete" });
     try {
       const response = await deleteNews_req(id);
       if (response) {
-        setSuccess(false);
         getNews();
-        setSuccess(true);
+        setMessage({ ...message, open: true, type: "delete" });
       }
-    } catch (e) {}
+    } catch (e) {
+      setMessage({ ...message, open: true, error: true });
+    }
   }
 
   async function publishNews(id) {
+    setMessage({ ...message, open: false, error: false, type: "publish" });
     const formData = new FormData();
     const status = true;
 
@@ -88,11 +94,12 @@ const NewsComponent = () => {
     try {
       const response = await publishNews_req(formData);
       if (response) {
-        setPublish(false);
         getNews();
-        setPublish(true);
+        setMessage({ ...message, open: true, type: "publish" });
       }
-    } catch (e) {}
+    } catch (e) {
+      setMessage({ ...message, open: true, error: true });
+    }
   }
 
   useEffect(() => {
@@ -128,9 +135,10 @@ const NewsComponent = () => {
             </CardContent>
           </Card>
         </Grid>
+
         {newsList.news &&
           newsList.news.map((item) => (
-            <Grid item xs={12} md={6} lg={6} xl={3} key={item.key}>
+            <Grid item xs={12} md={6} lg={6} xl={3} key={item._id}>
               <NewsCard
                 news={item}
                 image={item.image}
@@ -149,33 +157,45 @@ const NewsComponent = () => {
               />
             </Grid>
           ))}
-        <Grid item xs={12}>
-          <Box
-            mt={4}
-            display="flex"
-            justifyContent="flex-end"
-            alignItems="center"
-          >
-            {/* Pagination */}
-            {newsList?.news && (
-              <TablePagination
-                rowsPerPageOptions={[10]}
-                component="div"
-                count={newsList?.allCount}
-                rowsPerPage={newsList?.limit}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            )}
+        {newsList?.news ? (
+          <Grid item xs={12}>
+            <Box
+              mt={4}
+              display="flex"
+              justifyContent="flex-end"
+              alignItems="center"
+            >
+              {/* Pagination */}
+              {newsList?.news && (
+                <TablePagination
+                  rowsPerPageOptions={[10]}
+                  component="div"
+                  count={newsList?.allCount}
+                  rowsPerPage={newsList?.limit}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              )}
+            </Box>
+          </Grid>
+        ) : (
+          <Box sx={{ marginTop: "100px" }}>
+            <Loader />
           </Box>
-        </Grid>
+        )}
       </Grid>
-      {success === true && (
-        <ConfirmationNotice opening={success} title="Update News List" />
-      )}
-      {publish === true && (
-        <ConfirmationNotice opening={publish} title="Publish News" />
+      {message.open === true && (
+        <ConfirmationNotice
+          error={message.error}
+          title={
+            message.error === true
+              ? "An error occurred, try again"
+              : message.type === "delete"
+              ? "News Deleted"
+              : "News Published"
+          }
+        />
       )}
     </Fragment>
   );

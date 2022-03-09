@@ -1,28 +1,8 @@
 import { instance } from "../services/api";
 
-export const getUserTransactions_req = async (
-  userId,
-  page,
-  rowsPerPage,
-  data
-) => {
-  let params = {
-    page: page,
-    limit: rowsPerPage,
-  };
-
-  let result = Object.keys(data).map((key) => {
-    if (data[key]) {
-      params[key] = data[key];
-
-      return key;
-    }
-  });
-
-  console.log("PARAMS ==>", params);
-
+export const getUserTransactions_req = async (userId, data) => {
   const response = await instance.get(`/admin/user/${userId}/transaction`, {
-    params: params,
+    params: data,
   });
   return response.data;
 };

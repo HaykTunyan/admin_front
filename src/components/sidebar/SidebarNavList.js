@@ -1,11 +1,12 @@
 import React, { Fragment } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import reduceChildRoutes from "./reduceChildRoutes";
 import { Box } from "@material-ui/core";
 
 const SidebarNavList = (props) => {
   const { pages, depth, handleDrawerToggle } = props;
   const router = useLocation();
+  const params = useParams();
   const currentRoute = router.pathname;
 
   const childRoutes = pages.reduce(
@@ -20,9 +21,27 @@ const SidebarNavList = (props) => {
     []
   );
 
+  const handelNavClose = (router, props) => {
+    if (
+      router.view.location.pathname === "/dashboard" ||
+      router.view.location.pathname === "/device-management" ||
+      router.view.location.pathname === "/users" ||
+      router.view.location.pathname === "/affiliate-users" ||
+      router.view.location.pathname === "/news" ||
+      router.view.location.pathname === "/referral" ||
+      router.view.location.pathname === "/transactions" ||
+      router.view.location.pathname === "/settings" ||
+      router.view.location.pathname === "/notifications" ||
+      router.view.location.pathname === "/kyc" ||
+      router.view.location.pathname === "/administrators"
+    ) {
+      handleDrawerToggle();
+    }
+  };
+
   return (
     <Fragment>
-      <Box>{childRoutes}</Box>
+      <Box onClick={handelNavClose}>{childRoutes}</Box>
     </Fragment>
   );
 };

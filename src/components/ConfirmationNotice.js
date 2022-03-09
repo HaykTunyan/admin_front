@@ -5,24 +5,46 @@ const Alert = forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={8} ref={ref} variant="filled" {...props} />;
 });
 
-const ConfirmationNotice = ({ opening, title }) => {
-  const [state, setOpen] = useState(true);
+const ConfirmationNotice = ({ title, error }) => {
+  const [open, setOpen] = useState(true);
+  const [state, setState] = useState({
+    vertical: "bottom",
+    horizontal: "left",
+  });
+
+  const { vertical, horizontal } = state;
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-    opening = false;
     setOpen(false);
   };
 
   return (
-    <Stack spacing={2}>
-      <Snackbar open={state} autoHideDuration={2500} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-          {title}
-        </Alert>
-      </Snackbar>
-    </Stack>
+    <>
+      <Stack spacing={2}>
+        <Snackbar
+          anchorOrigin={{ vertical, horizontal }}
+          open={open}
+          onClose={handleClose}
+          autoHideDuration={2500}
+          key={vertical + horizontal}
+        >
+          <Alert
+            onClose={handleClose}
+            severity={error === true ? "error" : "success"}
+            sx={{ width: "100%" }}
+          >
+            {title}
+          </Alert>
+        </Snackbar>
+      </Stack>
+    </>
   );
 };
 

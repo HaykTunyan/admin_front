@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { instance } from "../../services/api";
 
 const initialState = {
@@ -42,4 +41,5 @@ export const getUserList_req = () => (dispatch) => {
       // dispatch({ type: USER_LIST, payload: false });
     });
 };
+
 export default userListSlice.reducer;

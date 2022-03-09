@@ -28,16 +28,17 @@ const Alert = styled(MuiAlert)(spacing);
 
 // validation Schema.
 const editAdminSchema = Yup.object().shape({
-  name: Yup.string().required("Name is requrired"),
+  name: Yup.string(),
+  // .required("Name is requrired")
   email: Yup.string()
     .email("Must be a valid email")
     .min(8, "Must be at least 8 characters")
-    .max(255)
-    .required("Email is requried"),
+    .max(255),
+  // .required("Email is requried")
   password: Yup.string()
     .min(6, " Must be a last 8 characters ")
-    .max(255, " Must be a last 355 characters")
-    .required(" Passowrd is required "),
+    .max(255, " Must be a last 355 characters"),
+  // .required(" Passowrd is required ")
 });
 
 const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
@@ -48,11 +49,7 @@ const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
   const [messageError, setMessageError] = useState([]);
   const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
-    name: name,
-    email: email,
-    password: "12345678",
     role: 4,
-    permissions: permissions,
     adminId: id,
   });
 
@@ -65,13 +62,14 @@ const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
   };
 
   const handleSubmit = (values) => {
+    setSuccess(false);
+    console.log(" value,   email", values);
     dispatch(editAdmin(values))
       .then((data) => {
-        setSuccess(false);
         if (data.success) {
           setOpen(false);
+          setSuccess(true);
         }
-        setSuccess(true);
         getAdminUsers();
       })
       .catch((error) => {
@@ -83,9 +81,7 @@ const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
 
   return (
     <Fragment>
-      {success === true && (
-        <ConfirmationNotice opening={true} title="Edit Admin User" />
-      )}
+      {success === true && <ConfirmationNotice title="Successfully Edited" />}
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
         <Edit2 />
       </IconButton>
@@ -130,7 +126,7 @@ const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
                 <TextField
                   margin="dense"
                   id="name"
-                  defaultValue={state.name}
+                  defaultValue={name}
                   error={Boolean(touched.name && errors.name)}
                   helperText={touched.name && errors.name}
                   onBlur={handleBlur}
@@ -144,7 +140,7 @@ const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
                 <TextField
                   margin="dense"
                   id="email"
-                  defaultValue={state.email}
+                  defaultValue={email}
                   error={Boolean(touched.email && errors.email)}
                   helperText={touched.email && errors.email}
                   onBlur={handleBlur}
@@ -158,12 +154,11 @@ const EditAdminModal = ({ email, name, id, getAdminUsers, permissions }) => {
                 <TextField
                   margin="dense"
                   id="password"
-                  defaultValue={state.password}
                   error={Boolean(touched.password && errors.password)}
                   helperText={touched.password && errors.password}
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  label="Admin password"
+                  label="Change password"
                   type="password"
                   variant="outlined"
                   fullWidth

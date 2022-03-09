@@ -1,10 +1,5 @@
 // Authentication service.
-
 import axios from "axios";
-
-const instance = axios.create({
-  baseURL: "http://nodejs.beincrypto.org:3000/api",
-});
 
 const API_URL = "http://nodejs.beincrypto.org:3000/api";
 

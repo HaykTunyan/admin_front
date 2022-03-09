@@ -1,7 +1,8 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import styled from "styled-components/macro";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import { instance } from "../services/api";
 import {
   Button,
   TextField,
@@ -40,6 +41,10 @@ const EditSwapModal = ({
   decimalsSwap,
   feeSwap,
   minSwap,
+  minFrom,
+  minTo,
+  limitFrom,
+  limitTo,
   limitSwap,
   limitEnabledSwap,
   fromCoin,
@@ -52,12 +57,17 @@ const EditSwapModal = ({
   const [open, setOpen] = useState(false);
   const [check, setCheck] = useState(limitEnabledSwap);
   const [errorMes, setErrorMes] = useState([]);
+  const [coinSettings, getCoinSettings] = useState([]);
   const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
     swapId: idSwap, //is required
     decimals: decimalsSwap,
     fee: feeSwap,
+    min_from: minFrom,
+    min_to: minTo,
     min: minSwap,
+    limit_from: limitFrom,
+    limit_to: limitTo,
     limit: limitSwap,
   });
 
@@ -67,10 +77,18 @@ const EditSwapModal = ({
     fee: Yup.number()
       .required("Field is required")
       .min(0, " Field can not be negative value"),
-    min: Yup.number()
+    min_from: Yup.number()
       .required("Field is required")
       .min(0, " Field can not be negative value"),
-    limit: check
+    min_to: Yup.number()
+      .required("Field is required")
+      .min(0, " Field can not be negative value"),
+    limit_from: check
+      ? Yup.number()
+          .required("Field is required")
+          .min(0, " Field can not be negative value")
+      : Yup.number(),
+    limit_to: check
       ? Yup.number()
           .required("Field is required")
           .min(0, " Field can not be negative value")
@@ -86,12 +104,16 @@ const EditSwapModal = ({
   };
 
   const handleSubmit = (values) => {
+    setSuccess(false);
+
     let data = {
       swapId: values.swapId, //is required
       decimals: values.decimals,
       fee: Number(values.fee),
-      min: Number(values.min),
-      limit: Number(values.limit),
+      min_from: Number(values.min_from),
+      min_to: Number(values.min_to),
+      limit_from: Number(values.limit_from),
+      limit_to: Number(values.limit_to),
       limitEnabled: check,
     };
 
@@ -106,7 +128,6 @@ const EditSwapModal = ({
 
     dispatch(editSwap(data))
       .then((data) => {
-        setSuccess(false);
         setOpen(false);
         getSwap();
         setSuccess(true);
@@ -118,10 +139,28 @@ const EditSwapModal = ({
 
   const invalid = errorMes?.message;
 
+  // get getSettingCoin.
+  const getSettingCoin = () => {
+    return instance
+      .get("/admin/settings/coins")
+      .then((data) => {
+        getCoinSettings(data.data);
+        return data;
+      })
+      .catch((error) => {
+        return Promise.reject(error);
+      })
+      .finally(() => {});
+  };
+
+  useEffect(() => {
+    getSettingCoin();
+  }, []);
+
   return (
     <Fragment>
       {success === true && (
-        <ConfirmationNotice opening={success} title="Edit Swap" />
+        <ConfirmationNotice title="Swap Successfully Edited" />
       )}
       <IconButton aria-label="done" onClick={handleClickOpen}>
         <EditIcon />
@@ -175,31 +214,6 @@ const EditSwapModal = ({
                   </>
                 )}
                 <Grid container pt={6} spacing={6}>
-                  {/* Min */}
-                  <Grid item xs={4} md={4} display="flex" alignItems="center">
-                    <Typography
-                      variant="subtitle1"
-                      color="inherit"
-                      component="div"
-                    >
-                      Min Amount
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8} md={8}>
-                    <TextField
-                      margin="dense"
-                      id="min"
-                      name="min"
-                      label="Min"
-                      //type="number"
-                      fullWidth
-                      error={Boolean(touched.min && errors.min)}
-                      helperText={touched.min && errors.min}
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      defaultValue={state.min}
-                    />
-                  </Grid>
                   {/* Fee  */}
                   <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
@@ -216,13 +230,7 @@ const EditSwapModal = ({
                       id="fee"
                       name="fee"
                       label="Fee"
-                      //type="number"
                       fullWidth
-                      // InputProps={{
-                      //   inputProps: {
-                      //     min: 0,
-                      //   },
-                      // }}
                       error={Boolean(touched.fee && errors.fee)}
                       helperText={touched.fee && errors.fee}
                       onBlur={handleBlur}
@@ -255,6 +263,54 @@ const EditSwapModal = ({
                       defaultValue={state.decimals}
                     />
                   </Grid>
+                  {/* Min From */}
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
+                    <Typography
+                      variant="subtitle1"
+                      color="inherit"
+                      component="div"
+                    >
+                      Min {fromCoin.toUpperCase()}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={8} md={8}>
+                    <TextField
+                      margin="dense"
+                      id="min_from"
+                      name="min_from"
+                      label={` Min ${fromCoin.toUpperCase()}`}
+                      fullWidth
+                      error={Boolean(touched.min_from && errors.min_from)}
+                      helperText={touched.min_from && errors.min_from}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      defaultValue={state.min_from}
+                    />
+                  </Grid>
+                  {/* Min To */}
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
+                    <Typography
+                      variant="subtitle1"
+                      color="inherit"
+                      component="div"
+                    >
+                      Min {toCoin.toUpperCase()}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={8} md={8}>
+                    <TextField
+                      margin="dense"
+                      id="min_to"
+                      name="min_to"
+                      label={` Min ${toCoin.toUpperCase()}`}
+                      fullWidth
+                      error={Boolean(touched.min_to && errors.min_to)}
+                      helperText={touched.min_to && errors.min_to}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      defaultValue={state.min_to}
+                    />
+                  </Grid>
                   {/* Limit Enabled */}
                   <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
@@ -277,22 +333,11 @@ const EditSwapModal = ({
                         />
                       }
                     />
-                    {/* <FormControlLabel
-                      label="Enabled Limit"
-                      name="limitEnabled"
-                      control={
-                        <Checkbox
-                          {...label}
-                          defaultChecked={state.limitEnabled}
-                          onChange={handleChange}
-                        />
-                      }
-                    /> */}
                   </Grid>
-                  {/* Limit  */}
                   {/* check */}
                   {check ? (
                     <>
+                      {/* Limit From */}
                       <Grid
                         item
                         xs={4}
@@ -305,20 +350,51 @@ const EditSwapModal = ({
                           color="inherit"
                           component="div"
                         >
-                          Limit Swap
+                          Limit Swap {fromCoin.toUpperCase()}
                         </Typography>
                       </Grid>
                       <Grid item xs={8} md={8}>
                         <TextField
                           margin="dense"
-                          id="limit"
-                          name="limit"
-                          label="Limit"
-                          //type="number"
+                          id="limit_from"
+                          name="limit_from"
+                          label={`Limit Swap ${fromCoin.toUpperCase()} `}
                           fullWidth
-                          error={Boolean(touched.limit && errors.limit)}
-                          helperText={touched.limit && errors.limit}
-                          defaultValue={limitSwap}
+                          error={Boolean(
+                            touched.limit_from && errors.limit_from
+                          )}
+                          helperText={touched.limit_from && errors.limit_from}
+                          defaultValue={limitFrom}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                        />
+                      </Grid>
+                      {/* Limit To */}
+                      <Grid
+                        item
+                        xs={4}
+                        md={4}
+                        display="flex"
+                        alignItems="center"
+                      >
+                        <Typography
+                          variant="subtitle1"
+                          color="inherit"
+                          component="div"
+                        >
+                          Limit Swap {toCoin.toUpperCase()}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8} md={8}>
+                        <TextField
+                          margin="dense"
+                          id="limit_to"
+                          name="limit_to"
+                          label={`Limit Swap ${toCoin.toUpperCase()}  `}
+                          fullWidth
+                          error={Boolean(touched.limit_to && errors.limit_to)}
+                          helperText={touched.limit_to && errors.limit_to}
+                          defaultValue={limitTo}
                           onBlur={handleBlur}
                           onChange={handleChange}
                         />

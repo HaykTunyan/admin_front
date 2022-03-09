@@ -95,6 +95,8 @@ const EditTransactionModal = ({
   };
 
   const handleSubmit = (values) => {
+    setSuccess(false);
+
     let data = {
       coin_id: Number(values.coinId), // is required
       name: values.name,
@@ -118,23 +120,17 @@ const EditTransactionModal = ({
     }
 
     dispatch(editCoin(data)).then((data) => {
-      setSuccess(false);
       if (data.success) {
         setOpen(false);
         getCoins();
+        setSuccess(true);
       }
-      setSuccess(true);
     });
   };
 
   return (
     <Fragment>
-      {success === true && (
-        <ConfirmationNotice
-          opening={success}
-          title="Transaction Coin Editing"
-        />
-      )}
+      {success === true && <ConfirmationNotice title="Coin Edited" />}
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
         <Edit2 />
       </IconButton>

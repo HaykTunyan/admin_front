@@ -20,7 +20,10 @@ import ConfirmationNotice from "../components/ConfirmationNotice";
 const SendNotificationModal = ({ item, primission }) => {
   // Hooks.
   const [open, setOpen] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+  });
   const [initialValues, setInitialValues] = useState({
     title: item.title,
     message: item.content,
@@ -55,6 +58,7 @@ const SendNotificationModal = ({ item, primission }) => {
   };
 
   async function sendNotification(values) {
+    setMessage({ ...message, open: false, error: false });
     let users = values.emailOrId.replace(/\s+/g, "").split(",");
 
     let data = {
@@ -69,19 +73,26 @@ const SendNotificationModal = ({ item, primission }) => {
     try {
       const response = await sendNotification_req(data);
       if (response) {
-        setSuccess(false);
         setOpen(false);
-        setSuccess(true);
+        setMessage({ ...message, open: true });
       }
     } catch (e) {
       setOpen(false);
+      setMessage({ ...message, open: true, error: true });
     }
   }
 
   return (
     <Fragment>
-      {success === true && (
-        <ConfirmationNotice opening={success} title="Action Success" />
+      {message.open === true && (
+        <ConfirmationNotice
+          error={message.error}
+          title={
+            message.error === true
+              ? "An error occurred, try again"
+              : "Notification Sent"
+          }
+        />
       )}
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         Action

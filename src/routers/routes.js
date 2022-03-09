@@ -27,8 +27,6 @@ import Administrators from "../pages/user-managment/administrator/Administrators
 import DashboardPage from "../pages/dashboard";
 import DeviceManagement from "../pages/device-managment";
 
-const userSuccess = localStorage.getItem("accessToken");
-
 // Routes.
 const routes = [
   {

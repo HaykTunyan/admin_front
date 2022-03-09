@@ -26,6 +26,7 @@ import {
   IconButton,
   Autocomplete,
   TextField,
+  createFilterOptions,
 } from "@material-ui/core";
 import CSVButton from "../../components/CSVButton";
 import DateRange from "../../components/date-picker/DateRange";
@@ -35,19 +36,6 @@ import Loader from "../../components/Loader";
 // Spacing.
 const Paper = styled(MuiPaper)(spacing);
 const Card = styled(MuiCard)(spacing);
-
-// Custom Style.
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 10;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-    },
-  },
-};
-
 const Chip = styled(MuiChip)`
   height: 20px;
   padding: 4px 0;
@@ -57,115 +45,195 @@ const Chip = styled(MuiChip)`
   color: ${(props) => props.theme.palette.common.white};
 `;
 
+export const cellList = [
+  {
+    id: "1",
+    head: "Date",
+    sortable: true,
+    param: "date",
+  },
+  {
+    id: "2",
+    head: "Email",
+    sortable: true,
+    param: "email",
+  },
+  {
+    id: "3",
+    head: "Phone",
+    sortable: false,
+  },
+  {
+    id: "4",
+    head: "Amount",
+    sortable: true,
+    param: "amount_received",
+  },
+  {
+    id: "5",
+    head: "Coin",
+    sortable: false,
+  },
+  {
+    id: "6",
+    head: "TX Id",
+    sortable: false,
+  },
+  {
+    id: "7",
+    head: "Type",
+    sortable: false,
+  },
+  {
+    id: "8",
+    head: "Type of operations",
+    sortable: false,
+  },
+  {
+    id: "9",
+    head: "Status",
+    sortable: false,
+  },
+];
+
 const SwapTable = () => {
   // Hooks.
   const [swap, setSwap] = useState([]);
-  const [page, setPage] = useState(0); // page.
+  // State.
+  const rows = swap?.transactions;
+  //Pagination
+  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10); // limit.
+  //Filters
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [statusValue, setStatusValue] = useState("");
-  const [value, setValue] = useState([null, null]);
+  const [time, setTime] = useState([null, null]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [sortPhone, setSortPhone] = useState("");
   const [country, setCountry] = useState("");
   const [coinSettings, getCoinSettings] = useState([]);
+  const [inputValue, setInputValue] = useState("");
   // Sorting.
-  const [sortDate, setSortDate] = useState(true);
-  const [sortEmail, setSortEmail] = useState(true);
-  const [sortAmount, setSortAmount] = useState(true);
-  const [sortParams, setSortParmas] = useState("");
-  const [sortType, setSortType] = useState("");
-  const [inputPhone, setPhoneValue] = useState("");
-  // State.
-  const rows = swap?.transactions;
+  const [sort, setSort] = useState({
+    type: "decreasing",
+    param: "",
+  });
 
-  // Sorting Functions.
-  const sortingDate = () => {
-    setSortDate(!sortDate);
-    if (sortDate) {
-      getSorting("decreasing", "date");
-    } else {
-      getSorting("increasing", "date");
-    }
-  };
+  const filterOptions = createFilterOptions({
+    matchFrom: "start",
+    limit: 8,
+    stringify: (country) => country.telefon,
+  });
 
-  // Sorting Email.
-  const sortingEmail = () => {
-    setSortEmail(!sortEmail);
-    if (sortEmail) {
-      getSorting("decreasing", "email");
-    } else {
-      getSorting("increasing", "email");
-    }
-  };
+  //Handle Sorting
+  const handleSorting = (id, param) => {
+    setSort({
+      [`sorted_${id}`]: true,
+      type: sort.type === "decreasing" ? "increasing" : "decreasing",
+      param: param,
+    });
 
-  // Sorting Phone.
-  const sortingPhone = (event) => {
-    setSortPhone(event.target.value);
-    getPhoneSorting(event.target.value);
-  };
-
-  const handleCountry = (event, newPhoneValue) => {
-    setSortPhone(event?.target?.value);
-    setPhoneValue(newPhoneValue);
-    getPhoneSorting(event?.target?.value);
-  };
-
-  // Sorting Amount.
-  const sortingAmount = () => {
-    setSortAmount(!sortAmount);
-    if (sortAmount) {
-      getSorting("decreasing", "amount_received");
-    } else {
-      getSorting("increasing", "amount_received");
-    }
+    getSwap(
+      1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(from),
+      Number(to),
+      statusValue,
+      sort.type === "decreasing" ? "increasing" : "decreasing",
+      param,
+      inputValue
+    );
   };
 
   // Date Range Picker.
   const onChangeTime = (newValue) => {
     setStartDate(moment(newValue[0]).format("YYYY-MM-DD"));
     setEndDate(moment(newValue[1]).format("YYYY-MM-DD"));
-    setValue(newValue);
-    getDateFilters(
-      moment(newValue[0]).format("YYYY-MM-DD"),
-      moment(newValue[1]).format("YYYY-MM-DD")
-    );
+    setTime(newValue);
+
+    if (newValue[1]) {
+      getSwap(
+        1,
+        rowsPerPage,
+        moment(newValue[0]).format("YYYY-MM-DD"),
+        moment(newValue[1]).format("YYYY-MM-DD"),
+        Number(from),
+        Number(to),
+        statusValue,
+        sort.type,
+        sort.param,
+        inputValue
+      );
+    }
   };
 
   // Filter Search.
-  const handleChangeFrom = (event, from) => {
+  const handleChangeFrom = (event) => {
     setFrom(event.target.value);
-    console.log(" from  change", from);
-    if (from?.props.value != "all") {
-      getFromCoin(from?.props.value);
-    } else {
-      getSwap();
-    }
+    getSwap(
+      page,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(event.target.value),
+      Number(to),
+      statusValue,
+      sort.type,
+      sort.param,
+      inputValue
+    );
   };
 
-  const handleChangeTo = (event, to) => {
+  const handleChangeTo = (event) => {
     setTo(event.target.value);
-    if (to?.props.value === "all") {
-      getSwap();
-    } else {
-      getToCoin(to?.props.value);
-    }
+    getSwap(
+      page,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(from),
+      Number(event.target.value),
+      statusValue,
+      sort.type,
+      sort.param,
+      inputValue
+    );
   };
 
-  const handleStatusValue = (event, statusValue) => {
+  const handleStatusValue = (event) => {
     setStatusValue(event.target.value);
-    if (statusValue?.props?.value != "all") {
-      getSendStatusFilter(statusValue?.props?.value);
-    } else {
-      getSwap();
-    }
+
+    getSwap(
+      page,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(from),
+      Number(to),
+      event.target.value,
+      sort.type,
+      sort.param,
+      inputValue
+    );
   };
 
   // Table Pagination.
   const handleChangePage = (event, newPage) => {
-    getSwap(newPage + 1);
+    getSwap(
+      newPage + 1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(from),
+      Number(to),
+      statusValue,
+      sort.type,
+      sort.param,
+      inputValue
+    );
     setPage(newPage);
   };
 
@@ -174,30 +242,79 @@ const SwapTable = () => {
     setPage(1);
   };
 
-  // End FIlter .
+  const handlePhoneCode = (value) => {
+    setInputValue(value);
+
+    getSwap(
+      1,
+      rowsPerPage,
+      startDate,
+      endDate,
+      Number(from),
+      Number(to),
+      statusValue,
+      sort.type,
+      sort.param,
+      value
+    );
+  };
+
+  // get getSettingCoin Data.
+  const getSettingCoin = () => {
+    return instance.get("/admin/settings/coins").then((data) => {
+      getCoinSettings(data.data);
+      return data;
+    });
+  };
+
+  // get Country Code.
+  const getCountry = () => {
+    return instance.get("/admin/settings/countries").then((data) => {
+      setCountry(data.data);
+      return data;
+    });
+  };
 
   // get Swap.
   const getSwap = (
     page,
     rowsPerPage,
-    startDate,
-    endDate,
-    from,
-    to,
-    statusValue
+    start_date,
+    end_date,
+    coin_from,
+    coin_to,
+    status,
+    sort_type,
+    sort_param,
+    code
   ) => {
+    let params = {
+      type: "swap",
+      page: page,
+      limit: rowsPerPage,
+      start_date: start_date,
+      end_date: end_date,
+      coin_from_id: coin_from,
+      coin_to_id: coin_to,
+      status: status,
+      sort_type: sort_type,
+      sort_param: sort_param,
+      telefon_code: code,
+    };
+
+    let result = Object.keys(params).filter(
+      (key) => !params[key] || params[key] === ""
+    );
+
+    for (let item of result) {
+      delete params[`${item}`];
+    }
+
+    console.log("PARAMS ==>", params);
+
     return instance
       .get("/admin/transaction/all", {
-        params: {
-          type: "swap",
-          limit: rowsPerPage,
-          page: page,
-          start_date: startDate,
-          end_date: endDate,
-          coin_from_id: from,
-          coin_to_id: to,
-          status: statusValue,
-        },
+        params: params,
       })
       .then((data) => {
         setSwap(data.data);
@@ -209,142 +326,11 @@ const SwapTable = () => {
       .finally(() => {});
   };
 
-  // get Send Sorting Data.
-  const getSorting = (sort_type, sort_params, page, rowsPerPage) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "swap",
-          sort_type: sort_type,
-          sort_param: sort_params,
-          limit: rowsPerPage,
-          page: page,
-          start_date: startDate,
-          end_date: endDate,
-          coin_from_id: from,
-          coin_to_id: to,
-          status: statusValue,
-        },
-      })
-      .then((data) => {
-        setSwap(data.data);
-        return data;
-      });
-  };
-
-  // get Date FIlters Date.
-  const getDateFilters = (start_date, end_date) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "swap",
-          start_date: start_date,
-          end_date: end_date,
-          limit: rowsPerPage,
-          page: page,
-        },
-      })
-      .then((data) => {
-        setSwap(data.data);
-        return data;
-      });
-  };
-
-  // get Country Code.
-  const getCountry = () => {
-    return instance.get("/admin/settings/countries").then((data) => {
-      setCountry(data.data);
-      return data;
-    });
-  };
-
-  // get getSettingCoin Data.
-  const getSettingCoin = () => {
-    return instance.get("/admin/settings/coins").then((data) => {
-      getCoinSettings(data.data);
-      return data;
-    });
-  };
-
-  // get Send Status Filter Data
-  const getSendStatusFilter = (status) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "swap",
-          status: status,
-          limit: rowsPerPage,
-          page: page,
-        },
-      })
-      .then((data) => {
-        setSwap(data.data);
-        return data;
-      });
-  };
-
-  // Phone Sorting.
-  const getPhoneSorting = (telefon_code) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "swap",
-          telefon_code: telefon_code,
-          limit: rowsPerPage,
-          page: page,
-        },
-      })
-      .then((data) => {
-        setSwap(data.data);
-        return data;
-      });
-  };
-
-  // get Coin Filter Data
-  const getFromCoin = (coin_from_id, page, rowsPerPage, to) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "swap",
-          coin_from_id: coin_from_id,
-          limit: rowsPerPage,
-          page: page,
-          coin_to_id: to,
-        },
-      })
-      .then((data) => {
-        setSwap(data.data);
-        return data;
-      });
-  };
-
-  // get Coin Filter Data
-  const getToCoin = (coin_to_id, page, rowsPerPage, from) => {
-    return instance
-      .get("/admin/transaction/all", {
-        params: {
-          type: "swap",
-          coin_to_id: coin_to_id,
-          limit: rowsPerPage,
-          page: page,
-          coin_from_id: from,
-        },
-      })
-      .then((data) => {
-        setSwap(data.data);
-        return data;
-      });
-  };
-
   // Use Effect.
   useEffect(() => {
     getSwap();
-    setTimeout(() => {
-      getSorting();
-      getDateFilters();
-      getSettingCoin();
-      getCountry();
-    }, 700);
+    getCountry();
+    getSettingCoin();
   }, []);
 
   return (
@@ -358,7 +344,7 @@ const SwapTable = () => {
         }}
       >
         <Grid item xs={12} sm={2} md={2} m={2}>
-          <DateRange value={value} onChange={onChangeTime} />
+          <DateRange value={time} onChange={onChangeTime} />
         </Grid>
         <Grid item xs={12} sm={2} md={2} m={2}>
           <FormControl fullWidth>
@@ -411,9 +397,9 @@ const SwapTable = () => {
               <MenuItem value="all">
                 <em>All</em>
               </MenuItem>
-              <MenuItem value="panding">Pending</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
               <MenuItem value="rejected"> Rejected </MenuItem>
-              <MenuItem value="approved"> Approved </MenuItem>
+              <MenuItem value="accepted"> Approved </MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -423,115 +409,85 @@ const SwapTable = () => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    Date
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                      <IconButton onClick={sortingDate}>
-                        {sortDate ? (
-                          <ArrowUp size={16} />
-                        ) : (
-                          <ArrowDown size={16} />
-                        )}
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    Email
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                      <IconButton onClick={sortingEmail}>
-                        {sortEmail ? (
-                          <ArrowUp size={16} />
-                        ) : (
-                          <ArrowDown size={16} />
-                        )}
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Box>Phone</Box>
+                {cellList?.map((item) => (
+                  <TableCell key={item.id} align="left">
                     <Box
                       sx={{
                         display: "flex",
-                        justifyContent: "center",
-                        marginLeft: "20px",
+                        alignItems: "center",
+                      }}
+                      onMouseOver={() => {
+                        setSort({ ...sort, [`show_${item.id}`]: true });
+                      }}
+                      onMouseLeave={() =>
+                        setSort({ ...sort, [`show_${item.id}`]: false })
+                      }
+                      onClick={() => {
+                        handleSorting(Number(item.id), item.param);
                       }}
                     >
-                      <Autocomplete
-                        inputValue={inputPhone}
-                        onInputChange={handleCountry}
-                        id="country-states"
-                        options={country}
-                        getOptionLabel={(country) => country.telefon}
-                        sx={{ width: 150 }}
-                        renderOption={(props, option) => (
-                          <Box
-                            component="li"
-                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                            {...props}
-                          >
-                            {option.telefon}
+                      {item.head}
+
+                      {item.sortable === true &&
+                        (sort[`sorted_${item.id}`] === true ||
+                          sort[`show_${item.id}`] === true) && (
+                          <Box sx={{ display: "flex" }}>
+                            <IconButton
+                              onClick={() =>
+                                handleSorting(Number(item.id), item.param)
+                              }
+                            >
+                              {sort.type === "increasing" ? (
+                                <ArrowUp size={16} />
+                              ) : (
+                                <ArrowDown size={16} />
+                              )}
+                            </IconButton>
                           </Box>
                         )}
-                        renderInput={(params) => (
-                          <>
-                            {console.log(" params ", params)}
-                            <TextField
-                              {...params}
-                              label="Phone"
-                              value={params?.inputProps?.value}
-                            />
-                          </>
-                        )}
-                      />
-                      {/* <FormControl sx={{ minWidth: "100px" }}>
-                        <InputLabel id="select-phone-label">Sort</InputLabel>
-                        <Select
-                          labelId="select-phone-label"
-                          id="select-phone-label"
-                          value={sortPhone}
-                          onChange={sortingPhone}
-                          autoWidth
-                          label="Sort"
-                          fullWidth
-                          MenuProps={MenuProps}
+                      {Number(item.id) === 3 && (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            marginLeft: "20px",
+                          }}
                         >
-                          {country &&
-                            country.map((item) => (
-                              <MenuItem key={item.id} value={item.id}>
-                                <Box sx={{ display: "flex", width: "100%" }}>
-                                  <Box mr={2}>{item.telefon}</Box>
-                                </Box>
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </FormControl> */}
+                          <Autocomplete
+                            filterOptions={filterOptions}
+                            id="country-phone-select"
+                            sx={{ width: 150 }}
+                            options={country}
+                            inputValue={inputValue}
+                            onInputChange={(event, newInputValue) => {
+                              handlePhoneCode(newInputValue);
+                            }}
+                            autoHighlight
+                            getOptionLabel={(option) => option.telefon}
+                            renderOption={(props, option) => (
+                              <Box
+                                component="li"
+                                sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                                {...props}
+                              >
+                                {option.telefon}
+                              </Box>
+                            )}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Phone"
+                                inputProps={{
+                                  ...params.inputProps,
+                                }}
+                              />
+                            )}
+                          />
+                        </Box>
+                      )}
                     </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    Amount
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                      <IconButton onClick={sortingAmount}>
-                        {sortAmount ? (
-                          <ArrowUp size={16} />
-                        ) : (
-                          <ArrowDown size={16} />
-                        )}
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>Coin</TableCell>
-                <TableCell>TX ID</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Type of operations</TableCell>
-                <TableCell>Status</TableCell>
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>

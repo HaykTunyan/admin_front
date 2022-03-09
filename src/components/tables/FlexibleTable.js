@@ -49,7 +49,7 @@ const Input = styled(InputBase)`
 const Search = styled.div`
   border-radius: 2px;
   background-color: ${(props) => props.theme.header.background};
-  display: none;
+  display: block;
   position: relative;
   width: 100%;
   &:hover {
@@ -95,7 +95,7 @@ const FlexibleTable = ({ title, rowList, rowBody, getFlexible }) => {
     const {
       target: { value },
     } = event;
-    setFilterCoin(typeof value === "string" ? value.split(",") : value);
+    setFilterCoin(typeof value === "string" ? value.push(" ") : value);
   };
 
   const handleCoinChange = (item) => {
@@ -123,12 +123,15 @@ const FlexibleTable = ({ title, rowList, rowBody, getFlexible }) => {
     setSearch(event.target.value);
 
     searchTimeout = setTimeout(async () => {
-      if (event.target.value.length > 2 || event.target.value.length === 0) {
-        try {
-          getSettingCoin(event.target.value);
-        } catch (e) {}
-      }
-    }, 100);
+      try {
+        getSettingCoin(event.target.value);
+      } catch (e) {}
+      // if (event.target.value.length > 2 || event.target.value.length === 0) {
+      //   try {
+      //     getSettingCoin(event.target.value);
+      //   } catch (e) {}
+      // }
+    }, 0);
   };
 
   // get getSettingCoin.
@@ -179,7 +182,7 @@ const FlexibleTable = ({ title, rowList, rowBody, getFlexible }) => {
                     value={filterCoin}
                     onChange={handleFilterCoin}
                     input={<OutlinedInput label="Coin Filter" />}
-                    renderValue={(selected) => selected.join(", ")}
+                    renderValue={(selected) => selected.push(" ")}
                     // MenuProps={MenuProps}
                   >
                     <Search>

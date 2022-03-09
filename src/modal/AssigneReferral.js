@@ -46,9 +46,9 @@ const AssigneReferral = ({ id, getUnassigned }) => {
   };
 
   const handleSubmit = (values) => {
+    setSuccess(false);
     dispatch(assigneReferralUser(values))
       .then((data) => {
-        setSuccess(false);
         if (data.success) {
           setOpen(false);
         }
@@ -63,9 +63,7 @@ const AssigneReferral = ({ id, getUnassigned }) => {
 
   return (
     <Fragment>
-      {success === true && (
-        <ConfirmationNotice opening={true} title="Assign User success" />
-      )}
+      {success === true && <ConfirmationNotice title="Assigned" />}
       <Button color="primary" variant="contained" onClick={handleClickOpen}>
         Assign
       </Button>

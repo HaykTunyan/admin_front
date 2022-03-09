@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import styled from "styled-components/macro";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { spacing } from "@material-ui/system";
 import { RemoveRedEye as RemoveRedEyeIcon } from "@material-ui/icons";
@@ -136,8 +136,8 @@ export const cellList = [
 ];
 
 const UsersList = ({ affiliate }) => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
+  const { state } = useLocation();
   const [rowUserList, setRowUserList] = useState([]);
   const rowList = rowUserList?.users;
 
@@ -150,7 +150,9 @@ const UsersList = ({ affiliate }) => {
   const [value, setValue] = useState([null, null]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState(
+    state && state.status ? state.status : ""
+  );
   // Sorting
   const [depositSort, setDepositSort] = useState("");
   const [sort, setSort] = useState({
@@ -294,8 +296,6 @@ const UsersList = ({ affiliate }) => {
       delete params[`${item}`];
     }
 
-    console.log("PARAMS ==>", params);
-
     return instance
       .get(`/admin/user/all`, {
         mode: "no-cors",
@@ -313,7 +313,14 @@ const UsersList = ({ affiliate }) => {
 
   // Use Effect.
   useEffect(() => {
-    getUserList_req();
+    getUserList_req(
+      1,
+      10,
+      startDate,
+      endDate,
+      Number(selectedStatus),
+      searchEmail
+    );
   }, [affiliate]);
 
   return (
@@ -381,6 +388,7 @@ const UsersList = ({ affiliate }) => {
                 <MenuItem value={"4"}>{"Verification passed"}</MenuItem>
                 <MenuItem value={"1"}>{"Pending"}</MenuItem>
                 <MenuItem value={"2"}>{"Rejected"}</MenuItem>
+                <MenuItem value={"0"}>{"Unverified"}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -568,6 +576,8 @@ const UsersList = ({ affiliate }) => {
                               <Chip label="Pending" color="warning" />
                             ) : row.status_kyc === 4 ? (
                               <Chip label="Verified" color="success" />
+                            ) : row.status_kyc === 2 ? (
+                              <Chip label="Rejected" color="error" />
                             ) : (
                               <Chip label="Unverified" color="error" />
                             )}

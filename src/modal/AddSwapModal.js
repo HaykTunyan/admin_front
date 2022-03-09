@@ -44,22 +44,33 @@ const AddSwapModal = ({ getSwap }) => {
     toCoin: Number,
     decimals: "",
     fee: "",
-    min: "",
-    limit: "",
+    min_from: "",
+    min_to: "",
+    limit_from: "",
+    limit_to: "",
   });
 
   // Yup Validation.
   const AddSwapSchema = Yup.object().shape({
     decimals: Yup.number()
       .required("Field is required")
-      .min(0, "Field can not be negative value"),
+      .min(0, "Field min value 10")
+      .max(10, "Field max value 10"),
     fee: Yup.number()
       .required("Field is required")
       .min(0, "Field can not be negative value"),
-    min: Yup.number()
+    min_from: Yup.number()
       .required("Field is required")
       .min(0, "Field can not be negative value"),
-    limit: check
+    min_to: Yup.number()
+      .required("Field is required")
+      .min(0, "Field can not be negative value"),
+    limit_from: check
+      ? Yup.number()
+          .required("Field is required")
+          .min(0, " Field can not be negative value")
+      : Yup.number(),
+    limit_to: check
       ? Yup.number()
           .required("Field is required")
           .min(0, " Field can not be negative value")
@@ -76,13 +87,17 @@ const AddSwapModal = ({ getSwap }) => {
 
   // Form Submit.
   const handleSubmit = (values) => {
+    setSuccess(false);
+
     let data = {
       fromCoin: Number(values.fromCoin),
       toCoin: Number(values.toCoin),
       decimals: values.decimals,
       fee: Number(values.fee),
-      min: Number(values.min),
-      limit: Number(values.limit),
+      min_from: Number(values.min_from),
+      min_to: Number(values.min_to),
+      limit_from: Number(values.limit_from),
+      limit_to: Number(values.limit_to),
       limitEnabled: check,
     };
 
@@ -94,10 +109,9 @@ const AddSwapModal = ({ getSwap }) => {
     for (let item of result) {
       delete data[`${item}`];
     }
-
+    console.log("data", data);
     dispatch(addSwap(data))
       .then((data) => {
-        setSuccess(false);
         setOpen(false);
         getSwap();
         setSuccess(true);
@@ -130,9 +144,7 @@ const AddSwapModal = ({ getSwap }) => {
 
   return (
     <Fragment>
-      {success === true && (
-        <ConfirmationNotice opening={success} title="Add Swap " />
-      )}
+      {success === true && <ConfirmationNotice title="Swap Added" />}
       <Button variant="contained" onClick={handleClickOpen}>
         Add Swap
       </Button>
@@ -264,13 +276,14 @@ const AddSwapModal = ({ getSwap }) => {
                       InputProps={{
                         inputProps: {
                           min: 0,
+                          max: 10,
                         },
                       }}
                       error={Boolean(touched.decimals && errors.decimals)}
                       helperText={touched.decimals && errors.decimals}
                       onBlur={handleBlur}
                       onChange={handleChange}
-                      defaultValue={state.decimals}
+                      defaultValue={values.decimals}
                     />
                   </Grid>
                   {/* Fee  */}
@@ -297,28 +310,52 @@ const AddSwapModal = ({ getSwap }) => {
                       defaultValue={state.fee}
                     />
                   </Grid>
-                  {/* Min */}
+                  {/* Min From */}
                   <Grid item xs={4} md={4} display="flex" alignItems="center">
                     <Typography
                       variant="subtitle1"
                       color="inherit"
                       component="div"
                     >
-                      Min
+                      Min From
                     </Typography>
                   </Grid>
                   <Grid item xs={8} md={8}>
                     <TextField
                       margin="dense"
-                      id="min"
-                      name="min"
-                      label="Min"
+                      id="min_from"
+                      name="min_from"
+                      label="Min From"
                       fullWidth
-                      error={Boolean(touched.min && errors.min)}
-                      helperText={touched.min && errors.min}
+                      error={Boolean(touched.min_from && errors.min_from)}
+                      helperText={touched.min_from && errors.min_from}
                       onBlur={handleBlur}
                       onChange={handleChange}
-                      defaultValue={state.min}
+                      defaultValue={state.min_from}
+                    />
+                  </Grid>
+                  {/* Min To */}
+                  <Grid item xs={4} md={4} display="flex" alignItems="center">
+                    <Typography
+                      variant="subtitle1"
+                      color="inherit"
+                      component="div"
+                    >
+                      Min To
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={8} md={8}>
+                    <TextField
+                      margin="dense"
+                      id="min_to"
+                      name="min_to"
+                      label="Min To"
+                      fullWidth
+                      error={Boolean(touched.min_to && errors.min_to)}
+                      helperText={touched.min_to && errors.min_to}
+                      onBlur={handleBlur}
+                      onChange={handleChange}
+                      defaultValue={state.min_to}
                     />
                   </Grid>
                   {/* Limit Enabled */}
@@ -348,6 +385,7 @@ const AddSwapModal = ({ getSwap }) => {
                   {/* Limit  */}
                   {check ? (
                     <>
+                      {/* Limit From */}
                       <Grid
                         item
                         xs={4}
@@ -360,21 +398,54 @@ const AddSwapModal = ({ getSwap }) => {
                           color="inherit"
                           component="div"
                         >
-                          Limit Swap
+                          Limit Swap From
                         </Typography>
                       </Grid>
                       <Grid item xs={8} md={8}>
                         <TextField
                           margin="dense"
-                          id="limit"
-                          name="limit"
-                          label="Limit"
+                          id="limit_from"
+                          name="limit_from"
+                          label="Limit From"
                           fullWidth
-                          error={Boolean(touched.limit && errors.limit)}
-                          helperText={touched.limit && errors.limit}
+                          error={Boolean(
+                            touched.limit_from && errors.limit_from
+                          )}
+                          helperText={touched.limit_to && errors.limit_to}
                           onBlur={handleBlur}
                           onChange={handleChange}
-                          defaultValue={state.limit}
+                          defaultValue={state.limit_from}
+                        />
+                      </Grid>
+                      <Spacer my={4} />
+                      {/* Limit To */}
+                      <Grid
+                        item
+                        xs={4}
+                        md={4}
+                        display="flex"
+                        alignItems="center"
+                      >
+                        <Typography
+                          variant="subtitle1"
+                          color="inherit"
+                          component="div"
+                        >
+                          Limit Swap To
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8} md={8}>
+                        <TextField
+                          margin="dense"
+                          id="limit_to"
+                          name="limit_to"
+                          label="Limit To"
+                          fullWidth
+                          error={Boolean(touched.limit_to && errors.limit_to)}
+                          helperText={touched.limit_to && errors.limit_to}
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          defaultValue={state.limit_to}
                         />
                       </Grid>
                     </>

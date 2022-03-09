@@ -7,13 +7,12 @@ import { InputBase } from "@material-ui/core";
 
 const Search = styled.div`
   border-radius: 2px;
-  background-color: ${(props) => props.theme.header.background};
+  background-color: ${(props) => darken(0.05, props.theme.header.background)};
   display: block;
   position: relative;
-  // width: 100%;
 
   &:hover {
-    background-color: ${(props) => darken(0.05, props.theme.header.background)};
+    background-color: ${(props) => darken(0.08, props.theme.header.background)};
   }
 
   ${(props) => props.theme.breakpoints.up("md")} {
@@ -42,10 +41,10 @@ const Input = styled(InputBase)`
 
   > input {
     color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)};
-    padding-right: ${(props) => props.theme.spacing(2.5)};
-    padding-bottom: ${(props) => props.theme.spacing(2.5)};
-    padding-left: ${(props) => props.theme.spacing(12)};
+    padding-top: ${(props) => props.theme.spacing(4)};
+    padding-right: ${(props) => props.theme.spacing(4)};
+    padding-bottom: ${(props) => props.theme.spacing(4)};
+    padding-left: ${(props) => props.theme.spacing(11)};
     width: 160px;
   }
 `;

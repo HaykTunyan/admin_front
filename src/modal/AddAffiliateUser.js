@@ -101,6 +101,8 @@ const AddAffiliateUser = ({ getUserList }) => {
   };
 
   const addAffiliateUser = async (values) => {
+    setSuccess(false);
+
     let data = {
       email: values.email,
       full_name: values.full_name,
@@ -285,7 +287,7 @@ const AddAffiliateUser = ({ getUserList }) => {
           </Formik>
         </DialogContent>
       </Dialog>
-      <>{success && <ConfirmationNotice title="Creat New Affilate User" />}</>
+      <>{success && <ConfirmationNotice title="Affiliate User added" />}</>
     </Fragment>
   );
 };

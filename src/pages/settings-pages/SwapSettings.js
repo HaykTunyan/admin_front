@@ -61,7 +61,7 @@ const Input = styled(InputBase)`
 const Search = styled.div`
   border-radius: 2px;
   background-color: ${(props) => props.theme.header.background};
-  display: none;
+  display: block;
   position: relative;
   width: 100%;
 
@@ -145,14 +145,19 @@ const SwapSettings = () => {
     setSearch(event.target.value);
 
     searchTimeout = setTimeout(async () => {
-      if (event.target.value.length > 2 || event.target.value.length === 0) {
-        try {
-          getSwap(coinFromIds, coinToIds, event.target.value);
-        } catch (e) {
-          console.log("ERROR in search", e);
-        }
+      try {
+        getSwap(coinFromIds, coinToIds, event.target.value);
+      } catch (e) {
+        console.log("ERROR in search", e);
       }
-    }, 100);
+      // if (event.target.value.length > 2 || event.target.value.length === 0) {
+      // try {
+      //   getSwap(coinFromIds, coinToIds, event.target.value);
+      // } catch (e) {
+      //   console.log("ERROR in search", e);
+      // }
+      // }
+    }, 0);
   };
 
   // get Swap.
@@ -317,7 +322,10 @@ const SwapSettings = () => {
                           idSwap={row.id}
                           decimalsSwap={row.decimals}
                           feeSwap={row.fee}
-                          minSwap={row.min}
+                          minFrom={row.min_from}
+                          minTo={row.min_to}
+                          limitFrom={row.limit_from}
+                          limitTo={row.limit_to}
                           limitSwap={row.limit}
                           limitEnabledSwap={row.limitEnabled}
                           fromCoin={row.fromCoin}

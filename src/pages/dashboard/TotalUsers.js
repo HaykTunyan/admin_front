@@ -22,8 +22,12 @@ const TotalUsers = ({ startDate, endDate }) => {
   const navigate = useNavigate();
   const [totalUsers, setTotalUsers] = useState({});
 
-  function goTo() {
-    navigate("/users");
+  function goTo(status) {
+    navigate("/users", {
+      state: {
+        status: status,
+      },
+    });
   }
 
   async function getTotalUsers() {
@@ -70,7 +74,7 @@ const TotalUsers = ({ startDate, endDate }) => {
                   color="inherit"
                   variant="text"
                   style={{ justifyContent: "flex-start" }}
-                  onClick={goTo}
+                  onClick={() => goTo("all")}
                 >
                   All
                 </Button>
@@ -93,7 +97,7 @@ const TotalUsers = ({ startDate, endDate }) => {
                   color="inherit"
                   variant="text"
                   style={{ justifyContent: "flex-start" }}
-                  onClick={goTo}
+                  onClick={() => goTo(4)}
                 >
                   Verified
                 </Button>
@@ -116,7 +120,7 @@ const TotalUsers = ({ startDate, endDate }) => {
                   color="inherit"
                   variant="text"
                   style={{ justifyContent: "flex-start" }}
-                  onClick={goTo}
+                  onClick={() => goTo(0)}
                 >
                   Unverified
                 </Button>

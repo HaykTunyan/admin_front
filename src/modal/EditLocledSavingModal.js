@@ -66,6 +66,8 @@ const EditLockedSavingModal = ({ savingId, min, max, duration, getLocked }) => {
   };
 
   const handleSubmit = (values) => {
+    setSuccess(false);
+
     let data = {
       savingId: values.savingId, // is required
       min: Number(values.min),
@@ -83,7 +85,6 @@ const EditLockedSavingModal = ({ savingId, min, max, duration, getLocked }) => {
 
     dispatch(editSaving(data))
       .then((data) => {
-        setSuccess(false);
         if (data.success) {
           setOpen(false);
           getLocked();
@@ -98,12 +99,7 @@ const EditLockedSavingModal = ({ savingId, min, max, duration, getLocked }) => {
 
   return (
     <Fragment>
-      {success === true && (
-        <ConfirmationNotice
-          opening={success}
-          title="Edit Locked Savings Settings"
-        />
-      )}
+      {success === true && <ConfirmationNotice title="Locked Saving Edited" />}
       <IconButton aria-label="done" onClick={handleClickOpen}>
         <EditIcon />
       </IconButton>

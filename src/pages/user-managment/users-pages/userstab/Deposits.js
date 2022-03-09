@@ -46,6 +46,8 @@ import moment from "moment";
 import { getCoins_req } from "../../../../api/userWalletsAPI";
 import { ArrowDown, ArrowUp } from "react-feather";
 import AddAffiliateSaving from "../../../../modal/AddAffiliateSaving";
+import ConfirmationNotice from "../../../../components/ConfirmationNotice";
+import ActionConfirmationModal from "../../../../modal/Confirmations/ActionConfirmationModal";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
@@ -170,6 +172,15 @@ const Deposits = () => {
 
   const [sortBy, setSortBy] = useState("increasing");
 
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+  });
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    savingId: null,
+  });
+
   const [changeAPY, setChangeAPY] = useState({
     fromPercent: null,
     toPercent: null,
@@ -255,6 +266,13 @@ const Deposits = () => {
   }
 
   async function saveEditedData(item) {
+    setMessage({
+      ...message,
+      open: false,
+      error: false,
+      type: tab === 1 ? "apy" : "duration",
+    });
+
     let type;
     let data = {
       saving_id: item.saving_id,
@@ -295,13 +313,22 @@ const Deposits = () => {
           `${tab === 1 ? "total_amount" : "amount"}`,
           sortBy
         );
+
+        setMessage({
+          ...message,
+          open: true,
+          type: tab === 1 ? "apy" : "duration",
+        });
       }
     } catch (e) {
       console.log("EDIT USER SAVINGS ERROR ==>", e.response);
+      setMessage({ ...message, open: true, error: true });
     }
   }
 
   async function deleteSaving(savingId) {
+    setMessage({ ...message, open: false, error: false, type: "delete" });
+
     try {
       const response = await deleteAffiliateSaving_req(userId, savingId);
       if (response) {
@@ -315,9 +342,14 @@ const Deposits = () => {
           `${tab === 1 ? "total_amount" : "amount"}`,
           sortBy
         );
+
+        setConfirmModal({ ...confirmModal, open: false });
+        setMessage({ ...message, open: true, type: "delete" });
       }
     } catch (e) {
       console.log("DELETE AFFILIATE SAVING ERROR ==>", e.response);
+      setConfirmModal({ ...confirmModal, open: false, savingId: null });
+      setMessage({ ...message, open: true, error: true });
     }
   }
 
@@ -392,6 +424,28 @@ const Deposits = () => {
   return (
     <>
       <Box sx={{ width: "100%", typography: "body1" }}>
+        {message.open === true && (
+          <ConfirmationNotice
+            error={message.error}
+            title={
+              message.error === true
+                ? "An error occurred, try again"
+                : message.type === "delete"
+                ? "Saving Deleted"
+                : message.type === "apy"
+                ? "7 Day APY changed"
+                : "Duration/ AI changed"
+            }
+          />
+        )}
+        {confirmModal.open && (
+          <ActionConfirmationModal
+            onClose={() =>
+              setConfirmModal({ ...confirmModal, open: false, savingId: null })
+            }
+            onConfirm={() => deleteSaving(confirmModal.savingId)}
+          />
+        )}
         <TabContext value={tab}>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
             <TabList
@@ -678,7 +732,23 @@ const Deposits = () => {
                                         if (
                                           changeAPY[`editing_${item.saving_id}`]
                                         ) {
-                                          saveEditedData(item);
+                                          console.log(
+                                            " changeAPY[`editing_${item.saving_id}`]",
+                                            changeAPY[
+                                              `editing_${item.saving_id}`
+                                            ]
+                                          );
+                                          if (
+                                            Number(changeAPY.fromPercent) > 0 &&
+                                            Number(changeAPY.toPercent) > 0
+                                          ) {
+                                            saveEditedData(item);
+                                          } else {
+                                            setChangeAPY({
+                                              ...changeAPY,
+                                              [`editing_${item.saving_id}`]: false,
+                                            });
+                                          }
                                         } else {
                                           setChangeAPY({
                                             ...changeAPY,
@@ -704,7 +774,12 @@ const Deposits = () => {
                                   variant="contained"
                                   sx={{ width: "50px", mx: "15px" }}
                                   onClick={() => {
-                                    deleteSaving(item.saving_id);
+                                    //deleteSaving(item.saving_id);
+                                    setConfirmModal({
+                                      ...confirmModal,
+                                      open: true,
+                                      savingId: item.saving_id,
+                                    });
                                   }}
                                 >
                                   {"Delete"}

@@ -21,13 +21,13 @@ import {
   blockUserWallet_req,
 } from "../../../../api/userWalletsAPI";
 import { ArrowDown, ArrowUp } from "react-feather";
-import SuccessModal from "../../../../modal/SuccessModal";
-import WithdrawalModal from "../../../../modal/Confirmations/WithdrawalModal";
+import ConfirmationNotice from "../../../../components/ConfirmationNotice";
+import ActionConfirmationModal from "../../../../modal/Confirmations/ActionConfirmationModal";
 
 // Spacing.
 const Card = styled(MuiCard)(spacing);
 
-const TableWrapper = styled.div`
+const TableWrapper = styled.div`s
   overflow-y: auto;
   max-width: calc(100vw - ${(props) => props.theme.spacing(12)});
 `;
@@ -39,7 +39,14 @@ const Wallets = () => {
   const userId = profileId?.id;
   const [wallets, setWallets] = useState([]);
   const [sortBy, setSortBy] = useState("increasing");
-  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+  });
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    wallet: {},
+  });
 
   const handleCellClick = (sortType) => {
     setSortBy(sortBy === "increasing" ? "decreasing" : "increasing");
@@ -50,24 +57,24 @@ const Wallets = () => {
     try {
       const response = await getUserWallets_req(userId, sortParam, sortType);
       if (response) {
-        console.log("GET USER WALLETS RESPONSE ==>", response);
         setWallets(response.result);
       }
-    } catch (e) {
-      console.log("GET USER WALLETS ERROR ==>", e.response);
-    }
+    } catch (e) {}
   }
 
   async function blockUserWallet(wallet) {
+    setMessage({ ...message, open: false, error: false });
+
     try {
       const response = await blockUserWallet_req(userId, wallet.id);
       if (response) {
-        console.log("BLOCK USER WALLET RESPONSE ==>", response);
         getUserWallets("total_balance_usd", sortBy);
-        setSuccess(!success);
+        setConfirmModal({ ...confirmModal, open: false });
+        setMessage({ ...message, open: true });
       }
     } catch (e) {
-      console.log("BLOCK USER WALLET ERROR ==>", e);
+      setConfirmModal({ ...confirmModal, open: false, wallet: {} });
+      setMessage({ ...message, open: true, error: true });
     }
   }
 
@@ -116,58 +123,87 @@ const Wallets = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {wallets.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell component="th" scope="row" width="25%">
-                      {row.coin_name}
-                    </TableCell>
-                    <TableCell align="center" width="25%">
-                      {row.total_balance}
-                    </TableCell>
-                    <TableCell align="center" width="25%">
-                      {row.total_balance_usd}
-                    </TableCell>
-                    <TableCell align="right">
-                      <Box display="flex" justifyContent="flex-end">
-                        <Box mx={2}>
-                          <WalletsModal
-                            wallet={row}
-                            id={"topUp"}
-                            userId={userId}
-                          />
+                {wallets.map((row) => {
+                  return (
+                    <TableRow key={row.id}>
+                      <TableCell component="th" scope="row" width="25%">
+                        {row.coin_name}
+                      </TableCell>
+                      <TableCell align="center" width="25%">
+                        {row.total_balance}
+                      </TableCell>
+                      <TableCell align="center" width="25%">
+                        {row.total_balance_usd}
+                      </TableCell>
+                      <TableCell align="right">
+                        <Box display="flex" justifyContent="flex-end">
+                          <Box mx={2}>
+                            <WalletsModal
+                              wallet={row}
+                              id={"topUp"}
+                              userId={userId}
+                            />
+                          </Box>
+                          <Box mx={2}>
+                            <WalletsModal
+                              wallet={row}
+                              id={"withdraw"}
+                              userId={userId}
+                            />
+                          </Box>
+                          <Box mx={2}>
+                            <Button
+                              variant="contained"
+                              onClick={() =>
+                                setConfirmModal({
+                                  ...confirmModal,
+                                  open: true,
+                                  wallet: row,
+                                })
+                              }
+                              sx={{ width: "max-content" }}
+                            >{`${
+                              row.block_status === true ? "Unblock" : "Block"
+                            } withdrawal`}</Button>
+                            {confirmModal.open === true && (
+                              <ActionConfirmationModal
+                                onClose={() =>
+                                  setConfirmModal({
+                                    ...confirmModal,
+                                    open: false,
+                                    wallet: {},
+                                  })
+                                }
+                                onConfirm={() => {
+                                  blockUserWallet(confirmModal.wallet);
+                                }}
+                              />
+                            )}
+                            {message.open === true && (
+                              <ConfirmationNotice
+                                error={message.error}
+                                title={
+                                  message.error === true
+                                    ? "An error occurred, try again"
+                                    : `Withdrawal ${
+                                        confirmModal.wallet.block_status ===
+                                        true
+                                          ? "unblocked"
+                                          : "blocked"
+                                      }`
+                                }
+                              />
+                            )}
+                          </Box>
                         </Box>
-                        <Box mx={2}>
-                          <WalletsModal
-                            wallet={row}
-                            id={"withdraw"}
-                            userId={userId}
-                          />
-                        </Box>
-                        <Box mx={2}>
-                          <WithdrawalModal
-                            row={row}
-                            wallets={wallets}
-                            getUserWallets={getUserWallets}
-                            sortBy={sortBy}
-                            userId={userId}
-                          />
-                          {/* <Button
-                            variant="contained"
-                            onClick={() => blockUserWallet(row)}
-                            sx={{ width: "max-content" }}
-                          >{`${
-                            row.block_status === true ? "Unblock" : "Block"
-                          } withdrawal`}</Button> */}
-                        </Box>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableWrapper>
         </Paper>
-        {success && <SuccessModal />}
       </Card>
     </>
   );

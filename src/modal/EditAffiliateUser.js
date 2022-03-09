@@ -15,6 +15,7 @@ import {
 } from "@material-ui/core";
 import { Edit2 } from "react-feather";
 import { editAffiliate } from "../redux/actions/user-managment";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const TextField = styled(MuiTextField)(spacing);
@@ -47,6 +48,7 @@ const EditAffiliateModal = ({
   getUserList_req,
 }) => {
   const [open, setOpen] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
     userId: userId,
     email: email,
@@ -66,9 +68,11 @@ const EditAffiliateModal = ({
   };
 
   const handleSubmit = (values) => {
+    setSuccess(false);
     dispatch(editAffiliate(values)).then((data) => {
       if (data.success) {
         setOpen(false);
+        setSuccess(true);
       }
       getUserList_req();
     });
@@ -76,6 +80,7 @@ const EditAffiliateModal = ({
 
   return (
     <div>
+      {success === true && <ConfirmationNotice title="Successfully Edited" />}
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
         <Edit2 />
       </IconButton>

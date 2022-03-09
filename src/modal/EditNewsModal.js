@@ -67,6 +67,7 @@ const EditNewsModal = ({ news, getNews }) => {
   }
 
   async function editNews(values) {
+    setSuccess(false);
     console.log("Initial Values ==>", initialValues, ".....", values);
     const formData = new FormData();
 
@@ -94,12 +95,11 @@ const EditNewsModal = ({ news, getNews }) => {
 
     try {
       const response = await editNews_req(formData);
-      setSuccess(false);
       if (response) {
         setOpen(false);
         getNews();
+        setSuccess(true);
       }
-      setSuccess(true);
     } catch (e) {
       setOpen(false);
     }
@@ -108,7 +108,7 @@ const EditNewsModal = ({ news, getNews }) => {
   return (
     <Fragment>
       {success === true && (
-        <ConfirmationNotice opening={success} title="Edit News" />
+        <ConfirmationNotice title="News successfully edited" />
       )}
       <Button size="small" color="primary" onClick={handleClickOpen}>
         Edit

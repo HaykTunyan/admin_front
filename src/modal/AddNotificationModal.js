@@ -17,7 +17,10 @@ import ConfirmationNotice from "../components/ConfirmationNotice";
 const AddNotificationModal = ({ getTemplates }) => {
   // Hooks.
   const [open, setOpen] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+  });
   const [initialValues, setInitialValues] = useState({
     title: "",
     message: "",
@@ -37,27 +40,36 @@ const AddNotificationModal = ({ getTemplates }) => {
   };
 
   async function saveNotification(values) {
+    setMessage({ ...message, open: false, error: false });
+
     let data = {
       title: values.title,
       content: values.message,
     };
     try {
       const response = await createNotifTemplate_req(data);
-      setSuccess(false);
       if (response) {
         setOpen(false);
         getTemplates();
+        setMessage({ ...message, open: true });
       }
-      setSuccess(true);
     } catch (e) {
       setOpen(false);
+      setMessage({ ...message, open: true, error: true });
     }
   }
 
   return (
     <Fragment>
-      {success === true && (
-        <ConfirmationNotice opening={true} title="Create New Notification" />
+      {message.open === true && (
+        <ConfirmationNotice
+          error={message.error}
+          title={
+            message.error === true
+              ? "An error occurred, try again"
+              : "Notification successfully added"
+          }
+        />
       )}
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         Add Notification

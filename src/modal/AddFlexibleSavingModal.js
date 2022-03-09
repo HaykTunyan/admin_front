@@ -22,6 +22,7 @@ import {
 } from "@material-ui/core";
 import { addSaving } from "../redux/actions/settings";
 import { instance } from "../services/api";
+import ConfirmationNotice from "../components/ConfirmationNotice";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -45,6 +46,7 @@ const AddFlexibleSavingModal = ({ getFlexible }) => {
   const [open, setOpen] = useState(false);
   const [errorMes, setErrorMes] = useState([]);
   const [coinSettings, getCoinSettings] = useState([]);
+  const [success, setSuccess] = useState(false);
   const [state, setState] = useState({
     coin: Number,
     type: "flexible", // for flexible
@@ -64,6 +66,8 @@ const AddFlexibleSavingModal = ({ getFlexible }) => {
 
   // Form Req.
   const addSavings = (values) => {
+    setSuccess(false);
+
     let data = {
       coin: Number(values.coin),
       type: "flexible",
@@ -80,6 +84,7 @@ const AddFlexibleSavingModal = ({ getFlexible }) => {
         console.log("data", data);
         setOpen(false);
         getFlexible();
+        setSuccess(true);
       })
       .catch((error) => {
         console.log(" error messages ", error?.response?.data);
@@ -108,6 +113,7 @@ const AddFlexibleSavingModal = ({ getFlexible }) => {
   return (
     <>
       <div>
+        {success && <ConfirmationNotice title="Flexible Saving added" />}
         <Button variant="contained" onClick={handleClickOpen}>
           Add Saving
         </Button>

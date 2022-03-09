@@ -16,6 +16,7 @@ import ReferralUserModal from "../../modal/ReferralUserModal";
 import { instance } from "../../services/api";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
+import Loader from "../../components/Loader";
 
 // Spacing.
 const Spacer = styled.div(spacing);
@@ -32,6 +33,9 @@ const ReferralTable = () => {
   const [referralRow, setReferralRow] = useState(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const refUrl = process.env.GLOBAL_DEV_API;
+  const refferalUrl = "https://beincrypto.io/?ref";
 
   const handleChangePage = (event, newPage) => {
     getReferrals(newPage + 1);
@@ -99,7 +103,7 @@ const ReferralTable = () => {
                         </TableCell>
                         <TableCell align="center">
                           <Box component="div" sx={{ display: "flex" }}>
-                            <span>https://bein.demka.online/</span>
+                            <span>{refferalUrl}</span>
                             <span>=</span>
                             <span>{item.referralCode}</span>
                           </Box>
@@ -137,17 +141,25 @@ const ReferralTable = () => {
                 </TableBody>
               </Table>
               {/* Pagination */}
-              {referralRow?.referrals && (
-                <Box py={5} display="flex" justifyContent="flex-end">
-                  <TablePagination
-                    rowsPerPageOptions={[10]}
-                    component="div"
-                    count={referralRow?.allCount}
-                    rowsPerPage={referralRow?.limit}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                  />
+              {referralRow?.referrals ? (
+                <>
+                  {referralRow?.referrals && (
+                    <Box py={5} display="flex" justifyContent="flex-end">
+                      <TablePagination
+                        rowsPerPageOptions={[10]}
+                        component="div"
+                        count={referralRow?.allCount}
+                        rowsPerPage={referralRow?.limit}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                      />
+                    </Box>
+                  )}
+                </>
+              ) : (
+                <Box sx={{ marginTop: "100px" }}>
+                  <Loader />
                 </Box>
               )}
             </TableContainer>

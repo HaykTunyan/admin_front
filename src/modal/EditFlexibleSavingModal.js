@@ -67,6 +67,8 @@ const EditFlexibleSavingModal = ({
   };
 
   const handleSubmit = (values) => {
+    setSuccess(false);
+
     let data = {
       savingId: values.savingId, // is required
       min: Number(values.min),
@@ -95,7 +97,7 @@ const EditFlexibleSavingModal = ({
 
   return (
     <Fragment>
-      {success && <ConfirmationNotice title="Add Flexible Saving" />}
+      {success && <ConfirmationNotice title="Flexible Saving Edited" />}
       <IconButton aria-label="done" onClick={handleClickOpen}>
         <EditIcon />
       </IconButton>

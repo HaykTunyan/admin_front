@@ -45,12 +45,9 @@ const Activity = () => {
     try {
       const response = await getUserActivity_req(userId);
       if (response) {
-        console.log("GET ACCOUNT ACTIVITY RESPONSE ==>", response);
         setActivity(response.activity);
       }
-    } catch (e) {
-      console.log("GET ACCOUNT ACTIVITY ERROR ==>", e);
-    }
+    } catch (e) {}
   }
 
   useEffect(() => {

@@ -26,7 +26,10 @@ const IconButton = styled(MuiIconButton)`
 const DeleteSwapModal = ({ swapId, getSwap }) => {
   // hooks
   const [open, setOpen] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState({
+    open: false,
+    error: false,
+  });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -37,15 +40,17 @@ const DeleteSwapModal = ({ swapId, getSwap }) => {
   };
 
   const handleClick = () => {
+    setMessage({ ...message, open: false, error: false });
+
     return instance
       .delete(`/admin/swap-settings/${swapId} `, { mode: "no-cors" })
       .then((data) => {
-        setSuccess(false);
         getSwap();
-        setSuccess(true);
+        setMessage({ ...message, open: true });
         return data;
       })
       .catch((error) => {
+        setMessage({ ...message, open: true, error: true });
         return Promise.reject(error);
       })
       .finally(() => {});
@@ -53,10 +58,14 @@ const DeleteSwapModal = ({ swapId, getSwap }) => {
 
   return (
     <Fragment>
-      {success === true && (
+      {message.open === true && (
         <ConfirmationNotice
-          opening={success}
-          title="Delete Item successfully"
+          error={message.error}
+          title={
+            message.error === true
+              ? "An error occurred, try again"
+              : `Swap Deleted`
+          }
         />
       )}
       <IconButton aria-label="settings" size="large" onClick={handleClickOpen}>
